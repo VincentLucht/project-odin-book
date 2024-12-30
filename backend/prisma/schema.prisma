@@ -1,0 +1,314 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL_GLOBAL")
+}
+
+enum VoteType {
+  UPVOTE
+  DOWNVOTE
+}
+
+enum UserRole {
+  CONTRIBUTOR
+  BASIC
+}
+
+enum CommunityType {
+  PUBLIC
+  PRIVATE
+  RESTRICTED
+}
+
+model MainCategory {
+  id              String           @id @default(uuid())
+  name            String           @unique
+  community_topic CommunityTopic[]
+}
+
+model CommunityTopic {
+  id               String       @id @default(uuid())
+  name             String       @unique
+  main_category_id String
+  main_category    MainCategory @relation(fields: [main_category_id], references: [id])
+  community        Community?   @relation(fields: [community_id], references: [id])
+  community_id     String?
+
+  @@index([main_category_id])
+  @@index([community_id])
+}
+
+model User {
+  id                  String   @id @default(uuid())
+  username            String   @unique @db.VarChar(20)
+  email               String   @unique
+  password            String
+  display_name        String?  @db.VarChar(40)
+  profile_picture_url String?
+  description         String?  @db.VarChar(200)
+  created_at          DateTime @default(now())
+  cake_day            Int
+
+  banned_users        BannedUser[]
+  user_communities    UserCommunity[]
+  community           Community[]
+  community_moderator CommunityModerator[]
+  comment             Comment[]
+  post_vote           PostVote[]
+  comment_votes       CommentVote[]
+  chat                Chat[]
+  message             Message[]
+  user_chats          UserChats[]
+  chat_admin          ChatAdmin[]
+  user_flair          UserFlair[]
+}
+
+model UserCommunity {
+  id           String    @id @unique
+  user_id      String
+  user         User      @relation(fields: [user_id], references: [id])
+  community_id String
+  community    Community @relation(fields: [community_id], references: [id])
+  joined_at    DateTime  @default(now())
+  role         UserRole
+
+  @@index([user_id, community_id])
+}
+
+model Community {
+  id                          String   @id @default(uuid())
+  name                        String   @unique
+  description                 String?
+  profile_picture_url_desktop String?
+  profile_picture_url_mobile  String?
+  banner_url                  String?
+  created_at                  DateTime @default(now())
+  is_private                  Boolean  @default(false)
+  is_mature                   Boolean  @default(false)
+
+  type             CommunityType
+  community_topics CommunityTopic[]
+  owner_id         String
+  owner            User             @relation(fields: [owner_id], references: [id])
+
+  banned_users         BannedUser[]
+  user_communities     UserCommunity[]
+  community_moderators CommunityModerator[]
+  posts                Post[]
+  community_flair      CommunityFlair[]
+}
+
+model CommunityModerator {
+  id           String    @id @default(uuid())
+  created_at   DateTime  @default(now())
+  user_id      String
+  user         User      @relation(fields: [user_id], references: [id])
+  community_id String
+  community    Community @relation(fields: [community_id], references: [id])
+
+  @@index([community_id, user_id])
+}
+
+enum PostType {
+  BASIC
+  POLL
+}
+
+model Post {
+  id           String    @id @default(uuid())
+  community_id String
+  community    Community @relation(fields: [community_id], references: [id])
+  poster_id    String
+  title        String    @db.VarChar(300)
+  body         String    @db.VarChar(40000)
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+  deleted_at   DateTime?
+  is_spoiler   Boolean
+  pinned_at    DateTime?
+
+  post_type  PostType
+  comments   Comment[]
+  post_votes PostVote[]
+  post_flair PostFlair[]
+
+  @@index([title])
+  @@index([created_at])
+  @@index([community_id])
+}
+
+model PostVote {
+  id         String   @id @default(uuid())
+  post_id    String
+  post       Post     @relation(fields: [post_id], references: [id])
+  user_id    String
+  user       User     @relation(fields: [user_id], references: [id])
+  created_at DateTime @default(now())
+  vote_type  VoteType
+
+  @@unique([post_id, user_id])
+  @@index([post_id])
+}
+
+model Comment {
+  id         String    @id @default(uuid())
+  content    String    @db.VarChar(10000)
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  post_id       String
+  post          Post          @relation(fields: [post_id], references: [id])
+  user_id       String
+  user          User          @relation(fields: [user_id], references: [id])
+  comment_votes CommentVote[]
+
+  // Parent relation
+  parent_comment_id String?
+  parent_comment    Comment?  @relation("CommentReplies", fields: [parent_comment_id], references: [id])
+  // Child relation
+  replies           Comment[] @relation("CommentReplies")
+
+  @@index([post_id]) // for lookups of comments by post
+  @@index([parent_comment_id]) // for comment replies
+  @@index([user_id]) // for user comment history
+  @@index([created_at])
+}
+
+model CommentVote {
+  id         String   @id @default(uuid())
+  comment_id String
+  comment    Comment  @relation(fields: [comment_id], references: [id])
+  user_id    String
+  user       User     @relation(fields: [user_id], references: [id])
+  created_at DateTime @default(now())
+  vote_type  VoteType
+
+  @@unique([comment_id, user_id])
+  @@index([comment_id])
+}
+
+model BannedUser {
+  id           String    @id @default(uuid())
+  user_id      String
+  user         User      @relation(fields: [user_id], references: [id])
+  community_id String
+  community    Community @relation(fields: [community_id], references: [id])
+  banned_at    DateTime
+  ban_reason   String    @db.VarChar(500)
+  ban_duration DateTime
+
+  @@index([user_id, community_id])
+}
+
+enum FlairType {
+  POST
+  USER
+  ALL
+}
+
+model Flair {
+  id              String           @id @default(uuid())
+  emoji           String?          @db.VarChar(4)
+  name            String           @db.VarChar(20)
+  color           String?          @db.VarChar(7)
+  type            FlairType[]
+  community_flair CommunityFlair[]
+  user_flair      UserFlair[]
+  post_flair      PostFlair[]
+}
+
+model CommunityFlair {
+  id           String    @id @default(uuid())
+  community_id String
+  community    Community @relation(fields: [community_id], references: [id])
+  flair_id     String
+  flair        Flair     @relation(fields: [flair_id], references: [id])
+
+  @@unique([community_id, flair_id])
+}
+
+model UserFlair {
+  id       String @id @default(uuid())
+  user_id  String
+  user     User   @relation(fields: [user_id], references: [id])
+  flair_id String
+  flair    Flair  @relation(fields: [flair_id], references: [id])
+
+  @@unique([user_id, flair_id])
+}
+
+model PostFlair {
+  id       String @id @default(uuid())
+  post_id  String
+  post     Post   @relation(fields: [post_id], references: [id])
+  flair_id String
+  flair    Flair  @relation(fields: [flair_id], references: [id])
+
+  @@unique([post_id, flair_id])
+}
+
+model Chat {
+  id                  String      @id @default(uuid())
+  name                String      @db.VarChar(100)
+  time_created        DateTime    @default(now())
+  profile_picture_url String?
+  is_group_chat       Boolean     @default(false)
+  chat_description    String?     @db.VarChar(200)
+  updated_at          DateTime    @updatedAt
+  last_message_id     String?     @unique
+  owner_id            String
+  owner               User        @relation(fields: [owner_id], references: [id], onDelete: Cascade)
+  last_message        Message?    @relation("LastMessage", fields: [last_message_id], references: [id], onDelete: SetNull)
+  messages            Message[]   @relation("ChatMessages")
+  userChats           UserChats[]
+  chatAdmins          ChatAdmin[]
+
+  @@index([updated_at])
+}
+
+model Message {
+  id                String   @id @default(uuid())
+  content           String   @db.VarChar(10000)
+  time_created      DateTime @default(now())
+  user              User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id           String
+  is_system_message Boolean  @default(false)
+  chat              Chat     @relation("ChatMessages", fields: [chat_id], references: [id], onDelete: Cascade)
+  chat_id           String
+  last_message_chat Chat?    @relation("LastMessage")
+  iv                String
+
+  @@index([chat_id, time_created])
+  @@index([chat_id, user_id])
+}
+
+model UserChats {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id   String
+  chat      Chat     @relation(fields: [chat_id], references: [id], onDelete: Cascade)
+  chat_id   String
+  joined_at DateTime @default(now())
+
+  @@unique([user_id, chat_id])
+}
+
+model ChatAdmin {
+  id      String @id @default(uuid())
+  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id String
+  chat    Chat   @relation(fields: [chat_id], references: [id], onDelete: Cascade)
+  chat_id String
+
+  @@unique([user_id, chat_id])
+}
