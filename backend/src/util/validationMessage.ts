@@ -12,11 +12,13 @@ class ValidationMessages {
   }
 
   minLen(field: string, length: number) {
-    return `${field} must be at least ${length} characters long`;
+    const word = field.charAt(0).toUpperCase() + field.slice(1);
+    return `${word} must be at least ${length} characters long`;
   }
 
   maxLen(field: string, length: number) {
-    return `${field} cannot be longer than ${length} characters`;
+    const word = field.charAt(0).toUpperCase() + field.slice(1);
+    return `${word} cannot be longer than ${length} characters`;
   }
 
   match(field1: string, field2: number) {
