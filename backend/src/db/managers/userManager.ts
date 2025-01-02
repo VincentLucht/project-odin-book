@@ -4,7 +4,7 @@ export default class UserManager {
   constructor(private prisma: PrismaClient) {}
 
   // ! READ
-  async getUserById(id: string) {
+  async getById(id: string) {
     const user = await this.prisma.user.findUnique({
       where: {
         id,
@@ -14,7 +14,7 @@ export default class UserManager {
     return user;
   }
 
-  async getUserByUsername(username: string) {
+  async getByUsername(username: string) {
     const user = await this.prisma.user.findUnique({
       where: {
         username,
@@ -24,7 +24,7 @@ export default class UserManager {
     return user;
   }
 
-  async getUserByEmail(email: string) {
+  async getByEmail(email: string) {
     const user = await this.prisma.user.findUnique({
       where: {
         email,
@@ -35,7 +35,7 @@ export default class UserManager {
   }
 
   // ! CREATE
-  async createUser(
+  async create(
     username: string,
     email: string,
     hashedPassword: string,

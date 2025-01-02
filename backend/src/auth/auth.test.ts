@@ -44,7 +44,7 @@ describe('/auth', () => {
 
         expect(response.status).toBe(201);
         expect(response.body.message).toBe('User created successfully');
-        expect(db.user.createUser).toHaveBeenCalled();
+        expect(db.user.create).toHaveBeenCalled();
       });
     });
 
@@ -55,7 +55,7 @@ describe('/auth', () => {
 
         expect(response.status).toBe(409);
         expect(response.body.message).toBe('User already exists');
-        expect(db.user.createUser).not.toHaveBeenCalled();
+        expect(db.user.create).not.toHaveBeenCalled();
       });
 
       it('should handle an email already being used', async () => {
@@ -64,7 +64,7 @@ describe('/auth', () => {
 
         expect(response.status).toBe(409);
         expect(response.body.message).toBe('Email already in use');
-        expect(db.user.createUser).not.toHaveBeenCalled();
+        expect(db.user.create).not.toHaveBeenCalled();
       });
 
       it('should handle missing inputs', async () => {

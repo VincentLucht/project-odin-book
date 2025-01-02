@@ -5,7 +5,7 @@ export default class UserChecker {
   constructor(private db: DB) {}
 
   async foundById(res: Response, id: string) {
-    const user = await this.db.user.getUserById(id);
+    const user = await this.db.user.getById(id);
     if (user) {
       res.status(409).json({ message: 'User already exists' });
       return true;
@@ -15,7 +15,7 @@ export default class UserChecker {
   }
 
   async notFoundById(res: Response, id: string) {
-    const user = await this.db.user.getUserById(id);
+    const user = await this.db.user.getById(id);
     if (!user) {
       res.status(404).json({ message: 'User does not exist' });
       return true;
@@ -25,7 +25,7 @@ export default class UserChecker {
   }
 
   async foundByUsername(res: Response, username: string) {
-    const user = await this.db.user.getUserByUsername(username);
+    const user = await this.db.user.getByUsername(username);
     if (user) {
       res.status(409).json({ message: 'User already exists' });
       return true;
@@ -35,7 +35,7 @@ export default class UserChecker {
   }
 
   async emailFound(res: Response, email: string) {
-    const user = await this.db.user.getUserByEmail(email);
+    const user = await this.db.user.getByEmail(email);
     if (user) {
       res.status(409).json({ message: 'Email already in use' });
       return true;

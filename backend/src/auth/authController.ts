@@ -5,7 +5,7 @@ import db from '@/db/db';
 
 import { checkValidationError } from '@/util/checkValidationError';
 import checker from '@/util/checker/checker';
-import isCakeDayValid from '@/util/isCakeDayValid';
+import isCakeDayValid from '@/community/util/isCakeDayValid';
 
 type User = {
   id: string;
@@ -36,7 +36,7 @@ class AuthController {
     const { username, password } = req.body;
 
     try {
-      const user = await db.user.getUserByUsername(username);
+      const user = await db.user.getByUsername(username);
 
       if (user && (await bcrypt.compare(password, user.password))) {
         const payload = {
@@ -66,6 +66,7 @@ class AuthController {
       display_name,
       profile_picture_url,
       cake_day,
+      topics,
     } = req.body;
 
     try {
@@ -74,7 +75,7 @@ class AuthController {
 
       isCakeDayValid(cake_day);
 
-      await db.user.createUser(
+      await db.user.create(
         username,
         email,
         await bcrypt.hash(password, 10),
