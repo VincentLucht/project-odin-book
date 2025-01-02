@@ -24,6 +24,16 @@ export default class UserManager {
     return user;
   }
 
+  async getUserByEmail(email: string) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    return user;
+  }
+
   // ! CREATE
   async createUser(
     username: string,
@@ -31,6 +41,7 @@ export default class UserManager {
     hashedPassword: string,
     display_name?: string,
     profile_picture_url?: string,
+    cake_day?: string,
   ) {
     await this.prisma.user.create({
       data: {
@@ -39,6 +50,7 @@ export default class UserManager {
         password: hashedPassword,
         display_name,
         profile_picture_url,
+        cake_day,
       },
     });
   }

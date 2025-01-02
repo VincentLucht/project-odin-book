@@ -11,6 +11,15 @@ class MockChecker {
       });
   }
 
+  mockEmailExistenceCheck(status: number, message: string) {
+    jest
+      .mocked(checker.user.emailFound)
+      .mockImplementationOnce(async (res: Response) => {
+        res.status(status).json({ message });
+        return true;
+      });
+  }
+
   mockDbError() {
     jest
       .mocked(checker.user.foundByUsername)

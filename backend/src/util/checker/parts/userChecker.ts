@@ -33,4 +33,14 @@ export default class UserChecker {
 
     return false;
   }
+
+  async emailFound(res: Response, email: string) {
+    const user = await this.db.user.getUserByEmail(email);
+    if (user) {
+      res.status(409).json({ message: 'Email already in use' });
+      return true;
+    }
+
+    return false;
+  }
 }
