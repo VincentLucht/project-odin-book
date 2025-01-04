@@ -24,14 +24,42 @@ export default async function createTestEnvironment(prisma: PrismaClient) {
   console.log('Creating communities...');
 
   const totalRecords = 2;
-  const batch = Array.from({ length: totalRecords }, (_, index) => ({
-    id: index.toString(),
-    name: `${faker.company.name().substring(0, 10)}_${index}`,
-    description: faker.lorem.sentence(),
-    type: index === 1 ? CommunityType.PRIVATE : CommunityType.PUBLIC,
-    owner_id: t1.id,
-  }));
-  await prisma.community.createMany({ data: batch });
+  await prisma.$transaction(async (tx) => {
+    for (let index = 0; index < totalRecords; index++) {
+      const community = await tx.community.create({
+        data: {
+          id: index.toString(),
+          name: `${faker.company.name().substring(0, 10)}_${index}`,
+          description: faker.lorem.sentence(),
+          type: index === 1 ? CommunityType.PRIVATE : CommunityType.PUBLIC,
+          owner_id: t1.id,
+        },
+      });
+
+      await tx.communityTopics.createMany({
+        data: ['1', '2'].map((topicId) => ({
+          community_id: community.id,
+          topic_id: topicId,
+        })),
+      });
+
+      await tx.communityModerator.create({
+        data: {
+          community_id: community.id,
+          user_id: t1.id,
+        },
+      });
+
+      await tx.userCommunity.create({
+        data: {
+          id: `user_community_${index}`,
+          community_id: community.id,
+          user_id: t1.id,
+          role: 'CONTRIBUTOR',
+        },
+      });
+    }
+  });
 
   console.log('Communities created');
 }
