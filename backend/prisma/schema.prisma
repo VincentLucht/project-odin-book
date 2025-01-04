@@ -29,34 +29,16 @@ enum CommunityType {
   RESTRICTED
 }
 
-model MainCategory {
-  id              String           @id @default(uuid())
-  name            String           @unique
-  community_topic CommunityTopic[]
-}
-
-model CommunityTopic {
-  id               String       @id @default(uuid())
-  name             String       @unique
-  main_category_id String
-  main_category    MainCategory @relation(fields: [main_category_id], references: [id])
-  community        Community?   @relation(fields: [community_id], references: [id])
-  community_id     String?
-
-  @@index([main_category_id])
-  @@index([community_id])
-}
-
 model User {
   id                  String   @id @default(uuid())
   username            String   @unique @db.VarChar(20)
-  email               String   @unique
+  email               String   @unique @db.VarChar(320)
   password            String
   display_name        String?  @db.VarChar(40)
   profile_picture_url String?
   description         String?  @db.VarChar(200)
+  cake_day            String?
   created_at          DateTime @default(now())
-  cake_day            Int
 
   banned_users        BannedUser[]
   user_communities    UserCommunity[]
@@ -70,10 +52,30 @@ model User {
   user_chats          UserChats[]
   chat_admin          ChatAdmin[]
   user_flair          UserFlair[]
+  join_request        JoinRequest[]
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model JoinRequest {
+  id           String        @id @default(uuid())
+  user_id      String
+  user         User          @relation(fields: [user_id], references: [id])
+  community_id String
+  community    Community     @relation(fields: [community_id], references: [id])
+  requested_at DateTime      @default(now())
+  status       RequestStatus @default(PENDING)
+  message      String?       @db.VarChar(500)
+
+  @@unique([user_id, community_id])
 }
 
 model UserCommunity {
-  id           String    @id @unique
+  id           String    @id @unique @default(uuid())
   user_id      String
   user         User      @relation(fields: [user_id], references: [id])
   community_id String
@@ -84,27 +86,54 @@ model UserCommunity {
   @@index([user_id, community_id])
 }
 
+model MainTopic {
+  id              String  @id @default(uuid())
+  name            String  @unique
+  community_topic Topic[]
+}
+
+model Topic {
+  id               String            @id @default(uuid())
+  name             String            @unique
+  main_category_id String
+  main_category    MainTopic         @relation(fields: [main_category_id], references: [id])
+  community_topics CommunityTopics[]
+
+  @@index([main_category_id])
+}
+
+model CommunityTopics {
+  id           String    @id @default(uuid())
+  community_id String
+  community    Community @relation(fields: [community_id], references: [id])
+  topic_id     String
+  topic        Topic     @relation(fields: [topic_id], references: [id])
+
+  @@index([community_id, topic_id])
+  @@index([topic_id])
+}
+
 model Community {
   id                          String   @id @default(uuid())
-  name                        String   @unique
-  description                 String?
+  name                        String   @unique @db.VarChar(30)
+  description                 String?  @db.VarChar(500)
   profile_picture_url_desktop String?
   profile_picture_url_mobile  String?
   banner_url                  String?
   created_at                  DateTime @default(now())
-  is_private                  Boolean  @default(false)
   is_mature                   Boolean  @default(false)
 
   type             CommunityType
-  community_topics CommunityTopic[]
+  community_topics CommunityTopics[]
   owner_id         String
-  owner            User             @relation(fields: [owner_id], references: [id])
+  owner            User              @relation(fields: [owner_id], references: [id])
 
   banned_users         BannedUser[]
   user_communities     UserCommunity[]
   community_moderators CommunityModerator[]
   posts                Post[]
   community_flair      CommunityFlair[]
+  join_request         JoinRequest[]
 }
 
 model CommunityModerator {
