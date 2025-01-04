@@ -11,6 +11,10 @@ class ValidationMessages {
     return 'Username is required';
   }
 
+  communityIdReq() {
+    return 'Community ID is required';
+  }
+
   minLen(field: string, length: number) {
     const word = field.charAt(0).toUpperCase() + field.slice(1);
     return `${word} must be at least ${length} characters long`;
