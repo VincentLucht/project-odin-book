@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client/default';
 
 import UserManager from '@/db/managers/userManager';
 import CommunityManager from '@/db/managers/communityManager';
-import TopicManager from '@/db/managers/communityTopicManager';
+import TopicManager from '@/db/managers/topicManager';
 import UserCommunityManager from '@/db/managers/userCommunityManager';
 import BannedUsersManager from '@/db/managers/bannedUsersManager';
 
