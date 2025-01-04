@@ -1,9 +1,13 @@
 import express from 'express';
 import authRouter from '@/auth/authRouter';
+import communityRouter from '@/community/communityRouter';
+import userCommunityRouter from '@/userCommunity/userCommunityRouter';
 
 const router = express.Router();
 
 router.use('/auth', authRouter);
+router.use('/community', communityRouter);
+router.use('/community', userCommunityRouter);
 
 router.get('/test', (req, res) => {
   return res.json([{ title: 'test' }, { title: 'test2' }]);
