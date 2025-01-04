@@ -5,6 +5,7 @@ import request from 'supertest';
 import express from 'express';
 import router from '@/routes/router';
 
+import db from '@/db/db';
 import mockChecker from '@/util/test/checker/mockChecker';
 import { mockUser, mockCommunity } from '@/util/test/testUtil';
 import { generateToken } from '@/util/test/testUtil';
@@ -28,7 +29,7 @@ jest.mock('@/util/checker/checker');
 import mockDb from '@/util/test/mockDb';
 
 // prettier-ignore
-describe('POST /community', () => {
+describe('/community', () => {
   const token = generateToken(mockUser.id, mockUser.username);
 
   const mockRequest = {
@@ -94,6 +95,70 @@ describe('POST /community', () => {
         const response = await sendRequest(mockRequest);
 
         assert.exp(response, 403, "Can't join community when banned");
+      });
+
+      it('should handle missing inputs', async () => {
+        const response = await sendRequest({});
+
+        expect(response.body).toMatchObject(valErr.missingCommunityId());
+      });
+
+      it('should handle db error', async () => {
+        mockChecker.dbError.user.notFoundById();
+        const response = await sendRequest(mockRequest);
+
+        assert.dbError(response);
+      });
+    });
+  });
+
+  describe('DELETE /community/leave', () => {
+    const sendRequest = (body: any) => {
+      return request(app)
+        .delete('/community/leave')
+        .set('Authorization', `Bearer ${token}`)
+        .send(body);
+    };
+
+    describe('Success cases', () => {
+      it('should successfully leave a community', async () => {
+        mockDb.communityModerator.isMod.mockResolvedValue(false);
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 200, 'Successfully left community');
+        expect(db.userCommunity.leave).toHaveBeenCalled();
+      });
+
+      it('should successfully leave a community and remove your mod status', async () => {
+        mockDb.communityModerator.isMod.mockResolvedValue(true);
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 200, 'Successfully left community');
+        expect(db.communityModerator.delete).toHaveBeenCalled();
+        expect(db.userCommunity.leave).toHaveBeenCalled();
+      });
+    });
+
+    describe('Error cases', () => {
+      it('should handle user not existing', async () => {
+        mockChecker.user.notFoundById();
+        const response = await sendRequest(mockRequest);
+
+        assert.user.notFound(response);
+      });
+
+      it('should handle community not existing', async () => {
+        mockChecker.community.notFoundById();
+        const response = await sendRequest(mockRequest);
+
+        assert.community.notFound(response);
+      });
+
+      it('should handle a user not being inside a community', async () => {
+        mockChecker.userCommunity.isNotMember();
+        const response = await sendRequest(mockRequest);
+
+        assert.userCommunity.isNotMember(response);
       });
 
       it('should handle missing inputs', async () => {

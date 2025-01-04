@@ -32,6 +32,10 @@ class Assert {
       expect(res.status).toBe(409);
       expect(res.body.message).toBe('You already joined that community');
     },
+    isNotMember: (res: any) => {
+      expect(res.status).toBe(409);
+      expect(res.body.message).toBe('You are not part of this community');
+    },
   };
 }
 

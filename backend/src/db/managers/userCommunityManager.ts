@@ -21,4 +21,15 @@ export default class UserCommunityManager {
       },
     });
   }
+
+  async leave(user_id: string, community_id: string) {
+    await this.prisma.userCommunity.delete({
+      where: {
+        user_id_community_id: {
+          user_id,
+          community_id,
+        },
+      },
+    });
+  }
 }

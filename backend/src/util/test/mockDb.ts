@@ -7,6 +7,11 @@ const mockDb = {
   },
   userCommunity: {
     join: jest.fn(),
+    leave: jest.fn(),
+  },
+  communityModerator: {
+    isMod: jest.fn(),
+    delete: jest.fn(),
   },
 };
 

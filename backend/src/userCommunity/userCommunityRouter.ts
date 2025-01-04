@@ -13,4 +13,11 @@ userCommunityRouter.post(
   userCommunityController.join,
 );
 
+userCommunityRouter.delete(
+  '/leave',
+  token.authenticate,
+  userCommunityValidator.leaveRules(),
+  userCommunityController.leave,
+);
+
 export default userCommunityRouter;
