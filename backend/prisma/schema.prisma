@@ -83,7 +83,7 @@ model UserCommunity {
   joined_at    DateTime  @default(now())
   role         UserRole
 
-  @@index([user_id, community_id])
+  @@unique([user_id, community_id])
 }
 
 model MainTopic {
@@ -144,7 +144,7 @@ model CommunityModerator {
   community_id String
   community    Community @relation(fields: [community_id], references: [id])
 
-  @@index([community_id, user_id])
+  @@unique([community_id, user_id])
 }
 
 enum PostType {
