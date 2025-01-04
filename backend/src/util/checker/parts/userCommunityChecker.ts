@@ -11,6 +11,7 @@ export default class UserCommunityChecker {
     );
     if (isMember) {
       res.status(409).json({ message: 'You already joined that community' });
+      return true;
     }
 
     return false;
@@ -23,6 +24,7 @@ export default class UserCommunityChecker {
     );
     if (!isMember) {
       res.status(409).json({ message: 'You are not part of this community' });
+      return true;
     }
 
     return false;
