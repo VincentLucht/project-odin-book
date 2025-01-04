@@ -6,7 +6,8 @@ import express from 'express';
 import router from '@/routes/router';
 import db from '@/db/db';
 
-import mockChecker from '@/util/test/mockChecker';
+import mockChecker from '@/util/test/checker/mockChecker';
+import assert from '@/util/test/assert';
 
 const app = express();
 app.use(express.json());
@@ -42,28 +43,25 @@ describe('/auth', () => {
       it('should create an user', async () => {
         const response = await sendRequest(mockUser);
 
-        expect(response.status).toBe(201);
-        expect(response.body.message).toBe('User created successfully');
+        assert.exp(response, 201, 'User created successfully');
         expect(db.user.create).toHaveBeenCalled();
       });
     });
 
     describe('Error cases', () => {
       it('should handle an username already being used', async () => {
-        mockChecker.mockUserExistenceCheck(409, 'User already exists');
+        mockChecker.user.foundByUsername();
         const response = await sendRequest(mockUser);
 
-        expect(response.status).toBe(409);
-        expect(response.body.message).toBe('User already exists');
+        assert.user.found(response);
         expect(db.user.create).not.toHaveBeenCalled();
       });
 
       it('should handle an email already being used', async () => {
-        mockChecker.mockEmailExistenceCheck(409, 'Email already in use');
+        mockChecker.user.emailFound();
         const response = await sendRequest(mockUser);
 
-        expect(response.status).toBe(409);
-        expect(response.body.message).toBe('Email already in use');
+        assert.exp(response, 409, 'Email already in use');
         expect(db.user.create).not.toHaveBeenCalled();
       });
 
@@ -74,11 +72,10 @@ describe('/auth', () => {
       });
 
       it('should handle db error', async () => {
-        mockChecker.mockDbError();
+        mockChecker.dbError.user.foundByUsername();
         const response = await sendRequest(mockUser);
 
-        expect(response.status).toBe(500);
-        expect(response.body.message).toBe('Database error');
+        assert.dbError(response);
       });
     });
   });
