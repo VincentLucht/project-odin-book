@@ -16,10 +16,9 @@ async function reset() {
   await prisma.chat.deleteMany();
 
   // Delete post and comment related records
-  await prisma.postFlair.deleteMany();
-  await prisma.userFlair.deleteMany();
+  await prisma.userAssignedFlair.deleteMany();
+  await prisma.postAssignedFlair.deleteMany();
   await prisma.communityFlair.deleteMany();
-  await prisma.flair.deleteMany();
 
   await prisma.commentVote.deleteMany();
   await prisma.comment.deleteMany();

@@ -13,6 +13,9 @@ const mockDb = {
     isMod: jest.fn(),
     delete: jest.fn(),
   },
+  communityFlair: {
+    create: jest.fn(),
+  },
 };
 
 export default mockDb;

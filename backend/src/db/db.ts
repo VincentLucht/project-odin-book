@@ -6,6 +6,7 @@ import TopicManager from '@/db/managers/topicManager';
 import UserCommunityManager from '@/db/managers/userCommunityManager';
 import BannedUsersManager from '@/db/managers/bannedUsersManager';
 import CommunityModeratorManager from '@/db/managers/communityModeratorManager';
+import CommunityFlairManager from '@/db/managers/communityFlairManager';
 
 export class DB {
   private prisma: PrismaClient;
@@ -15,6 +16,7 @@ export class DB {
   public communityModerator: CommunityModeratorManager;
   public bannedUsers: BannedUsersManager;
   public topic: TopicManager;
+  public communityFlair: CommunityFlairManager;
 
   constructor() {
     this.prisma = new PrismaClient();
@@ -24,6 +26,7 @@ export class DB {
     this.communityModerator = new CommunityModeratorManager(this.prisma);
     this.bannedUsers = new BannedUsersManager(this.prisma);
     this.topic = new TopicManager(this.prisma);
+    this.communityFlair = new CommunityFlairManager(this.prisma);
   }
 }
 
