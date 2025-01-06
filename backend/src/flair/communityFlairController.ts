@@ -43,7 +43,7 @@ class CommunityFlairController {
     } catch (error) {
       console.error(error);
       return res.status(500).json({
-        message: 'Failed to join Community',
+        message: 'Failed to create flair',
         error: error instanceof Error ? error.message : String(error),
       });
     }
