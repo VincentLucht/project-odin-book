@@ -9,7 +9,7 @@ export default class CommunityManager {
     return count > 0;
   }
 
-  async notFoundByName(name: string) {
+  async foundByName(name: string) {
     const count = await this.prisma.community.count({ where: { name } });
     return count > 0;
   }

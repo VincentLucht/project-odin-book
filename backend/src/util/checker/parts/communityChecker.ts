@@ -15,7 +15,7 @@ export default class CommunityChecker {
   }
 
   async foundByName(res: Response, name: string) {
-    const community = await this.db.community.notFoundByName(name);
+    const community = await this.db.community.foundByName(name);
     if (community) {
       res.status(409).json({ message: 'Community name is already in use' });
       return true;
