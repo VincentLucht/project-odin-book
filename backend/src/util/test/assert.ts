@@ -37,6 +37,15 @@ class Assert {
       expect(res.body.message).toBe('You are not part of this community');
     },
   };
+
+  communityModerator = {
+    notAdmin: (res: any) => {
+      expect(res.status).toBe(404);
+      expect(res.body.message).toBe(
+        'You are not a moderator in this community',
+      );
+    },
+  };
 }
 
 const assert = new Assert();

@@ -4,17 +4,23 @@ import { MockUserChecker } from '@/util/test/checker/parts/mockUserChecker';
 import { MockCommunityChecker } from '@/util/test/checker/parts/mockCommunityChecker';
 import { MockUserCommunityChecker } from '@/util/test/checker/parts/mockUserCommunityChecker';
 import { MockBannedUsersChecker } from '@/util/test/checker/parts/mockBannedUsersChecker';
+import { MockCommunityFlairChecker } from '@/util/test/checker/parts/mockCommunityFlairChecker';
+import { MockCommunityModeratorChecker } from '@/util/test/checker/parts/mockCommunityModeratorChecker';
 
 class MockChecker {
   public user: MockUserChecker;
   public community: MockCommunityChecker;
   public userCommunity: MockUserCommunityChecker;
+  public communityFlair: MockCommunityFlairChecker;
+  public communityModerator: MockCommunityModeratorChecker;
   public bannedUsers: MockBannedUsersChecker;
 
   constructor() {
     this.user = new MockUserChecker(checker);
     this.community = new MockCommunityChecker(checker);
     this.userCommunity = new MockUserCommunityChecker(checker);
+    this.communityFlair = new MockCommunityFlairChecker(checker);
+    this.communityModerator = new MockCommunityModeratorChecker(checker);
     this.bannedUsers = new MockBannedUsersChecker(checker);
   }
 
