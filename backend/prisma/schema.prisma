@@ -51,8 +51,9 @@ model User {
   message             Message[]
   user_chats          UserChats[]
   chat_admin          ChatAdmin[]
-  user_flair          UserFlair[]
   join_request        JoinRequest[]
+  user_assigned_flair UserAssignedFlair[]
+  post                Post[]
 }
 
 enum RequestStatus {
@@ -157,6 +158,7 @@ model Post {
   community_id String
   community    Community @relation(fields: [community_id], references: [id])
   poster_id    String
+  post         User      @relation(fields: [poster_id], references: [id])
   title        String    @db.VarChar(300)
   body         String    @db.VarChar(40000)
   created_at   DateTime  @default(now())
@@ -165,10 +167,10 @@ model Post {
   is_spoiler   Boolean
   pinned_at    DateTime?
 
-  post_type  PostType
-  comments   Comment[]
-  post_votes PostVote[]
-  post_flair PostFlair[]
+  post_type           PostType
+  comments            Comment[]
+  post_votes          PostVote[]
+  post_assigned_flair PostAssignedFlair[]
 
   @@index([title])
   @@index([created_at])
@@ -239,51 +241,38 @@ model BannedUser {
   @@index([user_id, community_id])
 }
 
-enum FlairType {
-  POST
-  USER
-  ALL
-}
-
-model Flair {
-  id              String           @id @default(uuid())
-  emoji           String?          @db.VarChar(4)
-  name            String           @db.VarChar(20)
-  color           String?          @db.VarChar(7)
-  type            FlairType[]
-  community_flair CommunityFlair[]
-  user_flair      UserFlair[]
-  post_flair      PostFlair[]
-}
-
 model CommunityFlair {
-  id           String    @id @default(uuid())
-  community_id String
-  community    Community @relation(fields: [community_id], references: [id])
-  flair_id     String
-  flair        Flair     @relation(fields: [flair_id], references: [id])
+  id                     String    @id @default(uuid())
+  community_id           String
+  community              Community @relation(fields: [community_id], references: [id])
+  name                   String    @db.VarChar(20)
+  color                  String    @db.VarChar(7)
+  is_assignable_to_posts Boolean   @default(false)
+  is_assignable_to_users Boolean   @default(false)
+  emoji                  String?   @db.VarChar(8)
 
-  @@unique([community_id, flair_id])
+  user_assigned_flair UserAssignedFlair[]
+  post_assigned_flair PostAssignedFlair[]
 }
 
-model UserFlair {
-  id       String @id @default(uuid())
-  user_id  String
-  user     User   @relation(fields: [user_id], references: [id])
-  flair_id String
-  flair    Flair  @relation(fields: [flair_id], references: [id])
+model UserAssignedFlair {
+  id                 String         @id @default(uuid())
+  user_id            String
+  user               User           @relation(fields: [user_id], references: [id])
+  community_flair_id String
+  community_flair    CommunityFlair @relation(fields: [community_flair_id], references: [id])
 
-  @@unique([user_id, flair_id])
+  @@unique([user_id, community_flair_id])
 }
 
-model PostFlair {
-  id       String @id @default(uuid())
-  post_id  String
-  post     Post   @relation(fields: [post_id], references: [id])
-  flair_id String
-  flair    Flair  @relation(fields: [flair_id], references: [id])
+model PostAssignedFlair {
+  id                 String         @id @default(uuid())
+  post_id            String
+  post               Post           @relation(fields: [post_id], references: [id])
+  community_flair_id String
+  community_flair    CommunityFlair @relation(fields: [community_flair_id], references: [id])
 
-  @@unique([post_id, flair_id])
+  @@unique([post_id, community_flair_id])
 }
 
 model Chat {
