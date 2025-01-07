@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 
 import db from '@/db/db';
-import checker from '@/util/checker/checker';
 import { checkValidationError } from '@/util/checkValidationError';
 import { asyncHandler } from '@/util/asyncHandler';
 import getAuthUser from '@/util/getAuthUser';
@@ -24,8 +23,14 @@ class CommunityController {
 
     try {
       const { user_id } = getAuthUser(req.authData);
-      if (await checker.user.notFoundById(res, user_id)) return;
-      if (await checker.community.foundByName(res, name)) return;
+      if (!(await db.user.getById(user_id))) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      if (await db.community.doesExistByName(name)) {
+        return res
+          .status(409)
+          .json({ message: 'Community Name already in use' });
+      }
 
       await db.community.create(
         name,

@@ -4,24 +4,35 @@ dotenv.config();
 import request from 'supertest';
 import express from 'express';
 import router from '@/routes/router';
-import db from '@/db/db';
 
-import mockChecker from '@/util/test/checker/mockChecker';
+import db from '@/db/db';
 import assert from '@/util/test/assert';
 
 const app = express();
 app.use(express.json());
 app.use('', router);
 
+jest.mock('@/db/db', () => {
+  const actualMockDb = jest.requireActual('@/util/test/mockDb').default;
+  return {
+    __esModule: true,
+    default: actualMockDb,
+  };
+});
+
 jest.mock('@/db/db');
 jest.mock('bcrypt');
-jest.mock('@/util/checker/checker');
+
+import mockDb from '@/util/test/mockDb';
 
 // prettier-ignore
 describe('/auth', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.resetAllMocks();
+
+    mockDb.user.getByUsername.mockResolvedValue(null);
+    mockDb.user.getByEmail.mockResolvedValue(null);
   });
 
   const mockUser = {
@@ -50,29 +61,65 @@ describe('/auth', () => {
 
     describe('Error cases', () => {
       it('should handle an username already being used', async () => {
-        mockChecker.user.foundByUsername();
+        mockDb.user.getByUsername.mockResolvedValue(true);
         const response = await sendRequest(mockUser);
 
-        assert.user.found(response);
+        assert.exp(response, 409, 'User already exists');
+        expect(db.user.getByUsername).toHaveBeenCalledWith(mockUser.username);
         expect(db.user.create).not.toHaveBeenCalled();
       });
 
       it('should handle an email already being used', async () => {
-        mockChecker.user.emailFound();
+        mockDb.user.getByEmail.mockResolvedValue(true);
         const response = await sendRequest(mockUser);
 
         assert.exp(response, 409, 'Email already in use');
         expect(db.user.create).not.toHaveBeenCalled();
       });
 
+      it('should handle invalid cake day format', async () => {
+        const response = await sendRequest({ ...mockUser, cake_day: 'invalid_format' });
+
+        expect(response.body).toMatchObject({
+          message: 'Failed to create user',
+          error: 'Cake Day must be in DD/MM format',
+        });
+        expect(db.user.create).not.toHaveBeenCalled();
+      });
+
       it('should handle missing inputs', async () => {
         const response = await sendRequest({});
 
-        expect(response.body.errors.length).toBe(3);
+        expect(response.body).toMatchObject({
+          errors: [
+            {
+              type: 'field',
+              value: '',
+              msg: 'Username must be at least 2 characters long',
+              path: 'username',
+              location: 'body',
+            },
+            {
+              type: 'field',
+              value: '',
+              msg: 'Email must be at least 1 characters long',
+              path: 'email',
+              location: 'body',
+            },
+            {
+              type: 'field',
+              value: '',
+              msg: 'Password must be at least 1 characters long',
+              path: 'password',
+              location: 'body',
+            },
+          ],
+        });
+        expect(db.user.create).not.toHaveBeenCalled();
       });
 
       it('should handle db error', async () => {
-        mockChecker.dbError.user.foundByUsername();
+        mockDb.user.getByUsername.mockRejectedValue(new Error('DB error'));
         const response = await sendRequest(mockUser);
 
         assert.dbError(response);

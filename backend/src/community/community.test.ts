@@ -6,7 +6,6 @@ import express from 'express';
 import router from '@/routes/router';
 
 import db from '@/db/db';
-import mockChecker from '@/util/test/checker/mockChecker';
 import { mockUser, mockCommunity } from '@/util/test/testUtil';
 import { generateToken } from '@/util/test/testUtil';
 import assert from '@/util/test/assert';
@@ -23,8 +22,6 @@ jest.mock('@/db/db', () => {
     default: actualMockDb,
   };
 });
-jest.mock('bcrypt');
-jest.mock('@/util/checker/checker');
 
 import mockDb from '@/util/test/mockDb';
 
@@ -41,6 +38,9 @@ describe('POST /community', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.resetAllMocks();
+
+    mockDb.user.getById.mockResolvedValue(true);
+    mockDb.community.doesExistByName.mockResolvedValue(false);
     mockDb.topic.getAll.mockResolvedValue(['topic1', 'topic2']);
   });
 
@@ -65,14 +65,14 @@ describe('POST /community', () => {
 
     describe('Error cases', () => {
       it('should handle a name already being used', async () => {
-        mockChecker.community.foundByName();
+        mockDb.community.doesExistByName.mockResolvedValue(true);
         const response = await sendRequest(mockRequest);
 
         assert.exp(response, 409, 'Community Name already in use');
       });
 
       it('should handle user not existing', async () => {
-        mockChecker.user.notFoundById();
+        mockDb.user.getById.mockResolvedValue(false);
         const response = await sendRequest(mockRequest);
 
         assert.user.notFound(response);
@@ -97,7 +97,7 @@ describe('POST /community', () => {
       });
 
       it('should handle db error', async () => {
-        mockChecker.dbError.user.notFoundById();
+        mockDb.user.getById.mockRejectedValue(new Error('DB error'));
         const response = await sendRequest(mockRequest);
 
         assert.dbError(response);

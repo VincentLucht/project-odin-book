@@ -4,7 +4,6 @@ import bcrypt from 'bcrypt';
 import db from '@/db/db';
 
 import { checkValidationError } from '@/util/checkValidationError';
-import checker from '@/util/checker/checker';
 import isCakeDayValid from '@/community/util/isCakeDayValid';
 
 type User = {
@@ -66,12 +65,15 @@ class AuthController {
       display_name,
       profile_picture_url,
       cake_day,
-      topics,
     } = req.body;
 
     try {
-      if (await checker.user.foundByUsername(res, username)) return;
-      if (await checker.user.emailFound(res, email)) return;
+      if (await db.user.getByUsername(username)) {
+        return res.status(409).json({ message: 'User already exists' });
+      }
+      if (await db.user.getByEmail(email)) {
+        return res.status(409).json({ message: 'Email already in use' });
+      }
 
       isCakeDayValid(cake_day);
 

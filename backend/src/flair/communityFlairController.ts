@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 
 import db from '@/db/db';
-import checker from '@/util/checker/checker';
 import { checkValidationError } from '@/util/checkValidationError';
 import { asyncHandler } from '@/util/asyncHandler';
 import getAuthUser from '@/util/getAuthUser';
@@ -11,7 +10,7 @@ class CommunityFlairController {
     if (checkValidationError(req, res)) return;
 
     const {
-      community_id: id,
+      community_id,
       name,
       color,
       is_assignable_to_posts,
@@ -21,15 +20,23 @@ class CommunityFlairController {
 
     try {
       const { user_id } = getAuthUser(req.authData);
-      if (await checker.user.notFoundById(res, user_id)) return;
-      if (await checker.community.notFoundById(res, id)) return;
-      if (await checker.communityFlair.foundName(res, id, name)) return;
-      if (await checker.communityModerator.notFoundById(res, user_id, id)) {
-        return;
+      if (!(await db.user.getById(user_id))) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      if (!(await db.community.doesExistById(community_id))) {
+        return res.status(404).json({ message: 'Community not found' });
+      }
+      if (await db.communityFlair.doesExist(community_id, name)) {
+        return res.status(409).json({ message: 'Flair already exists' });
+      }
+      if (!(await db.communityModerator.isMod(user_id, community_id))) {
+        return res
+          .status(403)
+          .json({ message: 'You are not a moderator in this community' });
       }
 
       const flair = await db.communityFlair.create(
-        id,
+        community_id,
         name,
         color,
         is_assignable_to_posts,

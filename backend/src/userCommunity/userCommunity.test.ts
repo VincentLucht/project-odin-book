@@ -6,7 +6,6 @@ import express from 'express';
 import router from '@/routes/router';
 
 import db from '@/db/db';
-import mockChecker from '@/util/test/checker/mockChecker';
 import { mockUser, mockCommunity } from '@/util/test/testUtil';
 import { generateToken } from '@/util/test/testUtil';
 import assert from '@/util/test/assert';
@@ -23,8 +22,6 @@ jest.mock('@/db/db', () => {
     default: actualMockDb,
   };
 });
-jest.mock('bcrypt');
-jest.mock('@/util/checker/checker');
 
 import mockDb from '@/util/test/mockDb';
 
@@ -42,7 +39,12 @@ describe('/community', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.resetAllMocks();
-    mockDb.topic.getAll.mockResolvedValue(['topic1', 'topic2']);
+
+    mockDb.user.getById.mockResolvedValue(true);
+    mockDb.community.doesExistById.mockResolvedValue(true);
+    mockDb.userCommunity.isMember.mockResolvedValue(false);
+    mockDb.community.isPrivate.mockResolvedValue(false);
+    mockDb.bannedUsers.isBanned.mockResolvedValue(false);
   });
 
   describe('POST /community/join', () => {
@@ -63,38 +65,38 @@ describe('/community', () => {
 
     describe('Error cases', () => {
       it('should handle user not existing', async () => {
-        mockChecker.user.notFoundById();
+        mockDb.user.getById.mockResolvedValue(false);
         const response = await sendRequest(mockRequest);
 
         assert.user.notFound(response);
       });
 
       it('should handle community not existing', async () => {
-        mockChecker.community.notFoundById();
+        mockDb.community.doesExistById.mockResolvedValue(false);
         const response = await sendRequest(mockRequest);
 
         assert.community.notFound(response);
       });
 
       it('should handle user already being part of community', async () => {
-        mockChecker.userCommunity.isMember();
+        mockDb.userCommunity.isMember.mockResolvedValue(true);
         const response = await sendRequest(mockRequest);
 
         assert.userCommunity.isMember(response);
       });
 
       it('should not allow joining private community', async () => {
-        mockChecker.community.isPrivate();
+        mockDb.community.isPrivate.mockResolvedValue(true);
         const response = await sendRequest(mockRequest);
 
-        assert.exp(response, 400, 'Can not join private community');
+        assert.exp(response, 403, "You can't join a private community");
       });
 
       it('should not allow banned user joining', async () => {
-        mockChecker.bannedUsers.isBanned();
+        mockDb.bannedUsers.isBanned.mockResolvedValue(true);
         const response = await sendRequest(mockRequest);
 
-        assert.exp(response, 403, "Can't join community when banned");
+        assert.exp(response, 403, 'You are banned from this community');
       });
 
       it('should handle missing inputs', async () => {
@@ -104,7 +106,7 @@ describe('/community', () => {
       });
 
       it('should handle db error', async () => {
-        mockChecker.dbError.user.notFoundById();
+        mockDb.user.getById.mockRejectedValue(new Error('DB error'));
         const response = await sendRequest(mockRequest);
 
         assert.dbError(response);
@@ -123,6 +125,7 @@ describe('/community', () => {
     describe('Success cases', () => {
       it('should successfully leave a community', async () => {
         mockDb.communityModerator.isMod.mockResolvedValue(false);
+        mockDb.userCommunity.isMember.mockResolvedValue(true);
         const response = await sendRequest(mockRequest);
 
         assert.exp(response, 200, 'Successfully left community');
@@ -131,6 +134,7 @@ describe('/community', () => {
 
       it('should successfully leave a community and remove your mod status', async () => {
         mockDb.communityModerator.isMod.mockResolvedValue(true);
+        mockDb.userCommunity.isMember.mockResolvedValue(true);
         const response = await sendRequest(mockRequest);
 
         assert.exp(response, 200, 'Successfully left community');
@@ -141,21 +145,21 @@ describe('/community', () => {
 
     describe('Error cases', () => {
       it('should handle user not existing', async () => {
-        mockChecker.user.notFoundById();
+        mockDb.user.getById.mockResolvedValue(false);
         const response = await sendRequest(mockRequest);
 
         assert.user.notFound(response);
       });
 
       it('should handle community not existing', async () => {
-        mockChecker.community.notFoundById();
+        mockDb.community.doesExistById.mockResolvedValue(false);
         const response = await sendRequest(mockRequest);
 
         assert.community.notFound(response);
       });
 
       it('should handle a user not being inside a community', async () => {
-        mockChecker.userCommunity.isNotMember();
+        mockDb.userCommunity.isMember.mockResolvedValue(false);
         const response = await sendRequest(mockRequest);
 
         assert.userCommunity.isNotMember(response);
@@ -168,7 +172,7 @@ describe('/community', () => {
       });
 
       it('should handle db error', async () => {
-        mockChecker.dbError.user.notFoundById();
+        mockDb.user.getById.mockRejectedValue(new Error('DB error'));
         const response = await sendRequest(mockRequest);
 
         assert.dbError(response);
