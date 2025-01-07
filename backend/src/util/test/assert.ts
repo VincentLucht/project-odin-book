@@ -6,7 +6,7 @@ class Assert {
 
   dbError(res: any) {
     expect(res.status).toBe(500);
-    expect(res.body.message).toBe('Database error');
+    expect(res.body.error).toBe('DB error');
   }
 
   user = {
@@ -16,31 +16,33 @@ class Assert {
     },
     notFound: (res: any) => {
       expect(res.status).toBe(404);
-      expect(res.body.message).toBe('User does not exist');
+      expect(res.body.message).toBe('User not found');
     },
   };
 
   community = {
     notFound: (res: any) => {
       expect(res.status).toBe(404);
-      expect(res.body.message).toBe('Community does not exist');
+      expect(res.body.message).toBe('Community not found');
     },
   };
 
   userCommunity = {
     isMember: (res: any) => {
       expect(res.status).toBe(409);
-      expect(res.body.message).toBe('You already joined that community');
+      expect(res.body.message).toBe(
+        'You already are a member of this community',
+      );
     },
     isNotMember: (res: any) => {
-      expect(res.status).toBe(409);
+      expect(res.status).toBe(403);
       expect(res.body.message).toBe('You are not part of this community');
     },
   };
 
   communityModerator = {
     notAdmin: (res: any) => {
-      expect(res.status).toBe(404);
+      expect(res.status).toBe(403);
       expect(res.body.message).toBe(
         'You are not a moderator in this community',
       );
