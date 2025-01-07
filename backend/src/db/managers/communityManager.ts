@@ -4,12 +4,12 @@ export default class CommunityManager {
   constructor(private prisma: PrismaClient) {}
 
   // ! GET
-  async foundById(id: string) {
+  async doesExistById(id: string) {
     const count = await this.prisma.community.count({ where: { id } });
     return count > 0;
   }
 
-  async foundByName(name: string) {
+  async doesExistByName(name: string) {
     const count = await this.prisma.community.count({ where: { name } });
     return count > 0;
   }
