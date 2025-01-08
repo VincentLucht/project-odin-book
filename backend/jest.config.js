@@ -14,11 +14,15 @@ module.exports = {
     '^@utils/(.*)$': '<rootDir>/src/utils/$1',
     '^@types/(.*)$': '<rootDir>/src/types/$1',
     '^@auth/(.*)$': '<rootDir>/src/auth/$1',
-    '^@db/(.*)$': '<rootDir>/src/db/$1'
+    '^@db/(.*)$': '<rootDir>/src/db/$1',
   },
   transform: {
-    '^.+\\.tsx?$': ['ts-jest', {
-      tsconfig: './tsconfig.json'
-    }]
-  }
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      {
+        tsconfig: './tsconfig.json',
+      },
+    ],
+  },
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
 };
