@@ -20,6 +20,9 @@ class CommunityValidator {
       body('is_mature')
         .isBoolean(),
 
+      body('is_post_flair_required')
+        .isBoolean(),
+
       body('type').trim()
         .custom((input) => {
           let found = false;

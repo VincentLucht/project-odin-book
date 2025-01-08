@@ -123,6 +123,7 @@ model Community {
   banner_url                  String?
   created_at                  DateTime @default(now())
   is_mature                   Boolean  @default(false)
+  is_post_flair_required      Boolean  @default(false)
 
   type             CommunityType
   community_topics CommunityTopics[]
@@ -165,6 +166,7 @@ model Post {
   updated_at   DateTime  @updatedAt
   deleted_at   DateTime?
   is_spoiler   Boolean
+  is_mature    Boolean
   pinned_at    DateTime?
 
   post_type           PostType

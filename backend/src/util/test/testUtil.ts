@@ -21,6 +21,7 @@ export const mockCommunity = {
   profile_picture_url_mobile: 'https://example.com/profile-pic-mobile.jpg',
   banner_url: 'https://example.com/banner.jpg',
   is_mature: false,
+  is_post_flair_required: false,
   created_at: new Date(),
   owner_id: 't1',
   type: CommunityType.PUBLIC,

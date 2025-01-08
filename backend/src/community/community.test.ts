@@ -93,7 +93,43 @@ describe('POST /community', () => {
       it('should handle missing inputs', async () => {
         const response = await sendRequest({});
 
-        expect(response.body).toMatchObject(valErr.missingCommunity());
+        expect(response.body).toMatchObject({
+          'errors': [
+            {
+              'type': 'field',
+              'value': '',
+              'msg': 'Name must be at least 1 characters long',
+              'path': 'name',
+              'location': 'body',
+            },
+            {
+              'type': 'field',
+              'msg': 'Invalid value',
+              'path': 'is_mature',
+              'location': 'body',
+            },
+            {
+              'type': 'field',
+              'msg': 'Invalid value',
+              'path': 'is_post_flair_required',
+              'location': 'body',
+            },
+            {
+              'type': 'field',
+              'value': '',
+              'msg': 'Invalid value',
+              'path': 'type',
+              'location': 'body',
+            },
+            {
+              'type': 'field',
+              'value': '',
+              'msg': 'Community Topics are required',
+              'path': 'topics',
+              'location': 'body',
+            },
+          ],
+        });
       });
 
       it('should handle db error', async () => {
