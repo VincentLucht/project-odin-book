@@ -23,6 +23,20 @@ class CommunityValidator {
       body('is_post_flair_required')
         .isBoolean(),
 
+      body('allow_basic_user_posts')
+        .custom((bool, { req }) => {
+          const { type } = req.body;
+          if (typeof bool !== 'boolean') {
+            throw new Error('Invalid value for Allow Basic Users Posts');
+          }
+
+          if (type === CommunityType.PUBLIC && !bool) {
+            throw new Error('You can only change Allow Basic Users posts if the community is not public');
+          }
+
+          return true;
+        }),
+
       body('type').trim()
         .custom((input) => {
           let found = false;

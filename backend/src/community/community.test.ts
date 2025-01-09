@@ -116,6 +116,12 @@ describe('POST /community', () => {
             },
             {
               'type': 'field',
+              'msg': 'Invalid value for Allow Basic Users Posts',
+              'path': 'allow_basic_user_posts',
+              'location': 'body',
+            },
+            {
+              'type': 'field',
               'value': '',
               'msg': 'Invalid value',
               'path': 'type',
@@ -127,6 +133,22 @@ describe('POST /community', () => {
               'msg': 'Community Topics are required',
               'path': 'topics',
               'location': 'body',
+            },
+          ],
+        });
+      });
+
+      it('should handle not allowing allow_basic_users_posts to be false in public community', async () => {
+        const response = await sendRequest({ ...mockCommunity, allow_basic_user_posts: false });
+
+        expect(response.body).toMatchObject({
+          errors: [
+            {
+              type: 'field',
+              value: false,
+              msg: 'You can only change Allow Basic Users posts if the community is not public',
+              path: 'allow_basic_user_posts',
+              location: 'body',
             },
           ],
         });

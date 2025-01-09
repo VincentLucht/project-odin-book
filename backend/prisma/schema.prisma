@@ -124,6 +124,7 @@ model Community {
   created_at                  DateTime @default(now())
   is_mature                   Boolean  @default(false)
   is_post_flair_required      Boolean  @default(false)
+  allow_basic_user_posts      Boolean  @default(true)
 
   type             CommunityType
   community_topics CommunityTopics[]

@@ -14,6 +14,14 @@ export default class CommunityManager {
     return count > 0;
   }
 
+  async getById(id: string) {
+    const community = await this.prisma.community.findUnique({
+      where: { id },
+    });
+
+    return community;
+  }
+
   async getByName(name: string) {
     const community = await this.prisma.community.findUnique({
       where: { name },
@@ -35,6 +43,7 @@ export default class CommunityManager {
   async create(
     name: string,
     is_mature: boolean,
+    allow_basic_user_posts: boolean,
     is_post_flair_required: boolean,
     owner_id: string,
     type: CommunityType,
@@ -50,6 +59,7 @@ export default class CommunityManager {
       data: {
         name,
         is_mature,
+        allow_basic_user_posts,
         is_post_flair_required,
         owner_id,
         type,

@@ -13,6 +13,7 @@ class CommunityController {
     const {
       name,
       is_mature,
+      allow_basic_user_posts,
       is_post_flair_required,
       type,
       topics,
@@ -36,6 +37,7 @@ class CommunityController {
       await db.community.create(
         name,
         is_mature,
+        allow_basic_user_posts,
         is_post_flair_required,
         user_id,
         type,

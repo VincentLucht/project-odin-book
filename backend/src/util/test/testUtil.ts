@@ -24,6 +24,7 @@ export const mockCommunity = {
   is_post_flair_required: false,
   created_at: new Date(),
   owner_id: 't1',
+  allow_basic_user_posts: true,
   type: CommunityType.PUBLIC,
   topics: ['topic1', 'topic2'],
 };
