@@ -11,12 +11,14 @@ const mockDb = {
   community: {
     doesExistById: jest.fn(),
     doesExistByName: jest.fn(),
+    getById: jest.fn(),
     getByName: jest.fn(),
     isPrivate: jest.fn(),
     create: jest.fn(),
   },
   userCommunity: {
     isMember: jest.fn(),
+    getById: jest.fn(),
     join: jest.fn(),
     leave: jest.fn(),
   },
@@ -25,11 +27,15 @@ const mockDb = {
     delete: jest.fn(),
   },
   communityFlair: {
-    doesExist: jest.fn(),
+    doesExistByName: jest.fn(),
+    getById: jest.fn(),
     create: jest.fn(),
   },
   bannedUsers: {
     isBanned: jest.fn(),
+  },
+  post: {
+    create: jest.fn(),
   },
 };
 
