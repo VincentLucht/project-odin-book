@@ -35,7 +35,9 @@ const mockDb = {
     isBanned: jest.fn(),
   },
   post: {
+    getById: jest.fn(),
     create: jest.fn(),
+    edit: jest.fn(),
   },
 };
 

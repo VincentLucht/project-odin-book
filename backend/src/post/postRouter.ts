@@ -13,4 +13,11 @@ postRouter.post(
   postController.create,
 );
 
+postRouter.put(
+  '/post',
+  token.authenticate,
+  postValidator.editRules(),
+  postController.edit,
+);
+
 export default postRouter;

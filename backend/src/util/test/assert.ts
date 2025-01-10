@@ -53,6 +53,13 @@ class Assert {
       );
     },
   };
+
+  post = {
+    notFound: (res: any) => {
+      expect(res.status).toBe(404);
+      expect(res.body.message).toBe('Post not found');
+    },
+  };
 }
 
 const assert = new Assert();

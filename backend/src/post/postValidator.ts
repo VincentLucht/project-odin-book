@@ -6,17 +6,17 @@ import isPostTypeValid from '@/post/util/isPostTypeValid';
 class PostValidator {
   creationRules() {
     return [
-      body('community_id')
+      body('community_id').trim()
         .notEmpty()
         .withMessage(vm.communityIdReq()),
 
-      body('title')
+      body('title').trim()
         .isLength({ min: 1 })
         .withMessage(vm.minLen('title', 1))
         .isLength({ max: 300 })
         .withMessage(vm.maxLen('title', 300)),
 
-      body('body')
+      body('body').trim()
         .isLength({ min: 1 })
         .withMessage(vm.minLen('body', 1))
         .isLength({ max: 40000 })
@@ -32,6 +32,32 @@ class PostValidator {
         .custom((type: string) => {
           return isPostTypeValid(type);
         }),
+    ];
+  }
+
+  editRules() {
+    return [
+      body('post_id').trim()
+        .notEmpty()
+        .withMessage(vm.postIdReq()),
+
+      body('title').trim()
+        .isLength({ min: 1 })
+        .withMessage(vm.minLen('title', 1))
+        .isLength({ max: 300 })
+        .withMessage(vm.maxLen('title', 300)),
+
+      body('body').trim()
+        .isLength({ min: 1 })
+        .withMessage(vm.minLen('body', 1))
+        .isLength({ max: 40000 })
+        .withMessage(vm.maxLen('body', 40000)),
+
+      body('is_spoiler')
+        .isBoolean(),
+
+      body('is_mature')
+        .isBoolean(),
     ];
   }
 }

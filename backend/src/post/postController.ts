@@ -83,6 +83,79 @@ class PostController {
       });
     }
   });
+
+  edit = asyncHandler(async (req: Request, res: Response) => {
+    if (checkValidationError(req, res)) return;
+
+    const { post_id, title, body, is_spoiler, is_mature, flair_id } = req.body;
+
+    try {
+      const { user_id } = getAuthUser(req.authData);
+      if (!(await db.user.getById(user_id))) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      const post = await db.post.getById(post_id);
+      if (!post) {
+        return res.status(404).json({ message: 'Post not found' });
+      }
+      const community = await db.community.getById(post.community_id);
+      if (!community) {
+        return res.status(404).json({ message: 'Community not found' });
+      }
+      // Don't allow to remove flair when editing
+      if (community.is_post_flair_required && !flair_id) {
+        return res
+          .status(400)
+          .json({ message: 'Flair is required for this community' });
+      }
+
+      if (post.poster_id !== user_id) {
+        return res
+          .status(403)
+          .json({ message: 'You are not allowed to edit this post' });
+      }
+
+      // Check if post was assigned a flair before updating
+      const flair = await db.communityFlair.getById(
+        post.community_id,
+        flair_id,
+      );
+      const hadPreviousFlair = flair !== null && flair !== undefined;
+
+      // Validate flair only if required or if one was provided
+      if (community.is_post_flair_required || flair_id) {
+        await isFlairValid(flair_id, community);
+      }
+      const isBanned = await db.bannedUsers.isBanned(
+        user_id,
+        post.community_id,
+      );
+      if (isBanned) {
+        return res
+          .status(403)
+          .json({ message: 'You are banned from this community' });
+      }
+
+      // ! Edit
+      await db.post.edit(
+        post_id,
+        title,
+        body,
+        is_spoiler,
+        is_mature,
+        flair_id,
+        hadPreviousFlair,
+      );
+
+      return res.status(200).json({ message: 'Successfully edited post' });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        message: 'Failed to edit post',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  });
 }
 
 const postController = new PostController();
