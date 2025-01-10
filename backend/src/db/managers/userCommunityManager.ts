@@ -11,6 +11,19 @@ export default class UserCommunityManager {
     return count > 0;
   }
 
+  async getById(user_id: string, community_id: string) {
+    const member = await this.prisma.userCommunity.findUnique({
+      where: {
+        user_id_community_id: {
+          user_id,
+          community_id,
+        },
+      },
+    });
+
+    return member;
+  }
+
   // ! CREATE
   async join(user_id: string, community_id: string) {
     await this.prisma.userCommunity.create({
