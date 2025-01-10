@@ -9,6 +9,11 @@ class Assert {
     expect(res.body.error).toBe('DB error');
   }
 
+  isBanned(res: any) {
+    expect(res.status).toBe(403);
+    expect(res.body.message).toBe('You are banned from this community');
+  }
+
   user = {
     found: (res: any) => {
       expect(res.status).toBe(409);
