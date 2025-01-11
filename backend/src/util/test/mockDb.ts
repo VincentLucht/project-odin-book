@@ -39,6 +39,10 @@ const mockDb = {
     create: jest.fn(),
     edit: jest.fn(),
   },
+  comment: {
+    getById: jest.fn(),
+    create: jest.fn(),
+  },
 };
 
 export default mockDb;

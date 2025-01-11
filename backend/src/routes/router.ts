@@ -4,6 +4,7 @@ import communityRouter from '@/community/communityRouter';
 import userCommunityRouter from '@/userCommunity/userCommunityRouter';
 import communityFlairRouter from '@/flair/communityFlairRouter';
 import postRouter from '@/post/postRouter';
+import commentRouter from '@/comment/commentRouter';
 
 const router = express.Router();
 
@@ -11,14 +12,15 @@ router.use('/auth', authRouter);
 router.use('/community', communityRouter);
 router.use('/community', userCommunityRouter);
 router.use('/community/flair', communityFlairRouter);
-router.use('/community', postRouter);
+router.use('/community/post', postRouter);
+router.use('/community/post/comment', commentRouter);
 
 router.get('/test', (req, res) => {
   return res.json([{ title: 'test' }, { title: 'test2' }]);
 });
 
 // catch all route
-router.get('*', (req, res) => {
+router.all('*', (req, res) => {
   res.status(404).send('Error, route not found');
 });
 
