@@ -49,9 +49,12 @@ class CommentController {
       if (parent_comment_id) {
         const parentComment = await db.comment.getById(parent_comment_id);
         if (!parentComment) {
-          return res
-            .status(409)
-            .json({ message: 'Parent comment was not found' });
+          return res.status(404).json({ message: 'Parent comment not found' });
+        }
+        if (parentComment.post_id !== post_id) {
+          return res.status(400).json({
+            message: 'Cannot reply to a comment from a different post',
+          });
         }
       }
 
