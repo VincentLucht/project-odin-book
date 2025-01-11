@@ -27,15 +27,6 @@ import mockDb from '@/util/test/mockDb';
 describe('/community', () => {
   const token = generateToken(mockUser.id, mockUser.username);
 
-  const mockRequest = {
-    community_id: '1',
-    title: 't',
-    body: 'b',
-    is_spoiler: false,
-    is_mature: false,
-    type: 'BASIC',
-  };
-
   beforeEach(() => {
     jest.clearAllMocks();
     jest.resetAllMocks();
@@ -53,6 +44,15 @@ describe('/community', () => {
         .post('/community/post')
         .set('Authorization', `Bearer ${token}`)
         .send(body);
+    };
+
+    const mockRequest = {
+      community_id: '1',
+      title: 't',
+      body: 'b',
+      is_spoiler: false,
+      is_mature: false,
+      type: 'BASIC',
     };
 
     describe('Success cases', () => {
@@ -136,8 +136,7 @@ describe('/community', () => {
               location: 'body',
             },
           ],
-        },
-        );
+        });
       });
 
       it('it should handle community requiring flairs + sending an incorrect flair', async () => {
@@ -197,6 +196,144 @@ describe('/community', () => {
               'location': 'body',
             },
           ],
+        });
+      });
+
+      it('should handle db error', async () => {
+        mockDb.user.getById.mockRejectedValue('DB error');
+        const response = await sendRequest(mockRequest);
+
+        assert.dbError(response);
+      });
+    });
+  });
+
+  describe('PUT /community/post', () => {
+    beforeEach(() => {
+      mockDb.user.getById.mockResolvedValue(true);
+      mockDb.post.getById.mockResolvedValue({ poster_id: 't1' });
+      mockDb.community.getById.mockResolvedValue({ is_post_flair_required: false });
+    });
+
+    const sendRequest = (body: any) => {
+      return request(app)
+        .put('/community/post')
+        .set('Authorization', `Bearer ${token}`)
+        .send(body);
+    };
+
+    const mockRequest = {
+      post_id: '1',
+      title: 't',
+      body: 'b',
+      is_spoiler: false,
+      is_mature: false,
+    };
+
+    describe('Success cases', () => {
+      it('should successfully edit a post', async () => {
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 200, 'Successfully edited post');
+      });
+
+      it('should successfully edit a post where flair is required + had a previous flair', async () => {
+        mockDb.community.getById.mockResolvedValue({ is_post_flair_required: true });
+        mockDb.communityFlair.getById.mockResolvedValue({ is_assignable_to_posts: true });
+        const response = await sendRequest({ ...mockRequest, flair_id: '1' });
+
+        assert.exp(response, 200, 'Successfully edited post');
+      });
+    });
+
+    describe('Error cases', () => {
+      it('should handle user not existing', async () => {
+        mockDb.user.getById.mockResolvedValue(false);
+        const response = await sendRequest(mockRequest);
+
+        assert.user.notFound(response);
+      });
+
+      it('should handle community not existing', async () => {
+        mockDb.community.getById.mockResolvedValue(false);
+        const response = await sendRequest(mockRequest);
+
+        assert.community.notFound(response);
+      });
+
+      it('should handle post not existing', async () => {
+        mockDb.post.getById.mockResolvedValue(false);
+        const response = await sendRequest(mockRequest);
+
+        assert.post.notFound(response);
+      });
+
+      it('user not being the poster', async () => {
+        mockDb.post.getById.mockResolvedValue({ poster_id: 'otherUser' });
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 403, 'You are not allowed to edit this post');
+      });
+
+      it('should handle missing flair when required', async () => {
+        mockDb.community.getById.mockResolvedValue({ is_post_flair_required: true });
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 400, 'Flair is required for this community');
+      });
+
+      it('it should handle sending an incorrect flair', async () => {
+        const response = await sendRequest({ ...mockRequest, flair_id: 'invalid' });
+
+        expect(response.body.error).toBe('Flair not found');
+      });
+
+      it('should not allow banned user to edit', async () => {
+        mockDb.bannedUsers.isBanned.mockResolvedValue(true);
+        const response = await sendRequest(mockRequest);
+
+        assert.isBanned(response);
+      });
+
+      it('should handle missing inputs', async () => {
+        const response = await sendRequest({});
+
+        expect(response.body).toMatchObject({
+            'errors': [
+                {
+                    'type': 'field',
+                    'value': '',
+                    'msg': 'Post ID is required',
+                    'path': 'post_id',
+                    'location': 'body',
+                },
+                {
+                    'type': 'field',
+                    'value': '',
+                    'msg': 'Title must be at least 1 characters long',
+                    'path': 'title',
+                    'location': 'body',
+                },
+                {
+                    'type': 'field',
+                    'value': '',
+                    'msg': 'Body must be at least 1 characters long',
+                    'path': 'body',
+                    'location': 'body',
+                },
+                {
+                    'type': 'field',
+                    'msg': 'Invalid value',
+                    'path': 'is_spoiler',
+                    'location': 'body',
+                },
+                {
+                    'type': 'field',
+                    'msg': 'Invalid value',
+                    'path': 'is_mature',
+                    'location': 'body',
+                },
+            ],
         });
       });
 
