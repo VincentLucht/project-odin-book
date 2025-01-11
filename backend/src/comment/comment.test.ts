@@ -58,7 +58,7 @@ describe('POST /community', () => {
       });
 
       it('should successfully reply to a comment', async () => {
-        mockDb.comment.getById.mockResolvedValue(true);
+        mockDb.comment.getById.mockResolvedValue({ post_id: '1' });
         const response = await sendRequest({ ...mockRequest, parent_comment_id: '1' });
 
         assert.exp(response, 201, 'Successfully replied to Comment');
@@ -132,6 +132,20 @@ describe('POST /community', () => {
         const response = await sendRequest(mockRequest);
 
         assert.exp(response, 403, 'Basic users cannot comment in this community');
+      });
+
+      it('should handle not finding parent comment', async () => {
+        mockDb.comment.getById.mockResolvedValue(null);
+        const response = await sendRequest({ ...mockRequest, parent_comment_id: '1' });
+
+        assert.exp(response, 404, 'Parent comment not found');
+      });
+
+      it('should not allow to reply to a post inside of another community', async () => {
+        mockDb.comment.getById.mockResolvedValue({ post_id: 'otherPost' });
+        const response = await sendRequest({ ...mockRequest, parent_comment_id: '1' });
+
+        assert.exp(response, 400, 'Cannot reply to a comment from a different post');
       });
 
       it('should handle missing inputs', async () => {
