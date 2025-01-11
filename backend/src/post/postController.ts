@@ -6,6 +6,7 @@ import { asyncHandler } from '@/util/asyncHandler';
 import getAuthUser from '@/util/getAuthUser';
 import isFlairValid from '@/post/util/isFlairValid';
 import isPostTypeValid from '@/post/util/isPostTypeValid';
+import checkCommunityPermissions from '@/util/checkCommunityPermissions';
 
 class PostController {
   create = asyncHandler(async (req: Request, res: Response) => {
@@ -46,6 +47,18 @@ class PostController {
             });
           }
         }
+      }
+
+      const permissionCheck = await checkCommunityPermissions({
+        db,
+        userId: user_id,
+        community,
+        action: 'post',
+      });
+      if (!permissionCheck.isAllowed) {
+        return res
+          .status(permissionCheck.status ?? 400)
+          .json({ message: permissionCheck.message });
       }
 
       isPostTypeValid(type);
