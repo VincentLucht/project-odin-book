@@ -7,14 +7,14 @@ import postController from '@/post/postController';
 const postRouter = express.Router();
 
 postRouter.post(
-  '/post',
+  '',
   token.authenticate,
   postValidator.creationRules(),
   postController.create,
 );
 
 postRouter.put(
-  '/post',
+  '',
   token.authenticate,
   postValidator.editRules(),
   postController.edit,
