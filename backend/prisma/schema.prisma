@@ -156,19 +156,22 @@ enum PostType {
 }
 
 model Post {
-  id           String    @id @default(uuid())
-  community_id String
-  community    Community @relation(fields: [community_id], references: [id])
-  poster_id    String
-  post         User      @relation(fields: [poster_id], references: [id])
-  title        String    @db.VarChar(300)
-  body         String    @db.VarChar(40000)
-  created_at   DateTime  @default(now())
-  updated_at   DateTime  @updatedAt
-  deleted_at   DateTime?
-  is_spoiler   Boolean
-  is_mature    Boolean
-  pinned_at    DateTime?
+  id               String    @id @default(uuid())
+  community_id     String
+  community        Community @relation(fields: [community_id], references: [id])
+  poster_id        String
+  post             User      @relation(fields: [poster_id], references: [id])
+  title            String    @db.VarChar(300)
+  body             String    @db.VarChar(40000)
+  created_at       DateTime  @default(now())
+  updated_at       DateTime  @updatedAt
+  deleted_at       DateTime?
+  is_spoiler       Boolean
+  is_mature        Boolean
+  pinned_at        DateTime?
+  upvote_count     Int       @default(0)
+  downvote_count   Int       @default(0)
+  total_vote_score Int       @default(0)
 
   post_type           PostType
   comments            Comment[]
@@ -194,16 +197,16 @@ model PostVote {
 }
 
 model Comment {
-  id         String    @id @default(uuid())
-  content    String    @db.VarChar(10000)
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime?
+  id         String   @id @default(uuid())
+  content    String   @db.VarChar(10000)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  is_deleted Boolean  @default(false)
 
   post_id       String
   post          Post          @relation(fields: [post_id], references: [id])
-  user_id       String
-  user          User          @relation(fields: [user_id], references: [id])
+  user_id       String?
+  user          User?         @relation(fields: [user_id], references: [id])
   comment_votes CommentVote[]
 
   // Parent relation
