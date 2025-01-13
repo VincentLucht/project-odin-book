@@ -16,6 +16,14 @@ class CommentValidator {
       .withMessage(vm.postIdReq()),
     ];
   }
+
+  deletionRules() {
+    return [
+      body('comment_id').trim()
+        .notEmpty()
+        .withMessage(vm.req('Comment ID')),
+    ];
+  }
 }
 
 const commentValidator = new CommentValidator();
