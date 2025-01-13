@@ -51,6 +51,11 @@ class CommentController {
         if (!parentComment) {
           return res.status(404).json({ message: 'Parent comment not found' });
         }
+        if (parentComment.is_deleted) {
+          return res
+            .status(400)
+            .json({ message: 'Cannot reply to a deleted comment' });
+        }
         if (parentComment.post_id !== post_id) {
           return res.status(400).json({
             message: 'Cannot reply to a comment from a different post',

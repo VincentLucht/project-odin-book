@@ -144,6 +144,13 @@ describe('POST /community', () => {
         assert.exp(response, 404, 'Parent comment not found');
       });
 
+      it('should handle parent comment being deleted', async () => {
+        mockDb.comment.getById.mockResolvedValue({ is_deleted: true });
+        const response = await sendRequest({ ... mockRequest, parent_comment_id: '1' });
+
+        assert.exp(response, 400, 'Cannot reply to a deleted comment');
+      });
+
       it('should not allow to reply to a post inside of another community', async () => {
         mockDb.comment.getById.mockResolvedValue({ post_id: 'otherPost' });
         const response = await sendRequest({ ...mockRequest, parent_comment_id: '1' });
