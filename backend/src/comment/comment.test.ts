@@ -25,7 +25,7 @@ import mockDb from '@/util/test/mockDb';
 import db from '@/db/db';
 
 // prettier-ignore
-describe('POST /community', () => {
+describe('/community/post/comment', () => {
   const token = generateToken(mockUser.id, mockUser.username);
 
   beforeEach(() => {
