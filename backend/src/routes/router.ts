@@ -4,6 +4,7 @@ import communityRouter from '@/community/communityRouter';
 import userCommunityRouter from '@/userCommunity/userCommunityRouter';
 import communityFlairRouter from '@/flair/communityFlairRouter';
 import postRouter from '@/post/postRouter';
+import postVoteRouter from '@/postVote/postVoteRouter';
 import commentRouter from '@/comment/commentRouter';
 
 const router = express.Router();
@@ -13,6 +14,7 @@ router.use('/community', communityRouter);
 router.use('/community', userCommunityRouter);
 router.use('/community/flair', communityFlairRouter);
 router.use('/community/post', postRouter);
+router.use('/community/post/vote', postVoteRouter);
 router.use('/community/post/comment', commentRouter);
 
 router.get('/test', (req, res) => {

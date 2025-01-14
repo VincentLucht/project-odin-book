@@ -4,7 +4,7 @@ interface CheckCommunityPermissions {
   db: any;
   userId: string;
   community: Community;
-  action: 'post' | 'comment';
+  action: 'post' | 'comment' | 'vote';
 }
 
 // Check posting permissions based on community type and if basic users are allowed an action
@@ -31,7 +31,7 @@ export default async function ({
     return {
       isAllowed: false,
       status: 403,
-      message: 'Only Contributors can post in restricted communities',
+      message: `Only Contributors can ${action} in restricted communities`,
     };
   }
 

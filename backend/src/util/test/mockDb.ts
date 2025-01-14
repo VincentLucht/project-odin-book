@@ -39,6 +39,10 @@ const mockDb = {
     create: jest.fn(),
     edit: jest.fn(),
   },
+  postVote: {
+    hasVoted: jest.fn(),
+    create: jest.fn(),
+  },
   comment: {
     getById: jest.fn(),
     create: jest.fn(),

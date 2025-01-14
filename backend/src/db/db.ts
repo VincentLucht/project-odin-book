@@ -8,6 +8,7 @@ import BannedUsersManager from '@/db/managers/bannedUsersManager';
 import CommunityModeratorManager from '@/db/managers/communityModeratorManager';
 import CommunityFlairManager from '@/db/managers/communityFlairManager';
 import PostManager from '@/db/managers/postManager';
+import PostVoteManager from '@/db/managers/postVoteManager';
 import CommentManager from '@/db/managers/commentManager';
 
 export class DB {
@@ -20,6 +21,7 @@ export class DB {
   public topic: TopicManager;
   public communityFlair: CommunityFlairManager;
   public post: PostManager;
+  public postVote: PostVoteManager;
   public comment: CommentManager;
 
   constructor() {
@@ -32,6 +34,7 @@ export class DB {
     this.topic = new TopicManager(this.prisma);
     this.communityFlair = new CommunityFlairManager(this.prisma);
     this.post = new PostManager(this.prisma);
+    this.postVote = new PostVoteManager(this.prisma);
     this.comment = new CommentManager(this.prisma);
   }
 }
