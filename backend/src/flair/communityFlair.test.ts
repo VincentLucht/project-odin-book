@@ -76,7 +76,7 @@ describe('/community/flair', () => {
       });
 
       it('should handle flair already existing', async () => {
-        mockDb.communityFlair.doesExist.mockResolvedValue(true);
+        mockDb.communityFlair.doesExistByName.mockResolvedValue(true);
         const response = await sendRequest(mockRequest);
 
         assert.exp(response, 409, 'Flair already exists');

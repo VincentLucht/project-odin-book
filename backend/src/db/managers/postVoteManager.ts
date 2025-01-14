@@ -6,10 +6,7 @@ export default class PostVoteManager {
   async getById(post_id: string, user_id: string) {
     const vote = await this.prisma.postVote.findUnique({
       where: {
-        post_id_user_id: {
-          post_id,
-          user_id,
-        },
+        post_id_user_id: { post_id, user_id },
       },
     });
 
@@ -67,10 +64,7 @@ export default class PostVoteManager {
         await Promise.all([
           tx.postVote.update({
             where: {
-              post_id_user_id: {
-                post_id,
-                user_id,
-              },
+              post_id_user_id: { post_id, user_id },
             },
             data: {
               vote_type,
@@ -90,6 +84,39 @@ export default class PostVoteManager {
                     upvote_count: { increment: 1 },
                     downvote_count: { decrement: 1 },
                     total_vote_score: { increment: 2 },
+                  },
+          }),
+        ]);
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+      throw new Error('An unknown error occurred');
+    }
+  }
+
+  async delete(post_id: string, user_id: string, previous_vote_type: VoteType) {
+    try {
+      await this.prisma.$transaction(async (tx) => {
+        await Promise.all([
+          tx.postVote.delete({
+            where: {
+              post_id_user_id: { post_id, user_id },
+            },
+          }),
+
+          tx.post.update({
+            where: { id: post_id },
+            data:
+              previous_vote_type === 'DOWNVOTE'
+                ? {
+                    downvote_count: { decrement: 1 },
+                    total_vote_score: { increment: 1 },
+                  }
+                : {
+                    upvote_count: { decrement: 1 },
+                    total_vote_score: { decrement: 1 },
                   },
           }),
         ]);
