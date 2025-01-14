@@ -165,4 +165,109 @@ describe('/community/post/vote', () => {
       });
     });
   });
+
+  describe('DELETE /community/post/vote', () => {
+    beforeEach(() => {
+      mockDb.user.getById.mockResolvedValue(true);
+      mockDb.post.getById.mockResolvedValue(true);
+      mockDb.community.getById.mockResolvedValue({ id: '1', type: 'PUBLIC' });
+      mockDb.bannedUsers.isBanned.mockResolvedValue(false);
+      mockDb.postVote.getById.mockResolvedValue(true);
+    });
+
+    const mockRequest = {
+      post_id: '1',
+    };
+
+    const sendRequest = (body: any) => {
+      return request(app)
+        .delete('/community/post/vote')
+        .set('Authorization', `Bearer ${token}`)
+        .send(body);
+    };
+
+    describe('Success cases', () => {
+      it('should successfully remove a vote from a post', async () => {
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 200, 'Successfully removed vote from post');
+      });
+    });
+
+    describe('Error cases', () => {
+      it('should handle user not existing', async () => {
+        mockDb.user.getById.mockResolvedValue(false);
+        const response = await sendRequest(mockRequest);
+
+        assert.user.notFound(response);
+      });
+
+      it('should handle post not being found', async () => {
+        mockDb.post.getById.mockResolvedValue(null);
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 404, 'Post not found');
+      });
+
+      it('should handle community not being found', async () => {
+        mockDb.community.getById.mockResolvedValue(null);
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 404, 'Community not found');
+      });
+
+      it('should handle vote not existing', async () => {
+        mockDb.postVote.getById.mockResolvedValue(false);
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 404, 'Vote not found');
+      });
+
+      it('should handle banned user not being able remove vote if banned', async () => {
+        mockDb.bannedUsers.isBanned.mockResolvedValue(true);
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 403, 'You are banned from this community');
+      });
+
+      it('should handle not being able remove vote from restricted community when not being contributor anymore', async () => {
+        mockDb.community.getById.mockResolvedValue({ type: 'RESTRICTED' });
+        mockDb.userCommunity.getById.mockResolvedValue({ role: 'BASIC' });
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 403, 'Only Contributors can vote in restricted communities');
+      });
+
+      it('should handle not being able remove vote from private community the user was removed', async () => {
+        mockDb.community.getById.mockResolvedValue({ type: 'PRIVATE' });
+        mockDb.userCommunity.getById.mockResolvedValue(false);
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 403, 'You must be a member of this community to vote');
+      });
+
+      it('should handle missing inputs', async () => {
+        const response = await sendRequest({});
+
+        expect(response.body).toMatchObject({
+          'errors': [
+              {
+                  'type': 'field',
+                  'value': '',
+                  'msg': 'Post ID is required',
+                  'path': 'post_id',
+                  'location': 'body',
+              },
+          ],
+      });
+      });
+
+      it('should handle db error', async () => {
+        mockDb.user.getById.mockRejectedValue(new Error('DB error'));
+        const response = await sendRequest(mockRequest);
+
+        assert.dbError(response);
+      });
+    });
+  });
 });

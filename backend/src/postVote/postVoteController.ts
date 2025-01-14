@@ -76,7 +76,7 @@ class PostVoteController {
   delete = asyncHandler(async (req: Request, res: Response) => {
     if (checkValidationError(req, res)) return;
 
-    const { comment_id } = req.body;
+    const { post_id } = req.body;
 
     try {
       const { user_id } = getAuthUser(req.authData);
@@ -84,24 +84,10 @@ class PostVoteController {
         return res.status(404).json({ message: 'User not found' });
       }
 
-      const comment = await db.comment.getById(comment_id, true);
-      if (!comment) {
-        return res.status(404).json({ message: 'Comment not found' });
-      }
-      if (comment.is_deleted) {
-        return res.status(410).json({ message: 'Comment is already deleted' });
-      }
-      if (comment.user_id !== user_id) {
-        return res
-          .status(403)
-          .json({ message: 'You cannot delete other Comments' });
-      }
-
-      const post = await db.post.getById(comment.post_id);
+      const post = await db.post.getById(post_id);
       if (!post) {
         return res.status(404).json({ message: 'Post not found' });
       }
-
       const community = await db.community.getById(post.community_id);
       if (!community) {
         return res.status(404).json({ message: 'Community not found' });
@@ -113,9 +99,28 @@ class PostVoteController {
           .json({ message: 'You are banned from this community' });
       }
 
+      const previousVote = await db.postVote.getById(post_id, user_id);
+      if (!previousVote) {
+        return res.status(404).json({ message: 'Vote not found' });
+      }
+
+      const permissionCheck = await checkCommunityPermissions({
+        db,
+        userId: user_id,
+        community,
+        action: 'vote',
+      });
+      if (!permissionCheck.isAllowed) {
+        return res
+          .status(permissionCheck.status ?? 400)
+          .json({ message: permissionCheck.message });
+      }
+
+      await db.postVote.delete(post_id, user_id, previousVote.vote_type);
+
       return res
         .status(200)
-        .json({ message: 'Successfully remove vote from post' });
+        .json({ message: 'Successfully removed vote from post' });
     } catch (error) {
       console.error(error);
       return res.status(500).json({

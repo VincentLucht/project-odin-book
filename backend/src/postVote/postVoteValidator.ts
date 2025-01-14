@@ -16,6 +16,14 @@ class PostVoteValidator {
         }),
     ];
   }
+
+  deletionRules() {
+    return [
+      body('post_id').trim()
+        .notEmpty()
+        .withMessage(vm.req('Post ID')),
+    ];
+  }
 }
 
 const postVoteValidator = new PostVoteValidator();

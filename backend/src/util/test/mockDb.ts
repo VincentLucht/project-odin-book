@@ -44,6 +44,7 @@ const mockDb = {
     create: jest.fn(),
     getById: jest.fn(),
     update: jest.fn(),
+    delete: jest.fn(),
   },
   comment: {
     getById: jest.fn(),

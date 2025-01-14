@@ -13,4 +13,11 @@ postVoteRouter.post(
   postVoteController.vote,
 );
 
+postVoteRouter.delete(
+  '',
+  token.authenticate,
+  postVoteValidator.deletionRules(),
+  postVoteController.delete,
+);
+
 export default postVoteRouter;
