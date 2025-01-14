@@ -22,6 +22,7 @@ jest.mock('@/db/db', () => {
 });
 
 import mockDb from '@/util/test/mockDb';
+import db from '@/db/db';
 
 // prettier-ignore
 describe('/community/post/vote', () => {
@@ -38,7 +39,7 @@ describe('/community/post/vote', () => {
       mockDb.post.getById.mockResolvedValue(true);
       mockDb.community.getById.mockResolvedValue({ id: '1', type: 'PUBLIC' });
       mockDb.bannedUsers.isBanned.mockResolvedValue(false);
-      mockDb.postVote.hasVoted.mockResolvedValue(false);
+      mockDb.postVote.getById.mockResolvedValue(false);
     });
 
     const mockRequest = {
@@ -64,6 +65,14 @@ describe('/community/post/vote', () => {
         const response = await sendRequest({ ...mockRequest, vote_type: 'DOWNVOTE' });
 
         assert.exp(response, 201, 'Successfully voted for post');
+      });
+
+      it('should successfully update a vote', async () => {
+        mockDb.postVote.getById.mockResolvedValue({ vote_type: 'DOWNVOTE' });
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 200, 'Successfully updated vote');
+        expect(db.postVote.update).toHaveBeenCalled();
       });
     });
 
@@ -97,7 +106,7 @@ describe('/community/post/vote', () => {
       });
 
       it('should handle user already voting for a post', async () => {
-        mockDb.postVote.hasVoted.mockResolvedValue(true);
+        mockDb.postVote.getById.mockResolvedValue({ vote_type: 'UPVOTE' });
         const response = await sendRequest(mockRequest);
 
         assert.exp(response, 409, 'You already voted for this post');

@@ -8,7 +8,7 @@ import checkCommunityPermissions from '@/util/checkCommunityPermissions';
 
 class PostVoteController {
   // ! POST
-  create = asyncHandler(async (req: Request, res: Response) => {
+  vote = asyncHandler(async (req: Request, res: Response) => {
     if (checkValidationError(req, res)) return;
 
     const { post_id, vote_type } = req.body;
@@ -34,12 +34,6 @@ class PostVoteController {
           .json({ message: 'You are banned from this community' });
       }
 
-      if (await db.postVote.hasVoted(post_id, user_id)) {
-        return res
-          .status(409)
-          .json({ message: 'You already voted for this post' });
-      }
-
       const permissionCheck = await checkCommunityPermissions({
         db,
         userId: user_id,
@@ -50,6 +44,18 @@ class PostVoteController {
         return res
           .status(permissionCheck.status ?? 400)
           .json({ message: permissionCheck.message });
+      }
+
+      const existingVote = await db.postVote.getById(post_id, user_id);
+      if (existingVote) {
+        if (existingVote.vote_type === vote_type) {
+          return res
+            .status(409)
+            .json({ message: 'You already voted for this post' });
+        } else {
+          await db.postVote.update(post_id, user_id, vote_type);
+          return res.status(200).json({ message: 'Successfully updated vote' });
+        }
       }
 
       await db.postVote.create(post_id, user_id, vote_type);
@@ -65,8 +71,6 @@ class PostVoteController {
       });
     }
   });
-
-  // ! PUT
 
   // ! DELETE
   delete = asyncHandler(async (req: Request, res: Response) => {

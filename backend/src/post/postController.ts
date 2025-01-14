@@ -15,6 +15,8 @@ class PostController {
     const { community_id, title, body, is_spoiler, is_mature, type, flair_id } =
       req.body;
 
+    // TODO: Upvote on creation
+
     try {
       const { user_id } = getAuthUser(req.authData);
       if (!(await db.user.getById(user_id))) {

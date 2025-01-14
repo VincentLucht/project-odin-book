@@ -60,4 +60,45 @@ export default class PostVoteManager {
       throw new Error('An unknown error occurred');
     }
   }
+
+  async update(post_id: string, user_id: string, vote_type: VoteType) {
+    try {
+      await this.prisma.$transaction(async (tx) => {
+        await Promise.all([
+          tx.postVote.update({
+            where: {
+              post_id_user_id: {
+                post_id,
+                user_id,
+              },
+            },
+            data: {
+              vote_type,
+            },
+          }),
+
+          tx.post.update({
+            where: { id: post_id },
+            data:
+              vote_type === 'DOWNVOTE'
+                ? {
+                    upvote_count: { decrement: 1 },
+                    downvote_count: { increment: 1 },
+                    total_vote_score: { decrement: 2 },
+                  }
+                : {
+                    upvote_count: { increment: 1 },
+                    downvote_count: { decrement: 1 },
+                    total_vote_score: { increment: 2 },
+                  },
+          }),
+        ]);
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+      throw new Error('An unknown error occurred');
+    }
+  }
 }

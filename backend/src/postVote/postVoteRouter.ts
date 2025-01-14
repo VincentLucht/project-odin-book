@@ -10,7 +10,7 @@ postVoteRouter.post(
   '',
   token.authenticate,
   postVoteValidator.voteRules(),
-  postVoteController.create,
+  postVoteController.vote,
 );
 
 export default postVoteRouter;
