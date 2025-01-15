@@ -197,11 +197,14 @@ model PostVote {
 }
 
 model Comment {
-  id         String   @id @default(uuid())
-  content    String   @db.VarChar(10000)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  is_deleted Boolean  @default(false)
+  id               String   @id @default(uuid())
+  content          String   @db.VarChar(10000)
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+  is_deleted       Boolean  @default(false)
+  upvote_count     Int      @default(0)
+  downvote_count   Int      @default(0)
+  total_vote_score Int      @default(0)
 
   post_id       String
   post          Post          @relation(fields: [post_id], references: [id])
