@@ -16,6 +16,14 @@ class CommentVoteValidator {
         }),
     ];
   }
+
+  deletionRules() {
+    return [
+      body('comment_id').trim()
+      .notEmpty()
+      .withMessage(vm.req('Comment ID')),
+    ];
+  }
 }
 
 const commentVoteValidator = new CommentVoteValidator();

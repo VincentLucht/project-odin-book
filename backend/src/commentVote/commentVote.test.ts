@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 import request from 'supertest';
-import express from 'express';
+import express, { response } from 'express';
 import router from '@/routes/router';
 
 import { mockUser } from '@/util/test/testUtil';
@@ -22,7 +22,6 @@ jest.mock('@/db/db', () => {
 });
 
 import mockDb from '@/util/test/mockDb';
-import db from '@/db/db';
 
 // prettier-ignore
 describe('/community/post/comment/vote', () => {
@@ -152,6 +151,53 @@ describe('/community/post/comment/vote', () => {
         const response = await sendRequest(mockRequest);
 
         assert.dbError(response);
+      });
+    });
+  });
+
+  describe('DELETE /comment/post/comment', () => {
+    const sendRequest = (body: any) => {
+      return request(app)
+        .delete('/community/post/comment/vote')
+        .set('Authorization', `Bearer ${token}`)
+        .send(body);
+    };
+
+    beforeEach(() => {
+      mockDb.user.getById.mockResolvedValue(true);
+      mockDb.comment.getById.mockResolvedValue(true);
+      mockDb.post.getById.mockResolvedValue(true);
+      mockDb.community.getById.mockResolvedValue({ id: '1', type: 'PUBLIC' });
+      mockDb.bannedUsers.isBanned.mockResolvedValue(false);
+      mockDb.commentVote.getById.mockResolvedValue({ vote_type: 'UPVOTE' });
+    });
+
+    const mockRequest = {
+      comment_id: '1',
+    };
+
+    describe('Success cases', () => {
+      it('should successfully delete a vote', async () => {
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 200, 'Successfully deleted comment vote');
+      });
+    });
+
+    describe('Error cases', () => {
+      it('should handle vote not existing', async () => {
+        mockDb.commentVote.getById.mockResolvedValue(false);
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 404, 'Vote not found');
+      });
+
+      it('should not allow comment deletion if user is non-member', async () => {
+        mockDb.community.getById.mockResolvedValue({ type: 'RESTRICTED' });
+        mockDb.userCommunity.getById.mockResolvedValue(false);
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 403, 'You must be a member of this community to vote');
       });
     });
   });

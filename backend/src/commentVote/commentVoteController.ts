@@ -86,12 +86,44 @@ class CommentVoteController {
         return res.status(404).json({ message: 'User not found' });
       }
 
-      const comment = await db.comment.getById(comment_id, true);
+      const comment = await db.comment.getById(comment_id);
       if (!comment) {
         return res.status(404).json({ message: 'Comment not found' });
       }
+      const post = await db.post.getById(comment.post_id);
+      if (!post) {
+        return res.status(404).json({ message: 'Post not found' });
+      }
+      const community = await db.community.getById(post.community_id);
+      if (!community) {
+        return res.status(404).json({ message: 'Community not found' });
+      }
+      if (await db.bannedUsers.isBanned(user_id, community.id)) {
+        return res
+          .status(403)
+          .json({ message: 'You are banned from this community' });
+      }
 
-      return res.status(200).json({ message: '' });
+      // Allow deletion of votes regardless of role, but check if member
+      if (community.type === 'RESTRICTED' || community.type === 'PRIVATE') {
+        const member = await db.userCommunity.getById(user_id, community.id);
+        if (!member) {
+          return res.status(403).json({
+            message: 'You must be a member of this community to vote',
+          });
+        }
+      }
+
+      const vote = await db.commentVote.getById(comment_id, user_id);
+      if (!vote) {
+        return res.status(404).json({ message: 'Vote not found' });
+      }
+
+      await db.commentVote.delete(comment_id, user_id, vote.vote_type);
+
+      return res.status(200).json({
+        message: 'Successfully deleted comment vote',
+      });
     } catch (error) {
       console.error(error);
       return res.status(500).json({

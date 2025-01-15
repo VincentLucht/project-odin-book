@@ -81,4 +81,39 @@ export default class CommentVoteManager {
       throw new Error('An unknown error occurred');
     }
   }
+
+  async delete(
+    comment_id: string,
+    user_id: string,
+    previous_vote_type: VoteType,
+  ) {
+    try {
+      await this.prisma.$transaction(async (tx) => {
+        await tx.commentVote.delete({
+          where: {
+            comment_id_user_id: { comment_id, user_id },
+          },
+        });
+
+        await tx.comment.update({
+          where: { id: comment_id },
+          data:
+            previous_vote_type === 'DOWNVOTE'
+              ? {
+                  downvote_count: { decrement: 1 },
+                  total_vote_score: { increment: 1 },
+                }
+              : {
+                  upvote_count: { decrement: 1 },
+                  total_vote_score: { decrement: 1 },
+                },
+        });
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+      throw new Error('An unknown error occurred');
+    }
+  }
 }

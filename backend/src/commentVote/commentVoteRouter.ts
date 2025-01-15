@@ -13,4 +13,11 @@ commentVoteRouter.post(
   commentVoteController.vote,
 );
 
+commentVoteRouter.delete(
+  '',
+  token.authenticate,
+  commentVoteValidator.deletionRules(),
+  commentVoteController.delete,
+);
+
 export default commentVoteRouter;
