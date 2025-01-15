@@ -52,6 +52,11 @@ const mockDb = {
     softDelete: jest.fn(),
     delete: jest.fn(),
   },
+  commentVote: {
+    getById: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+  },
 };
 
 export default mockDb;

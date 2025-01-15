@@ -26,29 +26,27 @@ export default class PostVoteManager {
   async create(post_id: string, user_id: string, vote_type: VoteType) {
     try {
       await this.prisma.$transaction(async (tx) => {
-        await Promise.all([
-          tx.postVote.create({
-            data: {
-              post_id,
-              user_id,
-              vote_type,
-            },
-          }),
+        await tx.postVote.create({
+          data: {
+            post_id,
+            user_id,
+            vote_type,
+          },
+        });
 
-          tx.post.update({
-            where: { id: post_id },
-            data:
-              vote_type === 'UPVOTE'
-                ? {
-                    upvote_count: { increment: 1 },
-                    total_vote_score: { increment: 1 },
-                  }
-                : {
-                    downvote_count: { increment: 1 },
-                    total_vote_score: { decrement: 1 },
-                  },
-          }),
-        ]);
+        await tx.post.update({
+          where: { id: post_id },
+          data:
+            vote_type === 'UPVOTE'
+              ? {
+                  upvote_count: { increment: 1 },
+                  total_vote_score: { increment: 1 },
+                }
+              : {
+                  downvote_count: { increment: 1 },
+                  total_vote_score: { decrement: 1 },
+                },
+        });
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -61,32 +59,30 @@ export default class PostVoteManager {
   async update(post_id: string, user_id: string, vote_type: VoteType) {
     try {
       await this.prisma.$transaction(async (tx) => {
-        await Promise.all([
-          tx.postVote.update({
-            where: {
-              post_id_user_id: { post_id, user_id },
-            },
-            data: {
-              vote_type,
-            },
-          }),
+        await tx.postVote.update({
+          where: {
+            post_id_user_id: { post_id, user_id },
+          },
+          data: {
+            vote_type,
+          },
+        });
 
-          tx.post.update({
-            where: { id: post_id },
-            data:
-              vote_type === 'DOWNVOTE'
-                ? {
-                    upvote_count: { decrement: 1 },
-                    downvote_count: { increment: 1 },
-                    total_vote_score: { decrement: 2 },
-                  }
-                : {
-                    upvote_count: { increment: 1 },
-                    downvote_count: { decrement: 1 },
-                    total_vote_score: { increment: 2 },
-                  },
-          }),
-        ]);
+        await tx.post.update({
+          where: { id: post_id },
+          data:
+            vote_type === 'DOWNVOTE'
+              ? {
+                  upvote_count: { decrement: 1 },
+                  downvote_count: { increment: 1 },
+                  total_vote_score: { decrement: 2 },
+                }
+              : {
+                  upvote_count: { increment: 1 },
+                  downvote_count: { decrement: 1 },
+                  total_vote_score: { increment: 2 },
+                },
+        });
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -99,27 +95,25 @@ export default class PostVoteManager {
   async delete(post_id: string, user_id: string, previous_vote_type: VoteType) {
     try {
       await this.prisma.$transaction(async (tx) => {
-        await Promise.all([
-          tx.postVote.delete({
-            where: {
-              post_id_user_id: { post_id, user_id },
-            },
-          }),
+        await tx.postVote.delete({
+          where: {
+            post_id_user_id: { post_id, user_id },
+          },
+        });
 
-          tx.post.update({
-            where: { id: post_id },
-            data:
-              previous_vote_type === 'DOWNVOTE'
-                ? {
-                    downvote_count: { decrement: 1 },
-                    total_vote_score: { increment: 1 },
-                  }
-                : {
-                    upvote_count: { decrement: 1 },
-                    total_vote_score: { decrement: 1 },
-                  },
-          }),
-        ]);
+        await tx.post.update({
+          where: { id: post_id },
+          data:
+            previous_vote_type === 'DOWNVOTE'
+              ? {
+                  downvote_count: { decrement: 1 },
+                  total_vote_score: { increment: 1 },
+                }
+              : {
+                  upvote_count: { decrement: 1 },
+                  total_vote_score: { decrement: 1 },
+                },
+        });
       });
     } catch (error) {
       if (error instanceof Error) {
