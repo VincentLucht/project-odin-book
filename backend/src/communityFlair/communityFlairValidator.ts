@@ -1,6 +1,6 @@
 import { body } from 'express-validator/lib';
 import vm from '@/util/validationMessage';
-import isValidHex from '@/flair/util/isValidHex';
+import isValidHex from '@/communityFlair/util/isValidHex';
 
 // prettier-ignore
 class CommunityFlairValidator {

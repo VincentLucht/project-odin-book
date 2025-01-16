@@ -1,7 +1,7 @@
 import express from 'express';
 import token from '@/auth/token';
-import communityFlairValidator from '@/flair/communityFlairValidator';
-import communityFlairController from '@/flair/communityFlairController';
+import communityFlairValidator from '@/communityFlair/communityFlairValidator';
+import communityFlairController from '@/communityFlair/communityFlairController';
 
 // /community/flair
 const communityFlairRouter = express.Router();

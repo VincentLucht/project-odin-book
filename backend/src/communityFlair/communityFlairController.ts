@@ -26,7 +26,7 @@ class CommunityFlairController {
       if (!(await db.community.doesExistById(community_id))) {
         return res.status(404).json({ message: 'Community not found' });
       }
-      if (await db.communityFlair.doesExist(community_id, name)) {
+      if (await db.communityFlair.doesExistByName(community_id, name)) {
         return res.status(409).json({ message: 'Flair already exists' });
       }
       if (!(await db.communityModerator.isMod(user_id, community_id))) {
@@ -34,6 +34,7 @@ class CommunityFlairController {
           .status(403)
           .json({ message: 'You are not a moderator in this community' });
       }
+      // TODO: Add limit of 700 flair types for community
 
       const flair = await db.communityFlair.create(
         community_id,
