@@ -58,6 +58,13 @@ const mockDb = {
     update: jest.fn(),
     delete: jest.fn(),
   },
+  userAssignedFlair: {
+    getById: jest.fn(),
+    getUserFlairInCommunity: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+  },
 };
 
 export default mockDb;

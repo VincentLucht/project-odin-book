@@ -11,6 +11,7 @@ import PostManager from '@/db/managers/postManager';
 import PostVoteManager from '@/db/managers/postVoteManager';
 import CommentManager from '@/db/managers/commentManager';
 import CommentVoteManager from '@/db/managers/commentVoteManager';
+import UserAssignedFlairManager from '@/db/managers/userAssignedFlairManager';
 
 export class DB {
   private prisma: PrismaClient;
@@ -25,6 +26,7 @@ export class DB {
   public postVote: PostVoteManager;
   public comment: CommentManager;
   public commentVote: CommentVoteManager;
+  public userAssignedFlair: UserAssignedFlairManager;
 
   constructor() {
     this.prisma = new PrismaClient();
@@ -39,6 +41,7 @@ export class DB {
     this.postVote = new PostVoteManager(this.prisma);
     this.comment = new CommentManager(this.prisma);
     this.commentVote = new CommentVoteManager(this.prisma);
+    this.userAssignedFlair = new UserAssignedFlairManager(this.prisma);
   }
 }
 
