@@ -100,6 +100,11 @@ class UserAssignedFlairController {
       if (!userFlair) {
         return res.status(404).json({ message: 'Flair not found' });
       }
+      if (userFlair.user_id !== user_id) {
+        return res
+          .status(403)
+          .json({ message: 'You can only remove your own flairs' });
+      }
 
       await db.userAssignedFlair.delete(user_assigned_flair_id);
 
