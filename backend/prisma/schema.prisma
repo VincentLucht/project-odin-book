@@ -269,7 +269,7 @@ model UserAssignedFlair {
   user_id            String
   user               User           @relation(fields: [user_id], references: [id])
   community_flair_id String
-  community_flair    CommunityFlair @relation(fields: [community_flair_id], references: [id])
+  community_flair    CommunityFlair @relation(fields: [community_flair_id], references: [id], onDelete: Cascade)
 
   @@unique([user_id, community_flair_id])
 }
@@ -279,7 +279,7 @@ model PostAssignedFlair {
   post_id            String
   post               Post           @relation(fields: [post_id], references: [id])
   community_flair_id String
-  community_flair    CommunityFlair @relation(fields: [community_flair_id], references: [id])
+  community_flair    CommunityFlair @relation(fields: [community_flair_id], references: [id], onDelete: Cascade)
 
   @@unique([post_id, community_flair_id])
 }
