@@ -1,8 +1,15 @@
+import { ValidationError } from '@/interface/backendErrors';
+import handleLogin from '@/auth/Login/util/handleLogin';
+
 interface LoginAsGuestButtonProps {
-  handleLogin: (username: string, password: string) => void;
+  setErrors: React.Dispatch<React.SetStateAction<ValidationError>>;
+  loginAuth: (newToken: string) => void;
 }
 
-export default function LoginAsGuestButton({ handleLogin }: LoginAsGuestButtonProps) {
+export default function LoginAsGuestButton({
+  setErrors,
+  loginAuth,
+}: LoginAsGuestButtonProps) {
   return (
     <button
       className="relative h-[52px] w-full rounded-full border-2 border-green-200 bg-green-50
@@ -10,7 +17,7 @@ export default function LoginAsGuestButton({ handleLogin }: LoginAsGuestButtonPr
         hover:bg-green-100 active:scale-95 active:bg-green-200"
       onClick={(e) => {
         e.preventDefault();
-        handleLogin('guest', 'pass123');
+        handleLogin('guest', 'pass123', setErrors, loginAuth);
       }}
     >
       <img

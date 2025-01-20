@@ -1,8 +1,15 @@
+import handleLogin from '@/auth/Login/util/handleLogin';
+import { ValidationError } from '@/interface/backendErrors';
+
 interface LoginAsAdminButtonProps {
-  handleLogin: (username: string, password: string) => void;
+  setErrors: React.Dispatch<React.SetStateAction<ValidationError>>;
+  loginAuth: (newToken: string) => void;
 }
 
-export default function LoginAsAdminButton({ handleLogin }: LoginAsAdminButtonProps) {
+export default function LoginAsAdminButton({
+  setErrors,
+  loginAuth,
+}: LoginAsAdminButtonProps) {
   return (
     <button
       className="relative h-[52px] w-full rounded-full border-2 border-purple-200 bg-purple-50
@@ -10,7 +17,7 @@ export default function LoginAsAdminButton({ handleLogin }: LoginAsAdminButtonPr
         hover:bg-purple-100 active:scale-95 active:bg-purple-200"
       onClick={(e) => {
         e.preventDefault();
-        handleLogin('guest_admin', 'adminpw');
+        handleLogin('guest_admin', 'adminpw', setErrors, loginAuth);
       }}
     >
       <img
