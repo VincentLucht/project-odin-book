@@ -44,7 +44,11 @@ export default function InputWithError({
     setIsFocused(true);
   };
 
-  const errorFieldName = placeholder.toLowerCase();
+  let errorFieldName = placeholder.toLowerCase();
+  const split = errorFieldName.split(' ');
+  if (split.length > 1) {
+    errorFieldName = split.join('');
+  }
   const error = errors?.[errorFieldName];
 
   // Reset errors on value change
