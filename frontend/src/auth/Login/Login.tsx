@@ -3,69 +3,26 @@ import { useNavigate } from 'react-router-dom';
 import useAuth from '@/context/auth/hook/useAuth';
 import useIsMobile from '@/context/screen/hook/useIsMobile';
 
-import login from '@/auth/Login/api/handleLogin';
+import handleLogin from '@/auth/Login/util/handleLogin';
 
 import LoginAsGuestButton from '@/auth/Login/components/LoginAsGuestButton';
 import LoginAsAdminButton from '@/auth/Login/components/LoginAsAdminButton';
 import InputWithError from '@/components/InputWithError';
+import LoadingButton from '@/components/LoadingButton';
 import SVG_PATHS from '@/auth/Login/svg/SVG_PATHS';
-import '@/css/spinner.css';
 
-import { ValidationError, ResponseError } from '@/interface/backendErrors';
-import { toast } from 'react-toastify';
+import { ValidationError } from '@/interface/backendErrors';
 
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const [errors, setErrors] = useState<ValidationError>({});
 
   const navigate = useNavigate();
   const { login: loginAuth } = useAuth();
   const isMobile = useIsMobile();
-
-  const handleLogin = (username: string, password: string) => {
-    if (!username) {
-      setErrors((prev) => ({ ...prev, username: 'Username is required' }));
-    }
-    if (!password) {
-      setErrors((prev) => ({ ...prev, password: 'Password is required' }));
-    }
-    if (!username || !password) return;
-
-    login(username, password)
-      .then((response) => {
-        toast.success('Successfully logged in');
-        loginAuth(response.token);
-      })
-      .catch((response: ResponseError) => {
-        if (response.errors) {
-          const errors: { [key: string]: string } = {};
-          response.errors.forEach((error) => {
-            errors[error.path] = error.msg;
-          });
-          setErrors(errors);
-        }
-
-        if (response.message === 'Load failed') {
-          setErrors({
-            username: ' ',
-            password: 'Connection error, please try again later',
-          });
-        } else if (response.message === 'Authentication failed') {
-          setErrors({
-            username: ' ',
-            password: 'Invalid username or password',
-          });
-        } else {
-          // other error
-          setErrors({
-            username: ' ',
-            password: 'Unknown error occurred, please try again',
-          });
-        }
-      });
-  };
 
   return (
     <div className="h-dvh flex-col df">
@@ -97,16 +54,13 @@ export default function Login() {
             setErrors={setErrors}
           />
 
-          <button
-            className="mt-1 h-[52px] w-full df prm-button-blue"
-            onClick={(e) => {
-              e.preventDefault();
-              handleLogin(username, password);
-            }}
-            type="submit"
-          >
-            Login
-          </button>
+          <LoadingButton
+            text="Login"
+            isLoading={isLoading}
+            func={() =>
+              handleLogin(username, password, setErrors, loginAuth, setIsLoading)
+            }
+          />
 
           <div className="w-full text-center">
             New To Reddnir?
@@ -125,9 +79,9 @@ export default function Login() {
               <hr className="border-t border-gray-600" />
             </div>
 
-            <LoginAsGuestButton handleLogin={handleLogin} />
+            <LoginAsGuestButton setErrors={setErrors} loginAuth={loginAuth} />
 
-            <LoginAsAdminButton handleLogin={handleLogin} />
+            <LoginAsAdminButton setErrors={setErrors} loginAuth={loginAuth} />
           </div>
         </div>
       </form>
