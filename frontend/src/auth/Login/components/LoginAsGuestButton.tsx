@@ -1,0 +1,24 @@
+interface LoginAsGuestButtonProps {
+  handleLogin: (username: string, password: string) => void;
+}
+
+export default function LoginAsGuestButton({ handleLogin }: LoginAsGuestButtonProps) {
+  return (
+    <button
+      className="relative h-[52px] w-full rounded-full border-2 border-green-200 bg-green-50
+        text-green-700 transition-all duration-200 ease-in-out df hover:border-green-300
+        hover:bg-green-100 active:scale-95 active:bg-green-200"
+      onClick={(e) => {
+        e.preventDefault();
+        handleLogin('guest', 'pass123');
+      }}
+    >
+      <img
+        src="userKey.svg"
+        alt="Login as Guest logo"
+        className="absolute left-4 top-1/2 h-[26px] w-[26px] -translate-y-1/2 transform"
+      />
+      <div className="font-semibold">Continue as Guest</div>
+    </button>
+  );
+}
