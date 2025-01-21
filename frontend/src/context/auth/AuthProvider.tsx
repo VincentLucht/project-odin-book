@@ -18,14 +18,22 @@ interface AuthContextType {
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 export default function AuthProvider({ children }: { children: any }) {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
-    localStorage.getItem('reddnir-jwt') !== null,
-  );
-
-  const [user, setUser] = useState<TokenUser | null>(null);
   const [token, setToken] = useState<string | null>(
     localStorage.getItem('reddnir-jwt'),
   );
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => token !== null);
+  const [user, setUser] = useState<TokenUser | null>(() => {
+    if (token) {
+      try {
+        return jwtDecode(token);
+      } catch {
+        localStorage.removeItem('reddnir-jwt');
+        return null;
+      }
+    }
+    return null;
+  });
+
   const navigate = useNavigate();
 
   const login = useCallback(
@@ -64,7 +72,12 @@ export default function AuthProvider({ children }: { children: any }) {
       if (token) {
         try {
           const decodedToken = jwtDecode<TokenUser>(token);
-          setUser(decodedToken);
+
+          if (decodedToken.exp * 1000 < Date.now()) {
+            toast.error('Session expired, please log in again');
+            logout();
+            return;
+          }
         } catch (error) {
           toast.error('Authentication error, please log in again');
           logout();
@@ -74,12 +87,12 @@ export default function AuthProvider({ children }: { children: any }) {
       }
     };
 
-    const interval = setInterval(() => {
-      checkTokenExpiration();
-    }, 300000); // ? 5 minutes
+    checkTokenExpiration();
+
+    const interval = setInterval(checkTokenExpiration, 300000); // ? 5 minutes
 
     return () => clearInterval(interval);
-  }, [token, logout]);
+  }, [token, isLoggedIn, logout]);
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 }
