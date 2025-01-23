@@ -8,4 +8,5 @@ export interface DBUser {
   description: string | null;
   cake_day: string | null;
   created_at: Date;
+  deletedAt: Date | null;
 }
