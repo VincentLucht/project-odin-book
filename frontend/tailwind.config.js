@@ -38,6 +38,24 @@ export default {
         '.bg-gray': {
           backgroundColor: 'rgba(37,37,37,255)'
         },
+        '.bg-accent-gray': {
+          backgroundColor: '#3F4246'
+        },
+        '.bg-hover-gray': {
+          backgroundColor: '#4A4D51'
+        },
+        '.bg-active-gray': {
+          backgroundColor: '#545759'
+        },
+        '.text-gray-secondary': {
+          color: '#B0B5BB'
+        },
+        '.bg-hover-transition': {
+          '@apply transition-all': {}
+        },
+        '.dropdown-btn-transition': {
+          '@apply transition-colors hover:bg-hover-gray active:bg-active-gray': {}
+        }
       };
 
       addUtilities(newUtilities, ['responsive', 'hover']);
