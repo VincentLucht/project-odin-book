@@ -3,9 +3,13 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './tailwind.css';
 
-import App from '@/App';
 import Login from '@/auth/Login/Login';
 import SignUp from '@/auth/SignUp/SignUp';
+import Layout from '@/Main/Layout/Layout';
+
+import Main from '@/Main/Main';
+import UserSettings from '@/Main/user/UserSettings/UserSettings';
+import UserProfile from '@/Main/user/UserProfile/UserProfile';
 
 import ScreenSizeProvider from '@/context/screen/ScreenSizeProvider';
 import AuthProvider from '@/context/auth/AuthProvider';
@@ -19,9 +23,14 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <AuthProvider>
         <ScreenSizeProvider>
           <Routes>
-            <Route path="/" element={<App />} />
             <Route path="/login" element={<Login />} />
             <Route path="/sign-up" element={<SignUp />} />
+
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Main />} />
+              <Route path="user/settings" element={<UserSettings />} />
+              <Route path="user/:username" element={<UserProfile />} />
+            </Route>
           </Routes>
 
           <ToastContainer theme="dark" />
