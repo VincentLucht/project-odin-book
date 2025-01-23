@@ -39,6 +39,7 @@ model User {
   description         String?  @db.VarChar(200)
   cake_day            String?
   created_at          DateTime @default(now())
+  deleted_at          DateTime?
 
   banned_users        BannedUser[]
   user_communities    UserCommunity[]
