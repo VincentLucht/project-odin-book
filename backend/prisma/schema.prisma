@@ -30,16 +30,19 @@ enum CommunityType {
 }
 
 model User {
-  id                  String   @id @default(uuid())
-  username            String   @unique @db.VarChar(20)
-  email               String   @unique @db.VarChar(320)
+  id                  String    @id @default(uuid())
+  username            String    @unique @db.VarChar(20)
+  email               String    @unique @db.VarChar(320)
   password            String
-  display_name        String?  @db.VarChar(40)
+  display_name        String?   @db.VarChar(40)
   profile_picture_url String?
-  description         String?  @db.VarChar(200)
+  description         String?   @db.VarChar(200)
   cake_day            String?
-  created_at          DateTime @default(now())
+  created_at          DateTime  @default(now())
   deleted_at          DateTime?
+
+  post_karma    Int @default(0)
+  comment_karma Int @default(0) 
 
   banned_users        BannedUser[]
   user_communities    UserCommunity[]
