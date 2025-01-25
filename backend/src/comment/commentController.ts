@@ -13,6 +13,8 @@ class CommentController {
 
     const { content, post_id, parent_comment_id } = req.body;
 
+    // TODO: Upvote on creation
+
     try {
       const { user_id } = getAuthUser(req.authData);
       if (!(await db.user.getById(user_id))) {
@@ -92,6 +94,8 @@ class CommentController {
     if (checkValidationError(req, res)) return;
 
     const { comment_id } = req.body;
+
+    // TODO: remove upvotes and downvotes from comment
 
     try {
       const { user_id } = getAuthUser(req.authData);

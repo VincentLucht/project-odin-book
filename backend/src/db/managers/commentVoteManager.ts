@@ -13,7 +13,12 @@ export default class CommentVoteManager {
     return vote;
   }
 
-  async create(comment_id: string, user_id: string, vote_type: VoteType) {
+  async create(
+    comment_id: string,
+    user_id: string,
+    vote_type: VoteType,
+    poster_id: string,
+  ) {
     try {
       await this.prisma.$transaction(async (tx) => {
         await tx.commentVote.create({
@@ -37,6 +42,18 @@ export default class CommentVoteManager {
                   total_vote_score: { decrement: 1 },
                 },
         });
+
+        await tx.user.update({
+          where: { id: poster_id },
+          data:
+            vote_type === 'UPVOTE'
+              ? {
+                  comment_karma: { increment: 1 },
+                }
+              : {
+                  comment_karma: { decrement: 1 },
+                },
+        });
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -46,7 +63,12 @@ export default class CommentVoteManager {
     }
   }
 
-  async update(comment_id: string, user_id: string, vote_type: VoteType) {
+  async update(
+    comment_id: string,
+    user_id: string,
+    vote_type: VoteType,
+    poster_id: string,
+  ) {
     try {
       await this.prisma.$transaction(async (tx) => {
         await tx.commentVote.update({
@@ -73,6 +95,18 @@ export default class CommentVoteManager {
                   total_vote_score: { increment: 2 },
                 },
         });
+
+        await tx.user.update({
+          where: { id: poster_id },
+          data:
+            vote_type === 'DOWNVOTE'
+              ? {
+                  comment_karma: { decrement: 2 },
+                }
+              : {
+                  comment_karma: { increment: 2 },
+                },
+        });
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -86,6 +120,7 @@ export default class CommentVoteManager {
     comment_id: string,
     user_id: string,
     previous_vote_type: VoteType,
+    poster_id: string,
   ) {
     try {
       await this.prisma.$transaction(async (tx) => {
@@ -106,6 +141,18 @@ export default class CommentVoteManager {
               : {
                   upvote_count: { decrement: 1 },
                   total_vote_score: { decrement: 1 },
+                },
+        });
+
+        await tx.user.update({
+          where: { id: poster_id },
+          data:
+            previous_vote_type === 'DOWNVOTE'
+              ? {
+                  comment_karma: { increment: 1 },
+                }
+              : {
+                  comment_karma: { decrement: 1 },
                 },
         });
       });

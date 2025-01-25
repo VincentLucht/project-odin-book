@@ -19,7 +19,7 @@ class CommentVoteController {
       }
 
       const comment = await db.comment.getById(comment_id);
-      if (!comment) {
+      if (!comment || !comment.user_id) {
         return res.status(404).json({ message: 'Comment not found' });
       }
       const post = await db.post.getById(comment.post_id);
@@ -54,13 +54,23 @@ class CommentVoteController {
             .json({ message: 'You already voted for this comment' });
         }
 
-        await db.commentVote.update(comment_id, user_id, vote_type);
+        await db.commentVote.update(
+          comment_id,
+          user_id,
+          vote_type,
+          comment.user_id,
+        );
         return res
           .status(200)
           .json({ message: 'Successfully updated comment vote' });
       }
 
-      await db.commentVote.create(comment_id, user_id, vote_type);
+      await db.commentVote.create(
+        comment_id,
+        user_id,
+        vote_type,
+        comment.user_id,
+      );
 
       return res.status(201).json({
         message: 'Successfully voted for Comment',
@@ -87,7 +97,7 @@ class CommentVoteController {
       }
 
       const comment = await db.comment.getById(comment_id);
-      if (!comment) {
+      if (!comment || !comment.user_id) {
         return res.status(404).json({ message: 'Comment not found' });
       }
       const post = await db.post.getById(comment.post_id);
@@ -119,7 +129,12 @@ class CommentVoteController {
         return res.status(404).json({ message: 'Vote not found' });
       }
 
-      await db.commentVote.delete(comment_id, user_id, vote.vote_type);
+      await db.commentVote.delete(
+        comment_id,
+        user_id,
+        vote.vote_type,
+        comment.user_id,
+      );
 
       return res.status(200).json({
         message: 'Successfully deleted comment vote',
