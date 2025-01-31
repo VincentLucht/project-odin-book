@@ -33,7 +33,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             </Route>
           </Routes>
 
-          <ToastContainer theme="dark" />
+          <ToastContainer theme="dark" className="mt-12" />
         </ScreenSizeProvider>
       </AuthProvider>
     </BrowserRouter>
