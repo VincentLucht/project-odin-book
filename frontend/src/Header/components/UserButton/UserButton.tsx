@@ -2,8 +2,10 @@ import useAuth from '@/context/auth/hook/useAuth';
 
 import LoginButton from '@/Header/components/LoginButton/LoginButton';
 import UserPFP from '@/components/user/UserPFP';
-import DropDownMenu from '@/components/DropDownMenu/DropDownMenu';
+import DropdownMenu from '@/components/DropdownMenu/DropdownMenu';
 import useClickOutside from '@/hooks/useClickOutside';
+import DropdownButton from '@/components/DropdownMenu/components/DropdownButton';
+import { SettingsIcon, LogOutIcon } from 'lucide-react';
 
 interface UserButtonProps {
   showDropDown: boolean;
@@ -16,7 +18,7 @@ export default function UserButton({
   setShowDropDown,
   dropdownId,
 }: UserButtonProps) {
-  const { isLoggedIn, user } = useAuth();
+  const { isLoggedIn, user, logout } = useAuth();
 
   const dropdownRef = useClickOutside(() => {
     setShowDropDown(null);
@@ -37,11 +39,37 @@ export default function UserButton({
         />
       </div>
 
-      <DropDownMenu
-        setterFunc={setShowDropDown}
-        className={`bg-hover-transition right-[20px] min-w-[256px] rounded-md df
+      <DropdownMenu
+        className={`right-[20px] min-w-[256px] rounded-md transition-all duration-300 df
           ${showDropDown ? 'opacity-100' : 'opacity-0'} `}
-      />
+      >
+        <DropdownButton
+          text="View Profile"
+          subText={user.username}
+          src={`${user.profile_picture_url ? user.profile_picture_url : '/user.svg'}`}
+          alt="View Profile"
+          route={`/user/${user.username}`}
+          size="large"
+          imgClassName="rounded-full border h-[32px] w-[32px]"
+          setterFunc={setShowDropDown}
+          show={showDropDown}
+        />
+
+        <DropdownButton
+          text="Settings"
+          icon={<SettingsIcon strokeWidth={1.5} />}
+          route="/user/settings"
+          setterFunc={setShowDropDown}
+          show={showDropDown}
+        />
+
+        <DropdownButton
+          text="Log out"
+          icon={<LogOutIcon className="pl-[2px]" />}
+          show={showDropDown}
+          customFunc={logout}
+        />
+      </DropdownMenu>
     </div>
   );
 }
