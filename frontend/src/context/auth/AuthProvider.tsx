@@ -53,6 +53,7 @@ export default function AuthProvider({ children }: { children: any }) {
     setUser(null);
     setToken(null);
     localStorage.removeItem('reddnir-jwt');
+    toast.info('Successfully logged out');
     navigate('/');
   }, [navigate]);
 
