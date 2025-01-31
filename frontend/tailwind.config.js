@@ -57,7 +57,7 @@ export default {
           '@apply transition-all': {}
         },
         '.dropdown-btn-transition': {
-          '@apply transition-colors hover:bg-hover-gray active:bg-active-gray': {}
+          '@apply transition-all duration-200 hover:bg-hover-gray active:bg-active-gray ease-in-out': {}
         },
         '.center-main': {
           '@apply w-full flex justify-center': {}
