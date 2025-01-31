@@ -42,7 +42,7 @@ model User {
   deleted_at          DateTime?
 
   post_karma    Int @default(0)
-  comment_karma Int @default(0) 
+  comment_karma Int @default(0)
 
   banned_users        BannedUser[]
   user_communities    UserCommunity[]
@@ -119,16 +119,16 @@ model CommunityTopics {
 }
 
 model Community {
-  id                          String   @id @default(uuid())
-  name                        String   @unique @db.VarChar(30)
-  description                 String?  @db.VarChar(500)
-  profile_picture_url_desktop String?
-  profile_picture_url_mobile  String?
-  banner_url                  String?
-  created_at                  DateTime @default(now())
-  is_mature                   Boolean  @default(false)
-  is_post_flair_required      Boolean  @default(false)
-  allow_basic_user_posts      Boolean  @default(true)
+  id                     String   @id @default(uuid())
+  name                   String   @unique @db.VarChar(30)
+  description            String?  @db.VarChar(500)
+  profile_picture_url    String?
+  banner_url_desktop     String?
+  banner_url_mobile      String?
+  created_at             DateTime @default(now())
+  is_mature              Boolean  @default(false)
+  is_post_flair_required Boolean  @default(false)
+  allow_basic_user_posts Boolean  @default(true)
 
   type             CommunityType
   community_topics CommunityTopics[]
@@ -160,22 +160,23 @@ enum PostType {
 }
 
 model Post {
-  id               String    @id @default(uuid())
-  community_id     String
-  community        Community @relation(fields: [community_id], references: [id])
-  poster_id        String
-  post             User      @relation(fields: [poster_id], references: [id])
-  title            String    @db.VarChar(300)
-  body             String    @db.VarChar(40000)
-  created_at       DateTime  @default(now())
-  updated_at       DateTime  @updatedAt
-  deleted_at       DateTime?
-  is_spoiler       Boolean
-  is_mature        Boolean
-  pinned_at        DateTime?
-  upvote_count     Int       @default(0)
-  downvote_count   Int       @default(0)
-  total_vote_score Int       @default(0)
+  id                  String    @id @default(uuid())
+  community_id        String
+  community           Community @relation(fields: [community_id], references: [id])
+  poster_id           String
+  post                User      @relation(fields: [poster_id], references: [id])
+  title               String    @db.VarChar(300)
+  body                String    @db.VarChar(40000)
+  created_at          DateTime  @default(now())
+  updated_at          DateTime  @updatedAt
+  deleted_at          DateTime?
+  is_spoiler          Boolean
+  is_mature           Boolean
+  pinned_at           DateTime?
+  upvote_count        Int       @default(0)
+  downvote_count      Int       @default(0)
+  total_vote_score    Int       @default(0)
+  total_comment_score Int       @default(0)
 
   post_type           PostType
   comments            Comment[]
@@ -185,6 +186,11 @@ model Post {
   @@index([title])
   @@index([created_at])
   @@index([community_id])
+  @@index([pinned_at])
+  @@index([total_vote_score])
+  @@index([community_id, created_at]) // for sorted by date
+  @@index([community_id, total_vote_score]) // for sorted by score
+  @@index([poster_id, created_at]) // for user post history
 }
 
 model PostVote {
@@ -226,6 +232,10 @@ model Comment {
   @@index([parent_comment_id]) // for comment replies
   @@index([user_id]) // for user comment history
   @@index([created_at])
+  @@index([total_vote_score]) // for score-based sorting
+  @@index([created_at, id]) // for date sorting
+  @@index([user_id, created_at]) // for user history with date sorting
+  @@index([user_id, total_vote_score]) // for user history with score sorting
 }
 
 model CommentVote {
