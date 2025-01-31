@@ -6,7 +6,7 @@ interface UserPFPProps {
 export default function UserPFP({ url, onClick }: UserPFPProps) {
   return (
     <div
-      className="hover:bg-accent-gray bg-hover-transition h-10 w-10 rounded-full df"
+      className="h-10 w-10 cursor-pointer rounded-full df bg-hover-transition hover:bg-accent-gray"
       onClick={() => onClick()}
     >
       <img
