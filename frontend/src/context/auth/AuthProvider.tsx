@@ -2,19 +2,11 @@ import { useState, useEffect, useCallback, useMemo, createContext } from 'react'
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { DBUser } from '@/interface/dbSchema';
 
-export interface TokenUser extends JwtPayload {
-  cake_day: string | null;
-  create_at: string;
-  description: string | null;
-  display_name: string | null;
-  email: string;
+export interface TokenUser extends JwtPayload, DBUser {
   iat: number;
   exp: number;
-  id: string;
-  password: null;
-  profile_picture_url: string | null;
-  username: string;
 }
 
 interface AuthContextType {
