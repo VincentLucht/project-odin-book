@@ -44,6 +44,9 @@ export default {
         '.bg-hover-gray': {
           backgroundColor: '#4A4D51'
         },
+        '.bg-hover-gray-secondary': {
+          backgroundColor: '#4A4D5140'
+        },
         '.bg-active-gray': {
           backgroundColor: '#545759'
         },
@@ -55,7 +58,25 @@ export default {
         },
         '.dropdown-btn-transition': {
           '@apply transition-colors hover:bg-hover-gray active:bg-active-gray': {}
-        }
+        },
+        '.center-main': {
+          '@apply w-full flex justify-center': {}
+        },
+        '.center-main-content': {
+          '@apply grid w-full max-w-[1072px] grid-cols-[1fr_300px] gap-4': {}
+        },
+        '.interaction-button-wrapper': {
+          '@apply flex h-8 items-center gap-1 rounded-full bg-accent-gray': {}
+        },
+        '.interaction-button-arrow': {
+          '@apply h-8 w-8 rounded-full df hover:bg-hover-gray active:bg-active-gray transition-all': {}
+        },
+        '.hover-upvote': {
+          '@apply hover:bg-orange-600 active:bg-orange-700': {}
+        },
+        '.hover-downvote': {
+          '@apply hover:bg-purple-600 active:bg-purple-700': {}
+        },
       };
 
       addUtilities(newUtilities, ['responsive', 'hover']);
