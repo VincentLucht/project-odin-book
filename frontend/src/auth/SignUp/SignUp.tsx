@@ -86,7 +86,8 @@ export default function SignUp() {
   return (
     <div className="h-dvh flex-col df">
       <form
-        className={`w-full max-w-[500px] rounded-xl border ${isMobile ? 'px-4' : 'px-[80px]'} py-4`}
+        className={`w-full max-w-[500px] rounded-xl border ${isMobile ? 'px-4' : 'px-[80px]'} max-h-[90dvh]
+          overflow-y-auto py-4`}
       >
         <h2 className="mb-6 w-full text-center h2">Sign Up</h2>
 
