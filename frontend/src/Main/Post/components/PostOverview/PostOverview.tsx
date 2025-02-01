@@ -4,17 +4,20 @@ import PostInteractionBar from '@/Main/Post/components/PostInteractionBar/PostIn
 
 import getRelativeTime from '@/util/getRelativeTime';
 import IsCommunityMember from '@/Main/Post/components/IsCommunityMember/IsCommunityMember';
+import slugify from 'slugify';
 import handlePostVote from '@/Main/Post/api/handlePostVote';
 
 import { DBPostWithCommunityName } from '@/interface/dbSchema';
 import { UserAndHistory } from '@/Main/user/UserProfile/api/fetchUserProfile';
 import { VoteType } from '@/interface/backendTypes';
+import { NavigateFunction } from 'react-router-dom';
 
 interface PostOverviewProps {
   post: DBPostWithCommunityName;
   userId: string;
   token: string;
   setFetchedUser: React.Dispatch<React.SetStateAction<UserAndHistory | null>>;
+  navigate: NavigateFunction;
 }
 
 export default function PostOverview({
@@ -22,6 +25,7 @@ export default function PostOverview({
   userId,
   token,
   setFetchedUser,
+  navigate,
 }: PostOverviewProps) {
   const userMember = post.community.user_communities;
 
@@ -36,13 +40,20 @@ export default function PostOverview({
     );
   };
 
+  const postRedirect = () => {
+    navigate(
+      `/r/${post.community.name}/${post.id}/${slugify(post.title, { lower: true })}`,
+    );
+  };
+
   return (
-    <div className="">
+    <div>
       <Separator />
 
       <div
         className="my-[6px] rounded-2xl px-2 py-2 transition-all hover:cursor-pointer
           hover:bg-hover-gray-secondary"
+        onClick={postRedirect}
       >
         <div className="flex justify-between">
           <div className="gap-1 text-sm df">
@@ -64,7 +75,13 @@ export default function PostOverview({
           </div>
 
           <div className="flex gap-2">
-            <IsCommunityMember userMember={userMember} userId={userId} />
+            <IsCommunityMember
+              userMember={userMember}
+              userId={userId}
+              token={token}
+              communityId={post.community_id}
+              setFetchedUser={setFetchedUser}
+            />
 
             {/* TODO: Add saved stuff */}
             <Save isSaved={false} />
