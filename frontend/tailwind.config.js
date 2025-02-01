@@ -50,6 +50,9 @@ export default {
         '.bg-active-gray': {
           backgroundColor: '#545759'
         },
+        '.text-bg-gray': {
+          color: 'rgba(37,37,37,255)'
+        },
         '.text-gray-secondary': {
           color: '#B0B5BB'
         },
