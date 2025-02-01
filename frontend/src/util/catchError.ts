@@ -1,11 +1,22 @@
 import { toast } from 'react-toastify';
 
-export default function catchError(error: any, customMessage?: string) {
+interface ErrorWithMessage {
+  message?: string;
+  error?: string;
+}
+
+export default function catchError(error: unknown, customMessage?: string) {
+  const errorMessage =
+    typeof error === 'object' && error
+      ? ((error as ErrorWithMessage).message ?? (error as ErrorWithMessage).error)
+      : null;
+
   const userMessage =
     customMessage ??
-    (error instanceof TypeError
-      ? 'Connection error, please try again'
-      : 'An unexpected error occurred');
+    (errorMessage === 'Load failed'
+      ? 'Connection error - please try again later'
+      : errorMessage) ??
+    'An unexpected error occurred';
 
   toast.error(userMessage);
 }
