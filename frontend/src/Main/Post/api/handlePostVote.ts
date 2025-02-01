@@ -46,6 +46,7 @@ export default async function handlePostVote(
             total_vote_score: getNewScore(value.total_vote_score),
           };
         }
+
         return value;
       }),
     };
