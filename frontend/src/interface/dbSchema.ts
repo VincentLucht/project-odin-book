@@ -52,6 +52,7 @@ export interface DBComment {
 // EXTENSIONS
 export interface DBPostWithCommunityName extends DBPost {
   community: {
+    id: string;
     name: string;
     profile_picture_url: string | null;
     user_communities: { user_id: string }[];

@@ -51,6 +51,7 @@ export default class UserManager {
             },
             community: {
               select: {
+                id: true,
                 name: true,
                 profile_picture_url: true,
                 user_communities: {
