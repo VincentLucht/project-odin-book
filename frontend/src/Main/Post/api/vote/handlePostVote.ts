@@ -1,6 +1,6 @@
 import { VoteType } from '@/interface/backendTypes';
-import deletePostVote from '@/Main/Post/api/deletePostVote';
-import postVote from '@/Main/Post/api/postVote';
+import deletePostVote from '@/Main/Post/api/vote/deletePostVote';
+import postVote from '@/Main/Post/api/vote/postVote';
 import catchError from '@/util/catchError';
 import { UserAndHistory } from '@/Main/user/UserProfile/api/fetchUserProfile';
 
