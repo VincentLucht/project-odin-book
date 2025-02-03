@@ -1,4 +1,5 @@
 import { PostType, PrismaClient } from '@prisma/client/default';
+import { postSelectFields } from '@/db/managers/postManager/util/postUtils';
 
 export default class PostManager {
   constructor(private prisma: PrismaClient) {}
@@ -9,6 +10,42 @@ export default class PostManager {
     });
 
     return post;
+  }
+
+  async getByIdAndCommunity(post_id: string, user_id: string | undefined) {
+    const postAndCommunity = await this.prisma.post.findUnique({
+      where: { id: post_id },
+      select: {
+        ...postSelectFields,
+        poster: {
+          select: { username: true },
+        },
+        post_votes: {
+          where: { user_id },
+          select: { user_id: true, vote_type: true },
+        },
+        community: {
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            profile_picture_url: true,
+            // no banners
+            created_at: true,
+            is_mature: true,
+            // no is_post_flair_required
+            // no allow_basic_user_posts
+            // no owner
+            user_communities: {
+              where: { user_id },
+              select: { user_id: true },
+            },
+          },
+        },
+      },
+    });
+
+    return postAndCommunity;
   }
 
   // ! POST
