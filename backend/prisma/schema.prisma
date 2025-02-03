@@ -164,7 +164,7 @@ model Post {
   community_id        String
   community           Community @relation(fields: [community_id], references: [id])
   poster_id           String
-  post                User      @relation(fields: [poster_id], references: [id])
+  poster              User      @relation(fields: [poster_id], references: [id])
   title               String    @db.VarChar(300)
   body                String    @db.VarChar(40000)
   created_at          DateTime  @default(now())
