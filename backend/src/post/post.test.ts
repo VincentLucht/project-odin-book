@@ -32,6 +32,70 @@ describe('/community', () => {
     jest.resetAllMocks();
   });
 
+  describe('GET /community/post', () => {
+    beforeEach(() => {
+      mockDb.post.getById.mockResolvedValue({ community_id: '1' });
+      mockDb.community.getById.mockResolvedValue({ id: '1', type: 'PUBLIC', allow_basic_user_posts: true, is_post_flair_required: false });
+    });
+
+    const sendRequest = (post_id = 1) => {
+      return request(app)
+        .get(`/post/${post_id}`)
+        .set('Authorization', `Bearer ${token}`);
+    };
+
+    describe('Success cases', () => {
+      it('should fetch post and community', async () => {
+        const response = await sendRequest();
+
+        assert.exp(response, 200, 'Successfully fetched post');
+      });
+    });
+
+    describe('Error cases', () => {
+      it('should handle post not existing', async () => {
+        mockDb.post.getById.mockResolvedValue(false);
+        const response = await sendRequest();
+
+        assert.post.notFound(response);
+      });
+
+      it('should handle community not existing', async () => {
+        mockDb.community.getById.mockResolvedValue(false);
+        const response = await sendRequest();
+
+        assert.community.notFound(response);
+      });
+
+      it('should handle not allowing user to fetch in private community', async () => {
+        mockDb.community.getById.mockResolvedValue({ type: 'PRIVATE' });
+        mockDb.userCommunity.isMember.mockResolvedValue(false);
+        const response = await sendRequest();
+
+        console.log(response.body);
+
+        assert.exp(response, 403, 'You are not part of this community');
+      });
+
+      it('should handle user not allowed to fetch in private community because of ban', async () => {
+        mockDb.community.getById.mockResolvedValue({ type: 'PRIVATE' });
+        mockDb.userCommunity.isMember.mockResolvedValue(true);
+        mockDb.bannedUsers.isBanned.mockResolvedValue(true);
+        const response = await sendRequest();
+
+        assert.exp(response, 403, 'You are banned from this community');
+      });
+
+      it('should handle missing inputs', async () => {
+        const response = await request(app)
+        .get('/post/')
+        .set('Authorization', `Bearer ${token}`);
+
+        expect(response.status).toBe(404);
+      });
+    });
+  });
+
   describe('POST /community/post', () => {
     beforeEach(() => {
       mockDb.user.getById.mockResolvedValue(true);
@@ -41,7 +105,7 @@ describe('/community', () => {
 
     const sendRequest = (body: any) => {
       return request(app)
-        .post('/community/post')
+        .post('/post')
         .set('Authorization', `Bearer ${token}`)
         .send(body);
     };
@@ -217,7 +281,7 @@ describe('/community', () => {
 
     const sendRequest = (body: any) => {
       return request(app)
-        .put('/community/post')
+        .put('/post')
         .set('Authorization', `Bearer ${token}`)
         .send(body);
     };

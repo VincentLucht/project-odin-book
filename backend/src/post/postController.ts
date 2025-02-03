@@ -9,6 +9,64 @@ import isPostTypeValid from '@/post/util/isPostTypeValid';
 import checkCommunityPermissions from '@/util/checkCommunityPermissions';
 
 class PostController {
+  get = asyncHandler(async (req: Request, res: Response) => {
+    if (checkValidationError(req, res)) return;
+
+    const { post_id } = req.params;
+
+    try {
+      let userId = undefined;
+
+      const post = await db.post.getById(post_id);
+      if (!post) {
+        return res.status(404).json({ message: 'Post not found' });
+      }
+      const community = await db.community.getById(post.community_id);
+      if (!community) {
+        return res.status(404).json({ message: 'Community not found' });
+      }
+
+      if (community.type === 'PRIVATE') {
+        if (!req.authData) {
+          return res.status(401).json({
+            message: 'Authentication required for private community content',
+          });
+        }
+
+        const { user_id } = getAuthUser(req.authData);
+        userId = user_id;
+
+        const isMember = await db.userCommunity.isMember(user_id, community.id);
+        if (!isMember) {
+          return res
+            .status(403)
+            .json({ message: 'You are not part of this community' });
+        }
+
+        if (await db.bannedUsers.isBanned(user_id, community.id)) {
+          return res
+            .status(403)
+            .json({ message: 'You are banned from this community' });
+        }
+      }
+
+      const postAndCommunity = await db.post.getByIdAndCommunity(
+        post.id,
+        userId,
+      );
+
+      return res
+        .status(200)
+        .json({ message: 'Successfully fetched post', postAndCommunity });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        message: 'Failed to fetch post',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  });
+
   create = asyncHandler(async (req: Request, res: Response) => {
     if (checkValidationError(req, res)) return;
 
@@ -151,7 +209,6 @@ class PostController {
           .json({ message: 'You are banned from this community' });
       }
 
-      // ! Edit
       await db.post.edit(
         post_id,
         title,

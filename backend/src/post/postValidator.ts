@@ -1,9 +1,17 @@
-import { body } from 'express-validator/lib';
+import { body, param } from 'express-validator/lib';
 import vm from '@/util/validationMessage';
 import isPostTypeValid from '@/post/util/isPostTypeValid';
 
 // prettier-ignore
 class PostValidator {
+  fetchRules() {
+    return [
+      param('post_id').trim()
+        .notEmpty()
+        .withMessage(vm.postIdReq()),
+    ];
+  }
+
   creationRules() {
     return [
       body('community_id').trim()

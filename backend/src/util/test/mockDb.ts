@@ -38,6 +38,7 @@ const mockDb = {
     getById: jest.fn(),
     create: jest.fn(),
     edit: jest.fn(),
+    getByIdAndCommunity: jest.fn(),
   },
   postVote: {
     hasVoted: jest.fn(),

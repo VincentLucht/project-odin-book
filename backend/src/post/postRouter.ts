@@ -3,8 +3,15 @@ import token from '@/auth/token';
 import postValidator from '@/post/postValidator';
 import postController from '@/post/postController';
 
-// /community
+// /post
 const postRouter = express.Router();
+
+postRouter.get(
+  '/:post_id',
+  token.authenticateOptional,
+  postValidator.fetchRules(),
+  postController.get,
+);
 
 postRouter.post(
   '',
