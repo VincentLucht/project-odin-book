@@ -1,8 +1,16 @@
-import { body } from 'express-validator/lib';
+import { body, param } from 'express-validator/lib';
 import vm from '@/util/validationMessage';
 
 // prettier-ignore
 class CommentValidator {
+  fetchRules() {
+    return [
+      param('post_id').trim()
+        .notEmpty()
+        .withMessage(vm.postIdReq()),
+    ];
+  }
+
   creationRules() {
     return [
       body('content').trim()

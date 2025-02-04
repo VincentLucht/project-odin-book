@@ -33,6 +33,77 @@ describe('/community/post/comment', () => {
     jest.resetAllMocks();
   });
 
+  describe('GET /community/post/:post_id', () => {
+    beforeEach(() => {
+      mockDb.post.getById.mockResolvedValue(true);
+      mockDb.community.getById.mockResolvedValue({ id: '1', type: 'PUBLIC' });
+    });
+
+    const sendRequest = () => {
+      return request(app)
+        .get('/post/comment/1')
+        .set('Authorization', `Bearer ${token}`);
+    };
+
+    describe('Success cases', () => {
+      it('should successfully fetch comments from a post', async () => {
+        const response = await sendRequest();
+
+        assert.exp(response, 200, 'Successfully fetched comments');
+      });
+
+      it('should successfully fetch comments from a post inside of a private community', async () => {
+        mockDb.community.getById.mockResolvedValue({ type: 'PRIVATE' });
+        mockDb.userCommunity.isMember.mockResolvedValue(true);
+        mockDb.bannedUsers.isBanned.mockResolvedValue(false);
+        const response = await sendRequest();
+
+        assert.exp(response, 200, 'Successfully fetched comments');
+      });
+    });
+
+    describe('Error cases', () => {
+      it('should handle post not being found', async () => {
+        mockDb.post.getById.mockResolvedValue(null);
+        const response = await sendRequest();
+
+        assert.exp(response, 404, 'Post not found');
+      });
+
+      it('should handle community not being found', async () => {
+        mockDb.community.getById.mockResolvedValue(null);
+        const response = await sendRequest();
+
+        assert.exp(response, 404, 'Community not found');
+      });
+
+      it('should not allow to fetch comments in private community where the user is not a member', async () => {
+        mockDb.community.getById.mockResolvedValue({ type: 'PRIVATE' });
+        mockDb.userCommunity.isMember.mockResolvedValue(false);
+        const response = await sendRequest();
+
+        assert.exp(response, 403, 'You are not part of this community');
+        expect(db.comment.getCommentThreads).not.toHaveBeenCalled();
+      });
+
+      it('should handle user being banned from community', async () => {
+        mockDb.community.getById.mockResolvedValue({ type: 'PRIVATE' });
+        mockDb.userCommunity.isMember.mockResolvedValue(true);
+        mockDb.bannedUsers.isBanned.mockResolvedValue(true);
+        const response = await sendRequest();
+
+        assert.isBanned(response);
+      });
+
+      it('should handle db error', async () => {
+        mockDb.post.getById.mockRejectedValue(new Error('DB error'));
+        const response = await sendRequest();
+
+        assert.dbError(response);
+      });
+    });
+  });
+
   describe('POST /community/post/comment', () => {
     beforeEach(() => {
       mockDb.user.getById.mockResolvedValue(true);
@@ -48,7 +119,7 @@ describe('/community/post/comment', () => {
 
     const sendRequest = (body: any) => {
       return request(app)
-        .post('/community/post/comment')
+        .post('/post/comment')
         .set('Authorization', `Bearer ${token}`)
         .send(body);
     };
@@ -193,7 +264,7 @@ describe('/community/post/comment', () => {
   describe('DELETE /community/post/comment', () => {
     const sendRequest = (body: any) => {
       return request(app)
-        .delete('/community/post/comment')
+        .delete('/post/comment')
         .set('Authorization', `Bearer ${token}`)
         .send(body);
     };

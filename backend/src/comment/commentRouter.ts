@@ -3,8 +3,15 @@ import token from '@/auth/token';
 import commentValidator from '@/comment/commentValidator';
 import commentController from '@/comment/commentController';
 
-// /community/post/comment
+// /post/comment
 const commentRouter = express.Router();
+
+commentRouter.get(
+  '/:post_id',
+  token.authenticateOptional,
+  commentValidator.fetchRules(),
+  commentController.get,
+);
 
 commentRouter.post(
   '',

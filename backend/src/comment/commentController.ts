@@ -5,8 +5,38 @@ import { checkValidationError } from '@/util/checkValidationError';
 import { asyncHandler } from '@/util/asyncHandler';
 import getAuthUser from '@/util/getAuthUser';
 import checkCommunityPermissions from '@/util/checkCommunityPermissions';
+import checkPrivateCommunityMembership from '@/util/checkPrivateCommunityMembership';
 
 class CommentController {
+  // ! GET
+  get = asyncHandler(async (req: Request, res: Response) => {
+    if (checkValidationError(req, res)) return;
+
+    const { post_id } = req.params;
+
+    try {
+      const post = await db.post.getById(post_id);
+      if (!post) {
+        return res.status(404).json({ message: 'Post not found' });
+      }
+
+      await checkPrivateCommunityMembership(db, post, undefined, req, res);
+
+      const comments = await db.comment.getCommentThreads(post.id);
+
+      return res.status(200).json({
+        message: 'Successfully fetched comments',
+        comments,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        message: 'Failed to fetch Comment',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  });
+
   // ! POST
   create = asyncHandler(async (req: Request, res: Response) => {
     if (checkValidationError(req, res)) return;
