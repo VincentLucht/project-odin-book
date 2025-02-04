@@ -6,6 +6,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 2020,
     sourceType: 'module',
+    project: "./tsconfig.json",
   },
   rules: {
     'prettier/prettier': ['error', { endOfLine: 'auto' }],
@@ -40,6 +41,7 @@ module.exports = {
     'newline-per-chained-call': [2, { ignoreChainWithDepth: 2 }], // Enforce newlines between chained method calls up to a specified depth
     'padded-blocks': [2, 'never'], // Disallow padding within blocks
     'template-curly-spacing': [2, 'never'], // Disallow spaces inside curly braces in template strings
+    '@typescript-eslint/no-floating-promises': 'error',
 
     // Prefer destructuring
     'prefer-destructuring': [
