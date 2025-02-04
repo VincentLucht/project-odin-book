@@ -28,6 +28,7 @@ class Token {
     }
 
     this.authenticate = this.authenticate.bind(this);
+    this.authenticateOptional = this.authenticateOptional.bind(this);
   }
 
   // extract and verify token
@@ -66,6 +67,41 @@ class Token {
 
         req.authData = decoded;
         next();
+      },
+    );
+  }
+
+  authenticateOptional(req: Request, res: Response, next: NextFunction) {
+    const authHeader = req.headers['authorization'];
+
+    // If no auth header, continue without authentication
+    if (typeof authHeader !== 'string') {
+      req.authData = undefined;
+      return next();
+    }
+
+    const parts = authHeader.split(' ');
+    if (parts.length !== 2 || parts[0].toLowerCase() !== 'bearer') {
+      req.authData = undefined;
+      return next();
+    }
+
+    const [, token] = parts;
+    req.token = token;
+
+    jwt.verify(
+      token,
+      this.secretKey,
+      { algorithms: this.algorithms },
+      (error, decoded) => {
+        if (error) {
+          // On any token error, continue without authentication
+          req.authData = undefined;
+          return next();
+        }
+
+        req.authData = decoded;
+        return next();
       },
     );
   }
