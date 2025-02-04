@@ -7,6 +7,7 @@ import getAuthUser from '@/util/getAuthUser';
 import isFlairValid from '@/post/util/isFlairValid';
 import isPostTypeValid from '@/post/util/isPostTypeValid';
 import checkCommunityPermissions from '@/util/checkCommunityPermissions';
+import checkPrivateCommunityMembership from '@/util/checkPrivateCommunityMembership';
 
 class PostController {
   get = asyncHandler(async (req: Request, res: Response) => {
@@ -21,33 +22,16 @@ class PostController {
       if (!post) {
         return res.status(404).json({ message: 'Post not found' });
       }
-      const community = await db.community.getById(post.community_id);
-      if (!community) {
-        return res.status(404).json({ message: 'Community not found' });
-      }
 
-      if (community.type === 'PRIVATE') {
-        if (!req.authData) {
-          return res.status(401).json({
-            message: 'Authentication required for private community content',
-          });
-        }
-
-        const { user_id } = getAuthUser(req.authData);
+      const user_id = await checkPrivateCommunityMembership(
+        db,
+        post,
+        userId,
+        req,
+        res,
+      );
+      if (typeof user_id === 'string') {
         userId = user_id;
-
-        const isMember = await db.userCommunity.isMember(user_id, community.id);
-        if (!isMember) {
-          return res
-            .status(403)
-            .json({ message: 'You are not part of this community' });
-        }
-
-        if (await db.bannedUsers.isBanned(user_id, community.id)) {
-          return res
-            .status(403)
-            .json({ message: 'You are banned from this community' });
-        }
       }
 
       const postAndCommunity = await db.post.getByIdAndCommunity(
