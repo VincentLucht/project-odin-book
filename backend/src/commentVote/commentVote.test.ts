@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 import request from 'supertest';
-import express, { response } from 'express';
+import express from 'express';
 import router from '@/routes/router';
 
 import { mockUser } from '@/util/test/testUtil';
@@ -49,7 +49,7 @@ describe('/community/post/comment/vote', () => {
 
     const sendRequest = (body: any) => {
       return request(app)
-        .post('/community/post/comment/vote')
+        .post('/comment/vote')
         .set('Authorization', `Bearer ${token}`)
         .send(body);
     };
@@ -57,6 +57,8 @@ describe('/community/post/comment/vote', () => {
     describe('Success cases', () => {
       it('should successfully upvote a comment', async () => {
         const response = await sendRequest(mockRequest);
+
+        console.log(response.body);
 
         assert.exp(response, 201, 'Successfully voted for Comment');
       });
@@ -158,7 +160,7 @@ describe('/community/post/comment/vote', () => {
   describe('DELETE /comment/post/comment', () => {
     const sendRequest = (body: any) => {
       return request(app)
-        .delete('/community/post/comment/vote')
+        .delete('/comment/vote')
         .set('Authorization', `Bearer ${token}`)
         .send(body);
     };

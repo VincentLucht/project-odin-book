@@ -41,7 +41,7 @@ describe('/community/post/comment', () => {
 
     const sendRequest = () => {
       return request(app)
-        .get('/post/comment/1')
+        .get('/comment/1')
         .set('Authorization', `Bearer ${token}`);
     };
 
@@ -80,7 +80,11 @@ describe('/community/post/comment', () => {
       it('should not allow to fetch comments in private community where the user is not a member', async () => {
         mockDb.community.getById.mockResolvedValue({ type: 'PRIVATE' });
         mockDb.userCommunity.isMember.mockResolvedValue(false);
-        const response = await sendRequest();
+        const response = await request(app)
+          .get('/comment/1')
+          .set('Authorization', `Bearer ${generateToken('otherUserId', 'otherUsername')}`);
+
+          console.log(response.body);
 
         assert.exp(response, 403, 'You are not part of this community');
         expect(db.comment.getCommentThreads).not.toHaveBeenCalled();
@@ -119,7 +123,7 @@ describe('/community/post/comment', () => {
 
     const sendRequest = (body: any) => {
       return request(app)
-        .post('/post/comment')
+        .post('/comment')
         .set('Authorization', `Bearer ${token}`)
         .send(body);
     };
@@ -264,7 +268,7 @@ describe('/community/post/comment', () => {
   describe('DELETE /community/post/comment', () => {
     const sendRequest = (body: any) => {
       return request(app)
-        .delete('/post/comment')
+        .delete('/comment')
         .set('Authorization', `Bearer ${token}`)
         .send(body);
     };

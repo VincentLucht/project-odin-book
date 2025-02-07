@@ -3,7 +3,7 @@ import token from '@/auth/token';
 import commentVoteValidator from '@/commentVote/commentVoteValidator';
 import commentVoteController from '@/commentVote/commentVoteController';
 
-// /community/post/comment/vote
+// /comment/vote
 const commentVoteRouter = express.Router();
 
 commentVoteRouter.post(
