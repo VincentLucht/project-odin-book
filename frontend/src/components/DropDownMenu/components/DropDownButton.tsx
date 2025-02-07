@@ -29,8 +29,6 @@ export default function DropdownButton({
 }: DropdownButtonProps) {
   const navigate = useNavigate();
 
-  console.log(src);
-
   return (
     <button
       className={`text-mds flex w-full items-center gap-2 rounded-md px-4 py-2 font-light
@@ -41,7 +39,7 @@ export default function DropdownButton({
           setterFunc(null);
           navigate(route);
         }
-        if (customFunc) {
+        if (show && customFunc) {
           customFunc();
         }
       }}
