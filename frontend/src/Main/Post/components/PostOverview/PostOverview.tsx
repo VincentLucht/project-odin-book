@@ -1,13 +1,15 @@
 import Save from '@/components/Interaction/Save';
 import Separator from '@/components/Separator';
 import PostInteractionBar from '@/Main/Post/components/PostInteractionBar/PostInteractionBar';
+import CommunityPFPSmall from '@/components/CommunityPFPSmall';
 
 import getRelativeTime from '@/util/getRelativeTime';
 import IsCommunityMember from '@/Main/Post/components/IsCommunityMember/IsCommunityMember';
 import slugify from 'slugify';
-import handlePostVote from '@/Main/Post/api/handlePostVote';
+import handlePostVote from '@/Main/Post/api/vote/handlePostVote';
 
 import { DBPostWithCommunityName } from '@/interface/dbSchema';
+import { DBPostWithCommunity } from '@/interface/dbSchema';
 import { UserAndHistory } from '@/Main/user/UserProfile/api/fetchUserProfile';
 import { VoteType } from '@/interface/backendTypes';
 import { NavigateFunction } from 'react-router-dom';
@@ -20,6 +22,7 @@ interface PostOverviewProps {
   navigate: NavigateFunction;
 }
 
+// TODO: Add poster info for community browsing posts!
 export default function PostOverview({
   post,
   userId,
@@ -35,15 +38,20 @@ export default function PostOverview({
       userId,
       token,
       voteType,
-      setFetchedUser,
+      setFetchedUser as React.Dispatch<
+        React.SetStateAction<UserAndHistory | DBPostWithCommunity | null>
+      >,
       post?.post_votes?.[0]?.vote_type,
     );
   };
 
-  const postRedirect = () => {
-    navigate(
-      `/r/${post.community.name}/${post.id}/${slugify(post.title, { lower: true })}`,
-    );
+  const postRedirect = (e: React.MouseEvent) => {
+    // Only redirect by clicking the div directly and NOT a button
+    if (!(e.target as HTMLElement).closest('button')) {
+      navigate(
+        `/r/${post.community.name}/${post.id}/${slugify(post.title, { lower: true })}`,
+      );
+    }
   };
 
   return (
@@ -57,19 +65,11 @@ export default function PostOverview({
       >
         <div className="flex justify-between">
           <div className="gap-1 text-sm df">
-            <img
-              src={
-                post.community.profile_picture_url
-                  ? post.community.profile_picture_url
-                  : '/community-default.svg'
-              }
-              alt="Community Profile Picture"
-              className="h-6 w-6 rounded-full border"
-            />
+            <CommunityPFPSmall src={post.community.profile_picture_url} />
 
-            <div>{post.community.name}</div>
+            <div className="font-semibold">r/{post.community.name}</div>
 
-            <div className="ml-1 text-gray-secondary">
+            <div className="text-xs text-gray-secondary">
               • {getRelativeTime(post.created_at)}
             </div>
           </div>
