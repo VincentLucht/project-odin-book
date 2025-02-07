@@ -8,8 +8,11 @@ import SignUp from '@/auth/SignUp/SignUp';
 import Layout from '@/Main/Layout/Layout';
 
 import Main from '@/Main/Main';
+
 import UserSettings from '@/Main/user/UserSettings/UserSettings';
 import UserProfile from '@/Main/user/UserProfile/UserProfile';
+
+import Post from '@/Main/Post/Post';
 
 import ScreenSizeProvider from '@/context/screen/ScreenSizeProvider';
 import AuthProvider from '@/context/auth/AuthProvider';
@@ -28,12 +31,17 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 
             <Route path="/" element={<Layout />}>
               <Route index element={<Main />} />
+
+              {/* USER */}
               <Route path="user/settings" element={<UserSettings />} />
               <Route path="user/:username" element={<UserProfile />} />
+
+              {/* POST */}
+              <Route path="r/:communityName/:postId/:postName?" element={<Post />} />
             </Route>
           </Routes>
 
-          <ToastContainer theme="dark" className="mt-12" />
+          <ToastContainer theme="dark" position="bottom-right" />
         </ScreenSizeProvider>
       </AuthProvider>
     </BrowserRouter>
