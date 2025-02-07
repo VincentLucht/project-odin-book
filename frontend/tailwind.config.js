@@ -71,10 +71,19 @@ export default {
         '.interaction-button-wrapper': {
           '@apply flex h-8 items-center gap-1 rounded-full bg-accent-gray': {}
         },
+        '.interaction-button-wrapper-secondary': {
+          '@apply flex h-8 items-center gap-1 rounded-full': {}
+        },
         '.interaction-button-arrow': {
           '@apply h-8 w-8 rounded-full df hover:bg-hover-gray active:bg-active-gray transition-all': {}
         },
+        '.interaction-button-arrow-secondary': {
+          '@apply h-8 w-8 rounded-full df hover:bg-hover-gray active:bg-active-gray transition-all': {}
+        },
         '.hover-upvote': {
+          '@apply hover:bg-orange-600 active:bg-orange-700': {}
+        },
+        '.hover-upvote-comment': {
           '@apply hover:bg-orange-600 active:bg-orange-700': {}
         },
         '.hover-downvote': {
