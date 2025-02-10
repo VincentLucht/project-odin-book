@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { ScreenSizeContext } from '@/context/screen/ScreenSizeProvider';
 
-export default function useIsMobile() {
+export default function useGetScreenSize() {
   return useContext(ScreenSizeContext);
 }
