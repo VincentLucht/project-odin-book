@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '@/context/auth/hook/useAuth';
-import useIsMobile from '@/context/screen/hook/useIsMobile';
+import useGetScreenSize from '@/context/screen/hook/useGetScreenSize';
 
 import handleLogin from '@/auth/Login/util/handleLogin';
 
@@ -22,7 +22,7 @@ export default function Login() {
 
   const navigate = useNavigate();
   const { login: loginAuth } = useAuth();
-  const isMobile = useIsMobile();
+  const { isMobile } = useGetScreenSize();
 
   return (
     <div className="h-dvh flex-col df">

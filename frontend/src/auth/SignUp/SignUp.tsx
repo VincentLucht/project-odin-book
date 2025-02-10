@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '@/context/auth/hook/useAuth';
-import useIsMobile from '@/context/screen/hook/useIsMobile';
+import useGetScreenSize from '@/context/screen/hook/useGetScreenSize';
 
 import signup from '@/auth/SignUp/api/signup';
 import login from '@/auth/Login/api/login';
@@ -28,7 +28,7 @@ export default function SignUp() {
 
   const navigate = useNavigate();
   const { login: loginAuth } = useAuth();
-  const isMobile = useIsMobile();
+  const { isMobile } = useGetScreenSize();
   usePasswordValidation({ password, confirmPassword, setErrors });
 
   const handleSignUp = (username: string, password: string) => {
