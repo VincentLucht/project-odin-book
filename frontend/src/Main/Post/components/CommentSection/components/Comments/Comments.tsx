@@ -4,20 +4,26 @@ import Comment from '@/Main/Post/components/CommentSection/components/Comments/c
 import handleCommentVote from '@/Main/Post/components/CommentSection/components/Comments/api/handleCommentVote';
 
 import { DBCommentWithReplies } from '@/interface/dbSchema';
+import { DBPostWithCommunity } from '@/interface/dbSchema';
 import { VoteType } from '@/interface/backendTypes';
+import { TokenUser } from '@/context/auth/AuthProvider';
 
 interface CommentsProps {
   comments: DBCommentWithReplies[] | null;
-  userId: string | undefined;
+  user: TokenUser | null;
   token: string | null;
+  postId: string;
   setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[] | null>>;
+  setPost: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>;
 }
 
 export default function Comments({
   comments,
-  userId,
+  user,
+  postId,
   token,
   setComments,
+  setPost,
 }: CommentsProps) {
   const navigate = useNavigate();
 
@@ -33,7 +39,7 @@ export default function Comments({
   ) => {
     void handleCommentVote(
       commentId,
-      userId,
+      user?.id,
       voteType,
       token,
       setComments,
@@ -42,15 +48,19 @@ export default function Comments({
   };
 
   return (
-    <div>
+    <div className="my-8">
       {comments.map((comment) => (
         <Comment
           comment={comment}
           depth={0}
-          userId={userId}
+          user={user}
+          token={token}
+          postId={postId}
           navigate={navigate}
           key={comment.id}
           onVote={onVote}
+          setComments={setComments}
+          setPost={setPost}
         />
       ))}
     </div>
