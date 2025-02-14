@@ -49,20 +49,27 @@ export default function Comments({
 
   return (
     <div className="my-8">
-      {comments.map((comment) => (
-        <Comment
-          comment={comment}
-          depth={0}
-          user={user}
-          token={token}
-          postId={postId}
-          navigate={navigate}
-          key={comment.id}
-          onVote={onVote}
-          setComments={setComments}
-          setPost={setPost}
-        />
-      ))}
+      <ul
+        className="comment"
+        style={{ '--left-offset': `${21}px` } as React.CSSProperties}
+      >
+        {comments.map((comment) => (
+          <li key={comment.id}>
+            <Comment
+              comment={comment}
+              depth={0}
+              user={user}
+              token={token}
+              postId={postId}
+              navigate={navigate}
+              key={comment.id}
+              onVote={onVote}
+              setComments={setComments}
+              setPost={setPost}
+            />
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

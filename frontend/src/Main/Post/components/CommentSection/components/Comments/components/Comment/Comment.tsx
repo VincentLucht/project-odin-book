@@ -13,6 +13,7 @@ import { DBPostWithCommunity } from '@/interface/dbSchema';
 import { NavigateFunction } from 'react-router-dom';
 import { VoteType } from '@/interface/backendTypes';
 import { TokenUser } from '@/context/auth/AuthProvider';
+import './css/comment.css';
 
 interface CommentProps {
   comment: DBCommentWithReplies;
@@ -51,7 +52,8 @@ export default function Comment({
   const [commentText, setCommentText] = useState('');
   const [hide, setHide] = useState(false);
 
-  const hasReply = comment.replies === undefined && comment._count.replies >= 1;
+  const hasReplyAtAll = comment.replies === undefined && comment._count.replies >= 1;
+  const hasReply = comment.replies?.length > 0;
 
   const redirectToUser = (username: string) => {
     navigate(`/user/${username}`);
@@ -85,6 +87,7 @@ export default function Comment({
         style={{ marginLeft: `${depth * 30}px` }}
       >
         <div className="flex items-center gap-1">
+          <div className={`${depth > 0 && 'comment-connector-line'}`}></div>
           <UserPFP
             url={comment.user?.profile_picture_url ?? null}
             onClick={() =>
@@ -102,10 +105,12 @@ export default function Comment({
         <div className="flex">
           <div className="grid min-w-11 grid-rows-[1fr_32px]">
             <div className="-mb-[6px] -mt-[3px] df">
-              <div className="h-full max-w-[1px] border border-gray-500"></div>
+              {hasReply && (
+                <div className="h-full max-w-[1px] border border-gray-500"></div>
+              )}
             </div>
 
-            <HideOrShow hide={hide} setHide={setHide} />
+            {hasReply && <HideOrShow hide={hide} setHide={setHide} />}
           </div>
 
           <div>
@@ -125,36 +130,49 @@ export default function Comment({
         </div>
 
         <ReplyEditor
-          depth={0 + 1}
+          depth={depth}
           show={showReply}
           toggleShow={toggleShow}
           setCommentText={setCommentText}
           commentText={commentText}
           postId={postId}
+          commentId={comment.id}
           parentCommentId={comment.id}
           setComments={setComments}
           setPost={setPost}
           user={user}
           token={token}
+          isReply={true}
+          hasReply={hasReply}
         />
 
-        <MoreRepliesButton hasReply={hasReply} parent_comment_id={comment.id} />
+        <MoreRepliesButton
+          hasReplyAtAll={hasReplyAtAll}
+          parent_comment_id={comment.id}
+        />
       </div>
 
-      {comment.replies?.map((commentReply) => (
-        <Comment
-          comment={commentReply}
-          depth={depth + 1}
-          user={user}
-          token={token}
-          postId={postId}
-          navigate={navigate}
-          key={commentReply.id}
-          onVote={onVote}
-          setComments={setComments}
-          setPost={setPost}
-        />
-      ))}
+      <ul
+        className={`${comment.replies?.length > 1 && 'comment'}`}
+        style={{ '--left-offset': `${21 + depth * 30}px` } as React.CSSProperties}
+      >
+        {comment.replies?.map((commentReply) => (
+          <li key={commentReply.id}>
+            <Comment
+              comment={commentReply}
+              depth={depth + 1}
+              user={user}
+              token={token}
+              postId={postId}
+              navigate={navigate}
+              key={commentReply.id}
+              onVote={onVote}
+              setComments={setComments}
+              setPost={setPost}
+            />
+          </li>
+        ))}
+      </ul>
     </>
   );
 }
