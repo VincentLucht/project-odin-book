@@ -13,6 +13,7 @@ import { TokenUser } from '@/context/auth/AuthProvider';
 
 interface ReplyEditorProps {
   show: boolean;
+  repliesHidden: boolean;
   depth: number;
   toggleShow: (wasSubmitted?: boolean) => void;
   commentText: string;
@@ -32,6 +33,7 @@ interface ReplyEditorProps {
 // TODO: Add Text Editor
 export default function ReplyEditor({
   show,
+  repliesHidden,
   depth,
   toggleShow,
   commentText,
@@ -102,7 +104,7 @@ export default function ReplyEditor({
       leaveTo="opacity-0 max-h-0"
     >
       <div className={`${isReply && 'ml-10'}`}>
-        {isReply && hasReply && (
+        {isReply && hasReply && !repliesHidden && (
           <div
             className="width-[2px] absolute -ml-[19px] -mt-[10px] h-24 border-l-[1px] border-r-[1px]
               border-gray-500"

@@ -36,7 +36,6 @@ interface CommentProps {
 // TODO: Add editing comments if you are the creator
 // TODO: Add share/copy functionality
 // TODO: Add save functionality for comment
-// TODO: Add hiding comments
 export default function Comment({
   comment,
   depth,
@@ -50,7 +49,7 @@ export default function Comment({
 }: CommentProps) {
   const [showReply, setShowReply] = useState(false);
   const [commentText, setCommentText] = useState('');
-  const [hide, setHide] = useState(false);
+  const [hideReplies, setHideReplies] = useState(false);
 
   const hasReplyAtAll = comment.replies === undefined && comment._count.replies >= 1;
   const hasReply = comment.replies?.length > 0;
@@ -110,7 +109,7 @@ export default function Comment({
               )}
             </div>
 
-            {hasReply && <HideOrShow hide={hide} setHide={setHide} />}
+            {hasReply && <HideOrShow hide={hideReplies} setHide={setHideReplies} />}
           </div>
 
           <div>
@@ -130,8 +129,9 @@ export default function Comment({
         </div>
 
         <ReplyEditor
-          depth={depth}
           show={showReply}
+          repliesHidden={hideReplies}
+          depth={depth}
           toggleShow={toggleShow}
           setCommentText={setCommentText}
           commentText={commentText}
@@ -152,27 +152,29 @@ export default function Comment({
         />
       </div>
 
-      <ul
-        className={`${comment.replies?.length > 1 && 'comment'}`}
-        style={{ '--left-offset': `${21 + depth * 30}px` } as React.CSSProperties}
-      >
-        {comment.replies?.map((commentReply) => (
-          <li key={commentReply.id}>
-            <Comment
-              comment={commentReply}
-              depth={depth + 1}
-              user={user}
-              token={token}
-              postId={postId}
-              navigate={navigate}
-              key={commentReply.id}
-              onVote={onVote}
-              setComments={setComments}
-              setPost={setPost}
-            />
-          </li>
-        ))}
-      </ul>
+      {!hideReplies && (
+        <ul
+          className={`${comment.replies?.length > 1 && 'comment'}`}
+          style={{ '--left-offset': `${21 + depth * 30}px` } as React.CSSProperties}
+        >
+          {comment.replies?.map((commentReply) => (
+            <li key={commentReply.id}>
+              <Comment
+                comment={commentReply}
+                depth={depth + 1}
+                user={user}
+                token={token}
+                postId={postId}
+                navigate={navigate}
+                key={commentReply.id}
+                onVote={onVote}
+                setComments={setComments}
+                setPost={setPost}
+              />
+            </li>
+          ))}
+        </ul>
+      )}
     </>
   );
 }
