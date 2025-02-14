@@ -23,12 +23,20 @@ export default {
           minHeight: '100dvh',
           maxHeight: '100dvh'
         },
+        '.text-hidden-ellipsis': {
+          '@apply overflow-ellipsis whitespace-nowrap overflow-hidden':
+            {},
+        },  
         '.prm-button': {
           '@apply transform rounded-full px-4 font-bold text-white':
             {},
         },
         '.prm-button-blue': {
           '@apply transform rounded-full bg-blue-500 px-4 font-bold text-white transition-all duration-200 ease-in-out hover:bg-blue-600 active:scale-95 active:bg-blue-700':
+          {},
+        },
+        '.prm-button-red': {
+          '@apply transform rounded-full bg-red-600 px-4 font-bold text-white transition-all duration-200 ease-in-out hover:bg-red-700 active:scale-95 active:bg-red-800':
           {},
         },
         '.prm-button-white': {
@@ -56,8 +64,9 @@ export default {
         '.text-gray-secondary': {
           color: '#B0B5BB'
         },
+        // TODO: Replace it with this class for every header btn
         '.bg-hover-transition': {
-          '@apply transition-all': {}
+          '@apply transition-all h-10 w-10 df rounded-full hover:bg-accent-gray cursor-pointer': {}
         },
         '.dropdown-btn-transition': {
           '@apply transition-all duration-200 hover:bg-hover-gray active:bg-active-gray ease-in-out': {}
