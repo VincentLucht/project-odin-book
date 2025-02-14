@@ -1,5 +1,6 @@
 import { ReactElement } from 'react';
 import useAuth from '@/context/auth/hook/useAuth';
+import './css/dropdown.css';
 
 interface DropdownMenuProps {
   children: ReactElement | ReactElement[];
@@ -12,8 +13,10 @@ export default function DropdownMenu({ children, className }: DropdownMenuProps)
   if (!user) return;
 
   return (
-    // TODO: Add box shadow
-    <div className={`absolute top-[58px] flex-col py-2 df bg-accent-gray ${className}`}>
+    <div
+      className={`dropdown-menu-shadow absolute top-[58px] z-10 flex-col py-2 df bg-accent-gray
+        ${className}`}
+    >
       {children}
     </div>
   );
