@@ -14,6 +14,8 @@ import UserProfile from '@/Main/user/UserProfile/UserProfile';
 
 import Post from '@/Main/Post/Post';
 
+import Create from '@/Main/Create/Create';
+
 import ScreenSizeProvider from '@/context/screen/ScreenSizeProvider';
 import AuthProvider from '@/context/auth/AuthProvider';
 
@@ -38,6 +40,13 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 
               {/* POST */}
               <Route path="r/:communityName/:postId/:postName?" element={<Post />} />
+              <Route
+                path="r/:communityName/:postId/:postName?/:parentCommentId"
+                element={<Post />}
+              />
+
+              {/* CREATION */}
+              <Route path="/create" element={<Create />} />
             </Route>
           </Routes>
 
