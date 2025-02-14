@@ -50,14 +50,26 @@ export interface DBComment {
 }
 
 // EXTENSIONS
+export interface CommunityTypes {
+  type: 'PUBLIC' | 'RESTRICTED' | 'PRIVATE';
+}
+
+export interface VotingRecord {
+  user_id: string;
+  vote_type: VoteType;
+}
+export interface CommunityMembership {
+  user_id: string;
+}
+
 export interface DBPostWithCommunityName extends DBPost {
   community: {
     id: string;
     name: string;
     profile_picture_url: string | null;
-    user_communities: { user_id: string }[];
+    user_communities: CommunityMembership[];
   };
-  post_votes: { user_id: string; vote_type: VoteType }[];
+  post_votes: VotingRecord[];
 }
 
 export interface DBCommentWithCommunityName extends DBComment {
@@ -65,6 +77,27 @@ export interface DBCommentWithCommunityName extends DBComment {
     title: string;
     community: { name: string; profile_picture_url: string | null };
   };
-  user_communities: { user_id: string }[];
-  comment_votes: { user_id: string; vote_type: VoteType }[];
+  user_communities: CommunityMembership[];
+  comment_votes: VotingRecord[];
+}
+
+export interface DBPostWithCommunity extends DBPost {
+  poster: { username: string };
+  post_votes: VotingRecord[];
+  community: {
+    id: string;
+    name: string;
+    description: string | null;
+    profile_picture_url: string | null;
+    created_at: string;
+    is_mature: boolean;
+    user_communities: CommunityMembership[];
+  };
+}
+
+export interface DBCommentWithReplies extends DBComment {
+  user: { username: string; profile_picture_url: string | null } | null;
+  comment_votes: VotingRecord[];
+  replies: DBCommentWithReplies[];
+  _count: { replies: number };
 }
