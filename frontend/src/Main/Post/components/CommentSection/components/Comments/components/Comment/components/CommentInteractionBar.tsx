@@ -59,7 +59,7 @@ export default function CommentInteractionBar({
           <Reply mode="comment" />
         </div>
 
-        <Share mode="comment" />
+        <Share mode="comment" commentId={commentId} />
       </div>
     </div>
   );
