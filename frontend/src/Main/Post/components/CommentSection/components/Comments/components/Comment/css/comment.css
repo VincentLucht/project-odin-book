@@ -16,6 +16,21 @@
   background-color: #6b7280;
 }
 
+.comment-active::before {
+  position: absolute;
+  content: '';
+  display: block;
+  top: 38px;
+  bottom: 40px;
+  margin-left: 20px;
+
+  border-left: 1px;
+  border-right: 1px;
+  width: 2px;
+  /* height: 100%; */
+  background-color: #6b7280;
+}
+
 .comment-connector-line {
   position: absolute;
   width: 13px;
@@ -27,4 +42,17 @@
   border-left: 2px solid #6b7280;
   border-bottom: 2px solid #6b7280;
   border-bottom-left-radius: 9999px;
+}
+
+.comment-connector-line-more-replies {
+  position: absolute;
+  width: 24px;
+  height: 30px;
+
+  top: -20px;
+  margin-left: -20px;
+
+  border-left: 2px solid #6b7280;
+  border-bottom: 2px solid #6b7280;
+  border-bottom-left-radius: 15px;
 }

@@ -83,7 +83,7 @@ export default function Comment({
   return (
     <>
       <div
-        className="flex flex-col gap-1 transition-all"
+        className={`flex flex-col gap-1 transition-all ${depth >= 8 && hasReplyAtAll && 'comment-active'}`}
         style={{ marginLeft: `${depth * 30}px` }}
       >
         <div className="flex items-center gap-1">
