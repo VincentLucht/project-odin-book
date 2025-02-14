@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import getBaseURL from '@/Main/Post/components/CommentSection/util/getBaseURL';
 import { Share2, LinkIcon } from 'lucide-react';
 
@@ -11,6 +11,7 @@ interface ShareProps {
 export default function Share({ mode = 'overview', commentId }: ShareProps) {
   const [copied, setCopied] = useState(false);
   const location = useLocation();
+  const { parentCommentId } = useParams();
 
   const isOverview = mode === 'overview';
   const iconClass = isOverview ? 'h-5 w-5' : 'h-[18px] w-[18px]';
@@ -20,9 +21,15 @@ export default function Share({ mode = 'overview', commentId }: ShareProps) {
     if (!location.pathname) return;
 
     if (mode === 'comment') {
-      void navigator.clipboard.writeText(
-        `${getBaseURL(`${window.location.origin}${location.pathname}`)}/${commentId}`,
-      );
+      if (parentCommentId) {
+        void navigator.clipboard.writeText(
+          `${window.location.origin}${getBaseURL(`${location.pathname}`)}/${commentId}`,
+        );
+      } else {
+        void navigator.clipboard.writeText(
+          `${`${window.location.origin}${location.pathname}/${commentId}`}`,
+        );
+      }
     }
     setCopied(true);
     setTimeout(() => {
