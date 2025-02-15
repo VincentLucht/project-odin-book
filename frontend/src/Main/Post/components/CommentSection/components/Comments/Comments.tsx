@@ -27,7 +27,7 @@ export default function Comments({
 }: CommentsProps) {
   const navigate = useNavigate();
 
-  // TODO: Add proper no comments
+  // TODO: Add proper no comments + loading screen
   if (!comments) {
     return <div>No comments here... Feel free to post one!</div>;
   }
@@ -54,20 +54,18 @@ export default function Comments({
         style={{ '--left-offset': `${21}px` } as React.CSSProperties}
       >
         {comments.map((comment) => (
-          <li key={comment.id}>
-            <Comment
-              comment={comment}
-              depth={0}
-              user={user}
-              token={token}
-              postId={postId}
-              navigate={navigate}
-              key={comment.id}
-              onVote={onVote}
-              setComments={setComments}
-              setPost={setPost}
-            />
-          </li>
+          <Comment
+            comment={comment}
+            depth={0}
+            user={user}
+            token={token}
+            postId={postId}
+            navigate={navigate}
+            key={comment.id}
+            onVote={onVote}
+            setComments={setComments}
+            setPost={setPost}
+          />
         ))}
       </ul>
     </div>
