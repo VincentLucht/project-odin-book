@@ -13,6 +13,7 @@ interface CommentsProps {
   user: TokenUser | null;
   token: string | null;
   postId: string;
+  originalPoster: string;
   setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[] | null>>;
   setPost: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>;
 }
@@ -21,6 +22,7 @@ export default function Comments({
   comments,
   user,
   postId,
+  originalPoster,
   token,
   setComments,
   setPost,
@@ -60,6 +62,7 @@ export default function Comments({
             user={user}
             token={token}
             postId={postId}
+            originalPoster={originalPoster}
             navigate={navigate}
             key={comment.id}
             onVote={onVote}

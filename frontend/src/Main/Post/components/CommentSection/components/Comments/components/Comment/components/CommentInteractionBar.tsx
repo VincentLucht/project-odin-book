@@ -28,7 +28,7 @@ export default function CommentInteractionBar({
   const isDownVote = userVote?.voteType === 'DOWNVOTE';
 
   return (
-    <div>
+    <div className="-ml-[2px] pt-1">
       <div className="flex items-center gap-1">
         <div className="flex h-8 items-center gap-1 rounded-full">
           <Upvote

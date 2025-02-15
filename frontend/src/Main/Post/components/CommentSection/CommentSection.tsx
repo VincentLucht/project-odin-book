@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 
 import Comments from '@/Main/Post/components/CommentSection/components/Comments/Comments';
 import AddComment from '@/Main/Post/components/CommentSection/components/AddComment/AddComment';
@@ -16,6 +14,7 @@ import { TokenUser } from '@/context/auth/AuthProvider';
 
 interface CommentSectionProps {
   postId: string;
+  originalPoster: string;
   user: TokenUser | null;
   token: string | null;
   setPost: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>;
@@ -23,6 +22,7 @@ interface CommentSectionProps {
 
 export default function CommentSection({
   postId,
+  originalPoster,
   user,
   token,
   setPost,
@@ -67,6 +67,7 @@ export default function CommentSection({
         user={user}
         token={token}
         postId={postId}
+        originalPoster={originalPoster}
         setComments={setComments}
         setPost={setPost}
       />

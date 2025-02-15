@@ -17,7 +17,7 @@ import { UserAndHistory } from '@/Main/user/UserProfile/api/fetchUserProfile';
 import { VoteType } from '@/interface/backendTypes';
 
 // TODO: Add loading + not found
-// TODO: Add go back button
+// TODO: Add go back button => but like completely back
 export default function Post() {
   const [post, setPost] = useState<DBPostWithCommunity | null>(null);
   const { communityName, postId, postName } = useParams();
@@ -87,10 +87,16 @@ export default function Post() {
             onVote={onVote}
           />
 
-          <CommentSection postId={post.id} userId={user?.id} token={token} />
+          <CommentSection
+            postId={post.id}
+            originalPoster={post.poster.username}
+            user={user}
+            token={token}
+            setPost={setPost}
+          />
         </div>
 
-        <PostSidebar />
+        <PostSidebar community={post.community} />
       </div>
     </div>
   );

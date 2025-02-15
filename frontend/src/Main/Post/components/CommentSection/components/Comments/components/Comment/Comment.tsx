@@ -21,6 +21,7 @@ interface CommentProps {
   user: TokenUser | null;
   token: string | null;
   postId: string;
+  originalPoster: string;
   navigate: NavigateFunction;
   onVote: (
     commentId: string,
@@ -31,10 +32,9 @@ interface CommentProps {
   setPost: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>;
 }
 
-// TODO: Mark post owner comments as OP
+// TODO: Mark post owner comments as OP <= you were here :)
 // TODO: Add user flair :)
 // TODO: Add editing comments if you are the creator
-// TODO: Add share/copy functionality
 // TODO: Add save functionality for comment
 export default function Comment({
   comment,
@@ -42,6 +42,7 @@ export default function Comment({
   user,
   token,
   postId,
+  originalPoster,
   navigate,
   onVote,
   setComments,
@@ -92,12 +93,17 @@ export default function Comment({
             onClick={() =>
               comment.user?.username && redirectToUser(comment.user.username)
             }
+            classname={`${depth === 0 && '-ml-[2px] mr-[2px]'}`}
           />
 
           <div>{comment.user?.username}</div>
 
+          {comment.user?.username === originalPoster && (
+            <div className="pt-1 text-xs text-blue-500 df">OP</div>
+          )}
+
           <div className="ml-1 text-xs text-gray-secondary">
-            • {getRelativeTime(comment.created_at)}
+            • {getRelativeTime(comment.created_at, true)}
           </div>
         </div>
 
@@ -113,7 +119,11 @@ export default function Comment({
           </div>
 
           <div>
-            <div className="break-all text-[14.5px]">{comment.content}</div>
+            <div
+              className={`break-all text-[14.5px] ${depth === 0 ? 'ml-[5px]' : 'ml-[3px]'}`}
+            >
+              {comment.content}
+            </div>
 
             <CommentInteractionBar
               totalVoteCount={comment.total_vote_score}
@@ -165,6 +175,7 @@ export default function Comment({
                 user={user}
                 token={token}
                 postId={postId}
+                originalPoster={originalPoster}
                 navigate={navigate}
                 key={commentReply.id}
                 onVote={onVote}
