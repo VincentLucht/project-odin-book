@@ -8,6 +8,7 @@ import { DBCommentWithReplies } from '@/interface/dbSchema';
 interface CommentContentProps {
   commentId: string;
   commentText: string;
+  isDeleted: boolean;
   depth: number;
   isEditActive: boolean;
   setIsEditActive: React.Dispatch<React.SetStateAction<boolean>>;
@@ -18,6 +19,7 @@ interface CommentContentProps {
 export default function CommentContent({
   commentId,
   commentText,
+  isDeleted,
   depth,
   isEditActive,
   setIsEditActive,
@@ -42,10 +44,12 @@ export default function CommentContent({
         leaveFrom="opacity-100 max-h-[300px]"
         leaveTo="opacity-0 max-h-0"
       >
-        <div
-          className={`break-all text-[14.5px] ${depth === 0 ? 'ml-[5px]' : 'ml-[3px]'}`}
-        >
-          {commentText}
+        <div className={`break-all text-sm ${depth === 0 ? 'ml-[5px]' : 'ml-[5px]'}`}>
+          {isDeleted ? (
+            <span className="text-gray-400">Comment deleted by user</span>
+          ) : (
+            commentText
+          )}
         </div>
       </Transition>
 

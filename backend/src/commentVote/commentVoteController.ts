@@ -19,6 +19,9 @@ class CommentVoteController {
       }
 
       const comment = await db.comment.getById(comment_id);
+      if (comment?.is_deleted) {
+        return res.status(404).json({ message: 'Comment is deleted' });
+      }
       if (!comment || !comment.user_id) {
         return res.status(404).json({ message: 'Comment not found' });
       }

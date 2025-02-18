@@ -11,6 +11,7 @@ interface EllipsisProps {
   showDropdown: string | null;
   setShowDropdown: React.Dispatch<React.SetStateAction<string | null>>;
   setIsEditActive: React.Dispatch<React.SetStateAction<boolean>>;
+  deleteFunc: () => void;
 }
 
 export default function Ellipsis({
@@ -20,6 +21,7 @@ export default function Ellipsis({
   showDropdown,
   setShowDropdown,
   setIsEditActive,
+  deleteFunc,
 }: EllipsisProps) {
   const divRef = useClickOutside(() => {
     setShowDropdown(null);
@@ -67,14 +69,16 @@ export default function Ellipsis({
           />
         }
         {isUserSelf ? (
-          <DropdownButton
-            text="Delete comment"
-            src={''}
-            alt="Delete comment"
-            imgClassName="rounded-full border h-[32px] w-[32px]"
-            setterFunc={setShowDropdown}
-            show={showDropdown === commentId}
-          />
+          <div className="w-full" onClick={() => deleteFunc()}>
+            <DropdownButton
+              text="Delete comment"
+              src={''}
+              alt="Delete comment"
+              imgClassName="rounded-full border h-[32px] w-[32px]"
+              setterFunc={setShowDropdown}
+              show={showDropdown === commentId}
+            />
+          </div>
         ) : (
           <></>
         )}

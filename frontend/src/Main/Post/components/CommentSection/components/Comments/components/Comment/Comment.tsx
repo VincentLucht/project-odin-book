@@ -101,16 +101,22 @@ export default function Comment({
             classname={`${depth === 0 && '-ml-[2px] mr-[2px]'}`}
           />
 
-          <div>{comment.user?.username}</div>
+          <div className={`text-sm font-bold ${depth === 0 ? '' : 'ml-[4px]'}`}>
+            {comment.is_deleted ? (
+              <span className="text-gray-300">[deleted]</span>
+            ) : (
+              comment.user?.username
+            )}
+          </div>
 
           {comment.user?.username === originalPoster && (
-            <div className="pt-1 text-xs text-blue-500 df">OP</div>
+            <div className="pt-[2px] text-xs text-blue-500 df">OP</div>
           )}
 
           <div className="ml-1 text-xs text-gray-secondary">
             • {getRelativeTime(comment.created_at, true)}
           </div>
-          {comment.edited_at && (
+          {comment.edited_at && !comment.is_deleted && (
             <div className="text-xs text-gray-secondary">
               • edited {getRelativeTime(comment.edited_at, true)}
             </div>
@@ -137,6 +143,7 @@ export default function Comment({
               setIsEditActive={setIsEditActive}
               setComments={setComments}
               token={token}
+              isDeleted={comment.is_deleted}
             />
 
             <CommentInteractionBar
@@ -153,6 +160,8 @@ export default function Comment({
               setShowDropdown={setShowDropdown}
               isEditActive={isEditActive}
               setIsEditActive={setIsEditActive}
+              token={token}
+              setComments={setComments}
             />
           </div>
         </div>
