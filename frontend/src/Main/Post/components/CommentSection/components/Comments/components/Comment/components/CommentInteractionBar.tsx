@@ -14,6 +14,7 @@ interface CommentInteractionBarProps {
   totalVoteCount: number;
   userVote: { hasVoted: boolean; voteType: VoteType | undefined };
   commentId: string;
+  isDeleted: boolean;
   onVoteComment: (
     commentId: string,
     voteType: VoteType,
@@ -33,6 +34,7 @@ export default function CommentInteractionBar({
   totalVoteCount,
   userVote,
   commentId,
+  isDeleted,
   onVoteComment,
   toggleShow,
   isUserSelf,
@@ -97,17 +99,19 @@ export default function CommentInteractionBar({
 
         <Share mode="comment" commentId={commentId} />
 
-        <div>
-          <Ellipsis
-            isUserSelf={isUserSelf}
-            mode="comment"
-            commentId={commentId}
-            showDropdown={showDropdown}
-            setShowDropdown={setShowDropdown}
-            setIsEditActive={setIsEditActive}
-            deleteFunc={deleteComment}
-          />
-        </div>
+        {!isDeleted && (
+          <div>
+            <Ellipsis
+              isUserSelf={isUserSelf}
+              mode="comment"
+              commentId={commentId}
+              showDropdown={showDropdown}
+              setShowDropdown={setShowDropdown}
+              setIsEditActive={setIsEditActive}
+              deleteFunc={deleteComment}
+            />
+          </div>
+        )}
       </div>
     </div>
   ) : (

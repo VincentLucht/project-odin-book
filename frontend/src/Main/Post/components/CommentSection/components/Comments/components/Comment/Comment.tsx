@@ -153,6 +153,7 @@ export default function Comment({
                 voteType: comment?.comment_votes?.[0]?.vote_type,
               }}
               commentId={comment.id}
+              isDeleted={comment.is_deleted}
               onVoteComment={onVote}
               toggleShow={toggleShow}
               isUserSelf={comment.user_id === user?.id}
