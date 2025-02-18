@@ -14,8 +14,7 @@ export default function DropdownMenu({ children, className }: DropdownMenuProps)
 
   return (
     <div
-      className={`dropdown-menu-shadow absolute top-[58px] z-10 flex-col py-2 df bg-accent-gray
-        ${className}`}
+      className={`dropdown-menu-shadow absolute top-[58px] flex-col py-2 df bg-accent-gray ${className}`}
     >
       {children}
     </div>
