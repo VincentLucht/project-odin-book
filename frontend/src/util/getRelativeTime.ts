@@ -11,17 +11,13 @@ export default function getRelativeTime(date: Date, useShortFormat = false): str
   const monthsDiff = now.diff(timestamp, 'month');
   const yearsDiff = now.diff(timestamp, 'year');
 
-  // Handle future dates
-  if (secondsDiff < 0) {
-    return 'in the future';
-  }
-
   // Less than a minute
   if (secondsDiff < 60) {
     if (useShortFormat) {
-      return `${secondsDiff}s ago`;
+      return `${1}m ago`;
     }
-    return secondsDiff === 1 ? '1 second ago' : `${secondsDiff} seconds ago`;
+
+    return '1 minute ago';
   }
 
   // Less than an hour
