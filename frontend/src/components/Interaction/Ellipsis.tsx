@@ -2,7 +2,7 @@ import useClickOutside from '@/hooks/useClickOutside';
 
 import DropdownMenu from '@/components/DropdownMenu/DropdownMenu';
 import DropdownButton from '@/components/DropdownMenu/components/DropdownButton';
-import { EllipsisIcon } from 'lucide-react';
+import { EllipsisIcon, PencilIcon, BookmarkIcon, TrashIcon } from 'lucide-react';
 
 interface EllipsisProps {
   isUserSelf: boolean;
@@ -48,7 +48,7 @@ export default function Ellipsis({
           <div className="w-full" onClick={() => setIsEditActive(true)}>
             <DropdownButton
               text="Edit comment"
-              src={''}
+              icon={mode === 'comment' && <PencilIcon className="h-[22px] w-[22px]" />}
               alt="Edit comment"
               imgClassName="rounded-full border h-[32px] w-[32px]"
               setterFunc={setShowDropdown}
@@ -61,7 +61,7 @@ export default function Ellipsis({
         {
           <DropdownButton
             text="Save comment"
-            src={''}
+            icon={mode === 'comment' && <BookmarkIcon />}
             alt="Save comment"
             imgClassName="rounded-full border h-[32px] w-[32px]"
             setterFunc={setShowDropdown}
@@ -72,7 +72,7 @@ export default function Ellipsis({
           <div className="w-full" onClick={() => deleteFunc()}>
             <DropdownButton
               text="Delete comment"
-              src={''}
+              icon={mode === 'comment' && <TrashIcon />}
               alt="Delete comment"
               imgClassName="rounded-full border h-[32px] w-[32px]"
               setterFunc={setShowDropdown}
