@@ -7,6 +7,10 @@ import getAuthUser from '@/util/getAuthUser';
 import checkCommunityPermissions from '@/util/checkCommunityPermissions';
 import checkPrivateCommunityMembership from '@/util/checkPrivateCommunityMembership';
 
+export interface AuthPayload {
+  id: string | undefined;
+}
+
 class CommentController {
   // ! GET
   get = asyncHandler(async (req: Request, res: Response) => {
@@ -20,9 +24,27 @@ class CommentController {
         return res.status(404).json({ message: 'Post not found' });
       }
 
-      await checkPrivateCommunityMembership(db, post, undefined, req, res);
+      // TODO: HIDE PRIVATE COMMENTS
+      const response = await checkPrivateCommunityMembership(
+        db,
+        post,
+        req.authData,
+        true,
+      );
+      if (!response.ok) {
+        return res
+          .status(response.status ?? 500)
+          .json({ message: response.message });
+      }
 
-      const comments = await db.comment.getCommentThreads(post.id);
+      let comments;
+      if (req.authData) {
+        const { id: userId } = req.authData as AuthPayload;
+
+        comments = await db.comment.getCommentThreads(post.id, userId);
+      } else {
+        comments = await db.comment.getCommentThreads(post.id, undefined);
+      }
 
       return res.status(200).json({
         message: 'Successfully fetched comments',
@@ -37,13 +59,56 @@ class CommentController {
     }
   });
 
+  getMoreReplies = asyncHandler(async (req: Request, res: Response) => {
+    if (checkValidationError(req, res)) return;
+
+    const { post_id, parent_comment_id } = req.params;
+
+    try {
+      const post = await db.post.getById(post_id);
+      if (!post) {
+        return res.status(404).json({ message: 'Post not found' });
+      }
+
+      // TODO: HIDE PRIVATE COMMENTS
+      const response = await checkPrivateCommunityMembership(
+        db,
+        post,
+        req.authData,
+        true,
+      );
+      if (!response.ok) {
+        return res
+          .status(response.status ?? 500)
+          .json({ message: response.message });
+      }
+
+      const { id: userId } = req.authData as AuthPayload;
+
+      const comments = await db.comment.getMoreReplies(
+        parent_comment_id,
+        post.id,
+        userId,
+      );
+
+      return res.status(200).json({
+        message: 'Successfully fetched more replies',
+        comments,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        message: 'Failed to fetch replies',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  });
+
   // ! POST
   create = asyncHandler(async (req: Request, res: Response) => {
     if (checkValidationError(req, res)) return;
 
     const { content, post_id, parent_comment_id } = req.body;
-
-    // TODO: Upvote on creation
 
     try {
       const { user_id } = getAuthUser(req.authData);
@@ -118,6 +183,63 @@ class CommentController {
   });
 
   // ! PUT
+  update = asyncHandler(async (req: Request, res: Response) => {
+    if (checkValidationError(req, res)) return;
+
+    const { comment_id, new_content } = req.body;
+
+    try {
+      const { user_id } = getAuthUser(req.authData);
+      if (!(await db.user.getById(user_id))) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      const comment = await db.comment.getById(comment_id);
+      if (!comment) {
+        return res.status(404).json({ message: 'Comment not found' });
+      }
+      if (comment.is_deleted) {
+        return res.status(410).json({ message: 'Comment is deleted' });
+      }
+      if (comment.user_id !== user_id) {
+        return res
+          .status(403)
+          .json({ message: 'You cannot edit other Comments' });
+      }
+
+      const post = await db.post.getById(comment.post_id);
+      if (!post) {
+        return res.status(404).json({ message: 'Post not found' });
+      }
+
+      const community = await db.community.getById(post.community_id);
+      if (!community) {
+        return res.status(404).json({ message: 'Community not found' });
+      }
+
+      if (await db.bannedUsers.isBanned(user_id, community.id)) {
+        return res
+          .status(403)
+          .json({ message: 'You are banned from this community' });
+      }
+
+      const updatedComment = await db.comment.update(
+        comment.id,
+        user_id,
+        new_content,
+      );
+
+      return res
+        .status(200)
+        .json({ message: 'Successfully updated Comment', updatedComment });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        message: 'Failed to update Comment',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  });
 
   // ! DELETE
   delete = asyncHandler(async (req: Request, res: Response) => {

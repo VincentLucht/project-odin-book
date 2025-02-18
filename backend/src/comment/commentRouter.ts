@@ -13,11 +13,25 @@ commentRouter.get(
   commentController.get,
 );
 
+commentRouter.get(
+  '/:post_id/replies/:parent_comment_id',
+  token.authenticateOptional,
+  commentValidator.fetchMoreRules(),
+  commentController.getMoreReplies,
+);
+
 commentRouter.post(
   '',
   token.authenticate,
   commentValidator.creationRules(),
   commentController.create,
+);
+
+commentRouter.put(
+  '',
+  token.authenticate,
+  commentValidator.updateRules(),
+  commentController.update,
 );
 
 commentRouter.delete(
