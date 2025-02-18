@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Comment from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/Comment';
@@ -27,6 +28,8 @@ export default function Comments({
   setComments,
   setPost,
 }: CommentsProps) {
+  const [showDropdown, setShowDropdown] = useState<string | null>(null);
+
   const navigate = useNavigate();
 
   // TODO: Add proper no comments + loading screen
@@ -68,6 +71,8 @@ export default function Comments({
             onVote={onVote}
             setComments={setComments}
             setPost={setPost}
+            showDropdown={showDropdown}
+            setShowDropdown={setShowDropdown}
           />
         ))}
       </ul>

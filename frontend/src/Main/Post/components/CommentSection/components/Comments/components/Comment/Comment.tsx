@@ -5,6 +5,7 @@ import CommentInteractionBar from '@/Main/Post/components/CommentSection/compone
 import HideOrShow from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/components/HideOrShow';
 import ReplyEditor from '@/Main/Post/components/ReplyEditor/ReplyEditor';
 import MoreRepliesButton from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/components/MoreRepliesButton/MoreRepliesButton';
+import CommentContent from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/components/CommentContent/CommentContent';
 
 import getRelativeTime from '@/util/getRelativeTime';
 
@@ -30,9 +31,10 @@ interface CommentProps {
   ) => void;
   setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[] | null>>;
   setPost: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>;
+  showDropdown: string | null;
+  setShowDropdown: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-// TODO: Mark post owner comments as OP <= you were here :)
 // TODO: Add user flair :)
 // TODO: Add editing comments if you are the creator
 // TODO: Add save functionality for comment
@@ -47,10 +49,13 @@ export default function Comment({
   onVote,
   setComments,
   setPost,
+  showDropdown,
+  setShowDropdown,
 }: CommentProps) {
   const [showReply, setShowReply] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [hideReplies, setHideReplies] = useState(false);
+  const [isEditActive, setIsEditActive] = useState(false);
 
   const hasReplyAtAll = comment.replies === undefined && comment._count.replies >= 1;
   const hasReply = comment.replies?.length > 0;
@@ -105,6 +110,11 @@ export default function Comment({
           <div className="ml-1 text-xs text-gray-secondary">
             • {getRelativeTime(comment.created_at, true)}
           </div>
+          {comment.edited_at && (
+            <div className="text-xs text-gray-secondary">
+              • edited {getRelativeTime(comment.edited_at, true)}
+            </div>
+          )}
         </div>
 
         <div className="flex">
@@ -118,12 +128,16 @@ export default function Comment({
             {hasReply && <HideOrShow hide={hideReplies} setHide={setHideReplies} />}
           </div>
 
-          <div>
-            <div
-              className={`break-all text-[14.5px] ${depth === 0 ? 'ml-[5px]' : 'ml-[3px]'}`}
-            >
-              {comment.content}
-            </div>
+          <div className="w-full">
+            <CommentContent
+              commentId={comment.id}
+              commentText={comment.content}
+              depth={depth}
+              isEditActive={isEditActive}
+              setIsEditActive={setIsEditActive}
+              setComments={setComments}
+              token={token}
+            />
 
             <CommentInteractionBar
               totalVoteCount={comment.total_vote_score}
@@ -134,6 +148,11 @@ export default function Comment({
               commentId={comment.id}
               onVoteComment={onVote}
               toggleShow={toggleShow}
+              isUserSelf={comment.user_id === user?.id}
+              showDropdown={showDropdown}
+              setShowDropdown={setShowDropdown}
+              isEditActive={isEditActive}
+              setIsEditActive={setIsEditActive}
             />
           </div>
         </div>
@@ -181,6 +200,8 @@ export default function Comment({
                 onVote={onVote}
                 setComments={setComments}
                 setPost={setPost}
+                showDropdown={showDropdown}
+                setShowDropdown={setShowDropdown}
               />
             </li>
           ))}
