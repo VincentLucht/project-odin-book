@@ -39,6 +39,7 @@ export interface DBComment {
   content: string;
   created_at: Date;
   updated_at: Date;
+  edited_at: Date;
   is_deleted: boolean;
   upvote_count: number;
   downvote_count: number;
