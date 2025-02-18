@@ -25,7 +25,7 @@ export default async function handlePostVote(
     userId: string,
   ) => {
     if (!prev) return prev;
-    previousState = prev;
+    previousState = { ...prev };
 
     // UserAndHistory
     if ('history' in prev) {

@@ -40,7 +40,7 @@ export default async function handlePostComment(
   const optimisticUpdate = () => {
     setPost((prev) => {
       if (!prev) return prev;
-      previousPostState = prev;
+      previousPostState = { ...prev };
 
       return { ...prev, total_comment_score: prev.total_comment_score + 1 };
     });
@@ -66,7 +66,7 @@ export default async function handlePostComment(
 
     setComments((prev) => {
       if (!prev) return prev;
-      previousCommentState = prev;
+      previousCommentState = JSON.parse(JSON.stringify(prev)) as DBCommentWithReplies[];
 
       // Comment is NOT reply
       if (!tempComment.parent_comment_id) {

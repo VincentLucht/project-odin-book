@@ -34,7 +34,7 @@ export default function handleEditComment(
 
         setComments((prev) => {
           if (!prev) return prev;
-          previousState = prev;
+          previousState = JSON.parse(JSON.stringify(prev)) as DBCommentWithReplies[];
 
           return prev.map((comment) => updateCommentInTree(comment));
         });
