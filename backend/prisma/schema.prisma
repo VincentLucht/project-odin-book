@@ -242,7 +242,7 @@ model Comment {
 model CommentVote {
   id         String   @id @default(uuid())
   comment_id String
-  comment    Comment  @relation(fields: [comment_id], references: [id])
+  comment    Comment  @relation(fields: [comment_id], references: [id], onDelete: Cascade)
   user_id    String
   user       User     @relation(fields: [user_id], references: [id])
   created_at DateTime @default(now())
