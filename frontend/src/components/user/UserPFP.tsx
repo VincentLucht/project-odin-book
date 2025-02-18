@@ -1,12 +1,14 @@
 interface UserPFPProps {
   url: string | null;
   onClick: () => void;
+  classname?: string;
 }
 
-export default function UserPFP({ url, onClick }: UserPFPProps) {
+export default function UserPFP({ url, onClick, classname }: UserPFPProps) {
   return (
     <div
-      className="h-10 w-10 cursor-pointer rounded-full df bg-hover-transition hover:bg-accent-gray"
+      className={`h-10 w-10 cursor-pointer rounded-full df bg-hover-transition hover:bg-accent-gray
+        ${classname}`}
       onClick={() => onClick()}
     >
       <img
