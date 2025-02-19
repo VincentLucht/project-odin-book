@@ -54,7 +54,7 @@ module.exports = {
     'block-spacing': [2, 'always'], // Enforce consistent spacing inside single-line blocks
     // 'newline-per-chained-call': [2, { ignoreChainWithDepth: 2 }], // Enforce newlines between chained method calls up to a specified depth
     'padded-blocks': [2, 'never'], // Disallow padding within blocks
-    'template-curly-spacing': [2, 'never'], // Disallow spaces inside curly braces in template strings
+    // 'template-curly-spacing': [2, 'never'], // Disallow spaces inside curly braces in template strings
     '@typescript-eslint/no-explicit-any': 'off',
 
     // Prefer destructuring
