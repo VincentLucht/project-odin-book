@@ -50,7 +50,6 @@ export default function CommentContent({
         <div>
           <CommentEditor
             commentId={commentId}
-            show={isEditActive}
             toggleShow={toggleShow}
             editText={editText}
             setEditText={setEditText}

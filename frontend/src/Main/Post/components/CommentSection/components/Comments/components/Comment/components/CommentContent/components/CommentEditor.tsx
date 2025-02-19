@@ -1,5 +1,4 @@
-import { useEffect, useRef } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useRef } from 'react';
 
 import TextareaAutosize from 'react-textarea-autosize';
 
@@ -11,7 +10,6 @@ import { toast } from 'react-toastify';
 import { DBCommentWithReplies } from '@/interface/dbSchema';
 
 interface CommentEditorProps {
-  show: boolean;
   toggleShow: (wasSubmitted?: boolean) => void;
   editText: string;
   setEditText: React.Dispatch<React.SetStateAction<string>>;
@@ -24,7 +22,6 @@ interface CommentEditorProps {
 // TODO: Complete UI (border color => grey, white on focus, buttons)
 // TODO: Add Text Editor
 export default function CommentEditor({
-  show,
   toggleShow,
   editText,
   setEditText,
@@ -34,18 +31,7 @@ export default function CommentEditor({
   setIsEditActive,
 }: CommentEditorProps) {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-
-  const navigate = useNavigate();
-  const location = useLocation();
   useFocusLastPosition(textareaRef);
-
-  useEffect(() => {
-    if (show) {
-      setTimeout(() => {
-        textareaRef.current?.focus();
-      }, 1); // ? Small delay to ensure it's mounted bc of Transition component
-    }
-  }, [show, commentId, location.pathname, navigate]);
 
   const handleSubmit = () => {
     if (!token) {
