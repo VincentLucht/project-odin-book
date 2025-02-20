@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import getBaseURL from '@/Main/Post/components/CommentSection/util/getBaseURL';
 import { Share2, LinkIcon } from 'lucide-react';
@@ -10,6 +10,8 @@ interface ShareProps {
 
 export default function Share({ mode = 'overview', commentId }: ShareProps) {
   const [copied, setCopied] = useState(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const location = useLocation();
   const { parentCommentId } = useParams();
 
@@ -31,9 +33,16 @@ export default function Share({ mode = 'overview', commentId }: ShareProps) {
         );
       }
     }
+
     setCopied(true);
-    setTimeout(() => {
+
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    timeoutRef.current = setTimeout(() => {
       setCopied(false);
+      timeoutRef.current = null;
     }, 1000);
   };
 
