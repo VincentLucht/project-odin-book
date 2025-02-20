@@ -137,9 +137,23 @@ export default class CommentManager {
 
   // ! DELETE
   async delete(comment_id: string, poster_id: string) {
-    await this.prisma.comment.delete({
-      where: { id: comment_id, user_id: poster_id },
-    });
+    try {
+      return await this.prisma.$transaction(async (tx) => {
+        const comment = await tx.comment.delete({
+          where: { id: comment_id, user_id: poster_id },
+        });
+
+        await tx.post.update({
+          where: { id: comment.post_id },
+          data: { total_comment_score: { decrement: 1 } },
+        });
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+      throw new Error('An unknown error occurred');
+    }
   }
 
   async softDelete(comment_id: string, poster_id: string) {
