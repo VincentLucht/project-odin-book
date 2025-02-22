@@ -4,9 +4,10 @@ import useAuth from '@/context/auth/hook/useAuth';
 
 import PostSidebar from '@/Main/Post/components/PostSidebar/PostSidebar';
 import CommunityPFPSmall from '@/components/CommunityPFPSmall';
-import Save from '@/components/Interaction/Save';
 import PostInteractionBar from '@/Main/Post/components/PostInteractionBar/PostInteractionBar';
 import CommentSection from '@/Main/Post/components/CommentSection/CommentSection';
+import PostEditDropdownMenu from '@/Main/Post/components/PostEditor/PostEditDropdownMenu';
+import PostContent from '@/Main/Post/components/PostContent/PostContent';
 
 import handleFetchPost from '@/Main/Post/api/fetch/handleFetchPost';
 import handlePostVote from '@/Main/Post/api/vote/handlePostVote';
@@ -20,9 +21,13 @@ import { VoteType } from '@/interface/backendTypes';
 // TODO: Add go back button => but like completely back
 export default function Post() {
   const [post, setPost] = useState<DBPostWithCommunity | null>(null);
-  const { communityName, postId, postName } = useParams();
+  const [showEditDropdown, setShowEditDropdown] = useState<string | null>(null);
+  const [isEditActive, setIsEditActive] = useState(false);
 
+  const { communityName, postId, postName } = useParams();
   const { user, token } = useAuth();
+  const isUserPoster = user?.id === post?.poster_id;
+  console.log(post);
 
   useEffect(() => {
     handleFetchPost(postId ?? '', token, setPost);
@@ -56,17 +61,35 @@ export default function Post() {
               <div className="flex gap-1">
                 <div className="text-sm font-semibold">r/{post.community.name}</div>
 
-                <div className="df text-gray-secondary">
-                  • {getRelativeTime(post.created_at)}
+                <div className="mt-[2px] gap-1 df text-gray-secondary">
+                  <div className="df">• {getRelativeTime(post.created_at)}</div>
+                  {post.edited_at && !post.deleted_at && (
+                    <div className="text-xs df">
+                      • edited {getRelativeTime(post.edited_at, true)}
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {/* TODO: Add lighter secondary gray */}
-              <div className="font-extralight">{post.poster.username}</div>
+              <div className="font-extralight text-gray-300">
+                {post?.poster?.username}
+              </div>
             </div>
 
             {/* TODO: Add saved */}
-            <Save isSaved={false} />
+            <PostEditDropdownMenu
+              isUserPoster={isUserPoster}
+              postId={post.id}
+              token={token}
+              showDropdown={showEditDropdown}
+              setShowDropdown={setShowEditDropdown}
+              setIsEditActive={setIsEditActive}
+              setPost={setPost}
+              newBody={post.body}
+              isMature={post.is_mature}
+              isSpoiler={post.is_spoiler}
+              community_flair_id={post.post_assigned_flair?.[0]?.community_flair_id}
+            />
           </div>
 
           {/* TITLE */}
@@ -75,7 +98,13 @@ export default function Post() {
           {/* TODO: POST FLAIR */}
 
           {/* CONTENT */}
-          <div className="py-4 pt-2">{post.body}</div>
+          <PostContent
+            post={post}
+            isEditActive={isEditActive}
+            setIsEditActive={setIsEditActive}
+            setPost={setPost}
+            token={token}
+          />
 
           <PostInteractionBar
             totalVoteCount={post.total_vote_score}
@@ -89,7 +118,7 @@ export default function Post() {
 
           <CommentSection
             postId={post.id}
-            originalPoster={post.poster.username}
+            originalPoster={post.poster ? post.poster.username : null}
             user={user}
             token={token}
             setPost={setPost}
