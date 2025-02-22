@@ -6,7 +6,7 @@ import { Transition } from '@headlessui/react';
 
 import handlePostComment from '@/Main/Post/components/ReplyEditor/api/post/handlePostComment';
 import handleInputKeyDown from '@/util/handleInputKeyDown';
-import transitionProps from '@/util/transitionProps';
+import transitionPropsHeight from '@/util/transitionProps';
 
 import { DBPostWithCommunity } from '@/interface/dbSchema';
 import { DBCommentWithReplies } from '@/interface/dbSchema';
@@ -94,7 +94,7 @@ export default function ReplyEditor({
   };
 
   return (
-    <Transition show={show} {...transitionProps}>
+    <Transition show={show} {...transitionPropsHeight}>
       <div className={`${isReply && 'ml-10'}`}>
         {isReply && hasReply && !repliesHidden && (
           <div
