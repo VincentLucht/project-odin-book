@@ -76,7 +76,7 @@ export default class UserManager {
           include: {
             comment_votes: {
               where: { user_id },
-              select: { user_id: true },
+              select: { user_id: true, vote_type: true },
             },
             parent_comment: {
               select: {
@@ -98,6 +98,7 @@ export default class UserManager {
                 },
               },
             },
+            user: { select: { username: true } },
           },
           take: limit,
           skip: offset,
