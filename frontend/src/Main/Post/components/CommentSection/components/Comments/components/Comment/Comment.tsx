@@ -22,13 +22,15 @@ interface CommentProps {
   user: TokenUser | null;
   token: string | null;
   postId: string;
-  originalPoster: string;
+  postName?: string;
+  originalPoster: string | null;
   navigate: NavigateFunction;
   onVote: (
     commentId: string,
     voteType: VoteType,
     previousVoteType: VoteType | undefined,
   ) => void;
+  onDelete: (commentId: string) => void;
   setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[] | null>>;
   setPost: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>;
   showDropdown: string | null;
@@ -44,9 +46,11 @@ export default function Comment({
   user,
   token,
   postId,
+  postName,
   originalPoster,
   navigate,
   onVote,
+  onDelete,
   setComments,
   setPost,
   showDropdown,
@@ -155,14 +159,13 @@ export default function Comment({
               commentId={comment.id}
               isDeleted={comment.is_deleted}
               onVoteComment={onVote}
+              onDeleteComment={onDelete}
               toggleShow={toggleShow}
               isUserSelf={comment.user_id === user?.id}
               showDropdown={showDropdown}
               setShowDropdown={setShowDropdown}
               isEditActive={isEditActive}
               setIsEditActive={setIsEditActive}
-              token={token}
-              setComments={setComments}
             />
           </div>
         </div>
@@ -204,10 +207,12 @@ export default function Comment({
                 user={user}
                 token={token}
                 postId={postId}
+                postName={postName}
                 originalPoster={originalPoster}
                 navigate={navigate}
                 key={commentReply.id}
                 onVote={onVote}
+                onDelete={onDelete}
                 setComments={setComments}
                 setPost={setPost}
                 showDropdown={showDropdown}

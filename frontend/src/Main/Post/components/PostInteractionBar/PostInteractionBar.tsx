@@ -9,6 +9,7 @@ interface PostInteractionBarProps {
   totalCommentCount: number;
   userVote: { hasVoted: boolean; voteType: VoteType | undefined };
   onVote: (voteType: VoteType) => void;
+  mode?: 'post';
 }
 
 export default function PostInteractionBar({
@@ -16,6 +17,7 @@ export default function PostInteractionBar({
   totalCommentCount,
   userVote,
   onVote,
+  mode,
 }: PostInteractionBarProps) {
   const isUpvote = userVote?.voteType === 'UPVOTE';
   const isDownVote = userVote?.voteType === 'DOWNVOTE';
@@ -32,7 +34,10 @@ export default function PostInteractionBar({
           onVote={onVote}
         />
 
-        <span className="-mx-[2px] text-sm font-medium">{totalVoteCount}</span>
+        {/* TODO: Really change this to not visible?? */}
+        <span className="-mx-[2px] text-sm font-medium">
+          {totalVoteCount <= 0 ? 0 : totalVoteCount}
+        </span>
 
         <Downvote
           isActive={userVote.hasVoted && isDownVote}
@@ -43,7 +48,7 @@ export default function PostInteractionBar({
 
       <Reply totalCommentCount={totalCommentCount} />
 
-      <Share />
+      <Share mode={mode && mode} />
     </div>
   );
 }

@@ -4,11 +4,8 @@ import Reply from '@/components/Interaction/Reply';
 import Share from '@/components/Interaction/Share';
 import Ellipsis from '@/components/Interaction/Ellipsis';
 
-import handleDeleteComment from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/api/delete/handleDeleteComment';
-
 import { VoteType } from '@/interface/backendTypes';
-import { DBCommentWithReplies } from '@/interface/dbSchema';
-import { toast } from 'react-toastify';
+import { UrlItems } from '@/components/Interaction/Share';
 
 interface CommentInteractionBarProps {
   totalVoteCount: number;
@@ -20,14 +17,15 @@ interface CommentInteractionBarProps {
     voteType: VoteType,
     previousVoteType: VoteType | undefined,
   ) => void;
+  onDeleteComment: (commentId: string) => void;
   toggleShow: () => void;
   isUserSelf: boolean;
   showDropdown: string | null;
   setShowDropdown: React.Dispatch<React.SetStateAction<string | null>>;
   isEditActive: boolean;
-  setIsEditActive: React.Dispatch<React.SetStateAction<boolean>>;
-  token: string | null;
-  setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[] | null>>;
+  setIsEditActive?: React.Dispatch<React.SetStateAction<boolean>>;
+  urlItems?: UrlItems;
+  onEdit?: () => void;
 }
 
 export default function CommentInteractionBar({
@@ -36,34 +34,18 @@ export default function CommentInteractionBar({
   commentId,
   isDeleted,
   onVoteComment,
+  onDeleteComment,
   toggleShow,
   isUserSelf,
   showDropdown,
   setShowDropdown,
   isEditActive,
   setIsEditActive,
-  token,
-  setComments,
+  urlItems,
+  onEdit,
 }: CommentInteractionBarProps) {
   const isUpvote = userVote?.voteType === 'UPVOTE';
   const isDownVote = userVote?.voteType === 'DOWNVOTE';
-
-  const deleteComment = () => {
-    if (!token) {
-      toast.error('You are not logged in');
-      return;
-    }
-
-    const willDelete = confirm(
-      "Delete comment?\n\nAre you sure you want to delete your comment? You can't undo this.",
-    );
-
-    if (!willDelete) {
-      return;
-    }
-
-    handleDeleteComment(token, commentId, setComments);
-  };
 
   return !isEditActive ? (
     <div className={`-ml-[2px] pt-1 ${isEditActive ? 'opacity-0' : 'opacity-100'}`}>
@@ -97,18 +79,19 @@ export default function CommentInteractionBar({
           <Reply mode="comment" />
         </div>
 
-        <Share mode="comment" commentId={commentId} />
+        <Share mode="comment" commentId={commentId} urlItems={urlItems} />
 
         {!isDeleted && (
-          <div>
+          <div onClick={(e) => e.stopPropagation()}>
             <Ellipsis
               isUserSelf={isUserSelf}
               mode="comment"
               commentId={commentId}
               showDropdown={showDropdown}
               setShowDropdown={setShowDropdown}
-              setIsEditActive={setIsEditActive}
-              deleteFunc={deleteComment}
+              setIsEditActive={setIsEditActive && setIsEditActive}
+              deleteFunc={onDeleteComment}
+              editFunc={onEdit}
             />
           </div>
         )}
