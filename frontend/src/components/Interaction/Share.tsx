@@ -1,21 +1,29 @@
 import { useState, useRef } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import getBaseURL from '@/Main/Post/components/CommentSection/util/getBaseURL';
+import getCommentThreadUrl from '@/util/getCommentThreadUrl';
 import { Share2, LinkIcon } from 'lucide-react';
 
-interface ShareProps {
-  mode?: 'overview' | 'comment';
-  commentId?: string;
+export interface UrlItems {
+  communityName: string;
+  postId: string;
+  postName: string;
 }
 
-export default function Share({ mode = 'overview', commentId }: ShareProps) {
+interface ShareProps {
+  mode?: 'overview' | 'comment' | 'post';
+  commentId?: string;
+  urlItems?: UrlItems;
+}
+
+export default function Share({ mode = 'overview', commentId, urlItems }: ShareProps) {
   const [copied, setCopied] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const location = useLocation();
   const { parentCommentId } = useParams();
 
-  const isOverview = mode === 'overview';
+  const isOverview = mode === 'overview' || mode === 'post';
   const iconClass = isOverview ? 'h-5 w-5' : 'h-[18px] w-[18px]';
   const spanClass = isOverview ? 'text-sm' : 'text-xs';
 
@@ -28,10 +36,18 @@ export default function Share({ mode = 'overview', commentId }: ShareProps) {
           `${window.location.origin}${getBaseURL(`${location.pathname}`)}/${commentId}`,
         );
       } else {
-        void navigator.clipboard.writeText(
-          `${`${window.location.origin}${location.pathname}/${commentId}`}`,
-        );
+        if (urlItems && commentId) {
+          void navigator.clipboard.writeText(getCommentThreadUrl(urlItems, commentId));
+        } else {
+          void navigator.clipboard.writeText(
+            `${`${window.location.origin}${location.pathname}/${commentId}`}`,
+          );
+        }
       }
+    }
+
+    if (mode === 'post') {
+      void navigator.clipboard.writeText(`${window.location.href}`);
     }
 
     setCopied(true);
