@@ -1,7 +1,14 @@
+import { useState } from 'react';
+
 import Save from '@/components/Interaction/Save';
 import Separator from '@/components/Separator';
 import PostInteractionBar from '@/Main/Post/components/PostInteractionBar/PostInteractionBar';
 import CommunityPFPSmall from '@/components/CommunityPFPSmall';
+import HideContent from '@/Main/Post/components/tags/common/HideContent';
+import SpoilerTag from '@/Main/Post/components/tags/common/SpoilerTag';
+import MatureTag from '@/Main/Post/components/tags/common/MatureTag';
+import { Transition } from '@headlessui/react';
+import transitionPropsHeight from '@/util/transitionProps';
 
 import getRelativeTime from '@/util/getRelativeTime';
 import IsCommunityMember from '@/Main/Post/components/IsCommunityMember/IsCommunityMember';
@@ -30,8 +37,16 @@ export default function PostOverview({
   setFetchedUser,
   navigate,
 }: PostOverviewProps) {
-  const userMember = post.community.user_communities;
+  const [showSpoiler, setShowSpoiler] = useState(false);
+  const [showMature, setShowMature] = useState(false);
 
+  const isMature = post.is_mature;
+  const isSpoiler = post.is_spoiler;
+
+  const showBody = showMature || showSpoiler || !(isMature || isSpoiler);
+  const hideContent = !showMature && !showSpoiler && (isMature || isSpoiler);
+
+  const userMember = post.community.user_communities;
   const onVote = (voteType: VoteType) => {
     void handlePostVote(
       post.id,
@@ -89,9 +104,27 @@ export default function PostOverview({
         </div>
 
         <div className="pb-[6px]">
+          <div className="flex items-center gap-1">
+            {isSpoiler && <SpoilerTag />}
+            {isMature && <MatureTag />}
+          </div>
+
           <div className="py-[6px] text-xl font-semibold">{post.title}</div>
 
-          <div>{post.body}</div>
+          <Transition show={showBody} {...transitionPropsHeight}>
+            <div>{post.body}</div>
+          </Transition>
+
+          <Transition show={hideContent} {...transitionPropsHeight}>
+            <div>
+              <HideContent
+                isMature={isMature}
+                isSpoiler={isSpoiler}
+                setShowMature={setShowMature}
+                setShowSpoiler={setShowSpoiler}
+              />
+            </div>
+          </Transition>
 
           {/* TODO: Post Flair */}
         </div>
