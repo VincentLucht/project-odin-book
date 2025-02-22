@@ -1,5 +1,8 @@
+import { useState } from 'react';
+
 import { Transition } from '@headlessui/react';
 import PostEditor from '@/Main/Post/components/PostEditor/PostEditor';
+import HideContent from '@/Main/Post/components/tags/common/HideContent';
 
 import transitionPropsHeight from '@/util/transitionProps';
 import { DBPostWithCommunity } from '@/interface/dbSchema';
@@ -20,6 +23,15 @@ export default function PostContent({
   setPost,
   token,
 }: PostContentProps) {
+  const [showSpoiler, setShowSpoiler] = useState(false);
+  const [showMature, setShowMature] = useState(false);
+
+  const isMature = post.is_mature;
+  const isSpoiler = post.is_spoiler;
+
+  const showBody = showMature || showSpoiler || !(isMature || isSpoiler);
+  const hideContent = !showMature && !showSpoiler && (isMature || isSpoiler);
+
   const toggleShow = () => {
     setIsEditActive((prev) => !prev);
   };
@@ -36,7 +48,22 @@ export default function PostContent({
               </span>
             </div>
           ) : (
-            <span className="py-4 pt-2">{post.body}</span>
+            <div>
+              <Transition show={showBody} {...transitionPropsHeight}>
+                <div>{post.body}</div>
+              </Transition>
+
+              <Transition show={hideContent} {...transitionPropsHeight}>
+                <div>
+                  <HideContent
+                    isMature={isMature}
+                    isSpoiler={isSpoiler}
+                    setShowMature={setShowMature}
+                    setShowSpoiler={setShowSpoiler}
+                  />
+                </div>
+              </Transition>
+            </div>
           )}
         </div>
       </Transition>

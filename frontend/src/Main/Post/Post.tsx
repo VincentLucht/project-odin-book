@@ -8,6 +8,8 @@ import PostInteractionBar from '@/Main/Post/components/PostInteractionBar/PostIn
 import CommentSection from '@/Main/Post/components/CommentSection/CommentSection';
 import PostEditDropdownMenu from '@/Main/Post/components/PostEditor/PostEditDropdownMenu';
 import PostContent from '@/Main/Post/components/PostContent/PostContent';
+import SpoilerTag from '@/Main/Post/components/tags/common/SpoilerTag';
+import MatureTag from '@/Main/Post/components/tags/common/MatureTag';
 
 import handleFetchPost from '@/Main/Post/api/fetch/handleFetchPost';
 import handlePostVote from '@/Main/Post/api/vote/handlePostVote';
@@ -94,6 +96,11 @@ export default function Post() {
 
           {/* TITLE */}
           <div className="mt-1 text-2xl font-medium">{post.title}</div>
+
+          <div className="flex items-center gap-1">
+            {post.is_spoiler && <SpoilerTag />}
+            {post.is_mature && <MatureTag />}
+          </div>
 
           {/* TODO: POST FLAIR */}
 
