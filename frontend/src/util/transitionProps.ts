@@ -1,4 +1,4 @@
-const transitionProps = {
+const transitionPropsHeight = {
   unmount: true,
   enter: 'transition-all duration-200',
   enterFrom: 'opacity-0 max-h-0 overflow-hidden',
@@ -8,4 +8,13 @@ const transitionProps = {
   leaveTo: 'opacity-0 max-h-0',
 };
 
-export default transitionProps;
+export const transitionPropsOpacity = {
+  enter: 'transition-opacity duration-300',
+  enterFrom: 'opacity-0',
+  enterTo: 'opacity-100',
+  leave: 'transition-opacity duration-300',
+  leaveFrom: 'opacity-100',
+  leaveTo: 'opacity-0',
+};
+
+export default transitionPropsHeight;
