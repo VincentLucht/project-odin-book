@@ -1,6 +1,10 @@
+import { useNavigate } from 'react-router-dom';
+
 export default function CreateButton() {
+  const navigate = useNavigate();
+
   return (
-    <div className="hover:bg-accent-gray bg-hover-transition h-10 w-10 rounded-full df">
+    <div className="df bg-hover-transition" onClick={() => navigate('/create')}>
       <img
         src="/plus.svg"
         alt="User profile picture"
