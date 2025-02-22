@@ -163,12 +163,13 @@ model Post {
   id                  String    @id @default(uuid())
   community_id        String
   community           Community @relation(fields: [community_id], references: [id])
-  poster_id           String
-  poster              User      @relation(fields: [poster_id], references: [id])
+  poster_id           String?
+  poster              User?     @relation(fields: [poster_id], references: [id])
   title               String    @db.VarChar(300)
   body                String    @db.VarChar(40000)
   created_at          DateTime  @default(now())
   updated_at          DateTime  @updatedAt
+  edited_at           DateTime?
   deleted_at          DateTime?
   is_spoiler          Boolean
   is_mature           Boolean
