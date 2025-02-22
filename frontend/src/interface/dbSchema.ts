@@ -19,15 +19,16 @@ export interface DBUser {
 export interface DBPost {
   id: string;
   community_id: string;
-  poster_id: string;
+  poster_id: string | null;
   title: string;
   body: string;
   created_at: Date;
   updated_at: Date;
+  edited_at?: Date;
   deleted_at?: Date;
   is_spoiler: boolean;
   is_mature: boolean;
-  pinned_at?: Date;
+  pinned_at?: Date | null;
   upvote_count: number;
   downvote_count: number;
   total_vote_score: number;
@@ -48,6 +49,22 @@ export interface DBComment {
   post_id: string;
   user_id?: string;
   parent_comment_id?: string;
+}
+
+export interface DBPostAssignedFlair {
+  id: string;
+  post_id: string;
+  community_flair_id: string;
+}
+
+export interface DBCommunityFlair {
+  id: string;
+  community_id: string;
+  color: string;
+  emoji: string;
+  is_assignable_to_posts: boolean;
+  is_assignable_to_users: boolean;
+  name: string;
 }
 
 // EXTENSIONS
@@ -80,10 +97,14 @@ export interface DBCommentWithCommunityName extends DBComment {
   };
   user_communities: CommunityMembership[];
   comment_votes: VotingRecord[];
+  user: { username: string };
 }
 
+export interface DBPostAssignedFlairWithCommunityFlair extends DBPostAssignedFlair {
+  community_flair: DBCommunityFlair;
+}
 export interface DBPostWithCommunity extends DBPost {
-  poster: { username: string };
+  poster: { username: string } | null;
   post_votes: VotingRecord[];
   community: {
     id: string;
@@ -94,6 +115,7 @@ export interface DBPostWithCommunity extends DBPost {
     is_mature: boolean;
     user_communities: CommunityMembership[];
   };
+  post_assigned_flair: DBPostAssignedFlairWithCommunityFlair[];
 }
 
 export interface DBCommentWithReplies extends DBComment {
