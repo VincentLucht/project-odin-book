@@ -38,6 +38,10 @@ export default function DropdownButton({
         if (show && route && setterFunc) {
           setterFunc(null);
           navigate(route);
+          return;
+        }
+        if (show && setterFunc) {
+          setterFunc(null);
         }
         if (show && customFunc) {
           customFunc();
