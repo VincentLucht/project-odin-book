@@ -39,9 +39,14 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               <Route path="user/:username" element={<UserProfile />} />
 
               {/* POST */}
+              <Route path="r/:communityName/:postId" element={<Post />} />
               <Route path="r/:communityName/:postId/:postName?" element={<Post />} />
               <Route
                 path="r/:communityName/:postId/:postName?/:parentCommentId"
+                element={<Post />}
+              />
+              <Route
+                path="r/:communityName/:postId/:postName?/:editCommentId"
                 element={<Post />}
               />
 
