@@ -14,7 +14,8 @@ import { TokenUser } from '@/context/auth/AuthProvider';
 
 interface CommentSectionProps {
   postId: string;
-  originalPoster: string;
+  postName?: string;
+  originalPoster: string | null;
   user: TokenUser | null;
   token: string | null;
   setPost: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>;
@@ -22,6 +23,7 @@ interface CommentSectionProps {
 
 export default function CommentSection({
   postId,
+  postName,
   originalPoster,
   user,
   token,
@@ -67,6 +69,7 @@ export default function CommentSection({
         user={user}
         token={token}
         postId={postId}
+        postName={postName ?? ''}
         originalPoster={originalPoster}
         setComments={setComments}
         setPost={setPost}

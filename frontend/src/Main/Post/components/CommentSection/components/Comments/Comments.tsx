@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 
 import Comment from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/Comment';
 import handleCommentVote from '@/Main/Post/components/CommentSection/components/Comments/api/handleCommentVote';
+import handleDeleteComment from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/api/delete/handleDeleteComment';
+import confirmDelete from '@/util/confirmDelete';
+import { toast } from 'react-toastify';
 
 import { DBCommentWithReplies } from '@/interface/dbSchema';
 import { DBPostWithCommunity } from '@/interface/dbSchema';
@@ -14,7 +17,8 @@ interface CommentsProps {
   user: TokenUser | null;
   token: string | null;
   postId: string;
-  originalPoster: string;
+  postName: string;
+  originalPoster: string | null;
   setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[] | null>>;
   setPost: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>;
 }
@@ -23,6 +27,7 @@ export default function Comments({
   comments,
   user,
   postId,
+  postName,
   originalPoster,
   token,
   setComments,
@@ -52,6 +57,17 @@ export default function Comments({
     );
   };
 
+  const onDelete = (commentId: string) => {
+    if (!token) {
+      toast.error('You are not logged in');
+      return;
+    }
+
+    if (confirmDelete('post')) {
+      handleDeleteComment(token, commentId, setComments);
+    }
+  };
+
   return (
     <div className="my-8">
       <ul
@@ -65,10 +81,12 @@ export default function Comments({
             user={user}
             token={token}
             postId={postId}
+            postName={postName}
             originalPoster={originalPoster}
             navigate={navigate}
             key={comment.id}
             onVote={onVote}
+            onDelete={onDelete}
             setComments={setComments}
             setPost={setPost}
             showDropdown={showDropdown}
