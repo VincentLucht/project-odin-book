@@ -68,9 +68,8 @@ export interface DBCommunityFlair {
 }
 
 // EXTENSIONS
-export interface CommunityTypes {
-  type: 'PUBLIC' | 'RESTRICTED' | 'PRIVATE';
-}
+export type CommunityTypes = 'PUBLIC' | 'RESTRICTED' | 'PRIVATE';
+export type UserRoles = 'BASIC' | 'CONTRIBUTOR';
 
 export interface VotingRecord {
   user_id: string;
