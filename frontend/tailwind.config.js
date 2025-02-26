@@ -71,6 +71,10 @@ export default {
         '.dropdown-btn-transition': {
           '@apply transition-all duration-200 hover:bg-hover-gray active:bg-active-gray ease-in-out': {}
         },
+        // TODO: Add active color
+        '.normal-bg-transition' :{
+          '@apply bg-accent-gray hover:bg-active-gray' : {}
+        },
         '.center-main': {
           '@apply w-full flex justify-center': {}
         },
@@ -97,6 +101,15 @@ export default {
         },
         '.hover-downvote': {
           '@apply hover:bg-purple-600 active:bg-purple-700': {}
+        },
+        '.create-btn': {
+          '@apply relative rounded-lg p-2 font-semibold transition-colors hover:bg-accent-gray': {}
+        },
+        '.create-btn-before': {
+          '@apply before:absolute before:top-8 before:left-1/2 before:block before:h-1 before:w-[80%] before:rounded-lg before:bg-blue-500 before:-translate-x-1/2': {}
+        },
+        '.create-comm-btn' :{
+          '@apply h-8 rounded-full p-5 text-sm': {}
         },
       };
 
