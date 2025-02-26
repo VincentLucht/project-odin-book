@@ -9,7 +9,10 @@ interface SearchBarWithImgProps {
   className?: string;
   imgClassName?: string;
   styling?: boolean;
+  icon?: React.ReactNode;
   imgLocation?: 'left' | 'right';
+  maxLength?: number;
+  req?: boolean;
 }
 
 export default function InputWithImg({
@@ -17,11 +20,14 @@ export default function InputWithImg({
   setterFunc,
   src,
   alt,
+  placeholder,
   className = '',
   imgClassName = 'min-h-[26px] min-w-[26px]',
   styling = true,
+  icon,
   imgLocation = 'left',
-  placeholder,
+  maxLength,
+  req = true,
 }: SearchBarWithImgProps) {
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -61,7 +67,7 @@ export default function InputWithImg({
       onFocus={handleFocus}
       onBlur={handleBlur}
     >
-      {imgLocation === 'left' && imageElement}
+      {icon && imgLocation === 'left' ? icon : imgLocation === 'left' && imageElement}
 
       <input
         ref={inputRef}
@@ -71,10 +77,12 @@ export default function InputWithImg({
         type="text"
         value={value}
         onChange={(e) => setterFunc(e.target.value)}
-        placeholder={placeholder}
+        placeholder={`${placeholder}`}
+        maxLength={maxLength}
+        required={req}
       />
 
-      {imgLocation === 'right' && imageElement}
+      {icon && imgLocation === 'right' ? icon : imgLocation === 'right' && imageElement}
     </div>
   );
 }
