@@ -1,0 +1,130 @@
+import { useState, useEffect, useRef } from 'react';
+import useClickOutside from '@/hooks/useClickOutside';
+
+import DropdownMenu from '@/components/DropdownMenu/DropdownMenu';
+import DropdownButton from '@/components/DropdownMenu/components/DropdownButton';
+import CloseButton from '@/components/Interaction/CloseButton';
+
+import handleSearchByName from '@/Main/CreatePost/components/SelectCommunity/api/handleSearchByName';
+import handleGetCreationInfo from '@/Main/CreatePost/components/SelectCommunity/api/handleGetCreationInfo';
+
+import { CommunitySearch } from '@/Main/CreatePost/components/SelectCommunity/api/searchByName';
+import { CreationInfo } from '@/Main/CreatePost/components/SelectCommunity/api/getCreationInfo';
+
+interface SelectCommunityProps {
+  communityName: string | undefined;
+  token: string;
+  activeCommunity: CreationInfo | null;
+  setActiveCommunity: React.Dispatch<React.SetStateAction<CreationInfo | null>>;
+}
+
+export default function SelectCommunity({
+  communityName,
+  token,
+  activeCommunity,
+  setActiveCommunity,
+}: SelectCommunityProps) {
+  const [search, setSearch] = useState(communityName ? communityName : '');
+  const [isSelecting, setIsSelecting] = useState(false);
+  const [foundCommunities, setFoundCommunities] = useState<CommunitySearch[]>([]);
+
+  const divRef = useClickOutside(() => {
+    setIsSelecting(false);
+  });
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (isSelecting && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isSelecting]);
+
+  useEffect(() => {
+    const debounceTimeout = setTimeout(() => {
+      if (isSelecting && search.length > 0) {
+        handleSearchByName(search, token, setFoundCommunities, true);
+      }
+    }, 300);
+
+    return () => clearTimeout(debounceTimeout);
+  }, [isSelecting, search, token]);
+
+  const pfp = activeCommunity?.profile_picture_url
+    ? activeCommunity.profile_picture_url
+    : 'community-default.svg';
+
+  return (
+    <div className="my-2">
+      {activeCommunity ? (
+        <div className="flex items-center gap-2">
+          <button
+            className="gap-[6px] font-semibold df normal-bg-transition create-comm-btn"
+            onClick={() => setActiveCommunity(null)}
+          >
+            <img
+              src={pfp}
+              alt="Community Profile picture"
+              className="rounded-full border"
+            />
+
+            <span>r/{activeCommunity.name}</span>
+          </button>
+
+          <CloseButton
+            customFunc={() => {
+              setIsSelecting(false);
+              setActiveCommunity(null);
+            }}
+          />
+        </div>
+      ) : isSelecting ? (
+        <div ref={divRef} className="relative inline-block">
+          <input
+            className="bg-accent-gray create-comm-btn focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Select a community"
+            type="text"
+            ref={inputRef}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            maxLength={32}
+          />
+
+          <DropdownMenu className="!top-12 z-10 w-[215px] rounded-md">
+            {foundCommunities.length === 0 ? (
+              <span>No communities found</span>
+            ) : (
+              foundCommunities.map((community) => {
+                return (
+                  <DropdownButton
+                    text={`r/${community.name}`}
+                    show={true}
+                    key={community.name}
+                    src={pfp}
+                    imgClassName="h-8 w-8 border rounded-full"
+                    alt="Community profile picture"
+                    subText={`${community.total_members}`}
+                    customFunc={() => {
+                      handleGetCreationInfo(
+                        community.name,
+                        token,
+                        true,
+                        setActiveCommunity,
+                      );
+                    }}
+                  />
+                );
+              })
+            )}
+          </DropdownMenu>
+        </div>
+      ) : (
+        <button
+          onClick={() => setIsSelecting(true)}
+          className="font-semibold transition-colors df normal-bg-transition create-comm-btn"
+        >
+          Select a community
+        </button>
+      )}
+    </div>
+  );
+}
