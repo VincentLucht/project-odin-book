@@ -6,6 +6,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 import handleEditPost from '@/Main/Post/api/edit/handleEditPost';
 import handleInputKeyDown from '@/util/handleInputKeyDown';
 import { toast } from 'react-toastify';
+
 import { DBPostWithCommunity } from '@/interface/dbSchema';
 
 interface PostEditorProps {
@@ -57,7 +58,7 @@ export default function PostEditor({
       <div className="rounded-[20px] border">
         <TextareaAutosize
           className="w-full rounded-t-[20px] p-2 px-4 text-sm bg-gray focus:outline-none focus:ring-0"
-          placeholder="Write your comment..."
+          placeholder="Write your post..."
           value={editText}
           onChange={(e) => setEditText(e.target.value)}
           onKeyDown={(e) => handleInputKeyDown(e, editText, setEditText, handleSubmit)}
