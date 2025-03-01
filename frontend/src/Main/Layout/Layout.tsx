@@ -4,7 +4,7 @@ import useGetScreenSize from '@/context/screen/hook/useGetScreenSize';
 import useClickOutside from '@/hooks/useClickOutside';
 
 import Header from '@/Header/Header';
-import Sidebar from '@/SideBar/Sidebar';
+import Sidebar from '@/Sidebar/Sidebar';
 import { Outlet } from 'react-router-dom';
 
 export default function Layout() {
