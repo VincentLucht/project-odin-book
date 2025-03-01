@@ -14,10 +14,11 @@ import UserProfile from '@/Main/user/UserProfile/UserProfile';
 
 import Post from '@/Main/Post/Post';
 
-import Create from '@/Main/Create/Create';
+import CreatePost from '@/Main/CreatePost/CreatePost';
 
 import ScreenSizeProvider from '@/context/screen/ScreenSizeProvider';
 import AuthProvider from '@/context/auth/AuthProvider';
+import RecentCommunitiesProvider from '@/Sidebar/components/RecentCommunities/context/RecentCommunitiesProvider';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -27,33 +28,36 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
       <AuthProvider>
         <ScreenSizeProvider>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/sign-up" element={<SignUp />} />
+          <RecentCommunitiesProvider>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/sign-up" element={<SignUp />} />
 
-            <Route path="/" element={<Layout />}>
-              <Route index element={<Main />} />
+              <Route path="/" element={<Layout />}>
+                <Route index element={<Main />} />
 
-              {/* USER */}
-              <Route path="user/settings" element={<UserSettings />} />
-              <Route path="user/:username" element={<UserProfile />} />
+                {/* USER */}
+                <Route path="user/settings" element={<UserSettings />} />
+                <Route path="user/:username" element={<UserProfile />} />
 
-              {/* POST */}
-              <Route path="r/:communityName/:postId" element={<Post />} />
-              <Route path="r/:communityName/:postId/:postName?" element={<Post />} />
-              <Route
-                path="r/:communityName/:postId/:postName?/:parentCommentId"
-                element={<Post />}
-              />
-              <Route
-                path="r/:communityName/:postId/:postName?/:editCommentId"
-                element={<Post />}
-              />
+                {/* POST */}
+                <Route path="r/:communityName/:postId" element={<Post />} />
+                <Route path="r/:communityName/:postId/:postName?" element={<Post />} />
+                <Route
+                  path="r/:communityName/:postId/:postName?/:parentCommentId"
+                  element={<Post />}
+                />
+                <Route
+                  path="r/:communityName/:postId/:postName?/:editCommentId"
+                  element={<Post />}
+                />
 
-              {/* CREATION */}
-              <Route path="/create" element={<Create />} />
-            </Route>
-          </Routes>
+                {/* CREATION */}
+                <Route path="/create" element={<CreatePost />} />
+                <Route path="/create/r/:communityName" element={<CreatePost />} />
+              </Route>
+            </Routes>
+          </RecentCommunitiesProvider>
 
           <ToastContainer theme="dark" position="bottom-right" />
         </ScreenSizeProvider>
