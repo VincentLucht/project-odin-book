@@ -58,6 +58,7 @@ model User {
   join_request        JoinRequest[]
   user_assigned_flair UserAssignedFlair[]
   post                Post[]
+  recent_communities  RecentCommunities[]
 }
 
 enum RequestStatus {
@@ -118,6 +119,18 @@ model CommunityTopics {
   @@index([topic_id])
 }
 
+model RecentCommunities {
+  id            String    @id @default(uuid())
+  interacted_at DateTime  @default(now())
+  community_id  String
+  community     Community @relation(fields: [community_id], references: [id])
+  user_id       String
+  user          User      @relation(fields: [user_id], references: [id])
+
+  @@unique([community_id, user_id])
+  @@unique([interacted_at])
+}
+
 model Community {
   id                     String   @id @default(uuid())
   name                   String   @unique @db.VarChar(30)
@@ -129,6 +142,7 @@ model Community {
   is_mature              Boolean  @default(false)
   is_post_flair_required Boolean  @default(false)
   allow_basic_user_posts Boolean  @default(true)
+  total_members          Int      @default(0)
 
   type             CommunityType
   community_topics CommunityTopics[]
@@ -141,6 +155,9 @@ model Community {
   posts                Post[]
   community_flair      CommunityFlair[]
   join_request         JoinRequest[]
+  recent_communities   RecentCommunities[]
+
+  @@index([name])
 }
 
 model CommunityModerator {
