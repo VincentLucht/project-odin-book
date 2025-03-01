@@ -73,7 +73,10 @@ export default {
         },
         // TODO: Add active color
         '.normal-bg-transition' :{
-          '@apply bg-accent-gray hover:bg-active-gray' : {}
+          '@apply transition-colors bg-accent-gray hover:bg-active-gray' : {}
+        },
+        '.bg-transition-hover' :{
+          '@apply transition-colors hover:bg-accent-gray active:bg-active-gray' : {}
         },
         '.center-main': {
           '@apply w-full flex justify-center': {}
@@ -111,6 +114,9 @@ export default {
         '.create-comm-btn' :{
           '@apply h-8 rounded-full p-5 text-sm': {}
         },
+        '.sidebar-btn': {
+          '@apply bg-transition-hover flex h-10 w-[215px] items-center gap-2 rounded-lg px-4 py-1': {}
+        }
       };
 
       addUtilities(newUtilities, ['responsive', 'hover']);
