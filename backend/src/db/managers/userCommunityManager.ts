@@ -24,6 +24,30 @@ export default class UserCommunityManager {
     return member;
   }
 
+  async getJoinedCommunities(user_id: string, offset: number, limit: number) {
+    const joinedCommunities = await this.prisma.userCommunity.findMany({
+      where: { user_id },
+      skip: offset,
+      take: limit,
+      orderBy: {
+        community: {
+          name: 'asc',
+        },
+      },
+      select: {
+        community: {
+          select: {
+            id: true,
+            name: true,
+            profile_picture_url: true,
+          },
+        },
+      },
+    });
+
+    return joinedCommunities;
+  }
+
   // ! CREATE
   async join(user_id: string, community_id: string) {
     await this.prisma.userCommunity.create({

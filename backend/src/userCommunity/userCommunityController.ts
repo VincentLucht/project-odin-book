@@ -47,6 +47,41 @@ class UserCommunityController {
     }
   });
 
+  getJoinedCommunities = asyncHandler(async (req: Request, res: Response) => {
+    if (checkValidationError(req, res)) return;
+
+    try {
+      const { user_id } = getAuthUser(req.authData);
+      if (!(await db.user.getById(user_id))) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 15;
+      const offset = (page - 1) * limit;
+
+      const joinedCommunities = await db.userCommunity.getJoinedCommunities(
+        user_id,
+        offset,
+        limit,
+      );
+
+      const hasMore = joinedCommunities.length >= 15;
+
+      return res.status(201).json({
+        message: 'Successfully fetched joined communities',
+        joinedCommunities,
+        hasMore,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        message: 'Failed to fetch joined communities',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  });
+
   leave = asyncHandler(async (req: Request, res: Response) => {
     if (checkValidationError(req, res)) return;
 
