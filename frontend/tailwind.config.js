@@ -58,6 +58,9 @@ export default {
         '.bg-active-gray': {
           backgroundColor: '#545759'
         },
+        '.border-bg-gray': {
+          borderColor: 'rgba(37,37,37,255)'
+        },
         '.text-bg-gray': {
           color: 'rgba(37,37,37,255)'
         },
@@ -111,12 +114,27 @@ export default {
         '.create-btn-before': {
           '@apply before:absolute before:top-8 before:left-1/2 before:block before:h-1 before:w-[80%] before:rounded-lg before:bg-blue-500 before:-translate-x-1/2': {}
         },
-        '.create-comm-btn' :{
+        '.create-comm-btn' : {
           '@apply h-8 rounded-full p-5 text-sm': {}
         },
+        '.community-sidebar': {
+          '@apply h-fit box-shadow rounded-md bg-gray-700 p-4 flex flex-col gap-2': {}
+        },
+        '.sidebar-heading': {
+          '@apply text-xl font-semibold break-words': {}
+        },
         '.sidebar-btn': {
-          '@apply bg-transition-hover flex h-10 w-[215px] items-center gap-2 rounded-lg px-4 py-1': {}
-        }
+          '@apply bg-transition-hover flex h-10 w-[215px] items-center rounded-lg px-4 py-1': {}
+        },
+        '.focus-blue': {
+          '@apply focus:outline focus:outline-2 focus:outline-blue-500': {}
+        },
+        '.focus-red': {
+          '@apply focus:outline focus:outline-2 focus:outline-red-500': {}
+        },
+        '.box-shadow': {
+          boxShadow: '5px 5px 5px rgba(0, 0, 0, 0.1)'
+        },
       };
 
       addUtilities(newUtilities, ['responsive', 'hover']);
