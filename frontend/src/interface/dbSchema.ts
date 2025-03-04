@@ -67,6 +67,18 @@ export interface DBCommunityFlair {
   name: string;
 }
 
+export interface DBMainTopic {
+  id: string;
+  name: string;
+  topics: DBTopic[];
+}
+export interface DBTopic {
+  id: string;
+  name: string;
+  main_category_id: string;
+  isActive?: boolean;
+}
+
 // EXTENSIONS
 export type CommunityTypes = 'PUBLIC' | 'RESTRICTED' | 'PRIVATE';
 export type UserRoles = 'BASIC' | 'CONTRIBUTOR';
