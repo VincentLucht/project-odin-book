@@ -1,6 +1,7 @@
 import createCommunity from '@/Main/Community/components/CreateCommunity/api/createCommunity';
 import catchError from '@/util/catchError';
 import { CommunityTypes, DBTopic } from '@/interface/dbSchema';
+import { NavigateFunction } from 'react-router-dom';
 
 export default function handleCreateCommunity(
   name: string,
@@ -14,6 +15,7 @@ export default function handleCreateCommunity(
   banner_url_mobile: string | null,
   profile_picture_url: string | null,
   token: string,
+  navigate: NavigateFunction,
 ) {
   const convertedTopics: string[] = [];
   topics.forEach((topic) => {
@@ -34,7 +36,7 @@ export default function handleCreateCommunity(
     token,
   )
     .then(() => {
-      console.log('Created Community');
+      navigate(`/r/${name}`);
     })
     .catch((error) => {
       console.log(error);

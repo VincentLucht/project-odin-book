@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import useAuthGuard from '@/context/auth/hook/useAuthGuard';
 
 import LevelIndicator from '@/Main/Community/components/CreateCommunity/Levels/LevelIndicator';
@@ -29,7 +30,7 @@ export default function CreateCommunity() {
   const [selectedType, setSelectedType] = useState<CommunityTypes>('PUBLIC');
   const [isMature, setIsMature] = useState(false);
   const [isPostFlairRequired, setIsPostFlairRequired] = useState(false);
-  const [allowBasicUserPosts, setAllowBasicUserPosts] = useState(false);
+  const [allowBasicUserPosts, setAllowBasicUserPosts] = useState(true);
 
   const [level, setLevel] = useState(1);
   const [isValid, setIsValid] = useState<IsValid>({
@@ -38,6 +39,7 @@ export default function CreateCommunity() {
     3: false,
     4: true,
   });
+  const navigate = useNavigate();
   const { token } = useAuthGuard();
 
   const increaseLevel = (level: number) => {
@@ -65,6 +67,7 @@ export default function CreateCommunity() {
       bannerUrlMobile,
       iconUrl,
       token,
+      navigate,
     );
   };
 
@@ -78,6 +81,7 @@ export default function CreateCommunity() {
           level={level}
           token={token}
           setIsValid={setIsValid}
+          setLevel={setLevel}
           communityName={communityName}
           setCommunityName={setCommunityName}
           description={description}
