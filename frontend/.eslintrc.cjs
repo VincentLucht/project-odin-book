@@ -58,14 +58,7 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
 
     // Prefer destructuring
-    'prefer-destructuring': [
-      'error',
-      {
-        VariableDeclarator: { array: true, object: true },
-        AssignmentExpression: { array: true, object: true },
-      },
-      { enforceForRenamedProperties: false },
-    ],
+    'prefer-destructuring': 'off',
     'object-shorthand': ['error', 'always'], // Add the object-shorthand rule
 
     // TSX
