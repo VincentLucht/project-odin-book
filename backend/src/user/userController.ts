@@ -43,8 +43,6 @@ class UserController {
   delete = asyncHandler(async (req: Request, res: Response) => {
     if (checkValidationError(req, res)) return;
 
-    const { user_id } = req.body;
-
     try {
       const { user_id } = getAuthUser(req.authData);
       if (!(await db.user.getById(user_id))) {
