@@ -11,6 +11,7 @@ import commentVoteRouter from '@/commentVote/commentVoteRouter';
 import userAssignedFlairRouter from '@/userAssignedFlair/userAssignedFlairRouter';
 import postAssignedFlairRouter from '@/postAssignedFlair/postAssignedFlairRouter';
 import recentCommunitiesRouter from '@/recentCommunities/recentCommunitiesRouter';
+import topicRouter from '@/topic/topicRouter';
 
 const router = express.Router();
 
@@ -18,7 +19,7 @@ router.use('/auth', authRouter);
 router.use('/user', userRouter);
 router.use('/user/recent-communities', recentCommunitiesRouter);
 router.use('/community', userCommunityRouter);
-router.use('/community', communityRouter);
+router.use('', communityRouter);
 router.use('/community/flair', communityFlairRouter);
 router.use('/post', postRouter);
 router.use('/community/post/vote', postVoteRouter);
@@ -26,6 +27,7 @@ router.use('/community/post/flair', postAssignedFlairRouter);
 router.use('/comment', commentRouter);
 router.use('/comment/vote', commentVoteRouter);
 router.use('/community/user/flair', userAssignedFlairRouter);
+router.use('/topic', topicRouter);
 
 router.get('/test', (req, res) => {
   return res.json([{ title: 'test' }, { title: 'test2' }]);
