@@ -1,4 +1,5 @@
 import API_URL from '@/auth/ApiUrl';
+import { IsValid } from '@/Main/Community/components/CreateCommunity/CreateCommunity';
 
 interface IsNameAvailableResponse {
   message: string;
@@ -6,7 +7,12 @@ interface IsNameAvailableResponse {
   isNameAvailable: boolean;
 }
 
-export default async function isNameAvailable(communityName: string, token: string) {
+export default async function isNameAvailable(
+  communityName: string,
+  setIsValid: React.Dispatch<React.SetStateAction<IsValid>>,
+  setLevel: React.Dispatch<React.SetStateAction<number>>,
+  token: string,
+) {
   const response = await fetch(
     `${API_URL}/community/is-name-available?community_name=${communityName}`,
     {
@@ -20,6 +26,10 @@ export default async function isNameAvailable(communityName: string, token: stri
 
   if (!response.ok) {
     const errorObject = (await response.json()) as string;
+    setIsValid((prev) => {
+      return { ...prev, 1: false };
+    });
+    setLevel(1);
     throw errorObject;
   }
 

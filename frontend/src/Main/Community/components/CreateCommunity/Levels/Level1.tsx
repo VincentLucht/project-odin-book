@@ -14,6 +14,7 @@ interface Level1Props {
   level: number;
   token: string;
   setIsValid: React.Dispatch<React.SetStateAction<IsValid>>;
+  setLevel: React.Dispatch<React.SetStateAction<number>>;
   communityName: string;
   setCommunityName: React.Dispatch<React.SetStateAction<string>>;
   description: string;
@@ -25,6 +26,7 @@ export default function Level1({
   level,
   token,
   setIsValid,
+  setLevel,
   communityName,
   setCommunityName,
   description,
@@ -49,7 +51,7 @@ export default function Level1({
   useEffect(() => {
     const debounceTimeout = setTimeout(() => {
       if (communityName.length >= 3) {
-        checkNameAvailability(communityName, token)
+        checkNameAvailability(communityName, setIsValid, setLevel, token)
           .then((response) => {
             setIsNameAvailable(response.isNameAvailable);
           })
@@ -65,7 +67,7 @@ export default function Level1({
     }, 300);
 
     return () => clearTimeout(debounceTimeout);
-  }, [communityName, token]);
+  }, [communityName, setIsValid, setLevel, token]);
 
   if (level !== 1) {
     return;
