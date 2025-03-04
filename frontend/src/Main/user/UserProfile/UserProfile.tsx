@@ -44,7 +44,7 @@ export default function UserProfile() {
   }, [username, page, sortBy]);
 
   return (
-    <div className="center-main">
+    <div className="overflow-y-scroll center-main">
       <div className="center-main-content">
         {fetchedUser ? (
           <div className="w-full min-w-0">
