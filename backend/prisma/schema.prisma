@@ -93,9 +93,9 @@ model UserCommunity {
 }
 
 model MainTopic {
-  id              String  @id @default(uuid())
-  name            String  @unique
-  community_topic Topic[]
+  id     String  @id @default(uuid())
+  name   String  @unique
+  topics Topic[]
 }
 
 model Topic {
@@ -133,7 +133,7 @@ model RecentCommunities {
 
 model Community {
   id                     String   @id @default(uuid())
-  name                   String   @unique @db.VarChar(30)
+  name                   String   @unique @db.VarChar(21)
   description            String?  @db.VarChar(500)
   profile_picture_url    String?
   banner_url_desktop     String?
