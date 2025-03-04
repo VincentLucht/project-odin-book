@@ -12,8 +12,10 @@ import Main from '@/Main/Main';
 import UserSettings from '@/Main/user/UserSettings/UserSettings';
 import UserProfile from '@/Main/user/UserProfile/UserProfile';
 
-import Post from '@/Main/Post/Post';
+import Community from '@/Main/Community/Community';
+import CreateCommunity from '@/Main/Community/components/CreateCommunity/CreateCommunity';
 
+import Post from '@/Main/Post/Post';
 import CreatePost from '@/Main/CreatePost/CreatePost';
 
 import ScreenSizeProvider from '@/context/screen/ScreenSizeProvider';
@@ -40,6 +42,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                 <Route path="user/settings" element={<UserSettings />} />
                 <Route path="user/:username" element={<UserProfile />} />
 
+                {/* COMMUNITY */}
+                <Route path="r/:communityName" element={<Community />} />
+
                 {/* POST */}
                 <Route path="r/:communityName/:postId" element={<Post />} />
                 <Route path="r/:communityName/:postId/:postName?" element={<Post />} />
@@ -53,6 +58,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                 />
 
                 {/* CREATION */}
+                <Route path="/create-community" element={<CreateCommunity />} />
+
                 <Route path="/create" element={<CreatePost />} />
                 <Route path="/create/r/:communityName" element={<CreatePost />} />
               </Route>
