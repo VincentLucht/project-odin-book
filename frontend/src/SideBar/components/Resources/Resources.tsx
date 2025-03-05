@@ -22,7 +22,9 @@ export default function Resources({ navigate }: ResourcesProps) {
         <SidebarButton navigate={() => navigate('/help')} buttonName="Help" />
 
         <SidebarButton
-          navigate={() => navigate('https://github.com/VincentLucht/project-odin-book')}
+          navigate={() =>
+            (window.location.href = 'https://github.com/VincentLucht/project-odin-book')
+          }
           buttonName="Source Code"
         />
       </ShowOrHideTab>
