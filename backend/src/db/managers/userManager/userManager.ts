@@ -31,7 +31,7 @@ export default class UserManager {
   }
 
   async getByUsernameAndHistory(
-    user_id: string,
+    user_id: string | undefined,
     username: string,
     sortBy: SortByUser,
     page: number,
@@ -45,19 +45,23 @@ export default class UserManager {
         ...userSelectFields,
         post: {
           include: {
-            post_votes: {
-              where: { user_id },
-              select: { user_id: true, vote_type: true },
-            },
+            ...(user_id && {
+              post_votes: {
+                where: { user_id },
+                select: { user_id: true, vote_type: true },
+              },
+            }),
             community: {
               select: {
                 id: true,
                 name: true,
                 profile_picture_url: true,
-                user_communities: {
-                  where: { user_id },
-                  select: { user_id: true },
-                },
+                ...(user_id && {
+                  user_communities: {
+                    where: { user_id },
+                    select: { user_id: true },
+                  },
+                }),
               },
             },
           },
@@ -74,10 +78,12 @@ export default class UserManager {
         },
         comment: {
           include: {
-            comment_votes: {
-              where: { user_id },
-              select: { user_id: true, vote_type: true },
-            },
+            ...(user_id && {
+              comment_votes: {
+                where: { user_id },
+                select: { user_id: true, vote_type: true },
+              },
+            }),
             parent_comment: {
               select: {
                 user: {

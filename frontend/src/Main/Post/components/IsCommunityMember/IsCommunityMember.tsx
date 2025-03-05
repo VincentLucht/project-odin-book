@@ -1,15 +1,17 @@
 import handleCommunityMembership from '@/Main/Community/api/handleCommunityMembership';
 
 import { UserAndHistory } from '@/Main/user/UserProfile/api/fetchUserProfile';
+import { NavigateFunction } from 'react-router-dom';
 
 interface IsCommunityMemberProps {
   userMember: {
     user_id: string;
   }[];
-  userId: string;
-  token: string;
+  userId: string | undefined;
+  token: string | null;
   communityId: string;
   setFetchedUser: React.Dispatch<React.SetStateAction<UserAndHistory | null>>;
+  navigate: NavigateFunction;
 }
 
 export default function IsCommunityMember({
@@ -18,22 +20,33 @@ export default function IsCommunityMember({
   token,
   communityId,
   setFetchedUser,
+  navigate,
 }: IsCommunityMemberProps) {
   let isMember = false;
   if (userMember.length && userMember[0].user_id === userId) {
     isMember = true;
   }
 
-  const toggleMembership = () =>
-    handleCommunityMembership(communityId, userId, token, setFetchedUser, isMember);
+  const toggleMembership = () => {
+    if (!userId || !token) {
+      navigate('/login');
+      return;
+    }
+
+    void handleCommunityMembership(
+      communityId,
+      userId,
+      token,
+      setFetchedUser,
+      isMember,
+    );
+  };
 
   return (
     <div className="transition-all">
       {isMember ? (
         <button
-          className="active:text-bg-gray h-6 max-w-[65px] border border-gray-400 text-[13px] !font-semibold
-            transition-all duration-200 ease-in-out df prm-button hover:border-white active:scale-95
-            active:border-gray-200 active:bg-gray-200"
+          className="transparent-btn h-6 max-w-[65px] text-[13px]"
           onClick={toggleMembership}
         >
           Joined

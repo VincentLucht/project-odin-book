@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import useAuthGuard from '@/context/auth/hook/useAuthGuard';
+import useAuth from '@/context/auth/hook/useAuth';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import fetchUserProfile, {
@@ -14,14 +14,13 @@ import UserNotFound from '@/components/partials/UserNotFound';
 import { SortByUser } from '@/interface/backendTypes';
 import { toast } from 'react-toastify';
 
-// TODO: Make this work without being logged in!
 export default function UserProfile() {
   const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState<SortByUser>('new');
   const [fetchedUser, setFetchedUser] = useState<UserAndHistory | null>(null);
   const [showCommentDropdown, setShowCommentDropdown] = useState<string | null>(null);
 
-  const { user, token } = useAuthGuard();
+  const { user, token } = useAuth();
 
   const navigate = useNavigate();
   const path = useParams();
@@ -30,7 +29,7 @@ export default function UserProfile() {
   useEffect(() => {
     if (!username) return;
 
-    fetchUserProfile(username, page, sortBy)
+    fetchUserProfile(username, page, sortBy, token)
       .then((response) => {
         setFetchedUser(response.user);
       })
@@ -41,7 +40,7 @@ export default function UserProfile() {
           toast.error('Failed to fetch user profile. Please try again later.');
         }
       });
-  }, [username, page, sortBy]);
+  }, [username, page, sortBy, token]);
 
   return (
     <div className="overflow-y-scroll center-main">
@@ -73,7 +72,7 @@ export default function UserProfile() {
                   <PostOverview
                     key={index}
                     post={value}
-                    userId={user.id}
+                    userId={user?.id}
                     token={token}
                     setFetchedUser={setFetchedUser}
                     navigate={navigate}
@@ -87,7 +86,7 @@ export default function UserProfile() {
                       postName: value.post.title,
                     }}
                     comment={value}
-                    userId={user.id}
+                    userId={user?.id}
                     token={token}
                     showCommentDropdown={showCommentDropdown}
                     setShowCommentDropdown={setShowCommentDropdown}

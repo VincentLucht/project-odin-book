@@ -11,8 +11,8 @@ export interface UserAndHistory extends DBUser {
 }
 
 interface FetchUserProfileResponse {
-  message: 'string';
-  error?: 'string';
+  message: string;
+  error?: string;
   user: UserAndHistory;
 }
 
@@ -20,6 +20,7 @@ export default async function fetchUserProfile(
   username: string,
   page: number,
   sortBy: SortBy,
+  token: string | null,
 ) {
   const response = await fetch(
     `${API_URL}/user/?username=${encodeURIComponent(username)}&sort_by=${encodeURIComponent(sortBy)}&page=${encodeURIComponent(page)}`,
@@ -27,6 +28,7 @@ export default async function fetchUserProfile(
       method: 'GET',
       headers: {
         'content-type': 'application/json',
+        authorization: token ?? '',
       },
     },
   );

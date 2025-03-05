@@ -6,7 +6,12 @@ import userController from '@/user/userController';
 // /user
 const userRouter = express.Router();
 
-userRouter.get('', userValidator.fetchRules(), userController.get);
+userRouter.get(
+  '',
+  token.authenticateOptional,
+  userValidator.fetchRules(),
+  userController.get,
+);
 
 userRouter.delete('', token.authenticate);
 

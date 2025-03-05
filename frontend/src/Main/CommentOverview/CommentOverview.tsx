@@ -16,8 +16,8 @@ import { NavigateFunction } from 'react-router-dom';
 interface CommentOverviewProps {
   comment: DBCommentWithCommunityName;
   urlItems?: UrlItems;
-  userId: string | null;
-  token: string | undefined;
+  userId: string | undefined;
+  token: string | null;
   showCommentDropdown: string | null;
   setShowCommentDropdown: React.Dispatch<React.SetStateAction<string | null>>;
   setFetchedUser: React.Dispatch<React.SetStateAction<UserAndHistory | null>>;
@@ -51,6 +51,11 @@ export default function CommentOverview({
     voteType: VoteType,
     previousVoteType: VoteType | undefined,
   ) => {
+    if (!token || !userId) {
+      navigate('/login');
+      return;
+    }
+
     void handleCommentVoteOverview(
       commentId,
       userId,
@@ -69,6 +74,11 @@ export default function CommentOverview({
   };
 
   const onDelete = (commentId: string) => {
+    if (!token || !userId) {
+      navigate('/login');
+      return;
+    }
+
     if (confirmDelete('comment')) {
       handleDeleteCommentOverview(token, commentId, setFetchedUser);
     }

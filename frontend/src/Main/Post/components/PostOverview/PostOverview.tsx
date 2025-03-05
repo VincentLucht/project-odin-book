@@ -23,8 +23,8 @@ import { NavigateFunction } from 'react-router-dom';
 
 interface PostOverviewProps {
   post: DBPostWithCommunityName;
-  userId: string;
-  token: string;
+  userId: string | undefined;
+  token: string | null;
   setFetchedUser: React.Dispatch<React.SetStateAction<UserAndHistory | null>>;
   navigate: NavigateFunction;
 }
@@ -46,8 +46,12 @@ export default function PostOverview({
   const showBody = showMature || showSpoiler || !(isMature || isSpoiler);
   const hideContent = !showMature && !showSpoiler && (isMature || isSpoiler);
 
-  const userMember = post.community.user_communities;
+  const userMember = post.community.user_communities ?? [];
   const onVote = (voteType: VoteType) => {
+    if (!token || !userId) {
+      navigate('/login');
+      return;
+    }
     void handlePostVote(
       post.id,
       userId,
@@ -96,6 +100,7 @@ export default function PostOverview({
               token={token}
               communityId={post.community_id}
               setFetchedUser={setFetchedUser}
+              navigate={navigate}
             />
 
             {/* TODO: Add saved stuff */}

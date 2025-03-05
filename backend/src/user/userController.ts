@@ -4,7 +4,9 @@ import db from '@/db/db';
 import { checkValidationError } from '@/util/checkValidationError';
 import { asyncHandler } from '@/util/asyncHandler';
 import getAuthUser from '@/util/getAuthUser';
+
 import { SortByUser } from '@/db/managers/util/types';
+import { AuthPayload } from '@/comment/commentController';
 
 class UserController {
   get = asyncHandler(async (req: Request, res: Response) => {
@@ -20,8 +22,14 @@ class UserController {
         return res.status(404).json({ message: 'User not found' });
       }
 
+      let requestUserId = undefined;
+      if (req.authData) {
+        const { id } = req.authData as AuthPayload;
+        requestUserId = id;
+      }
+
       const userAndHistory = await db.user.getByUsernameAndHistory(
-        user.id,
+        requestUserId,
         user.username,
         sort_by,
         page,

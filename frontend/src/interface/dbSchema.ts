@@ -96,9 +96,9 @@ export interface DBPostWithCommunityName extends DBPost {
     id: string;
     name: string;
     profile_picture_url: string | null;
-    user_communities: CommunityMembership[];
+    user_communities: CommunityMembership[] | undefined;
   };
-  post_votes: VotingRecord[];
+  post_votes: VotingRecord[] | undefined;
 }
 
 export interface DBCommentWithCommunityName extends DBComment {
