@@ -73,6 +73,12 @@ export default function PostOverview({
     }
   };
 
+  const commentToPostRedirect = () => {
+    navigate(
+      `/r/${post.community.name}/${post.id}/${slugify(post.title, { lower: true })}`,
+    );
+  };
+
   return (
     <div>
       <Separator />
@@ -142,6 +148,7 @@ export default function PostOverview({
             voteType: post?.post_votes?.[0]?.vote_type,
           }}
           onVote={onVote}
+          postRedirect={commentToPostRedirect}
         />
       </div>
     </div>

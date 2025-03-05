@@ -9,6 +9,7 @@ interface PostInteractionBarProps {
   totalCommentCount: number;
   userVote: { hasVoted: boolean; voteType: VoteType | undefined };
   onVote: (voteType: VoteType) => void;
+  postRedirect: () => void;
   mode?: 'post';
 }
 
@@ -17,6 +18,7 @@ export default function PostInteractionBar({
   totalCommentCount,
   userVote,
   onVote,
+  postRedirect,
   mode,
 }: PostInteractionBarProps) {
   const isUpvote = userVote?.voteType === 'UPVOTE';
@@ -46,7 +48,7 @@ export default function PostInteractionBar({
         />
       </div>
 
-      <Reply totalCommentCount={totalCommentCount} />
+      <Reply totalCommentCount={totalCommentCount} onClick={postRedirect} />
 
       <Share mode={mode && mode} />
     </div>
