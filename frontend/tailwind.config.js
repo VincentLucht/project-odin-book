@@ -126,6 +126,9 @@ export default {
         '.sidebar-btn': {
           '@apply bg-transition-hover flex h-10 w-[215px] items-center rounded-lg px-4 py-1': {}
         },
+        '.transparent-btn': {
+          '@apply border border-gray-400 font-semibold transition-all duration-200 ease-in-out df prm-button hover:border-white active:scale-95 active:border-gray-200 active:bg-gray-200 active:text-bg-gray': {}
+        },
         '.focus-blue': {
           '@apply focus:outline focus:outline-2 focus:outline-blue-500': {}
         },
