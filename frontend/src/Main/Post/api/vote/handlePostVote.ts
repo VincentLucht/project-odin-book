@@ -5,20 +5,25 @@ import getNewScore from '@/util/getNewScore';
 
 import { VoteType } from '@/interface/backendTypes';
 import { UserAndHistory } from '@/Main/user/UserProfile/api/fetchUserProfile';
+import { DBPostWithCommunityName } from '@/interface/dbSchema';
 import { DBPostWithCommunity } from '@/interface/dbSchema';
 
+export type HandlePostVoteType = React.Dispatch<
+  React.SetStateAction<
+    UserAndHistory | DBPostWithCommunityName[] | DBPostWithCommunity | null
+  >
+>;
+
 export default async function handlePostVote(
-  post_id: string,
+  postId: string,
   userId: string,
   token: string,
   voteType: VoteType,
-  setterFunc: React.Dispatch<
-    React.SetStateAction<UserAndHistory | DBPostWithCommunity | null>
-  >,
+  setterFunc: HandlePostVoteType,
   previousVoteType: VoteType | undefined,
 ) {
   const updateFetchedUserState = (
-    prev: UserAndHistory | DBPostWithCommunity | null,
+    prev: UserAndHistory | DBPostWithCommunityName[] | DBPostWithCommunity | null,
     post_id: string,
     previousVoteType: VoteType | undefined,
     voteType: VoteType,
@@ -46,11 +51,32 @@ export default async function handlePostVote(
               ),
             };
           }
+
           return value;
         }),
       };
+    } else if (Array.isArray(prev)) {
+      // DBPostWithCommunityName[]
+      return prev.map((post) => {
+        if (post.id === post_id) {
+          return {
+            ...post,
+            post_votes:
+              previousVoteType === voteType
+                ? []
+                : [{ user_id: userId, vote_type: voteType }],
+            total_vote_score: getNewScore(
+              post.total_vote_score,
+              voteType,
+              previousVoteType,
+            ),
+          };
+        }
+
+        return post;
+      });
     } else {
-      // DDPostWithCommunity
+      // DBPostWithCommunity
       return {
         ...prev,
         post_votes:
@@ -66,19 +92,23 @@ export default async function handlePostVote(
     }
   };
 
-  let previousState: UserAndHistory | DBPostWithCommunity | null = null;
+  let previousState:
+    | UserAndHistory
+    | DBPostWithCommunityName[]
+    | DBPostWithCommunity
+    | null = null;
 
   // Optimistic update
   setterFunc((prev) =>
-    updateFetchedUserState(prev, post_id, previousVoteType, voteType, userId),
+    updateFetchedUserState(prev, postId, previousVoteType, voteType, userId),
   );
 
   try {
     // Perform actual API call
     if (previousVoteType === voteType) {
-      await deletePostVote(post_id, token);
+      await deletePostVote(postId, token);
     } else {
-      await postVote(post_id, voteType, token);
+      await postVote(postId, voteType, token);
     }
   } catch (error) {
     if (previousState) {
@@ -93,7 +123,7 @@ export default async function handlePostVote(
       errorObj.message === 'Vote not found'
     ) {
       setterFunc((prev) =>
-        updateFetchedUserState(prev, post_id, previousVoteType, voteType, userId),
+        updateFetchedUserState(prev, postId, previousVoteType, voteType, userId),
       );
     } else {
       catchError(error);

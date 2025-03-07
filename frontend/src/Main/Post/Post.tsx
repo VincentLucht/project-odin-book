@@ -16,8 +16,8 @@ import handlePostVote from '@/Main/Post/api/vote/handlePostVote';
 import getRelativeTime from '@/util/getRelativeTime';
 
 import { DBPostWithCommunity } from '@/interface/dbSchema';
-import { UserAndHistory } from '@/Main/user/UserProfile/api/fetchUserProfile';
 import { VoteType } from '@/interface/backendTypes';
+import { HandlePostVoteType } from '@/Main/Post/api/vote/handlePostVote';
 
 // TODO: Add loading + not found
 // TODO: Add go back button => but like completely back
@@ -45,15 +45,13 @@ export default function Post() {
       user?.id ?? '',
       token ?? '',
       voteType,
-      setPost as React.Dispatch<
-        React.SetStateAction<UserAndHistory | DBPostWithCommunity | null>
-      >,
+      setPost as HandlePostVoteType,
       post?.post_votes?.[0]?.vote_type,
     );
   };
 
   return (
-    <div className="p-4 center-main">
+    <div className="overflow-y-scroll p-4 center-main">
       <div className="center-main-content">
         <div className="flex flex-col">
           <div className="flex gap-1 text-sm">

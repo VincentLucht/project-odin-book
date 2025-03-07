@@ -16,26 +16,33 @@ import slugify from 'slugify';
 import handlePostVote from '@/Main/Post/api/vote/handlePostVote';
 
 import { DBPostWithCommunityName } from '@/interface/dbSchema';
-import { DBPostWithCommunity } from '@/interface/dbSchema';
 import { UserAndHistory } from '@/Main/user/UserProfile/api/fetchUserProfile';
 import { VoteType } from '@/interface/backendTypes';
 import { NavigateFunction } from 'react-router-dom';
+import { HandlePostVoteType } from '@/Main/Post/api/vote/handlePostVote';
 
 interface PostOverviewProps {
   post: DBPostWithCommunityName;
   userId: string | undefined;
   token: string | null;
-  setFetchedUser: React.Dispatch<React.SetStateAction<UserAndHistory | null>>;
+  setFetchedUser?: React.Dispatch<React.SetStateAction<UserAndHistory | null>>;
+  setPosts?: React.Dispatch<React.SetStateAction<DBPostWithCommunityName[]>>;
   navigate: NavigateFunction;
+  showPoster?: boolean;
+  poster?: { username: string; profile_picture_url: string | null };
+  showMembership?: boolean;
 }
 
-// TODO: Add poster info for community browsing posts!
 export default function PostOverview({
   post,
   userId,
   token,
   setFetchedUser,
+  setPosts,
   navigate,
+  showPoster = false,
+  poster,
+  showMembership = true,
 }: PostOverviewProps) {
   const [showSpoiler, setShowSpoiler] = useState(false);
   const [showMature, setShowMature] = useState(false);
@@ -57,9 +64,9 @@ export default function PostOverview({
       userId,
       token,
       voteType,
-      setFetchedUser as React.Dispatch<
-        React.SetStateAction<UserAndHistory | DBPostWithCommunity | null>
-      >,
+      setPosts
+        ? (setPosts as HandlePostVoteType)
+        : (setFetchedUser as HandlePostVoteType),
       post?.post_votes?.[0]?.vote_type,
     );
   };
@@ -90,9 +97,19 @@ export default function PostOverview({
       >
         <div className="flex justify-between">
           <div className="gap-1 text-sm df">
-            <CommunityPFPSmall src={post.community.profile_picture_url} />
+            <CommunityPFPSmall
+              src={
+                poster
+                  ? post.poster.profile_picture_url
+                  : post.community.profile_picture_url
+              }
+            />
 
-            <div className="font-semibold">r/{post.community.name}</div>
+            {showPoster ? (
+              <div className="font-medium">u/{post.poster.username}</div>
+            ) : (
+              <div className="font-semibold">r/{post.community.name}</div>
+            )}
 
             <div className="text-xs text-gray-secondary">
               • {getRelativeTime(post.created_at)}
@@ -100,14 +117,16 @@ export default function PostOverview({
           </div>
 
           <div className="flex gap-2">
-            <IsCommunityMember
-              userMember={userMember}
-              userId={userId}
-              token={token}
-              communityId={post.community_id}
-              setFetchedUser={setFetchedUser}
-              navigate={navigate}
-            />
+            {showMembership && setFetchedUser && (
+              <IsCommunityMember
+                userMember={userMember}
+                userId={userId}
+                token={token}
+                communityId={post.community_id}
+                setFetchedUser={setFetchedUser}
+                navigate={navigate}
+              />
+            )}
 
             {/* TODO: Add saved stuff */}
             <Save isSaved={false} />
