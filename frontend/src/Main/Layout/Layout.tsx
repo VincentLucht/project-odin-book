@@ -56,7 +56,8 @@ export default function Layout() {
       />
 
       <div
-        className={`grid flex-1 ${isDesktop ? 'grid-cols-[270px_auto]' : 'grid-cols-[auto]'} `}
+        className={`grid flex-1 overflow-hidden
+          ${isDesktop ? 'grid-cols-[270px_auto]' : 'grid-cols-[auto]'} `}
       >
         <div
           ref={sidebarRef}
