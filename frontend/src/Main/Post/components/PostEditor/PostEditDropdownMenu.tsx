@@ -22,6 +22,7 @@ interface PostEditDropdownMenuProps {
   community_flair_id: string | null;
 }
 
+// TODO: Add post flair here
 export default function PostEditDropdownMenu({
   isUserPoster,
   postId,
@@ -64,7 +65,7 @@ export default function PostEditDropdownMenu({
       postId,
       newBody,
       isSpoiler,
-      true,
+      isMature ? false : true,
       setIsEditActive,
       setPost,
       community_flair_id,
@@ -86,7 +87,7 @@ export default function PostEditDropdownMenu({
       token,
       postId,
       newBody,
-      true,
+      isSpoiler ? false : true,
       isMature,
       setIsEditActive,
       setPost,
@@ -105,7 +106,9 @@ export default function PostEditDropdownMenu({
           setIsEditActive={setIsEditActive}
           deleteFunc={deletePost}
           // post flair func
+          isMature={isMature}
           matureFunc={addMatureTag}
+          isSpoiler={isSpoiler}
           spoilerFunc={addSpoilerTag}
         />
       ) : (

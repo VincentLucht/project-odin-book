@@ -14,7 +14,9 @@ interface EllipsisProps {
   setIsEditActive?: React.Dispatch<React.SetStateAction<boolean>>;
   deleteFunc: (commentId: string) => void;
   postFlairFunc?: () => void;
+  isSpoiler?: boolean;
   spoilerFunc?: () => void;
+  isMature?: boolean;
   matureFunc?: () => void;
   editFunc?: () => void;
 }
@@ -28,7 +30,9 @@ export default function Ellipsis({
   setIsEditActive,
   deleteFunc,
   postFlairFunc,
+  isSpoiler,
   spoilerFunc,
+  isMature,
   matureFunc,
   editFunc,
 }: EllipsisProps) {
@@ -122,9 +126,9 @@ export default function Ellipsis({
         {mode === 'post' && isUserSelf ? (
           <div className="w-full" onClick={() => matureFunc && matureFunc()}>
             <DropdownButton
-              text="Add NSFW tag"
+              text={`${isMature ? 'Remove NSFW tag' : 'Add NSFW tag'}`}
               icon={<BanIcon />}
-              alt="Add NSFW tag"
+              alt={`${isMature ? 'Remove NSFW tag' : 'Add NSFW tag'}`}
               imgClassName="rounded-full border h-[32px] w-[32px]"
               setterFunc={setShowDropdown}
               show={showDropdown === commentId}
@@ -137,9 +141,9 @@ export default function Ellipsis({
         {mode === 'post' && isUserSelf ? (
           <div className="w-full" onClick={() => spoilerFunc && spoilerFunc()}>
             <DropdownButton
-              text="Add spoiler tag"
+              text={`${isSpoiler ? 'Remove spoiler tag' : 'Add spoiler tag'}`}
               icon={<CircleAlertIcon />}
-              alt="Add spoiler tag"
+              alt={`${isSpoiler ? 'Remove spoiler tag' : 'Add spoiler tag'}`}
               imgClassName="rounded-full border h-[32px] w-[32px]"
               setterFunc={setShowDropdown}
               show={showDropdown === commentId}
