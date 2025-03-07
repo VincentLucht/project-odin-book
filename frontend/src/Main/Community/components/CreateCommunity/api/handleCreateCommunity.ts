@@ -39,7 +39,6 @@ export default function handleCreateCommunity(
       navigate(`/r/${name}`);
     })
     .catch((error) => {
-      console.log(error);
       catchError(error);
     });
 }
