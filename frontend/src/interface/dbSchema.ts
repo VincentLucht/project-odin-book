@@ -99,6 +99,7 @@ export interface DBPostWithCommunityName extends DBPost {
     user_communities: CommunityMembership[] | undefined;
   };
   post_votes: VotingRecord[] | undefined;
+  poster: { username: string; profile_picture_url: string | null };
 }
 
 export interface DBCommentWithCommunityName extends DBComment {
