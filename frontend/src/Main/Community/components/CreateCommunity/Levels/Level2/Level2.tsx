@@ -31,7 +31,7 @@ export default function Level2({
   const onAdd = (type: 'banner' | 'mobile' | 'icon') => {
     void Swal.fire({
       title: 'Enter the image URL',
-      input: 'url',
+      input: 'text',
       inputPlaceholder: 'Paste your image URL here...',
       confirmButtonText: 'Add',
       ...swalDefaultProps,
