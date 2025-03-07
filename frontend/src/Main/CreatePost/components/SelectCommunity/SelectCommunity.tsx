@@ -51,7 +51,8 @@ export default function SelectCommunity({
 
   useEffect(() => {
     if (communityName) {
-      handleGetCreationInfo(communityName, token, true, setActiveCommunity);
+      const separated = communityName.split('/')?.[0];
+      handleGetCreationInfo(separated, token, true, setActiveCommunity);
     }
   }, [communityName, token, setActiveCommunity]);
 
