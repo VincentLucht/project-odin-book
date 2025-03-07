@@ -12,7 +12,7 @@ import { CommunitySearch } from '@/Main/CreatePost/components/SelectCommunity/ap
 import { CreationInfo } from '@/Main/CreatePost/components/SelectCommunity/api/getCreationInfo';
 
 interface SelectCommunityProps {
-  communityName: string | undefined;
+  communityName: string | null;
   token: string;
   activeCommunity: CreationInfo | null;
   setActiveCommunity: React.Dispatch<React.SetStateAction<CreationInfo | null>>;
@@ -49,22 +49,28 @@ export default function SelectCommunity({
     return () => clearTimeout(debounceTimeout);
   }, [isSelecting, search, token]);
 
-  const pfp = activeCommunity?.profile_picture_url
-    ? activeCommunity.profile_picture_url
-    : 'community-default.svg';
+  useEffect(() => {
+    if (communityName) {
+      handleGetCreationInfo(communityName, token, true, setActiveCommunity);
+    }
+  }, [communityName, token, setActiveCommunity]);
 
   return (
     <div className="my-2">
       {activeCommunity ? (
         <div className="flex items-center gap-2">
           <button
-            className="gap-[6px] font-semibold df normal-bg-transition create-comm-btn"
+            className="gap-[6px] !px-3 font-semibold df normal-bg-transition create-comm-btn"
             onClick={() => setActiveCommunity(null)}
           >
             <img
-              src={pfp}
+              src={
+                activeCommunity?.profile_picture_url
+                  ? activeCommunity.profile_picture_url
+                  : '/community-default.svg'
+              }
               alt="Community Profile picture"
-              className="rounded-full border"
+              className="h-6 rounded-full border"
             />
 
             <span>r/{activeCommunity.name}</span>
@@ -99,7 +105,11 @@ export default function SelectCommunity({
                     text={`r/${community.name}`}
                     show={true}
                     key={community.name}
-                    src={pfp}
+                    src={
+                      community.profile_picture_url
+                        ? community.profile_picture_url
+                        : '/community-default.svg'
+                    }
                     imgClassName="h-8 w-8 border rounded-full"
                     alt="Community profile picture"
                     subText={`${community.total_members}`}

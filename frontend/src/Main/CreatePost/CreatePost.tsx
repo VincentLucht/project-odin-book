@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import useAuthGuard from '@/context/auth/hook/useAuthGuard';
 
 import MemberCheck from '@/Main/CreatePost/components/MemberCheck';
@@ -11,6 +10,7 @@ import { CaptionsIcon } from 'lucide-react';
 import SpoilerTag from '@/Main/Post/components/tags/common/SpoilerTag';
 import MatureTag from '@/Main/Post/components/tags/common/MatureTag';
 import TextareaAutosize from 'react-textarea-autosize';
+import MaxLengthIndicator from '@/components/MaxLengthIndicator';
 
 import handleCreatePost from '@/Main/Post/api/create/handleCreatePost';
 
@@ -18,6 +18,7 @@ import { CreationInfo } from '@/Main/CreatePost/components/SelectCommunity/api/g
 
 export type PostType = 'BASIC' | 'images' | 'POLL';
 
+// TODO: Add max len indicator for body?
 export default function CreatePost() {
   const [postType, setPostType] = useState<PostType>('BASIC');
   const [title, setTitle] = useState('');
@@ -28,7 +29,9 @@ export default function CreatePost() {
   const [activeCommunity, setActiveCommunity] = useState<CreationInfo | null>(null);
   const [isAllowedToPost, setIsAllowedToPost] = useState(true);
 
-  const { communityName } = useParams();
+  const [searchParams] = useSearchParams();
+  const communityName = searchParams.get('community');
+
   const { user, token } = useAuthGuard();
   const navigate = useNavigate();
 
@@ -54,7 +57,7 @@ export default function CreatePost() {
   };
 
   return (
-    <div className="p-4 center-main">
+    <div className="overflow-y-scroll p-4 center-main">
       <div className="center-main-content">
         <div className="flex flex-col">
           <h2 className="text-2xl font-bold">Create post</h2>
@@ -90,9 +93,7 @@ export default function CreatePost() {
             icon={<CaptionsIcon className="mr-1" />}
             maxLength={300}
           />
-          <div className="flex justify-end">
-            <span className="mr-4 mt-1 text-sm">{title.length}/300</span>
-          </div>
+          <MaxLengthIndicator length={title.length} maxLength={300} />
 
           <div className="flex gap-2">
             <button
@@ -112,7 +113,7 @@ export default function CreatePost() {
 
           <div className="mt-4 flex flex-col">
             <TextareaAutosize
-              className="w-full rounded-2xl px-4 py-4"
+              className="w-full rounded-2xl px-4 py-4 focus-blue"
               placeholder="Body"
               minRows={3}
               value={body}
