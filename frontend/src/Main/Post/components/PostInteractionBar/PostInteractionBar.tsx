@@ -9,7 +9,7 @@ interface PostInteractionBarProps {
   totalCommentCount: number;
   userVote: { hasVoted: boolean; voteType: VoteType | undefined };
   onVote: (voteType: VoteType) => void;
-  postRedirect: () => void;
+  postRedirect?: () => void;
   mode?: 'post';
 }
 
