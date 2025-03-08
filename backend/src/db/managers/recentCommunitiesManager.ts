@@ -23,7 +23,7 @@ export default class RecentCommunitiesManager {
   }
 
   async assign(user_id: string, community_id: string) {
-    const count = await this.prisma.recentCommunities.findMany({
+    const recentCommunities = await this.prisma.recentCommunities.findMany({
       where: { user_id },
       orderBy: { interacted_at: 'desc' },
       select: {
@@ -33,9 +33,9 @@ export default class RecentCommunitiesManager {
       },
     });
 
-    if (count.length >= 5) {
-      const firstRecent = count[0];
-      const lastRecent = count[4];
+    if (recentCommunities.length >= 5) {
+      const firstRecent = recentCommunities[0];
+      const lastRecent = recentCommunities[4];
 
       if (firstRecent.community.id === community_id) {
         return;
@@ -44,9 +44,18 @@ export default class RecentCommunitiesManager {
       await this.delete(user_id, lastRecent.community.id);
     }
 
-    await this.prisma.recentCommunities.create({
-      data: { user_id, community_id },
+    let alreadyRecent = false;
+    recentCommunities.forEach(({ community }) => {
+      if (community.id === community_id) {
+        alreadyRecent = true;
+      }
     });
+
+    if (!alreadyRecent) {
+      await this.prisma.recentCommunities.create({
+        data: { user_id, community_id },
+      });
+    }
   }
 
   async delete(user_id: string, community_id: string) {
