@@ -16,27 +16,26 @@ class PostController {
     const { post_id } = req.params;
 
     try {
-      let userId = undefined;
-
       const post = await db.post.getById(post_id);
       if (!post) {
         return res.status(404).json({ message: 'Post not found' });
       }
 
-      const user_id = await checkPrivateCommunityMembership(
+      const response = await checkPrivateCommunityMembership(
         db,
         post,
-        userId,
-        req,
-        res,
+        req.authData,
+        true,
       );
-      if (typeof user_id === 'string') {
-        userId = user_id;
+      if (!response.ok) {
+        return res
+          .status(response?.status ?? 500)
+          .json({ message: response?.message });
       }
 
       const postAndCommunity = await db.post.getByIdAndCommunity(
         post.id,
-        userId,
+        response.user_id,
       );
 
       return res
@@ -67,30 +66,6 @@ class PostController {
       const community = await db.community.getById(community_id);
       if (!community) {
         return res.status(404).json({ message: 'Community not found' });
-      }
-
-      // Check posting permissions based on community type and if basic users are allowed to post
-      if (community.type !== 'PUBLIC') {
-        const member = await db.userCommunity.getById(user_id, community.id);
-        if (!member) {
-          return res.status(403).json({
-            message: 'You must be a member to post in this community',
-          });
-        }
-
-        if (community.type === 'RESTRICTED' && member.role !== 'CONTRIBUTOR') {
-          return res.status(403).json({
-            message: 'Only Contributors can post in restricted communities',
-          });
-        }
-
-        if (community.type === 'PRIVATE') {
-          if (!community.allow_basic_user_posts && member.role === 'BASIC') {
-            return res.status(403).json({
-              message: 'Basic users cannot post in this community',
-            });
-          }
-        }
       }
 
       const permissionCheck = await checkCommunityPermissions({
@@ -129,9 +104,11 @@ class PostController {
         flair_id,
       );
 
-      return res
-        .status(201)
-        .json({ message: 'Successfully created post', post });
+      return res.status(201).json({
+        message: 'Successfully created post',
+        post,
+        communityName: community.name,
+      });
     } catch (error) {
       console.error(error);
       return res.status(500).json({
@@ -144,7 +121,7 @@ class PostController {
   edit = asyncHandler(async (req: Request, res: Response) => {
     if (checkValidationError(req, res)) return;
 
-    const { post_id, title, body, is_spoiler, is_mature, flair_id } = req.body;
+    const { post_id, body, is_spoiler, is_mature, flair_id } = req.body;
 
     try {
       const { user_id } = getAuthUser(req.authData);
@@ -152,6 +129,9 @@ class PostController {
         return res.status(404).json({ message: 'User not found' });
       }
       const post = await db.post.getById(post_id);
+      if (post?.deleted_at) {
+        return res.status(404).json({ message: 'Post was delete' });
+      }
       if (!post) {
         return res.status(404).json({ message: 'Post not found' });
       }
@@ -172,12 +152,10 @@ class PostController {
           .json({ message: 'You are not allowed to edit this post' });
       }
 
-      // Check if post was assigned a flair before updating
-      const flair = await db.communityFlair.getById(
+      const hasFlair = await db.postAssignedFlair.getPostFlairInCommunity(
+        post_id,
         post.community_id,
-        flair_id,
       );
-      const hadPreviousFlair = flair !== null && flair !== undefined;
 
       // Validate flair only if required or if one was provided
       if (community.is_post_flair_required || flair_id) {
@@ -195,19 +173,86 @@ class PostController {
 
       await db.post.edit(
         post_id,
-        title,
         body,
         is_spoiler,
         is_mature,
         flair_id,
-        hadPreviousFlair,
+        hasFlair !== null,
       );
 
-      return res.status(200).json({ message: 'Successfully edited post' });
+      let newFlair;
+      if (flair_id) {
+        newFlair =
+          await db.postAssignedFlair.getByIdAndCommunityFlair(flair_id);
+      }
+
+      return res
+        .status(200)
+        .json({ message: 'Successfully edited post', newFlair });
     } catch (error) {
       console.error(error);
       return res.status(500).json({
         message: 'Failed to edit post',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  });
+
+  delete = asyncHandler(async (req: Request, res: Response) => {
+    if (checkValidationError(req, res)) return;
+
+    const { post_id } = req.body;
+
+    try {
+      const { user_id } = getAuthUser(req.authData);
+      if (!(await db.user.getById(user_id))) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      const post = await db.post.getById(post_id);
+      if (!post) {
+        return res.status(404).json({ message: 'Post not found' });
+      }
+      if (post.poster_id !== user_id) {
+        return res
+          .status(403)
+          .json({ message: "You cannot delete someone else's post" });
+      }
+
+      const community = await db.community.getById(post.community_id);
+      if (!community) {
+        return res.status(404).json({ message: 'Community not found' });
+      }
+
+      const permissionCheck = await checkCommunityPermissions({
+        db,
+        userId: user_id,
+        community,
+        action: 'delete posts',
+      });
+      if (!permissionCheck.isAllowed) {
+        return res
+          .status(permissionCheck.status ?? 400)
+          .json({ message: permissionCheck.message });
+      }
+
+      const isBanned = await db.bannedUsers.isBanned(
+        user_id,
+        post.community_id,
+      );
+      if (isBanned) {
+        return res
+          .status(403)
+          .json({ message: 'You are banned from this community' });
+      }
+
+      await db.post.deletePost(post_id);
+
+      return res.status(200).json({ message: 'Successfully deleted post' });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        message: 'Failed to delete post',
         error: error instanceof Error ? error.message : String(error),
       });
     }
