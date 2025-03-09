@@ -23,6 +23,7 @@ export default function RecentCommunities({ navigate }: RecentCommunitiesProps) 
             buttonName={recent.community.name}
             src={`${recent.community.profile_picture_url ? recent.community.profile_picture_url : '/community-default.svg'}`}
             alt={`Link to r/${recent.community.name}`}
+            className="gap-2"
             imgClassName="border rounded-full w-8 h-8"
             key={recent.id}
           />
