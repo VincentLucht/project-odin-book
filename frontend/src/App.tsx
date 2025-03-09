@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import Header from '@/Header/Header';
 import Main from '@/Main/Main';
-import Sidebar from '@/SideBar/Sidebar';
+import Sidebar from '@/Sidebar/Sidebar';
 
 export default function App() {
   const [search, setSearch] = useState('');
