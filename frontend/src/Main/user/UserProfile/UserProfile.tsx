@@ -43,67 +43,67 @@ export default function UserProfile() {
   }, [username, page, sortBy, token]);
 
   return (
-    <div className="overflow-y-scroll center-main">
-      <div className="center-main-content">
-        {fetchedUser ? (
-          <div className="w-full min-w-0">
-            <div className="flex gap-2">
-              {/* TODO: Img is a bit distorted?? use object-cover?? */}
-              <img
-                src={`${fetchedUser?.profile_picture_url ? fetchedUser?.profile_picture_url : '/user.svg'}`}
-                alt="User Profile Pictures"
-                className="h-24 w-24 rounded-full border-2"
-              />
-              <div className="flex-col df">
-                <h2 className="text-xl font-bold">
-                  {fetchedUser?.display_name
-                    ? fetchedUser?.display_name
-                    : fetchedUser?.username}
-                </h2>
-                <span className="w-full text-gray-secondary">
-                  {fetchedUser?.username}
-                </span>
+    <div className="h-[100dvh + 56px] overflow-y-auto">
+      <div className="center-main">
+        <div className="center-main-content">
+          {fetchedUser ? (
+            <div className="w-full min-w-0">
+              <div className="flex gap-2">
+                {/* TODO: Img is a bit distorted?? use object-cover?? */}
+                <img
+                  src={`${fetchedUser?.profile_picture_url ? fetchedUser?.profile_picture_url : '/user.svg'}`}
+                  alt="User Profile Pictures"
+                  className="h-24 w-24 rounded-full border-2"
+                />
+                <div className="flex-col df">
+                  <h2 className="text-xl font-bold">
+                    {fetchedUser?.display_name
+                      ? fetchedUser?.display_name
+                      : fetchedUser?.username}
+                  </h2>
+                  <span className="w-full text-gray-secondary">
+                    {fetchedUser?.username}
+                  </span>
+                </div>
               </div>
+              {Array.isArray(fetchedUser?.history) && fetchedUser.history.length > 0 ? (
+                fetchedUser.history.map((value, index) =>
+                  isPost(value) ? (
+                    <PostOverview
+                      key={index}
+                      post={value}
+                      userId={user?.id}
+                      token={token}
+                      setFetchedUser={setFetchedUser}
+                      navigate={navigate}
+                    />
+                  ) : (
+                    <CommentOverview
+                      key={index}
+                      urlItems={{
+                        communityName: value.post.community.name,
+                        postId: value.post_id,
+                        postName: value.post.title,
+                      }}
+                      comment={value}
+                      userId={user?.id}
+                      token={token}
+                      showCommentDropdown={showCommentDropdown}
+                      setShowCommentDropdown={setShowCommentDropdown}
+                      setFetchedUser={setFetchedUser}
+                      navigate={navigate}
+                    />
+                  ),
+                )
+              ) : (
+                <p>No history found</p>
+              )}
             </div>
-
-            {Array.isArray(fetchedUser?.history) && fetchedUser.history.length > 0 ? (
-              fetchedUser.history.map((value, index) =>
-                isPost(value) ? (
-                  <PostOverview
-                    key={index}
-                    post={value}
-                    userId={user?.id}
-                    token={token}
-                    setFetchedUser={setFetchedUser}
-                    navigate={navigate}
-                  />
-                ) : (
-                  <CommentOverview
-                    key={index}
-                    urlItems={{
-                      communityName: value.post.community.name,
-                      postId: value.post_id,
-                      postName: value.post.title,
-                    }}
-                    comment={value}
-                    userId={user?.id}
-                    token={token}
-                    showCommentDropdown={showCommentDropdown}
-                    setShowCommentDropdown={setShowCommentDropdown}
-                    setFetchedUser={setFetchedUser}
-                    navigate={navigate}
-                  />
-                ),
-              )
-            ) : (
-              <p>No history found</p>
-            )}
-          </div>
-        ) : (
-          <UserNotFound />
-        )}
-
-        <UserSideBar user={fetchedUser} />
+          ) : (
+            <UserNotFound />
+          )}
+          <UserSideBar user={fetchedUser} />
+        </div>
       </div>
     </div>
   );
