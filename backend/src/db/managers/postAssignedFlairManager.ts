@@ -13,6 +13,19 @@ export default class PostAssignedFlairManager {
     return postFlair;
   }
 
+  async getByIdAndCommunityFlair(post_assigned_flair_id: string) {
+    const postFlair = await this.prisma.postAssignedFlair.findUnique({
+      where: {
+        id: post_assigned_flair_id,
+      },
+      include: {
+        community_flair: true,
+      },
+    });
+
+    return postFlair;
+  }
+
   async getPostFlairInCommunity(post_id: string, community_id: string) {
     const postFlair = await this.prisma.postAssignedFlair.findFirst({
       where: {
