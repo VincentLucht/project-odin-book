@@ -25,10 +25,14 @@ class PostAssignedFlairController {
         return res.status(403).json({ message: 'You are not the post author' });
       }
 
-      if (!(await db.community.doesExistById(post.community_id))) {
+      const community = await db.community.getById(post.community_id);
+      if (!community) {
         return res.status(404).json({ message: 'Community not found' });
       }
-      if (!(await db.userCommunity.isMember(user_id, post.community_id))) {
+      if (
+        community.type === 'PRIVATE' &&
+        !(await db.userCommunity.isMember(user_id, post.community_id))
+      ) {
         return res
           .status(403)
           .json({ message: 'Non-members cannot assign post flairs' });
