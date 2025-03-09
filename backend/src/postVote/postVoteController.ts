@@ -23,6 +23,9 @@ class PostVoteController {
       if (!post) {
         return res.status(404).json({ message: 'Post not found' });
       }
+      if (post.deleted_at) {
+        return res.status(410).json({ message: 'Post was deleted' });
+      }
       const community = await db.community.getById(post.community_id);
       if (!community) {
         return res.status(404).json({ message: 'Community not found' });
