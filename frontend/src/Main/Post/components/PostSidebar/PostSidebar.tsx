@@ -29,7 +29,7 @@ export default function PostSidebar({ community }: PostSidebarProps) {
 
   return (
     <div>
-      <div className="flex flex-col gap-2 rounded-md bg-gray-700 p-4">
+      <div className="community-sidebar">
         <div className="flex items-center justify-between">
           <h3 className="gap-1 text-xl font-semibold text-hidden-ellipsis">
             r/{community.name}
