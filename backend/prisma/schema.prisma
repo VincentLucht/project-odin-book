@@ -209,6 +209,7 @@ model Post {
   @@index([community_id, created_at]) // for sorted by date
   @@index([community_id, total_vote_score]) // for sorted by score
   @@index([poster_id, created_at]) // for user post history
+  @@index([community_id, created_at, deleted_at]) // for fetching
 }
 
 model PostVote {
