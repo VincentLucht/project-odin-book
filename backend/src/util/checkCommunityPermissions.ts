@@ -4,11 +4,11 @@ interface CheckCommunityPermissions {
   db: any;
   userId: string;
   community: Community;
-  action: 'post' | 'comment' | 'vote';
+  action: 'post' | 'comment' | 'vote' | 'edit posts' | 'delete posts';
 }
 
 // Check posting permissions based on community type and if basic users are allowed an action
-export default async function ({
+export default async function checkCommunityPermissions({
   db,
   userId,
   community,
