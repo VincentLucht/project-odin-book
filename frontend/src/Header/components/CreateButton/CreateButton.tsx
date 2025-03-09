@@ -1,23 +1,15 @@
+import handleCreatePostClick from '@/Header/components/CreateButton/util/handleCreatePostClick';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function CreateButton() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const handleClick = () => {
-    // Check if on community page
-    const communityMatch = location.pathname.match(/\/r\/([^]+)/);
-
-    if (communityMatch) {
-      const communityName = communityMatch[1];
-      navigate(`/create?community=${communityName}`);
-    } else {
-      navigate('/create');
-    }
-  };
-
   return (
-    <div className="df bg-hover-transition" onClick={handleClick}>
+    <div
+      className="df bg-hover-transition"
+      onClick={() => handleCreatePostClick(location.pathname, navigate)}
+    >
       <img
         src="/plus.svg"
         alt="User profile picture"
