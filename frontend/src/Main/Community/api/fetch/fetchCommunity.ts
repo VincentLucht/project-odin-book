@@ -1,5 +1,5 @@
 import API_URL from '@/auth/ApiUrl';
-import { CommunityTypes } from '@/interface/dbSchema';
+import { CommunityTypes, UserRoles } from '@/interface/dbSchema';
 import { SortByType } from '@/Main/Community/Community';
 import { DBPostWithCommunityName } from '@/interface/dbSchema';
 
@@ -19,7 +19,9 @@ export interface FetchedCommunityWithPosts {
   profile_picture_url: string | null;
   total_members: number;
   type: CommunityTypes;
+
   posts: DBPostWithCommunityName[];
+  user_communities: { user_id: string; role: UserRoles }[] | undefined;
 }
 
 interface FetchCommunityResponse {
