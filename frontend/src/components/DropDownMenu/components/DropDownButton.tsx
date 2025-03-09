@@ -12,6 +12,7 @@ interface DropdownButtonProps {
   size?: 'normal' | 'large';
   subText?: string;
   imgClassName?: string;
+  isSelected?: boolean;
 }
 
 export default function DropdownButton({
@@ -26,6 +27,7 @@ export default function DropdownButton({
   size = 'normal',
   subText,
   imgClassName,
+  isSelected = false,
 }: DropdownButtonProps) {
   const navigate = useNavigate();
 
@@ -33,7 +35,7 @@ export default function DropdownButton({
     <button
       className={`text-mds flex w-full items-center gap-2 rounded-md px-4 py-2 font-light
         dropdown-btn-transition ${size === 'normal' ? 'h-[48px]' : 'h-[64px]'}
-        ${show ? 'cursor-pointer' : 'cursor-default'}`}
+        ${show ? 'cursor-pointer' : 'cursor-default'} ${isSelected && 'bg-hover-gray'}`}
       onClick={() => {
         if (show && route && setterFunc) {
           setterFunc(null);
@@ -48,9 +50,9 @@ export default function DropdownButton({
         }
       }}
     >
-      {icon ? (
-        <div className="h-[32px] w-[32px] df">{icon}</div>
-      ) : (
+      {icon && <div className="h-[32px] w-[32px] df">{icon}</div>}
+
+      {src && (
         <div className="h-[32px] w-[32px] df">
           <img src={src} alt={alt} className={`${imgClassName} h-6 w-6`} />
         </div>
@@ -64,7 +66,7 @@ export default function DropdownButton({
           </div>
         </div>
       ) : (
-        <div>{text}</div>
+        <div className="whitespace-nowrap">{text}</div>
       )}
     </button>
   );
