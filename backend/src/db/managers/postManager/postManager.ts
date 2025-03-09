@@ -20,9 +20,16 @@ export default class PostManager {
         poster: {
           select: { username: true },
         },
-        post_votes: {
-          where: { user_id },
-          select: { user_id: true, vote_type: true },
+        ...(user_id && {
+          post_votes: {
+            where: { user_id },
+            select: { user_id: true, vote_type: true },
+          },
+        }),
+        post_assigned_flair: {
+          include: {
+            community_flair: true,
+          },
         },
         community: {
           select: {
@@ -32,6 +39,7 @@ export default class PostManager {
             profile_picture_url: true,
             // no banners
             created_at: true,
+            type: true,
             is_mature: true,
             // no is_post_flair_required
             // no allow_basic_user_posts
@@ -84,7 +92,6 @@ export default class PostManager {
   // ! PUT
   async edit(
     post_id: string,
-    title: string,
     body: string,
     is_spoiler: boolean,
     is_mature: boolean,
@@ -96,9 +103,9 @@ export default class PostManager {
         id: post_id,
       },
       data: {
-        title,
         body,
         is_spoiler,
+        edited_at: new Date().toISOString(),
         is_mature,
         ...(flair_id && {
           post_assigned_flair: hadPreviousFlair
@@ -121,6 +128,19 @@ export default class PostManager {
                 },
               },
         }),
+      },
+    });
+  }
+
+  // ! DELETE
+  async deletePost(post_id: string) {
+    await this.prisma.post.update({
+      where: { id: post_id },
+      data: {
+        deleted_at: new Date().toISOString(),
+        poster_id: null,
+        body: '',
+        pinned_at: null,
       },
     });
   }
