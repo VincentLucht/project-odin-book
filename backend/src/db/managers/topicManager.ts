@@ -7,4 +7,14 @@ export default class TopicManager {
     const topics = await this.prisma.topic.findMany({});
     return topics.map((topic) => topic.id);
   }
+
+  async getAllMainAndSubTopics() {
+    const topics = await this.prisma.mainTopic.findMany({
+      include: {
+        topics: true,
+      },
+    });
+
+    return topics;
+  }
 }
