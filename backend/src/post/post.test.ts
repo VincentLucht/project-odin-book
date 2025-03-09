@@ -166,7 +166,7 @@ describe('/community', () => {
 
         const response = await sendRequest(mockRequest);
 
-        assert.exp(response, 403, 'You must be a member to post in this community');
+        assert.exp(response, 403, 'You must be a member of this community to post');
       });
 
       it('should handle user not being able to post in restricted community because they are not a contributor', async () => {
@@ -288,7 +288,6 @@ describe('/community', () => {
 
     const mockRequest = {
       post_id: '1',
-      title: 't',
       body: 'b',
       is_spoiler: false,
       is_mature: false,
@@ -332,7 +331,7 @@ describe('/community', () => {
         assert.post.notFound(response);
       });
 
-      it('user not being the poster', async () => {
+      it('should handle user not being the poster', async () => {
         mockDb.post.getById.mockResolvedValue({ poster_id: 'otherUser' });
         const response = await sendRequest(mockRequest);
 
@@ -398,6 +397,77 @@ describe('/community', () => {
                     'location': 'body',
                 },
             ],
+        });
+      });
+
+      it('should handle db error', async () => {
+        mockDb.user.getById.mockRejectedValue('DB error');
+        const response = await sendRequest(mockRequest);
+
+        assert.dbError(response);
+      });
+    });
+  });
+
+  describe('DELETE /community/post', () => {
+    beforeEach(() => {
+    });
+
+    const sendRequest = (body: any) => {
+      return request(app)
+        .delete('/post')
+        .set('Authorization', `Bearer ${token}`)
+        .send(body);
+    };
+
+    const mockRequest = {
+      post_id: '1',
+
+    };
+
+    describe('Success cases', () => {
+      it('should successfully delete a post', async () => {
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 200, 'Successfully edited post');
+      });
+    });
+
+    describe('Error cases', () => {
+      it('should handle post not existing', async () => {
+        mockDb.post.getById.mockResolvedValue(false);
+        const response = await sendRequest(mockRequest);
+
+        assert.post.notFound(response);
+      });
+
+      it('should handle user not being the poster', async () => {
+        mockDb.post.getById.mockResolvedValue({ poster_id: 'otherUser' });
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 403, 'You are not allowed to edit this post');
+      });
+
+      it('should not allow banned user to delete', async () => {
+        mockDb.bannedUsers.isBanned.mockResolvedValue(true);
+        const response = await sendRequest(mockRequest);
+
+        assert.isBanned(response);
+      });
+
+      it('should handle missing inputs', async () => {
+        const response = await sendRequest({});
+
+        expect(response.body).toMatchObject({
+          'errors': [
+            {
+                'type': 'field',
+                'value': '',
+                'msg': 'Post ID is required',
+                'path': 'post_id',
+                'location': 'body',
+            },
+        ],
         });
       });
 
