@@ -1,0 +1,18 @@
+export const postSelectFields = {
+  id: true,
+  community_id: true,
+  poster_id: true,
+  title: true,
+  body: true,
+  created_at: true,
+  updated_at: true,
+  edited_at: true,
+  deleted_at: true,
+  is_spoiler: true,
+  is_mature: true,
+  pinned_at: true,
+  upvote_count: true,
+  downvote_count: true,
+  total_vote_score: true,
+  total_comment_score: true,
+};
