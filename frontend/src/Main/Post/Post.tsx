@@ -26,7 +26,7 @@ export default function Post() {
   const [showEditDropdown, setShowEditDropdown] = useState<string | null>(null);
   const [isEditActive, setIsEditActive] = useState(false);
 
-  const { communityName, postId, postName } = useParams();
+  const { postId } = useParams();
   const { user, token } = useAuth();
   const isUserPoster = user?.id === post?.poster_id;
   console.log(post);
