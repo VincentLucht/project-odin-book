@@ -1,15 +1,43 @@
+import handleCommunityMembershipHeader from '@/Main/Community/components/CommunityHeader/api/handleCommunityMembershipHeader';
+import handleCreatePostClick from '@/Header/components/CreateButton/util/handleCreatePostClick';
+
 import { PlusIcon } from 'lucide-react';
 import { FetchedCommunity } from '@/Main/Community/api/fetch/fetchCommunity';
+import { TokenUser } from '@/context/auth/AuthProvider';
+import { NavigateFunction } from 'react-router-dom';
 
 interface CommunityHeaderProps {
   community: FetchedCommunity;
+  setCommunity: React.Dispatch<React.SetStateAction<FetchedCommunity | null>>;
+  isMember: boolean;
+  user: TokenUser | null;
+  token: string | null;
+  navigate: NavigateFunction;
+  pathname: string;
 }
 
-export default function CommunityHeader({ community }: CommunityHeaderProps) {
-  const isMember = true;
-
+export default function CommunityHeader({
+  community,
+  setCommunity,
+  isMember,
+  user,
+  token,
+  navigate,
+  pathname,
+}: CommunityHeaderProps) {
   const toggleMembership = () => {
-    console.log(community);
+    if (!user || !token) {
+      navigate('/login');
+      return;
+    }
+
+    void handleCommunityMembershipHeader(
+      community,
+      user.id,
+      token,
+      setCommunity,
+      isMember,
+    );
   };
 
   return (
@@ -44,7 +72,10 @@ export default function CommunityHeader({ community }: CommunityHeaderProps) {
         </div>
 
         <div className="flex items-center justify-center gap-2">
-          <button className="transparent-btn h-[38px] gap-1 !font-medium">
+          <button
+            className="transparent-btn h-[38px] gap-1 !font-medium"
+            onClick={() => handleCreatePostClick(pathname, navigate)}
+          >
             <PlusIcon className="-ml-2" strokeWidth={1.7} />
             Create Post
           </button>
