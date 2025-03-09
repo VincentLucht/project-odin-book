@@ -1,8 +1,9 @@
+import getAuthUser from '@/util/getAuthUser';
+
 import { Post } from '@prisma/client/default';
 import { DB } from '@/db/db';
 import { JwtPayload } from 'jsonwebtoken';
-
-import getAuthUser from '@/util/getAuthUser';
+import { AuthPayload } from '@/comment/commentController';
 
 export default async function checkPrivateCommunityMembership(
   db: DB,
@@ -48,5 +49,10 @@ export default async function checkPrivateCommunityMembership(
     }
   }
 
-  return { ok: true };
+  let user_id = undefined;
+  if (authData) {
+    const { id } = authData as AuthPayload;
+    user_id = id;
+  }
+  return { ok: true, user_id };
 }
