@@ -8,6 +8,7 @@ import catchError from '@/util/catchError';
 
 import { JoinedCommunity } from '@/Sidebar/components/JoinedCommunities/api/getJoinedCommunities';
 import { NavigateFunction } from 'react-router-dom';
+import { PlusIcon } from 'lucide-react';
 
 interface JoinedCommunitiesProps {
   navigate: NavigateFunction;
@@ -41,14 +42,29 @@ export default function JoinedCommunities({ navigate, token }: JoinedCommunities
   return (
     <div>
       <ShowOrHideTab show={show} tabName="Communities" setShow={setShow}>
+        <SidebarButton
+          navigate={() => navigate('/create-community')}
+          buttonName="Create a community"
+          icon={<PlusIcon className="h-8 w-8" />}
+          className="gap-2"
+        />
+
         {joinedCommunities?.map(({ community }) => (
           <SidebarButton
             navigate={() => navigate(`r/${community.name}`)}
             buttonName={community.name}
             key={community.id}
+            src={
+              community.profile_picture_url
+                ? community.profile_picture_url
+                : '/community-default.svg'
+            }
+            className="gap-2"
+            imgClassName="h-8 w-8 rounded-full border"
           />
         ))}
         {joinedCommunities.length === 0 ? (
+          // TODO: Add better?
           <div>Join a community!</div>
         ) : (
           hasMore && (
