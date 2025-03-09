@@ -2,10 +2,8 @@ import fetchCommunity from '@/Main/Community/api/fetch/fetchCommunity';
 import catchError from '@/util/catchError';
 
 import { SortByType } from '@/Main/Community/Community';
-import {
-  FetchedCommunity,
-  FetchedPost,
-} from '@/Main/Community/api/fetch/fetchCommunity';
+import { FetchedCommunity } from '@/Main/Community/api/fetch/fetchCommunity';
+import { DBPostWithCommunityName } from '@/interface/dbSchema';
 
 export default function handleFetchCommunity(
   communityName: string,
@@ -13,7 +11,7 @@ export default function handleFetchCommunity(
   timeframe: string | null,
   token: string | null,
   setCommunity: React.Dispatch<React.SetStateAction<FetchedCommunity | null>>,
-  setPosts: React.Dispatch<React.SetStateAction<FetchedPost[]>>,
+  setPosts: React.Dispatch<React.SetStateAction<DBPostWithCommunityName[]>>,
 ) {
   fetchCommunity(communityName, sortByType, timeframe, token)
     .then((response) => {
