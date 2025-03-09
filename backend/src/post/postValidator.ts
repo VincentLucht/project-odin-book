@@ -49,12 +49,6 @@ class PostValidator {
         .notEmpty()
         .withMessage(vm.postIdReq()),
 
-      body('title').trim()
-        .isLength({ min: 1 })
-        .withMessage(vm.minLen('title', 1))
-        .isLength({ max: 300 })
-        .withMessage(vm.maxLen('title', 300)),
-
       body('body').trim()
         .isLength({ min: 1 })
         .withMessage(vm.minLen('body', 1))
@@ -66,6 +60,14 @@ class PostValidator {
 
       body('is_mature')
         .isBoolean(),
+    ];
+  }
+
+  deleteRules() {
+    return [
+      body('post_id').trim()
+        .notEmpty()
+        .withMessage(vm.postIdReq()),
     ];
   }
 }

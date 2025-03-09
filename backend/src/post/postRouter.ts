@@ -27,4 +27,11 @@ postRouter.put(
   postController.edit,
 );
 
+postRouter.delete(
+  '',
+  token.authenticate,
+  postValidator.deleteRules(),
+  postController.delete,
+);
+
 export default postRouter;
