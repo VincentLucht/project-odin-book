@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import useAuth from '@/context/auth/hook/useAuth';
 
 import PostSidebar from '@/Main/Post/components/PostSidebar/PostSidebar';
@@ -27,6 +27,7 @@ export default function Post() {
   const [isEditActive, setIsEditActive] = useState(false);
 
   const { postId } = useParams();
+  const [searchParams] = useSearchParams();
   const { user, token } = useAuth();
   const isUserPoster = user?.id === post?.poster_id;
   console.log(post);
@@ -34,6 +35,18 @@ export default function Post() {
   useEffect(() => {
     handleFetchPost(postId ?? '', token, setPost);
   }, [postId, token]);
+
+  useEffect(() => {
+    if (!post) return;
+
+    const isUserPoster = user?.id === post?.poster_id;
+
+    if (!isUserPoster) return;
+
+    if (searchParams.get('edit')) {
+      setIsEditActive(true);
+    }
+  }, [post, user, searchParams]);
 
   if (!post) {
     return <div>Not found</div>;
