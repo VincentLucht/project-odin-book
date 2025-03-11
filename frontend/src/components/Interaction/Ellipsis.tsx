@@ -7,7 +7,7 @@ import { SquarePenIcon, TagIcon, CircleAlertIcon, BanIcon } from 'lucide-react';
 
 interface EllipsisProps {
   isUserSelf: boolean;
-  commentId: string;
+  id: string;
   mode?: 'post' | 'comment';
   showDropdown: string | null;
   setShowDropdown: React.Dispatch<React.SetStateAction<string | null>>;
@@ -23,7 +23,7 @@ interface EllipsisProps {
 
 export default function Ellipsis({
   isUserSelf,
-  commentId,
+  id,
   mode = 'post',
   showDropdown,
   setShowDropdown,
@@ -40,15 +40,15 @@ export default function Ellipsis({
     setShowDropdown(null);
   });
 
+  const show = showDropdown === id;
+
   return (
     <div className="relative" ref={divRef}>
       <div
         className={`cursor-pointer px-3 transition-all interaction-button-wrapper-secondary
           hover:bg-hover-gray active:bg-active-gray ${ mode === 'comment' &&
           'text-gray-400 hover:text-white' }`}
-        onClick={() =>
-          setShowDropdown((prev) => (prev === commentId ? null : commentId))
-        }
+        onClick={() => setShowDropdown((prev) => (prev === id ? null : id))}
         onMouseDown={(e) => e.stopPropagation()}
       >
         {mode === 'post' ? (
@@ -60,7 +60,7 @@ export default function Ellipsis({
 
       <DropdownMenu
         className={`!-left-[216px] !top-9 min-w-[256px] rounded-md text-white transition-all duration-300 df
-          ${showDropdown === commentId ? '!z-10 opacity-100' : '!-z-10 opacity-0'} `}
+          ${show ? '!z-10 opacity-100' : '!-z-10 opacity-0'} `}
       >
         {isUserSelf ? (
           <div
@@ -76,7 +76,7 @@ export default function Ellipsis({
               alt={`${mode === 'post' ? 'Edit post' : 'Edit comment'}`}
               imgClassName="rounded-full border h-[32px] w-[32px]"
               setterFunc={setShowDropdown}
-              show={showDropdown === commentId}
+              show={show}
             />
           </div>
         ) : (
@@ -89,18 +89,18 @@ export default function Ellipsis({
             alt={`${mode === 'post' ? 'Save post' : 'Save comment'}`}
             imgClassName="rounded-full border h-[32px] w-[32px]"
             setterFunc={setShowDropdown}
-            show={showDropdown === commentId}
+            show={show}
           />
         }
         {isUserSelf ? (
-          <div className="w-full" onClick={() => deleteFunc(commentId)}>
+          <div className="w-full" onClick={() => deleteFunc(id)}>
             <DropdownButton
               text={`${mode === 'post' ? 'Delete post' : 'Delete comment'}`}
               icon={<TrashIcon />}
               alt={`${mode === 'post' ? 'Delete post' : 'Delete comment'}`}
               imgClassName="rounded-full border h-[32px] w-[32px]"
               setterFunc={setShowDropdown}
-              show={showDropdown === commentId}
+              show={show}
             />
           </div>
         ) : (
@@ -116,7 +116,7 @@ export default function Ellipsis({
               alt="Add Post Flair"
               imgClassName="rounded-full border h-[32px] w-[32px]"
               setterFunc={setShowDropdown}
-              show={showDropdown === commentId}
+              show={show}
             />
           </div>
         ) : (
@@ -131,7 +131,7 @@ export default function Ellipsis({
               alt={`${isMature ? 'Remove NSFW tag' : 'Add NSFW tag'}`}
               imgClassName="rounded-full border h-[32px] w-[32px]"
               setterFunc={setShowDropdown}
-              show={showDropdown === commentId}
+              show={show}
             />
           </div>
         ) : (
@@ -146,7 +146,7 @@ export default function Ellipsis({
               alt={`${isSpoiler ? 'Remove spoiler tag' : 'Add spoiler tag'}`}
               imgClassName="rounded-full border h-[32px] w-[32px]"
               setterFunc={setShowDropdown}
-              show={showDropdown === commentId}
+              show={show}
             />
           </div>
         ) : (
