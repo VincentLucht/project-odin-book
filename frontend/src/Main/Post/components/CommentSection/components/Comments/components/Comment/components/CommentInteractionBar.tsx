@@ -86,7 +86,7 @@ export default function CommentInteractionBar({
             <Ellipsis
               isUserSelf={isUserSelf}
               mode="comment"
-              commentId={commentId}
+              id={commentId}
               showDropdown={showDropdown}
               setShowDropdown={setShowDropdown}
               setIsEditActive={setIsEditActive && setIsEditActive}
