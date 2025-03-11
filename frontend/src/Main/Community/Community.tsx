@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import useAuth from '@/context/auth/hook/useAuth';
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +8,8 @@ import SetSortByType from '@/Main/Community/components/CommunityHeader/component
 import PostOverview from '@/Main/Post/components/PostOverview/PostOverview';
 import CommunitySidebar from '@/Main/Community/components/CommunitySidebar/CommunitySidebar';
 
+import CommunityPostManager from '@/Main/Community/util/CommunityPostManager';
+import CommunityPostHandler from '@/Main/Community/handlers/CommunityPostHandler';
 import handleFetchCommunity from '@/Main/Community/api/fetch/handleFetchCommunity';
 import getCommunityName from '@/Main/Community/util/getCommunityName';
 
@@ -20,6 +22,7 @@ export type TimeFrame = 'day' | 'week' | 'month' | 'year' | 'all';
 // TODO: Add no posts
 export default function Community() {
   const location = useLocation();
+  const [showEditDropdown, setShowEditDropdown] = useState<string | null>(null);
 
   const [community, setCommunity] = useState<FetchedCommunity | null>(null);
   const [posts, setPosts] = useState<DBPostWithCommunityName[]>([]);
@@ -30,6 +33,11 @@ export default function Community() {
 
   const { user, token } = useAuth();
   const navigate = useNavigate();
+
+  const communityPostHandler = useMemo(
+    () => new CommunityPostHandler(new CommunityPostManager(token), setPosts),
+    [token],
+  );
 
   useEffect(() => {
     handleFetchCommunity(
@@ -70,19 +78,27 @@ export default function Community() {
               setTimeframe={setTimeframe}
             />
 
-            {posts.map((post, index) => (
-              <PostOverview
-                post={post}
-                userId={user?.id}
-                token={token}
-                setPosts={setPosts}
-                navigate={navigate}
-                key={index}
-                showPoster={true}
-                poster={post.poster}
-                showMembership={false}
-              />
-            ))}
+            {posts.map((post, index) => {
+              return (
+                <PostOverview
+                  key={index}
+                  post={post}
+                  userId={user?.id}
+                  token={token}
+                  setPosts={setPosts}
+                  navigate={navigate}
+                  showPoster={true}
+                  showMembership={false}
+                  showEditDropdown={showEditDropdown}
+                  setShowEditDropdown={setShowEditDropdown}
+                  location={location.pathname}
+                  // Post edit functions
+                  deleteFunc={communityPostHandler.handleDeletePost(post.id)}
+                  spoilerFunc={communityPostHandler.handleSpoilerFunc(post)}
+                  matureFunc={communityPostHandler.handleMatureFunc(post)}
+                />
+              );
+            })}
           </div>
 
           <CommunitySidebar community={community} />

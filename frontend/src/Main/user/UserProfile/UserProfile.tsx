@@ -1,30 +1,40 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import useAuth from '@/context/auth/hook/useAuth';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
-import fetchUserProfile, {
-  UserAndHistory,
-} from '@/Main/user/UserProfile/api/fetchUserProfile';
-import isPost from '@/Main/user/UserProfile/util/isPost';
 import PostOverview from '@/Main/Post/components/PostOverview/PostOverview';
 import UserSideBar from '@/Main/user/UserProfile/components/UserSidebar/UserSidebar';
 import CommentOverview from '@/Main/CommentOverview/CommentOverview';
 import UserNotFound from '@/components/partials/UserNotFound';
 
-import { SortByUser } from '@/interface/backendTypes';
+import fetchUserProfile, {
+  UserAndHistory,
+} from '@/Main/user/UserProfile/api/fetchUserProfile';
+import isPost from '@/Main/user/UserProfile/util/isPost';
 import { toast } from 'react-toastify';
+import CommunityPostManager from '@/Main/Community/util/CommunityPostManager';
+import UserProfilePostHandler from '@/Main/user/UserProfile/handlers/UserProfilePostHandler';
+
+import { SortByUser } from '@/interface/backendTypes';
 
 export default function UserProfile() {
   const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState<SortByUser>('new');
   const [fetchedUser, setFetchedUser] = useState<UserAndHistory | null>(null);
+  const [showPostDropdown, setShowPostDropdown] = useState<string | null>(null);
   const [showCommentDropdown, setShowCommentDropdown] = useState<string | null>(null);
 
   const { user, token } = useAuth();
 
   const navigate = useNavigate();
+  const location = useLocation();
   const path = useParams();
   const { username } = path;
+
+  const userProfilePostHandler = useMemo(
+    () => new UserProfilePostHandler(new CommunityPostManager(token), setFetchedUser),
+    [token],
+  );
 
   useEffect(() => {
     if (!username) return;
@@ -76,6 +86,13 @@ export default function UserProfile() {
                       token={token}
                       setFetchedUser={setFetchedUser}
                       navigate={navigate}
+                      showEditDropdown={showPostDropdown}
+                      setShowEditDropdown={setShowPostDropdown}
+                      location={location.pathname}
+                      // Post edit functions
+                      deleteFunc={userProfilePostHandler.handleDeletePost(value.id)}
+                      spoilerFunc={userProfilePostHandler.handleSpoilerFunc(value)}
+                      matureFunc={userProfilePostHandler.handleMatureFunc(value)}
                     />
                   ) : (
                     <CommentOverview
