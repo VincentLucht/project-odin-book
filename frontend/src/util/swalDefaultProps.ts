@@ -9,4 +9,11 @@ const swalDefaultProps = {
   reverseButtons: true,
 };
 
+export const swalDefaultPropsConfirm = {
+  ...swalDefaultProps,
+  customClass: {
+    title: 'text-2xl',
+  },
+};
+
 export default swalDefaultProps;
