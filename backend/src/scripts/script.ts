@@ -1,7 +1,11 @@
 import { PrismaClient } from '@prisma/client/default';
 
-import createTestEnvironment from '@/scripts/createTestEnvironment';
-import createTopics from '@/scripts/topics';
+import createTopics from '@/scripts/funcs/createTopics';
+import createUsers from '@/scripts/funcs/createUsers';
+import createComments from '@/scripts/funcs/createComments';
+import createPosts from '@/scripts/funcs/createPosts';
+import createCommunities from '@/scripts/funcs/createCommunities';
+import createFlairs from '@/scripts/funcs/createFlairs';
 
 const prisma = new PrismaClient();
 
@@ -11,8 +15,8 @@ async function reset() {
 
   // Delete chat-related records first
   await prisma.chatAdmin.deleteMany();
-  await prisma.userChats.deleteMany();
   await prisma.message.deleteMany();
+  await prisma.userChats.deleteMany();
   await prisma.chat.deleteMany();
 
   // Delete post and comment related records
@@ -26,6 +30,7 @@ async function reset() {
   await prisma.post.deleteMany();
 
   // Delete community related records
+  await prisma.recentCommunities.deleteMany();
   await prisma.joinRequest.deleteMany();
   await prisma.bannedUser.deleteMany();
   await prisma.communityModerator.deleteMany();
@@ -45,8 +50,11 @@ async function main() {
   await reset();
 
   await createTopics(prisma);
-  await createTestEnvironment(prisma);
-  const userCount = 10;
+  await createUsers(prisma);
+  await createCommunities(prisma);
+  await createPosts(prisma);
+  await createComments(prisma);
+  await createFlairs(prisma);
 }
 
 main()
