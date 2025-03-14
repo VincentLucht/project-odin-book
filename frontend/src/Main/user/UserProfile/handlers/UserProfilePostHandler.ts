@@ -95,4 +95,40 @@ export default class UserProfilePostHandler {
       );
     };
   };
+
+  handleDeletePostFlair = (
+    post: DBPostWithCommunityName,
+    navigateToEdit: () => void,
+  ) => {
+    return () => {
+      if (!post.post_assigned_flair?.length) {
+        navigateToEdit();
+        return;
+      }
+
+      this.postManager.deletePostFlair(
+        post.id,
+        post.post_assigned_flair[0].id,
+        (postId) => {
+          this.setFetchedUser((prev) => {
+            if (!prev) return prev;
+
+            return {
+              ...prev,
+              history: prev.history.map((post) => {
+                if (post.id === postId) {
+                  return {
+                    ...post,
+                    post_assigned_flair: [],
+                  };
+                }
+
+                return post;
+              }),
+            };
+          });
+        },
+      );
+    };
+  };
 }

@@ -7,7 +7,9 @@ import CommunityPFPSmall from '@/components/CommunityPFPSmall';
 import PostInteractionBar from '@/Main/Post/components/PostInteractionBar/PostInteractionBar';
 import CommentSection from '@/Main/Post/components/CommentSection/CommentSection';
 import PostEditDropdownMenu from '@/Main/Post/components/PostEditor/PostEditDropdownMenu';
+import PostFlairSelection from '@/Main/Post/components/PostFlairTag/PostFlairSelection/PostFlairSelection';
 import PostContent from '@/Main/Post/components/PostContent/PostContent';
+import PostFlairTag from '@/Main/Post/components/PostFlairTag/PostFlairTag';
 import SpoilerTag from '@/Main/Post/components/tags/common/SpoilerTag';
 import MatureTag from '@/Main/Post/components/tags/common/MatureTag';
 
@@ -25,12 +27,12 @@ export default function Post() {
   const [post, setPost] = useState<DBPostWithCommunity | null>(null);
   const [showEditDropdown, setShowEditDropdown] = useState<string | null>(null);
   const [isEditActive, setIsEditActive] = useState(false);
+  const [showPostFlairSelection, setShowPostFlairSelection] = useState(false);
 
   const { postId } = useParams();
   const [searchParams] = useSearchParams();
   const { user, token } = useAuth();
   const isUserPoster = user?.id === post?.poster_id;
-  console.log(post);
 
   useEffect(() => {
     handleFetchPost(postId ?? '', token, setPost);
@@ -45,6 +47,9 @@ export default function Post() {
 
     if (searchParams.get('edit')) {
       setIsEditActive(true);
+    }
+    if (searchParams.get('edit-post-flair')) {
+      setShowPostFlairSelection(true);
     }
   }, [post, user, searchParams]);
 
@@ -101,19 +106,23 @@ export default function Post() {
               newBody={post.body}
               isMature={post.is_mature}
               isSpoiler={post.is_spoiler}
-              community_flair_id={post.post_assigned_flair?.[0]?.community_flair_id}
+              setShowPostFlairSelection={setShowPostFlairSelection}
             />
           </div>
 
           {/* TITLE */}
-          <div className="mt-1 text-2xl font-medium">{post.title}</div>
-
           <div className="flex items-center gap-1">
             {post.is_spoiler && <SpoilerTag />}
             {post.is_mature && <MatureTag />}
           </div>
 
-          {/* TODO: POST FLAIR */}
+          <div className="mt-1 text-2xl font-medium">{post.title}</div>
+
+          <PostFlairTag
+            showFlair={true}
+            postAssignedFlair={post.post_assigned_flair}
+            className="mt-2"
+          />
 
           {/* CONTENT */}
           <PostContent
@@ -140,6 +149,16 @@ export default function Post() {
             user={user}
             token={token}
             setPost={setPost}
+          />
+
+          <PostFlairSelection
+            show={showPostFlairSelection}
+            setShow={setShowPostFlairSelection}
+            communityId={post.community_id}
+            activePostFlairId={post.post_assigned_flair?.[0]?.community_flair.id}
+            postId={post.id}
+            setPost={setPost}
+            token={token}
           />
         </div>
 

@@ -19,10 +19,11 @@ interface PostEditDropdownMenuProps {
   newBody: string;
   isMature: boolean;
   isSpoiler: boolean;
-  community_flair_id: string | null;
+  setShowPostFlairSelection: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 // TODO: Add post flair here
+// TODO: Add saving posts (+comments)
 export default function PostEditDropdownMenu({
   isUserPoster,
   postId,
@@ -34,7 +35,7 @@ export default function PostEditDropdownMenu({
   newBody,
   isMature,
   isSpoiler,
-  community_flair_id,
+  setShowPostFlairSelection,
 }: PostEditDropdownMenuProps) {
   const deletePost = () => {
     if (!token) {
@@ -42,15 +43,9 @@ export default function PostEditDropdownMenu({
       return;
     }
 
+    // TODO: Replace with swal2
     if (confirmDelete('post')) {
       handleDeletePost(postId, token, setPost);
-    }
-  };
-
-  const addPostFlair = () => {
-    if (!token) {
-      toast.error('You are not logged in');
-      return;
     }
   };
 
@@ -68,16 +63,10 @@ export default function PostEditDropdownMenu({
       isMature ? false : true,
       setIsEditActive,
       setPost,
-      community_flair_id,
     );
   };
 
   const addSpoilerTag = () => {
-    if (!token) {
-      toast.error('You are not logged in');
-      return;
-    }
-
     if (!token) {
       toast.error('You are not logged in');
       return;
@@ -91,8 +80,11 @@ export default function PostEditDropdownMenu({
       isMature,
       setIsEditActive,
       setPost,
-      community_flair_id,
     );
+  };
+
+  const postFlairFunc = () => {
+    setShowPostFlairSelection((v) => !v);
   };
 
   return (
@@ -100,12 +92,12 @@ export default function PostEditDropdownMenu({
       {isUserPoster ? (
         <Ellipsis
           isUserSelf={isUserPoster}
-          commentId={postId}
+          id={postId}
           showDropdown={showDropdown}
           setShowDropdown={setShowDropdown}
           setIsEditActive={setIsEditActive}
           deleteFunc={deletePost}
-          // post flair func
+          postFlairFunc={postFlairFunc}
           isMature={isMature}
           matureFunc={addMatureTag}
           isSpoiler={isSpoiler}

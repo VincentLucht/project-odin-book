@@ -13,6 +13,7 @@ interface EllipsisProps {
   setShowDropdown: React.Dispatch<React.SetStateAction<string | null>>;
   setIsEditActive?: React.Dispatch<React.SetStateAction<boolean>>;
   deleteFunc: (commentId: string) => void;
+  hasPostFlair?: boolean;
   postFlairFunc?: () => void;
   isSpoiler?: boolean;
   spoilerFunc?: () => void;
@@ -29,6 +30,7 @@ export default function Ellipsis({
   setShowDropdown,
   setIsEditActive,
   deleteFunc,
+  hasPostFlair,
   postFlairFunc,
   isSpoiler,
   spoilerFunc,
@@ -111,9 +113,9 @@ export default function Ellipsis({
         {mode === 'post' && isUserSelf ? (
           <div className="w-full" onClick={() => postFlairFunc && postFlairFunc()}>
             <DropdownButton
-              text="Add Post Flair"
+              text={`${hasPostFlair ? 'Remove post flair' : 'Edit Post Flair'}`}
               icon={<TagIcon />}
-              alt="Add Post Flair"
+              alt={`${hasPostFlair ? 'Remove post flair' : 'Edit Post Flair'}`}
               imgClassName="rounded-full border h-[32px] w-[32px]"
               setterFunc={setShowDropdown}
               show={show}

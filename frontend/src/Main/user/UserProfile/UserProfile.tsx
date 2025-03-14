@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import useAuth from '@/context/auth/hook/useAuth';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import PostOverview from '@/Main/Post/components/PostOverview/PostOverview';
 import UserSideBar from '@/Main/user/UserProfile/components/UserSidebar/UserSidebar';
@@ -27,7 +27,6 @@ export default function UserProfile() {
   const { user, token } = useAuth();
 
   const navigate = useNavigate();
-  const location = useLocation();
   const path = useParams();
   const { username } = path;
 
@@ -53,7 +52,7 @@ export default function UserProfile() {
   }, [username, page, sortBy, token]);
 
   return (
-    <div className="h-[100dvh + 56px] overflow-y-auto">
+    <div className="h-[100dvh + 56px] overflow-y-auto p-4">
       <div className="center-main">
         <div className="center-main-content">
           {fetchedUser ? (
@@ -88,11 +87,17 @@ export default function UserProfile() {
                       navigate={navigate}
                       showEditDropdown={showPostDropdown}
                       setShowEditDropdown={setShowPostDropdown}
-                      location={location.pathname}
                       // Post edit functions
                       deleteFunc={userProfilePostHandler.handleDeletePost(value.id)}
                       spoilerFunc={userProfilePostHandler.handleSpoilerFunc(value)}
                       matureFunc={userProfilePostHandler.handleMatureFunc(value)}
+                      removePostFlairFunc={userProfilePostHandler.handleDeletePostFlair(
+                        value,
+                        () =>
+                          navigate(
+                            `/r/${value.community.name}/${value.id}?edit-post-flair=true`,
+                          ),
+                      )}
                     />
                   ) : (
                     <CommentOverview
