@@ -69,6 +69,7 @@ export default class CommunityManager {
         profile_picture_url: true,
         type: true,
         allow_basic_user_posts: true,
+        is_post_flair_required: true,
         user_communities: user_id
           ? {
               where: {
@@ -149,7 +150,57 @@ export default class CommunityManager {
     });
 
     // hot means: number of upvotes/downvotes and comments
-    const community = await this.prisma.community.findUnique(query);
+    const community = await this.prisma.community.findUnique({
+      where: { name },
+      include: {
+        ...(requestUserId && {
+          user_communities: {
+            where: { user_id: requestUserId },
+            select: { user_id: true, role: true },
+          },
+        }),
+        posts: {
+          include: {
+            ...(requestUserId && {
+              post_votes: {
+                where: { user_id: requestUserId },
+                select: { user_id: true, vote_type: true },
+              },
+            }),
+            poster: {
+              select: {
+                id: true,
+                username: true,
+                profile_picture_url: true,
+              },
+            },
+            community: {
+              select: {
+                id: true,
+                name: true,
+                profile_picture_url: true,
+                ...(requestUserId && {
+                  user_communities: {
+                    where: { user_id: requestUserId },
+                    select: { user_id: true },
+                  },
+                }),
+              },
+            },
+            // TODO: ADD this to all
+            post_assigned_flair: {
+              select: {
+                id: true,
+                community_flair: true,
+              },
+            },
+          },
+          where: {
+            deleted_at: null,
+          },
+        },
+      },
+    });
 
     const postsWithHotScore = community?.posts.map((post) => {
       return {

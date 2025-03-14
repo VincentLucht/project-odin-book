@@ -14,6 +14,7 @@ export interface CreationInfo {
   profile_picture_url: string | null;
   type: CommunityTypes;
   allow_basic_user_posts: boolean;
+  is_post_flair_required: boolean;
   user_communities: { id: string; role: UserRoles; user_id: string }[];
 }
 
