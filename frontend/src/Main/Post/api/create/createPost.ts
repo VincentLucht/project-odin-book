@@ -16,6 +16,7 @@ export default async function createPost(
   is_spoiler: boolean,
   is_mature: boolean,
   type: PostType,
+  flair_id: string,
   token: string,
 ) {
   const response = await fetch(`${API_URL}/post`, {
@@ -31,6 +32,7 @@ export default async function createPost(
       is_spoiler,
       is_mature,
       type,
+      flair_id,
     }),
   });
 

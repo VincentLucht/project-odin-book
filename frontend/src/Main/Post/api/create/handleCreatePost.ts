@@ -11,9 +11,10 @@ export default function handleCreatePost(
   is_mature: boolean,
   type: PostType,
   token: string,
+  flair_id: string,
   navigate?: NavigateFunction,
 ) {
-  createPost(community_id, title, body, is_spoiler, is_mature, type, token)
+  createPost(community_id, title, body, is_spoiler, is_mature, type, flair_id, token)
     .then((response) => {
       const { post, communityName } = response;
       navigate && navigate(`/r/${communityName}/${post.id}`);
