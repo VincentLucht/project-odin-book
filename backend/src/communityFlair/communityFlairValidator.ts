@@ -1,9 +1,25 @@
-import { body } from 'express-validator/lib';
+import { body, query } from 'express-validator/lib';
 import vm from '@/util/validationMessage';
 import isValidHex from '@/communityFlair/util/isValidHex';
 
 // prettier-ignore
 class CommunityFlairValidator {
+  getAllCommunityFlairsRules() {
+    return [
+      query('community_id')
+        .notEmpty()
+        .withMessage('Community Id is required'),
+    ];
+  }
+
+  getAllPostFlairsRules() {
+    return [
+      query('community_id')
+        .notEmpty()
+        .withMessage('Community Id is required'),
+    ];
+  }
+
   creationRules() {
     return [
       body('name').trim()
@@ -15,6 +31,15 @@ class CommunityFlairValidator {
       body('community_id').trim()
         .notEmpty()
         .withMessage(vm.communityIdReq()),
+
+      body('textColor').trim()
+        .notEmpty()
+        .withMessage(vm.req('textColor'))
+        .isLength({ max: 7 })
+        .withMessage(vm.maxLen('textColor', 7))
+        .custom((color) => {
+          return isValidHex(color);
+        }),
 
       body('color').trim()
         .notEmpty()

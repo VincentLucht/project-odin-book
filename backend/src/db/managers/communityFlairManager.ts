@@ -18,9 +18,26 @@ export default class CommunityFlairManager {
     return flair;
   }
 
+  async getAllCommunityFlairs(community_id: string) {
+    const allFlairs = await this.prisma.communityFlair.findMany({
+      where: { community_id },
+    });
+
+    return allFlairs;
+  }
+
+  async getAllPostFlairs(community_id: string) {
+    const allPostFlairs = await this.prisma.communityFlair.findMany({
+      where: { community_id, is_assignable_to_posts: true },
+    });
+
+    return allPostFlairs;
+  }
+
   async create(
     community_id: string,
     name: string,
+    textColor: string,
     color: string,
     is_assignable_to_posts: boolean,
     is_assignable_to_users: boolean,
@@ -29,6 +46,7 @@ export default class CommunityFlairManager {
     const flair = await this.prisma.communityFlair.create({
       data: {
         community_id,
+        textColor,
         name,
         color,
         is_assignable_to_posts,
