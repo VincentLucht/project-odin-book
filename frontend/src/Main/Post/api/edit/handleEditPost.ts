@@ -10,9 +10,8 @@ export default function handleEditPost(
   isMature: boolean,
   setIsEditActive: React.Dispatch<React.SetStateAction<boolean>>,
   setPost: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>,
-  flair_id: string | null,
 ) {
-  editPost(postId, newBody, isSpoiler, isMature, flair_id, token)
+  editPost(postId, newBody, isSpoiler, isMature, token)
     .then(() => {
       setPost((prev) => {
         if (!prev) return prev;

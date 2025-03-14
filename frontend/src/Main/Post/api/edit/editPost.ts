@@ -1,10 +1,10 @@
 import API_URL from '@/auth/ApiUrl';
-import { DBPostAssignedFlairWithCommunityFlair } from '@/interface/dbSchema';
+import { PostAssignedFlair } from '@/interface/dbSchema';
 
 interface EditPostResponse {
   message: string;
   error?: string;
-  newFlair: DBPostAssignedFlairWithCommunityFlair;
+  newFlair: PostAssignedFlair;
 }
 
 export default async function editPost(
@@ -12,7 +12,6 @@ export default async function editPost(
   body: string,
   is_spoiler: boolean,
   is_mature: boolean,
-  flair_id: string | null,
   token: string,
 ) {
   const response = await fetch(`${API_URL}/post`, {
@@ -26,7 +25,6 @@ export default async function editPost(
       body,
       is_spoiler,
       is_mature,
-      flair_id,
     }),
   });
 
