@@ -18,5 +18,11 @@ export default function catchError(error: unknown, customMessage?: string) {
       : errorMessage) ??
     'An unexpected error occurred';
 
-  toast.error(userMessage);
+  // Use consistent ID to avoid notification spam
+  const toastId = 'error-toast';
+  if (toast.isActive(toastId)) {
+    toast.update(toastId, { render: userMessage });
+  } else {
+    toast.error(userMessage, { toastId });
+  }
 }
