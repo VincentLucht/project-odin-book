@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import useClickOutside from '@/hooks/useClickOutside';
 import { useTransition, animated } from '@react-spring/web';
 
 import SelectFlair from '@/Main/Post/components/PostFlairTag/PostFlairSelection/components/SelectFlair';
+import InputWithImg from '@/components/InputWithImg';
 
 import fetchPostFlair from '@/Main/Post/components/PostFlairTag/api/fetchPostFlair';
 import catchError from '@/util/catchError';
@@ -14,11 +15,12 @@ import { DBPostWithCommunity } from '@/interface/dbSchema';
 interface PostFlairSelectionProps {
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
-  communityId: string;
-  postId: string;
+  communityId?: string;
+  postId?: string;
   activePostFlairId: string;
-  setPost: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>;
+  setPost?: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>;
   token: string | null;
+  cb?: (flair: DBCommunityFlair) => void;
 }
 
 export default function PostFlairSelection({
@@ -29,6 +31,7 @@ export default function PostFlairSelection({
   activePostFlairId,
   setPost,
   token,
+  cb,
 }: PostFlairSelectionProps) {
   const [availableFlairs, setAvailableFlairs] = useState<DBCommunityFlair[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -36,8 +39,27 @@ export default function PostFlairSelection({
     setShow(false);
   });
 
+  const [query, setQuery] = useState('');
+  const filteredItems = useMemo(() => {
+    if (!query.trim()) {
+      return availableFlairs;
+    }
+
+    return availableFlairs.filter((flair) => {
+      if (flair.name.toLowerCase().includes(query.toLowerCase())) {
+        return true;
+      }
+
+      if (flair?.emoji?.includes(query)) {
+        return true;
+      }
+
+      return false;
+    });
+  }, [query, availableFlairs]);
+
   useEffect(() => {
-    if (show && token) {
+    if (show && token && communityId) {
       fetchPostFlair(communityId, token)
         .then((response) => {
           setAvailableFlairs(response.allPostFlairs);
@@ -65,7 +87,13 @@ export default function PostFlairSelection({
   });
 
   const onSelect = (flair: DBCommunityFlair) => {
-    handleAssignPostFlair(postId, flair.id, setPost, token);
+    if (postId && setPost) {
+      handleAssignPostFlair(postId, flair.id, setPost, token);
+    }
+
+    if (cb) {
+      cb(flair);
+    }
   };
 
   return (
@@ -96,16 +124,25 @@ export default function PostFlairSelection({
                   Select a Post Flair from the community
                 </h2>
 
+                <InputWithImg
+                  value={query}
+                  setterFunc={setQuery}
+                  src="/magnify.svg"
+                  alt="Magnifying glass icon"
+                  placeholder="Search Post Flair"
+                  imgClassName=""
+                />
+
                 {isLoading ? (
                   <div className="df">
                     <div className="spinner-dots"></div>
                   </div>
                 ) : (
                   <div className="flex-1 flex-col gap-1 overflow-y-auto df">
-                    {!availableFlairs.length ? (
+                    {!filteredItems.length ? (
                       <div>There are no Post Flairs in this community...</div>
                     ) : (
-                      availableFlairs.map((flair) => (
+                      filteredItems.map((flair) => (
                         <SelectFlair
                           flair={flair}
                           key={flair.id}
