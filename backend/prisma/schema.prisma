@@ -289,6 +289,7 @@ model CommunityFlair {
   community_id           String
   community              Community @relation(fields: [community_id], references: [id])
   name                   String    @db.VarChar(20)
+  textColor              String    @db.VarChar(7)
   color                  String    @db.VarChar(7)
   is_assignable_to_posts Boolean   @default(false)
   is_assignable_to_users Boolean   @default(false)
@@ -296,6 +297,10 @@ model CommunityFlair {
 
   user_assigned_flair UserAssignedFlair[]
   post_assigned_flair PostAssignedFlair[]
+
+  @@index([community_id])
+  @@index([community_id, is_assignable_to_posts])
+  @@index([community_id, is_assignable_to_users])
 }
 
 model UserAssignedFlair {
