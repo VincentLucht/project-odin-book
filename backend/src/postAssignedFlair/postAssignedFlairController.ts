@@ -70,20 +70,30 @@ class PostAssignedFlairController {
         if (postFlair.community_flair_id === community_flair_id) {
           return res
             .status(409)
-            .json({ message: 'You already use this flair' });
+            .json({ message: 'You already use this post flair' });
         }
 
-        await db.postAssignedFlair.update(postFlair.id, community_flair_id);
-        return res.status(200).json({ message: 'Successfully updated flair' });
+        const newFlair = await db.postAssignedFlair.update(
+          postFlair.id,
+          community_flair_id,
+        );
+        return res
+          .status(200)
+          .json({ message: 'Successfully updated post flair', newFlair });
       }
 
-      await db.postAssignedFlair.create(post_id, community_flair_id);
+      const newFlair = await db.postAssignedFlair.create(
+        post_id,
+        community_flair_id,
+      );
 
-      return res.status(201).json({ message: 'Successfully assigned flair' });
+      return res
+        .status(201)
+        .json({ message: 'Successfully assigned post flair', newFlair });
     } catch (error) {
       console.error(error);
       return res.status(500).json({
-        message: 'Failed to assign flair',
+        message: 'Failed to assign post flair',
         error: error instanceof Error ? error.message : String(error),
       });
     }
@@ -108,7 +118,8 @@ class PostAssignedFlairController {
         return res.status(403).json({ message: 'You are not the post author' });
       }
 
-      if (!(await db.community.doesExistById(post.community_id))) {
+      const community = await db.community.getById(post.community_id);
+      if (!community) {
         return res.status(404).json({ message: 'Community not found' });
       }
       if (!(await db.userCommunity.isMember(user_id, post.community_id))) {
@@ -120,6 +131,13 @@ class PostAssignedFlairController {
         return res
           .status(403)
           .json({ message: 'You are banned from this community' });
+      }
+
+      // Don't allow to remove flair when editing, if required
+      if (community.is_post_flair_required) {
+        return res
+          .status(400)
+          .json({ message: 'Post Flairs are required for this community' });
       }
 
       const postFlair = await db.postAssignedFlair.getById(
