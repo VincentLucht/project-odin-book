@@ -45,7 +45,7 @@ export default function SetSortByType({
   const showTimeframe = showDropdown === 'timeframe';
 
   return (
-    <div ref={containerRef} className={`mb-2 ${sortByType === 'top' && 'flex'}`}>
+    <div ref={containerRef} className={`mb-2 w-fit ${sortByType === 'top' && 'flex'}`}>
       <div>
         <ChevronButton
           customFunc={() =>
