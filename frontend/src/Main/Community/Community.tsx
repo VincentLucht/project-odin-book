@@ -54,8 +54,6 @@ export default function Community() {
     return <div>No community found!</div>;
   }
 
-  // console.log(community);
-
   return (
     <div className="-mt-3 overflow-y-scroll p-4 center-main">
       <div className="w-full max-w-[1072px]">
@@ -91,11 +89,15 @@ export default function Community() {
                   showMembership={false}
                   showEditDropdown={showEditDropdown}
                   setShowEditDropdown={setShowEditDropdown}
-                  location={location.pathname}
                   // Post edit functions
                   deleteFunc={communityPostHandler.handleDeletePost(post.id)}
                   spoilerFunc={communityPostHandler.handleSpoilerFunc(post)}
                   matureFunc={communityPostHandler.handleMatureFunc(post)}
+                  removePostFlairFunc={communityPostHandler.handleDeletePostFlair(
+                    post,
+                    () =>
+                      navigate(`/r/${communityName}/${post.id}?edit-post-flair=true`),
+                  )}
                 />
               );
             })}

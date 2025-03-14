@@ -8,6 +8,7 @@ import editPost from '@/Main/Post/api/edit/editPost';
 
 import CommunityPostHandler from '@/Main/Community/handlers/CommunityPostHandler';
 import UserProfilePostHandler from '@/Main/user/UserProfile/handlers/UserProfilePostHandler';
+import deletePostFlair from '@/Main/Post/components/PostFlairTag/api/deletePostFlair';
 
 /**
  * Handles API calls related to posts, like deleting a post.
@@ -90,6 +91,25 @@ export default class CommunityPostManager {
             ? 'Successfully removed NSFW tag from post'
             : 'Successfully added NSFW tag to post',
         );
+
+        cb(postId);
+      })
+      .catch((error) => {
+        catchError(error);
+      });
+  }
+
+  deletePostFlair(
+    postId: string,
+    post_assigned_flair_id: string,
+    cb: (postId: string) => void,
+  ) {
+    if (!this.isLoggedIn()) return;
+    if (!post_assigned_flair_id) return;
+
+    deletePostFlair(postId, post_assigned_flair_id, this.token!)
+      .then(() => {
+        toast.success('Successfully removed post flair');
 
         cb(postId);
       })
