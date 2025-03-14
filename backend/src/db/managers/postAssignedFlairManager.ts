@@ -41,21 +41,27 @@ export default class PostAssignedFlairManager {
 
   // ! POST
   async create(post_id: string, community_flair_id: string) {
-    await this.prisma.postAssignedFlair.create({
+    const postFlair = await this.prisma.postAssignedFlair.create({
       data: { post_id, community_flair_id },
+      include: { community_flair: true },
     });
+
+    return postFlair;
   }
 
   // ! PUT
   async update(post_assigned_flair_id: string, community_flair_id: string) {
-    await this.prisma.postAssignedFlair.update({
+    const postFlair = await this.prisma.postAssignedFlair.update({
       where: {
         id: post_assigned_flair_id,
       },
       data: {
         community_flair_id,
       },
+      include: { community_flair: true },
     });
+
+    return postFlair;
   }
 
   // ! DELETE
