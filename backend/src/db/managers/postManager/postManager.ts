@@ -27,7 +27,8 @@ export default class PostManager {
           },
         }),
         post_assigned_flair: {
-          include: {
+          select: {
+            id: true,
             community_flair: true,
           },
         },
@@ -95,8 +96,6 @@ export default class PostManager {
     body: string,
     is_spoiler: boolean,
     is_mature: boolean,
-    flair_id: string | undefined,
-    hadPreviousFlair: boolean,
   ) {
     await this.prisma.post.update({
       where: {
@@ -107,27 +106,6 @@ export default class PostManager {
         is_spoiler,
         edited_at: new Date().toISOString(),
         is_mature,
-        ...(flair_id && {
-          post_assigned_flair: hadPreviousFlair
-            ? {
-                update: {
-                  where: {
-                    post_id_community_flair_id: {
-                      post_id,
-                      community_flair_id: flair_id,
-                    },
-                  },
-                  data: {
-                    community_flair_id: flair_id,
-                  },
-                },
-              }
-            : {
-                create: {
-                  community_flair_id: flair_id,
-                },
-              },
-        }),
       },
     });
   }

@@ -121,7 +121,7 @@ class PostController {
   edit = asyncHandler(async (req: Request, res: Response) => {
     if (checkValidationError(req, res)) return;
 
-    const { post_id, body, is_spoiler, is_mature, flair_id } = req.body;
+    const { post_id, body, is_spoiler, is_mature } = req.body;
 
     try {
       const { user_id } = getAuthUser(req.authData);
@@ -139,12 +139,6 @@ class PostController {
       if (!community) {
         return res.status(404).json({ message: 'Community not found' });
       }
-      // Don't allow to remove flair when editing
-      if (community.is_post_flair_required && !flair_id) {
-        return res
-          .status(400)
-          .json({ message: 'Flair is required for this community' });
-      }
 
       if (post.poster_id !== user_id) {
         return res
@@ -152,15 +146,6 @@ class PostController {
           .json({ message: 'You are not allowed to edit this post' });
       }
 
-      const hasFlair = await db.postAssignedFlair.getPostFlairInCommunity(
-        post_id,
-        post.community_id,
-      );
-
-      // Validate flair only if required or if one was provided
-      if (community.is_post_flair_required || flair_id) {
-        await isFlairValid(flair_id, community);
-      }
       const isBanned = await db.bannedUsers.isBanned(
         user_id,
         post.community_id,
@@ -171,24 +156,9 @@ class PostController {
           .json({ message: 'You are banned from this community' });
       }
 
-      await db.post.edit(
-        post_id,
-        body,
-        is_spoiler,
-        is_mature,
-        flair_id,
-        hasFlair !== null,
-      );
+      await db.post.edit(post_id, body, is_spoiler, is_mature);
 
-      let newFlair;
-      if (flair_id) {
-        newFlair =
-          await db.postAssignedFlair.getByIdAndCommunityFlair(flair_id);
-      }
-
-      return res
-        .status(200)
-        .json({ message: 'Successfully edited post', newFlair });
+      return res.status(200).json({ message: 'Successfully edited post' });
     } catch (error) {
       console.error(error);
       return res.status(500).json({
