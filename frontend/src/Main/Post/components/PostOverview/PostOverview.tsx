@@ -1,12 +1,13 @@
 import { useState } from 'react';
 
-import Save from '@/components/Interaction/Save';
 import Separator from '@/components/Separator';
 import PostInteractionBar from '@/Main/Post/components/PostInteractionBar/PostInteractionBar';
 import CommunityPFPSmall from '@/components/CommunityPFPSmall';
 import HideContent from '@/Main/Post/components/tags/common/HideContent';
 import SpoilerTag from '@/Main/Post/components/tags/common/SpoilerTag';
 import MatureTag from '@/Main/Post/components/tags/common/MatureTag';
+import PostEditDropdownMenuPost from '@/Main/Post/components/PostOverview/components/PostEditDropdownMenuPost';
+import PostFlairTag from '@/Main/Post/components/PostFlairTag/PostFlairTag';
 import { Transition } from '@headlessui/react';
 import transitionPropsHeight from '@/util/transitionProps';
 
@@ -29,8 +30,15 @@ interface PostOverviewProps {
   setPosts?: React.Dispatch<React.SetStateAction<DBPostWithCommunityName[]>>;
   navigate: NavigateFunction;
   showPoster?: boolean;
-  poster?: { username: string; profile_picture_url: string | null };
   showMembership?: boolean;
+  showEditDropdown: string | null;
+  setShowEditDropdown: React.Dispatch<React.SetStateAction<string | null>>;
+  showFlair?: boolean;
+
+  deleteFunc: () => void;
+  spoilerFunc: () => void;
+  matureFunc: () => void;
+  removePostFlairFunc: () => void;
 }
 
 export default function PostOverview({
@@ -41,8 +49,15 @@ export default function PostOverview({
   setPosts,
   navigate,
   showPoster = false,
-  poster,
   showMembership = true,
+  showEditDropdown,
+  setShowEditDropdown,
+  showFlair = true,
+  // Edit functions
+  deleteFunc,
+  spoilerFunc,
+  matureFunc,
+  removePostFlairFunc,
 }: PostOverviewProps) {
   const [showSpoiler, setShowSpoiler] = useState(false);
   const [showMature, setShowMature] = useState(false);
@@ -53,6 +68,7 @@ export default function PostOverview({
   const showBody = showMature || showSpoiler || !(isMature || isSpoiler);
   const hideContent = !showMature && !showSpoiler && (isMature || isSpoiler);
 
+  const isUserPoster = userId === post.poster_id ? true : false;
   const userMember = post.community.user_communities ?? [];
   const onVote = (voteType: VoteType) => {
     if (!token || !userId) {
@@ -99,24 +115,29 @@ export default function PostOverview({
           <div className="gap-1 text-sm df">
             <CommunityPFPSmall
               src={
-                poster
-                  ? post.poster.profile_picture_url
+                post.poster
+                  ? post.poster?.profile_picture_url
                   : post.community.profile_picture_url
               }
             />
 
             {showPoster ? (
-              <div className="font-medium">u/{post.poster.username}</div>
+              <div className="font-medium">u/{post.poster?.username}</div>
             ) : (
               <div className="font-semibold">r/{post.community.name}</div>
             )}
 
-            <div className="text-xs text-gray-secondary">
+            <div className="gap-1 text-xs df text-gray-secondary">
               • {getRelativeTime(post.created_at)}
+              {post.edited_at && !post.deleted_at && (
+                <div className="text-xs df">
+                  • edited {getRelativeTime(post.edited_at, true)}
+                </div>
+              )}
             </div>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             {showMembership && setFetchedUser && (
               <IsCommunityMember
                 userMember={userMember}
@@ -129,7 +150,23 @@ export default function PostOverview({
             )}
 
             {/* TODO: Add saved stuff */}
-            <Save isSaved={false} />
+            <PostEditDropdownMenuPost
+              isUserPoster={isUserPoster}
+              communityName={post.community.name}
+              postId={post.id}
+              postName={post.title}
+              hasPostFlair={Boolean(post.post_assigned_flair?.length)}
+              isMature={isMature}
+              isSpoiler={isSpoiler}
+              showEditDropdown={showEditDropdown}
+              setShowEditDropdown={setShowEditDropdown}
+              navigate={navigate}
+              // edit functions
+              deleteFunc={deleteFunc}
+              spoilerFunc={spoilerFunc}
+              matureFunc={matureFunc}
+              removePostFlairFunc={removePostFlairFunc}
+            />
           </div>
         </div>
 
@@ -140,6 +177,12 @@ export default function PostOverview({
           </div>
 
           <div className="py-[6px] text-xl font-semibold">{post.title}</div>
+
+          <PostFlairTag
+            showFlair={showFlair}
+            postAssignedFlair={post.post_assigned_flair}
+            className="mb-2"
+          />
 
           <Transition show={showBody} {...transitionPropsHeight}>
             <div>{post.body}</div>
