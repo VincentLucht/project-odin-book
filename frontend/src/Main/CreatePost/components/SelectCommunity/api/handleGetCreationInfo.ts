@@ -8,12 +8,17 @@ export default function handleGetCreationInfo(
   token: string,
   getMembership = false,
   setActiveCommunity: React.Dispatch<React.SetStateAction<CreationInfo | null>>,
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
 ) {
+  setIsLoading(true);
+
   getCreationInfo(communityName, token, getMembership)
     .then((response) => {
       setActiveCommunity(response.community);
+      setIsLoading(false);
     })
     .catch((error) => {
       catchError(error);
+      setIsLoading(false);
     });
 }

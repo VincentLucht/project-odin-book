@@ -16,6 +16,8 @@ import TextareaAutosize from 'react-textarea-autosize';
 import MaxLengthIndicator from '@/components/MaxLengthIndicator';
 import CloseButton from '@/components/Interaction/CloseButton';
 
+import CreatePostSidebar from '@/Main/CreatePost/components/CreatePostSidebar/CreatePostSidebar';
+
 import handleCreatePost from '@/Main/Post/api/create/handleCreatePost';
 
 import { CreationInfo } from '@/Main/CreatePost/components/SelectCommunity/api/getCreationInfo';
@@ -42,6 +44,8 @@ export default function CreatePost() {
 
   const { user, token } = useAuthGuard();
   const navigate = useNavigate();
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const isPostFlairRequired =
     activeCommunity?.is_post_flair_required && !activePostFlair;
@@ -83,6 +87,7 @@ export default function CreatePost() {
             token={token}
             activeCommunity={activeCommunity}
             setActiveCommunity={setActiveCommunity}
+            setIsLoading={setIsLoading}
           />
 
           <MemberCheck
@@ -199,8 +204,11 @@ export default function CreatePost() {
           />
         </div>
 
-        {/* TODO: Only show community rules if there are any */}
-        <div>Sidebar</div>
+        <CreatePostSidebar
+          communityName={activeCommunity?.name}
+          rules={activeCommunity?.community_rules}
+          isLoading={isLoading}
+        />
       </div>
     </div>
   );

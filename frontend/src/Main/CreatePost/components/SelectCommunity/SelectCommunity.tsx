@@ -16,6 +16,7 @@ interface SelectCommunityProps {
   token: string;
   activeCommunity: CreationInfo | null;
   setActiveCommunity: React.Dispatch<React.SetStateAction<CreationInfo | null>>;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function SelectCommunity({
@@ -23,6 +24,7 @@ export default function SelectCommunity({
   token,
   activeCommunity,
   setActiveCommunity,
+  setIsLoading,
 }: SelectCommunityProps) {
   const [search, setSearch] = useState(communityName ? communityName : '');
   const [isSelecting, setIsSelecting] = useState(false);
@@ -52,9 +54,9 @@ export default function SelectCommunity({
   useEffect(() => {
     if (communityName) {
       const separated = communityName.split('/')?.[0];
-      handleGetCreationInfo(separated, token, true, setActiveCommunity);
+      handleGetCreationInfo(separated, token, true, setActiveCommunity, setIsLoading);
     }
-  }, [communityName, token, setActiveCommunity]);
+  }, [communityName, token, setActiveCommunity, setIsLoading]);
 
   return (
     <div className="my-2">
@@ -120,6 +122,7 @@ export default function SelectCommunity({
                         token,
                         true,
                         setActiveCommunity,
+                        setIsLoading,
                       );
                     }}
                   />
