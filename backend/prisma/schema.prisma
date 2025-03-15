@@ -131,6 +131,19 @@ model RecentCommunities {
   @@unique([interacted_at])
 }
 
+model CommunityRule {
+  id           String    @id @default(uuid())
+  order        Int
+  title        String    @db.VarChar(100)
+  text         String    @db.VarChar(500)
+  community_id String
+  community    Community @relation(fields: [community_id], references: [id], onDelete: Cascade)
+  created_at   DateTime  @default(now())
+
+  @@unique([community_id, order])
+  @@index([community_id])
+}
+
 model Community {
   id                     String   @id @default(uuid())
   name                   String   @unique @db.VarChar(21)
@@ -156,6 +169,7 @@ model Community {
   community_flair      CommunityFlair[]
   join_request         JoinRequest[]
   recent_communities   RecentCommunities[]
+  community_rules      CommunityRule[]
 
   @@index([name])
 }

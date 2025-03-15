@@ -85,6 +85,15 @@ export type PostAssignedFlair = {
   community_flair: DBCommunityFlair;
 }[];
 
+export interface DBCommunityRule {
+  id: string;
+  order: number;
+  title: string;
+  text: string;
+  community_id: string;
+  created_at: string;
+}
+
 // EXTENSIONS
 export type CommunityTypes = 'PUBLIC' | 'RESTRICTED' | 'PRIVATE';
 export type UserRoles = 'BASIC' | 'CONTRIBUTOR';

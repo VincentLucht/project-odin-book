@@ -1,5 +1,5 @@
 import API_URL from '@/auth/ApiUrl';
-import { CommunityTypes } from '@/interface/dbSchema';
+import { CommunityTypes, DBCommunityRule } from '@/interface/dbSchema';
 import { UserRoles } from '@/interface/dbSchema';
 
 interface GetCreationInfoResponse {
@@ -16,6 +16,7 @@ export interface CreationInfo {
   allow_basic_user_posts: boolean;
   is_post_flair_required: boolean;
   user_communities: { id: string; role: UserRoles; user_id: string }[];
+  community_rules: DBCommunityRule[];
 }
 
 export default async function getCreationInfo(

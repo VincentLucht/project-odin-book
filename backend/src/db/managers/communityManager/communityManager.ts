@@ -82,8 +82,7 @@ export default class CommunityManager {
               },
             }
           : false,
-        // rules
-        // community flairs??
+        community_rules: true,
       },
     });
 
