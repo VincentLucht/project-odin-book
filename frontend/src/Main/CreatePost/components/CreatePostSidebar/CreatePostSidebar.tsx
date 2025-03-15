@@ -55,7 +55,11 @@ export default function CreatePostSidebar({
         <animated.div style={contentAnimation}>
           <h2 className="mb-2 font-semibold">r/{communityName} Rules:</h2>
           <div className="flex flex-col gap-3">
-            {rules?.map((rule) => <RuleTab key={rule.id} rule={rule} />)}
+            {!rules?.length ? (
+              <div>This community has no rules</div>
+            ) : (
+              rules?.map((rule) => <RuleTab key={rule.id} rule={rule} />)
+            )}
           </div>
         </animated.div>
       )}
