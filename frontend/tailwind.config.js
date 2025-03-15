@@ -81,6 +81,9 @@ export default {
         '.bg-transition-hover' :{
           '@apply transition-colors hover:bg-accent-gray active:bg-active-gray' : {}
         },
+        '.bg-transition-hover-2' :{
+          '@apply transition-colors hover:bg-gray-600/45 active:bg-gray-600/60' : {}
+        },
         '.center-main': {
           '@apply w-full flex justify-center': {}
         },
