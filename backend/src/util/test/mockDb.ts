@@ -74,6 +74,11 @@ const mockDb = {
     update: jest.fn(),
     delete: jest.fn(),
   },
+  joinRequest: {
+    hasRequested: jest.fn(),
+    request: jest.fn(),
+    delete: jest.fn(),
+  },
 };
 
 export default mockDb;

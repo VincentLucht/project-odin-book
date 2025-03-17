@@ -12,6 +12,7 @@ import userAssignedFlairRouter from '@/userAssignedFlair/userAssignedFlairRouter
 import postAssignedFlairRouter from '@/postAssignedFlair/postAssignedFlairRouter';
 import recentCommunitiesRouter from '@/recentCommunities/recentCommunitiesRouter';
 import topicRouter from '@/topic/topicRouter';
+import joinRequestRouter from '@/joinRequest/joinRequestRouter';
 
 const router = express.Router();
 
@@ -20,6 +21,7 @@ router.use('/user', userRouter);
 router.use('/user/recent-communities', recentCommunitiesRouter);
 router.use('/community', userCommunityRouter);
 router.use('', communityRouter);
+router.use('/community/join-request', joinRequestRouter);
 router.use('/community/flair', communityFlairRouter);
 router.use('/post', postRouter);
 router.use('/community/post/vote', postVoteRouter);
