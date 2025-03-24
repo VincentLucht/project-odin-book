@@ -22,6 +22,9 @@ interface Level1Props {
 }
 
 // TODO: Add a fitting main and text secondary color for ALL sidebars
+/**
+ * Allows to choose the community name and description, and also show a sidebar preview.
+ */
 export default function Level1({
   level,
   token,
@@ -33,11 +36,15 @@ export default function Level1({
   setDescription,
 }: Level1Props) {
   const [isNameAvailable, setIsNameAvailable] = useState(true);
+  const [isNameValid, setIsNameValid] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
   const [wasSelected, setWasSelected] = useState(false);
 
   useEffect(() => {
-    if (communityName.length && description.length && isNameAvailable) {
+    const validNameRegex = /^[a-zA-Z0-9_]+$/;
+    setIsNameValid(validNameRegex.test(communityName));
+
+    if (communityName.length && isNameValid && description.length && isNameAvailable) {
       setIsValid((prev) => {
         return { ...prev, 1: true };
       });
@@ -46,7 +53,7 @@ export default function Level1({
         return { ...prev, 1: false };
       });
     }
-  }, [communityName, description, isNameAvailable, setIsValid]);
+  }, [communityName, isNameValid, description, isNameAvailable, setIsValid]);
 
   useEffect(() => {
     const debounceTimeout = setTimeout(() => {
@@ -87,34 +94,42 @@ export default function Level1({
           placeholder="Community Name*"
           maxLength={21}
           className={`${
-            (!isNameAvailable && communityName.length >= 3) ||
-            (wasSelected && !isFocused && communityName.length < 3)
-              ? 'border-2 border-red-500 focus-red'
+            (wasSelected && !isFocused && communityName.length < 3) ||
+            (!isNameValid && communityName.length >= 3) ||
+            (!isNameAvailable && communityName.length >= 3)
+              ? 'outline outline-2 outline-red-500 focus:outline-red-500'
               : ''
-              }`}
+            }`}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
         />
-        <div className="flex items-center justify-between">
-          <span
-            className={`ml-[19px] text-sm text-red-500 ${
-              (wasSelected && !isFocused && communityName.length < 3) ||
-              (!isNameAvailable && communityName.length >= 3)
-                ? 'opacity-100'
-                : 'opacity-0'
-            }`}
-          >
-            {!isNameAvailable && communityName.length >= 3
-              ? 'Community Name already in use'
-              : 'Community Name must be at least 3 characters long'}
-          </span>
 
-          <MaxLengthIndicator
-            className="mr-3"
-            length={communityName.length}
-            maxLength={21}
-            onlySpan={true}
-          />
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col pt-1">
+            {(wasSelected && !isFocused && communityName.length < 3) ||
+            (!isNameAvailable && communityName.length >= 3) ? (
+              <span className="ml-[17px] text-sm text-red-500">
+                {!isNameAvailable && communityName.length >= 3
+                  ? 'Community Name already in use'
+                  : 'Community Name must be at least 3 characters long'}
+              </span>
+            ) : null}
+
+            <span className="ml-[17px] text-sm text-red-500">
+              {!isNameValid && communityName.length >= 3
+                ? 'Community Name can only contain letters, numbers, and underscore'
+                : ''}
+            </span>
+          </div>
+
+          <div className="self-start">
+            <MaxLengthIndicator
+              className="mr-3"
+              length={communityName.length}
+              maxLength={21}
+              onlySpan={true}
+            />
+          </div>
         </div>
 
         <TextareaAutosize

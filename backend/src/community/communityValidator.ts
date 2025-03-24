@@ -48,11 +48,26 @@ class CommunityValidator {
 
   creationRules() {
     return [
-      body('name').trim()
-        .isLength({ min: 3 })
-        .withMessage(vm.minLen('Name', 3))
-        .isLength({ max: 21 })
-        .withMessage(vm.maxLen('Name', 21)),
+      body('name')
+        .custom((name) => {
+          if (!name) {
+            throw new Error('Name is required');
+          }
+          if (name.length < 3) {
+            throw new Error(vm.minLen('Name', 3));
+          }
+          if (name.length > 21) {
+            throw new Error(vm.maxLen('Name', 21));
+          }
+
+          // Only allow alphanumeric characters and underscores
+          const validNameRegex = /^[a-zA-Z0-9_]+$/;
+          if (!validNameRegex.test(name)) {
+            throw new Error('Name can only contain letters, numbers, and underscores');
+          }
+
+          return true;
+        }),
 
       body('description').trim()
         .notEmpty()
