@@ -1,4 +1,5 @@
 import { VoteType } from '@/interface/backendTypes';
+import { PostType } from '@/Main/CreatePost/CreatePost';
 
 export interface DBUser {
   id: string;
@@ -10,7 +11,8 @@ export interface DBUser {
   description: string | null;
   cake_day: string | null;
   created_at: Date;
-  deletedAt: Date | null;
+  deleted_at: Date | null;
+  is_mature: boolean;
 
   post_karma: number;
   comment_karma: number;
@@ -33,6 +35,23 @@ export interface DBPost {
   downvote_count: number;
   total_vote_score: number;
   total_comment_score: number;
+  post_type: PostType;
+}
+
+export interface DBCommunity {
+  id: string;
+  name: string;
+  description: string | null;
+  profile_picture_url: string | null;
+  banner_url_desktop: string | null;
+  banner_url_mobile: string | null;
+  created_at: Date | string;
+  is_mature: boolean;
+  is_post_flair_required: boolean;
+  allow_basic_user_posts: boolean;
+  total_members: number;
+  type: CommunityTypes;
+  owner_id: string;
 }
 
 export interface DBComment {
@@ -63,7 +82,7 @@ export interface DBCommunityFlair {
   textColor: string;
   name: string;
   color: string;
-  emoji: string;
+  emoji: string | null;
   is_assignable_to_posts: boolean;
   is_assignable_to_users: boolean;
 }
@@ -85,6 +104,11 @@ export type PostAssignedFlair = {
   community_flair: DBCommunityFlair;
 }[];
 
+export type UserAssignedFlair = {
+  id: string;
+  community_flair: DBCommunityFlair;
+}[];
+
 export interface DBCommunityRule {
   id: string;
   order: number;
@@ -92,6 +116,12 @@ export interface DBCommunityRule {
   text: string;
   community_id: string;
   created_at: string;
+}
+
+export interface DBCommunityModerator {
+  id: string;
+  username: string;
+  profile_picture_url: string;
 }
 
 // EXTENSIONS
