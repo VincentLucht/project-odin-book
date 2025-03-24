@@ -15,6 +15,7 @@ import UserAssignedFlairManager from '@/db/managers/userAssignedFlairManager';
 import PostAssignedFlairManager from '@/db/managers/postAssignedFlairManager';
 import RecentCommunitiesManager from '@/db/managers/recentCommunitiesManager';
 import JoinRequestManager from '@/db/managers/joinRequestManager';
+import SearchResultsManager from '@/db/managers/misc/searchResultsManager';
 
 export class DB {
   private prisma: PrismaClient;
@@ -33,6 +34,7 @@ export class DB {
   public postAssignedFlair: PostAssignedFlairManager;
   public recentCommunities: RecentCommunitiesManager;
   public joinRequest: JoinRequestManager;
+  public searchResults: SearchResultsManager;
 
   constructor() {
     this.prisma = new PrismaClient();
@@ -51,6 +53,7 @@ export class DB {
     this.postAssignedFlair = new PostAssignedFlairManager(this.prisma);
     this.recentCommunities = new RecentCommunitiesManager(this.prisma);
     this.joinRequest = new JoinRequestManager(this.prisma);
+    this.searchResults = new SearchResultsManager(this.prisma);
   }
 }
 

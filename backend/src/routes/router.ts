@@ -13,10 +13,12 @@ import postAssignedFlairRouter from '@/postAssignedFlair/postAssignedFlairRouter
 import recentCommunitiesRouter from '@/recentCommunities/recentCommunitiesRouter';
 import topicRouter from '@/topic/topicRouter';
 import joinRequestRouter from '@/joinRequest/joinRequestRouter';
+import searchResultsRouter from '@/searchResults/searchResultsRouter';
 
 const router = express.Router();
 
 router.use('/auth', authRouter);
+router.use('/search', searchResultsRouter);
 router.use('/user', userRouter);
 router.use('/user/recent-communities', recentCommunitiesRouter);
 router.use('/community', userCommunityRouter);
