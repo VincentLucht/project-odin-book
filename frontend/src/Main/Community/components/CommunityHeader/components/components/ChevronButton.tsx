@@ -13,7 +13,7 @@ export default function ChevronButton({
 }: ChevronButtonProps) {
   return (
     <button
-      className={`h-[32px] w-[59px] gap-1 rounded-full pl-3 pr-2 df bg-transition-hover ${className}`}
+      className={`h-[32px] w-fit gap-1 rounded-full pl-3 pr-2 df bg-transition-hover ${className}`}
       onClick={customFunc}
     >
       <span className="text-sm">{text}</span>
