@@ -9,11 +9,14 @@ import Layout from '@/Main/Layout/Layout';
 
 import Main from '@/Main/Main';
 
+import SearchResults from '@/Main/SearchResults/SearchResults';
+
 import UserSettings from '@/Main/user/UserSettings/UserSettings';
 import UserProfile from '@/Main/user/UserProfile/UserProfile';
 
 import Community from '@/Main/Community/Community';
 import CreateCommunity from '@/Main/Community/components/CreateCommunity/CreateCommunity';
+import ModDashboard from '@/Main/Community/components/ModDashboard/ModDashboard';
 
 import Post from '@/Main/Post/Post';
 import CreatePost from '@/Main/CreatePost/CreatePost';
@@ -35,8 +38,13 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               <Route path="/login" element={<Login />} />
               <Route path="/sign-up" element={<SignUp />} />
 
+              <Route path="r/:communityName/mod/" element={<ModDashboard />} />
+
               <Route path="/" element={<Layout />}>
                 <Route index element={<Main />} />
+
+                {/* SEARCHING */}
+                <Route path="/search/*" element={<SearchResults />} />
 
                 {/* USER */}
                 <Route path="user/settings" element={<UserSettings />} />
