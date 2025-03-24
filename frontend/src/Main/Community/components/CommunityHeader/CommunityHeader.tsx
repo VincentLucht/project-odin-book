@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import handleCommunityMembershipHeader from '@/Main/Community/components/CommunityHeader/api/handleCommunityMembershipHeader';
 import handleCreatePostClick from '@/Header/components/CreateButton/util/handleCreatePostClick';
 
@@ -40,6 +42,14 @@ export default function CommunityHeader({
     );
   };
 
+  const isMod = useMemo(() => {
+    if (!user?.id || !community?.community_moderators) return false;
+
+    return (
+      community.community_moderators.find((mod) => mod.user.id === user.id) ?? false
+    );
+  }, [community.community_moderators, user]);
+
   return (
     <div className="mb-8">
       <div className="my-2 max-h-[128px] max-w-[1072px] overflow-hidden rounded-lg df">
@@ -56,7 +66,7 @@ export default function CommunityHeader({
 
       <div className="ml-4 flex justify-between">
         <div className="flex">
-          <div className="border-bg-gray z-10 -mt-10 h-[88px] w-[88px] rounded-full border-4 bg-gray-400 df">
+          <div className="z-10 -mt-10 h-[88px] w-[88px] rounded-full border-4 bg-gray-400 df border-bg-gray">
             {community.profile_picture_url ? (
               <img
                 className="rounded-full"
@@ -73,17 +83,26 @@ export default function CommunityHeader({
 
         <div className="flex items-center justify-center gap-2">
           <button
-            className="transparent-btn h-[38px] gap-1 !font-medium"
+            className="h-[38px] gap-1 !font-medium transparent-btn"
             onClick={() => handleCreatePostClick(pathname, navigate)}
           >
             <PlusIcon className="-ml-2" strokeWidth={1.7} />
             Create Post
           </button>
 
+          {isMod && (
+            <button
+              className="h-[38px] !font-medium prm-button-blue"
+              onClick={() => navigate(`/r/${community.name}/mod/`)}
+            >
+              Mod tools
+            </button>
+          )}
+
           <div className="transition-all">
             {isMember ? (
               <button
-                className="transparent-btn h-[38px] max-w-[65px] !px-10 !font-medium"
+                className="h-[38px] max-w-[65px] !px-10 !font-medium transparent-btn"
                 onClick={toggleMembership}
               >
                 Joined

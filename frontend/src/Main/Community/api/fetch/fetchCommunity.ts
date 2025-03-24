@@ -1,7 +1,7 @@
 import API_URL from '@/auth/ApiUrl';
-import { CommunityTypes, UserRoles } from '@/interface/dbSchema';
+import { CommunityTypes, DBCommunityRule, UserRoles } from '@/interface/dbSchema';
 import { SortByType } from '@/Main/Community/Community';
-import { DBPostWithCommunityName } from '@/interface/dbSchema';
+import { DBPostWithCommunityName, UserAssignedFlair } from '@/interface/dbSchema';
 
 export type FetchedCommunity = Omit<FetchedCommunityWithPosts, 'posts'>;
 
@@ -22,6 +22,15 @@ export interface FetchedCommunityWithPosts {
 
   posts: DBPostWithCommunityName[];
   user_communities: { user_id: string; role: UserRoles }[] | undefined;
+  community_moderators: { user: CommunityModerator }[];
+  community_rules: DBCommunityRule[];
+}
+
+export interface CommunityModerator {
+  id: string;
+  profile_picture_url: string;
+  username: string;
+  user_assigned_flair: UserAssignedFlair;
 }
 
 interface FetchCommunityResponse {
