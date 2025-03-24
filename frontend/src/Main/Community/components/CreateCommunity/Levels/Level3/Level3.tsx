@@ -20,6 +20,9 @@ interface FilteredMainTopic extends DBMainTopic {
   filteredSubtopics?: DBTopic[];
 }
 
+/**
+ * Allows to choose up to 3 community topics.
+ */
 export default function Level3({
   level,
   setIsValid,

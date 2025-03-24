@@ -24,6 +24,9 @@ interface Level4Props {
   setAllowBasicUserPosts: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+/**
+ * Allows to choose the community type, and other options like if it is mature or requiring a post to have post flair.
+ */
 export default function Level4({
   level,
   selectedType,

@@ -14,6 +14,9 @@ interface Level2Props {
   setIconUrl: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
+/**
+ * Allows to choose the community banner and icon, while also showing a preview.
+ */
 export default function Level2({
   level,
   communityName,
