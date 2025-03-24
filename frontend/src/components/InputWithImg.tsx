@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import CloseButton from '@/components/Interaction/CloseButton';
 
 interface SearchBarWithImgProps {
   value: string;
@@ -13,6 +14,8 @@ interface SearchBarWithImgProps {
   imgLocation?: 'left' | 'right';
   maxLength?: number;
   req?: boolean;
+  onSubmit?: () => void;
+  deleteButton?: boolean;
 }
 
 export default function InputWithImg({
@@ -28,6 +31,8 @@ export default function InputWithImg({
   imgLocation = 'left',
   maxLength,
   req = true,
+  onSubmit,
+  deleteButton = false,
 }: SearchBarWithImgProps) {
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -48,6 +53,10 @@ export default function InputWithImg({
 
   const handleFocus = () => {
     setIsFocused(true);
+  };
+
+  const onDelete = () => {
+    setterFunc('');
   };
 
   const imageElement = (
@@ -80,7 +89,20 @@ export default function InputWithImg({
         placeholder={`${placeholder}`}
         maxLength={maxLength}
         required={req}
+        onSubmit={onSubmit}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            onSubmit && onSubmit();
+          }
+        }}
       />
+
+      {deleteButton && value && (
+        <CloseButton
+          customFunc={onDelete}
+          classNameSvg="!h-[18px] !w-[18px] border rounded-full p-[2px]"
+        />
+      )}
 
       {icon && imgLocation === 'right' ? icon : imgLocation === 'right' && imageElement}
     </div>
