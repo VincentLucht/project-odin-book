@@ -103,7 +103,7 @@ export default function Community() {
             })}
           </div>
 
-          <CommunitySidebar community={community} />
+          <CommunitySidebar community={community} navigate={navigate} />
         </div>
       </div>
     </div>
