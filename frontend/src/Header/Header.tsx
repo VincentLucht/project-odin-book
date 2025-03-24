@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import useAuth from '@/context/auth/hook/useAuth';
 
 import Logo from '@/Header/components/Logo/Logo';
@@ -13,7 +15,7 @@ interface HeaderProps {
   search: string;
   setSearch: React.Dispatch<React.SetStateAction<string>>;
   isDesktop: boolean;
-  setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowSidebar?: React.Dispatch<React.SetStateAction<boolean>>;
   headerRef: React.RefObject<HTMLElement>;
 }
 
@@ -26,6 +28,23 @@ export default function Header({
 }: HeaderProps) {
   const [showDropDown, setShowDropDown] = useState<string | null>(null);
   const { isLoggedIn } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const onSearch = () => {
+    if (search.length !== 0) {
+      navigate(`/search/posts?q=${search}&sbt=relevance&t=all`);
+    }
+  };
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const queryValue = queryParams.get('q');
+
+    if (queryValue) {
+      setSearch(queryValue);
+    }
+  }, [location.search, setSearch]);
 
   return (
     <header
@@ -37,7 +56,7 @@ export default function Header({
       {!isDesktop && (
         <div
           className="bg-hover-transition"
-          onClick={() => setShowSidebar((prev) => !prev)}
+          onClick={() => setShowSidebar && setShowSidebar((prev) => !prev)}
         >
           <MenuIcon />
         </div>
@@ -54,6 +73,8 @@ export default function Header({
         alt="magnifying glass"
         placeholder="Search Reddnir"
         className="bg-accent-gray"
+        onSubmit={onSearch}
+        deleteButton={true}
       />
 
       <div className="flex justify-end gap-1">
