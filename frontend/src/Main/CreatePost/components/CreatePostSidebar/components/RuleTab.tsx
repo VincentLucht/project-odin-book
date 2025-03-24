@@ -32,8 +32,9 @@ export default function RuleTab({ rule }: RuleTabProps) {
 
   return (
     <div>
-      <div
-        className="bg-transition-hover-2 -mx-2 flex cursor-pointer items-center rounded-md p-2 text-sm"
+      <button
+        className="flex w-full cursor-pointer items-center rounded-md p-2 text-left text-sm
+          bg-transition-hover-2"
         onClick={() => setShow((v) => !v)}
       >
         <div className="mr-1 w-6 font-medium df">{rule.order}</div>
@@ -43,7 +44,7 @@ export default function RuleTab({ rule }: RuleTabProps) {
         <animated.div style={iconAnimation}>
           <ChevronUpIcon className="h-5 w-5" />
         </animated.div>
-      </div>
+      </button>
 
       <animated.div
         style={{
@@ -51,7 +52,7 @@ export default function RuleTab({ rule }: RuleTabProps) {
           overflow: 'hidden',
         }}
       >
-        <div ref={ref} className="ml-7 pt-2 text-sm">
+        <div ref={ref} className="ml-7 py-2 text-sm">
           {rule.text}
         </div>
       </animated.div>
