@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import Separator from '@/components/Separator';
 import PostInteractionBar from '@/Main/Post/components/PostInteractionBar/PostInteractionBar';
-import CommunityPFPSmall from '@/components/CommunityPFPSmall';
+import PFP from '@/components/PFP';
 import HideContent from '@/Main/Post/components/tags/common/HideContent';
 import SpoilerTag from '@/Main/Post/components/tags/common/SpoilerTag';
 import MatureTag from '@/Main/Post/components/tags/common/MatureTag';
@@ -113,7 +113,7 @@ export default function PostOverview({
       >
         <div className="flex justify-between">
           <div className="gap-1 text-sm df">
-            <CommunityPFPSmall
+            <PFP
               src={
                 post.poster
                   ? post.poster?.profile_picture_url

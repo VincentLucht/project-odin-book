@@ -3,7 +3,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import useAuth from '@/context/auth/hook/useAuth';
 
 import PostSidebar from '@/Main/Post/components/PostSidebar/PostSidebar';
-import CommunityPFPSmall from '@/components/CommunityPFPSmall';
+import PFP from '@/components/PFP';
 import PostInteractionBar from '@/Main/Post/components/PostInteractionBar/PostInteractionBar';
 import CommentSection from '@/Main/Post/components/CommentSection/CommentSection';
 import PostEditDropdownMenu from '@/Main/Post/components/PostEditor/PostEditDropdownMenu';
@@ -73,7 +73,7 @@ export default function Post() {
       <div className="center-main-content">
         <div className="flex flex-col">
           <div className="flex gap-1 text-sm">
-            <CommunityPFPSmall src={post.community.profile_picture_url} size="large" />
+            <PFP src={post.community.profile_picture_url} size="large" />
 
             <div className="flex-1 text-xs">
               <div className="flex gap-1">
