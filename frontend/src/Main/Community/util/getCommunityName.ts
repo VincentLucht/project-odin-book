@@ -1,4 +1,5 @@
 export default function getCommunityName(url: string) {
-  const communityName = url.slice(3);
+  const split = url.split('/');
+  const communityName = split[2];
   return communityName;
 }
