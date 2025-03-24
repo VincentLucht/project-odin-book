@@ -23,7 +23,7 @@ import handleCreatePost from '@/Main/Post/api/create/handleCreatePost';
 import { CreationInfo } from '@/Main/CreatePost/components/SelectCommunity/api/getCreationInfo';
 import { DBCommunityFlair } from '@/interface/dbSchema';
 
-export type PostType = 'BASIC' | 'images' | 'POLL';
+export type PostType = 'BASIC' | 'IMAGES' | 'POLL';
 
 // TODO: Add max len indicator for body?
 export default function CreatePost() {
@@ -140,7 +140,8 @@ export default function CreatePost() {
                   setShowPostFlairSelection(true);
                 }
               }}
-              className={`h-8 text-sm ${!activePostFlair ? 'prm-button-blue' : 'prm-button-red'}`}
+              className={`h-8 text-sm ${!activePostFlair ? 'prm-button-blue' : 'prm-button-red'}
+                ${!activeCommunity && '!bg-gray-700'}`}
             >
               {activePostFlair ? 'Edit Post Flair' : 'Add Post Flair'}
             </button>
