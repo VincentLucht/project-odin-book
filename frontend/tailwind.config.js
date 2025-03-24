@@ -121,7 +121,7 @@ export default {
           '@apply h-8 rounded-full p-5 text-sm': {}
         },
         '.sidebar': {
-          '@apply sticky top-4 flex h-fit flex-col gap-2': {}
+          '@apply sticky top-4 flex h-fit flex-col gap-2 overscroll-contain': {}
         },
         '.community-sidebar': {
           '@apply h-fit box-shadow rounded-md bg-gray-700 p-4 flex flex-col gap-2': {}
@@ -143,6 +143,12 @@ export default {
         },
         '.box-shadow': {
           boxShadow: '5px 5px 5px rgba(0, 0, 0, 0.1)'
+        },
+        '.sidebar-subheading': {
+          '@apply mb-1 text-xs font-bold': {}
+        },
+        '.sidebar-btn-stone': {
+          '@apply h-8 w-full rounded-full bg-stone-800 px-2 text-xs font-medium transition-colors hover:bg-stone-700 active:bg-stone-600': {}
         },
       };
 
