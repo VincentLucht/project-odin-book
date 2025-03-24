@@ -40,6 +40,7 @@ model User {
   cake_day            String?
   created_at          DateTime  @default(now())
   deleted_at          DateTime?
+  is_mature           Boolean   @default(false)
 
   post_karma    Int @default(0)
   comment_karma Int @default(0)
@@ -187,6 +188,7 @@ model CommunityModerator {
 
 enum PostType {
   BASIC
+  IMAGES
   POLL
 }
 
@@ -325,6 +327,7 @@ model UserAssignedFlair {
   community_flair    CommunityFlair @relation(fields: [community_flair_id], references: [id], onDelete: Cascade)
 
   @@unique([user_id, community_flair_id])
+  @@index([community_flair_id])
 }
 
 model PostAssignedFlair {
