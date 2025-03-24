@@ -10,6 +10,8 @@ export default async function createCommunities(prisma: PrismaClient) {
       name: 't11',
       type: CommunityType.PUBLIC,
       owner_id: '1',
+      description:
+        'Lorem ipsum odor amet, consectetuer adipiscing elit. Felis ad finibus tellus placerat vestibulum ridiculus vivamus commodo quam vehicula per nibh facilisi varius semper magna.',
     },
   });
 
@@ -54,6 +56,7 @@ export default async function createCommunities(prisma: PrismaClient) {
     }
   });
 
+  // Join communities
   await prisma.userCommunity.create({
     data: {
       id: '1',
@@ -62,6 +65,58 @@ export default async function createCommunities(prisma: PrismaClient) {
       role: 'CONTRIBUTOR',
     },
   });
+  await prisma.userCommunity.create({
+    data: {
+      id: '2',
+      community_id: '1',
+      user_id: '2',
+      role: 'CONTRIBUTOR',
+    },
+  });
 
-  console.log('Successfully created Communities');
+  // Create community rules
+  await prisma.communityRule.createMany({
+    data: [
+      {
+        order: 1,
+        title: 'Rule number 1',
+        text: 'This is rule number 1, wow!',
+        community_id: '1',
+      },
+      {
+        order: 2,
+        title: 'Rule number 2',
+        text: 'Be respectful to all community members',
+        community_id: '1',
+      },
+      {
+        order: 3,
+        title: 'No spam or self-promotion',
+        text: 'Avoid posting content solely for promotional purposes',
+        community_id: '1',
+      },
+      {
+        order: 4,
+        title: 'Stay on topic',
+        text: 'Ensure your posts are relevant to the community',
+        community_id: '1',
+      },
+    ],
+  });
+
+  // Create admins
+  await prisma.communityModerator.create({
+    data: {
+      user_id: '1',
+      community_id: '1',
+    },
+  });
+  await prisma.communityModerator.create({
+    data: {
+      user_id: '2',
+      community_id: '1',
+    },
+  });
+
+  console.log('Successfully created Communities with admins');
 }
