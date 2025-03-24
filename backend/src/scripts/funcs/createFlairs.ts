@@ -52,6 +52,32 @@ export default async function createFlairs(prisma: PrismaClient) {
     });
   }
 
+  // Create user flair in other community
+  await prisma.communityFlair.create({
+    data: {
+      id: '201',
+      community_id: '2',
+      textColor: '#ffffff',
+      name: 'Flair in other com',
+      color: '#654321',
+      is_assignable_to_users: true,
+    },
+  });
+  await prisma.userAssignedFlair.create({
+    data: {
+      user_id: '1',
+      community_flair_id: '201',
+    },
+  });
+
+  // Assign user flair to t1
+  await prisma.userAssignedFlair.create({
+    data: {
+      user_id: '1',
+      community_flair_id: '3',
+    },
+  });
+
   // Add post flair to post
   await prisma.postAssignedFlair.create({
     data: {
