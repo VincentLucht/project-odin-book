@@ -5,3 +5,7 @@ export default function isSortByValid(type: string) {
 export function isSortByValidUser(type: string) {
   return type === 'new' || type === 'top';
 }
+
+export function isSortByValidSearch(type: string) {
+  return type === 'new' || type === 'top' || type === 'relevance';
+}
