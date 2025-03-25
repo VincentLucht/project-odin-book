@@ -89,6 +89,9 @@ export default function SearchResults() {
             communities={communities}
             comments={comments}
             users={users}
+            loading={loading}
+            hasMore={hasMore}
+            loadMore={loadMore}
           />
         </div>
       </div>

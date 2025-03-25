@@ -7,14 +7,17 @@ export default function handleSearchUsers(
   query: string,
   sortByType: SortByTypeSearch,
   safeSearch: boolean,
-  setUsers: React.Dispatch<React.SetStateAction<DBUser[]>>,
-  offset?: number,
+  setUsers: (users: DBUser[]) => void,
+  onComplete?: (nextCursor: string | null) => void,
+  cursorId?: string,
 ) {
-  searchUsers(query, sortByType, safeSearch, offset)
+  searchUsers(query, sortByType, safeSearch, cursorId)
     .then((response) => {
       setUsers(response.users);
+      onComplete && onComplete(response.nextCursor || null);
     })
     .catch((error) => {
       catchError(error);
+      onComplete && onComplete(null);
     });
 }

@@ -6,17 +6,17 @@ interface SearchUsersResponse {
   message: string;
   error?: string;
   users: DBUser[];
+  nextCursor: string;
 }
 
-// TODO: Add offset
 export default async function searchUsers(
   query: string,
   sortByType: SortByTypeSearch,
   safeSearch: boolean,
-  offset?: number,
+  cursorId?: string,
 ) {
   const response = await fetch(
-    `${API_URL}/search/users?q=${encodeURIComponent(query)}&sbt=${sortByType}&safeSearch=${safeSearch}`,
+    `${API_URL}/search/users?q=${encodeURIComponent(query)}&sbt=${sortByType}&safeSearch=${safeSearch}&cId=${cursorId}`,
     {
       method: 'GET',
       headers: {

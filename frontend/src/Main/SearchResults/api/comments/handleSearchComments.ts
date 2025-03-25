@@ -8,15 +8,18 @@ export default function handleSearchComments(
   query: string,
   sortByType: SortByTypeSearch,
   safeSearch: boolean,
-  setComments: React.Dispatch<React.SetStateAction<DBCommentSearch[]>>,
+  setComments: (comments: DBCommentSearch[]) => void,
+  onComplete?: (nextCursor: string | null) => void,
   timeframe?: TimeFrame,
   cursorId?: string,
 ) {
   searchComments(query, sortByType, safeSearch, timeframe, cursorId)
     .then((response) => {
       setComments(response.comments);
+      onComplete && onComplete(response.nextCursor || null);
     })
     .catch((error) => {
       catchError(error);
+      onComplete && onComplete(null);
     });
 }

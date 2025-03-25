@@ -8,18 +8,22 @@ export default function handleSearchCommunities(
   query: string,
   timeframe: TimeFrame,
   safeSearch: boolean,
-  setCommunities: React.Dispatch<React.SetStateAction<DBCommunity[]>>,
+  setCommunities: (communities: DBCommunity[]) => void,
+  onComplete?: (nextCursor: string | null) => void,
+  cursorId?: string,
 ) {
   if (!query) {
     toast.error('Community Name is required');
     return;
   }
 
-  searchCommunities(query, timeframe, safeSearch)
+  searchCommunities(query, timeframe, safeSearch, cursorId)
     .then((response) => {
       setCommunities(response.communities);
+      onComplete && onComplete(response.nextCursor || null);
     })
     .catch((error) => {
       catchError(error);
+      onComplete && onComplete(null);
     });
 }

@@ -73,7 +73,19 @@ export default function useSearchBy(
       // Use the current cursorId from props, not from closure
       const currentCursorId = isInitialFetch ? '' : cursorId;
 
-      const handleCallback = (nextCursor: string | null) => {
+      const handleFetchedData = <T>(
+        newItems: T[],
+        setItems: React.Dispatch<React.SetStateAction<T[]>>,
+        isInitialFetch: boolean,
+      ) => {
+        if (isInitialFetch) {
+          setItems(newItems);
+        } else {
+          setItems((prev) => [...prev, ...newItems]);
+        }
+      };
+
+      const onComplete = (nextCursor: string | null) => {
         setCursorId(nextCursor ?? '');
         setLoading(false);
         setInitialLoad(false);
@@ -86,33 +98,40 @@ export default function useSearchBy(
           query,
           sortByType,
           safeSearch,
-          (newPosts) => {
-            if (isInitialFetch) {
-              setPosts(newPosts);
-            } else {
-              setPosts((prevPosts) => [...prevPosts, ...newPosts]);
-            }
-          },
-          handleCallback,
+          (newPosts) => handleFetchedData(newPosts, setPosts, isInitialFetch),
+          onComplete,
           timeframe,
           currentCursorId,
         );
       } else if (queryType === 'communities') {
-        handleSearchCommunities(query, timeframe, safeSearch, setCommunities);
-        handleCallback(null); // No pagination for communities yet
+        handleSearchCommunities(
+          query,
+          timeframe,
+          safeSearch,
+          (newCommunities) =>
+            handleFetchedData(newCommunities, setCommunities, isInitialFetch),
+          onComplete,
+          currentCursorId,
+        );
       } else if (queryType === 'comments') {
         handleSearchComments(
           query,
           sortByType,
           safeSearch,
-          setComments,
+          (newComments) => handleFetchedData(newComments, setComments, isInitialFetch),
+          onComplete,
           timeframe,
           currentCursorId,
         );
-        handleCallback(null); // Assuming no pagination for comments yet
       } else if (queryType === 'people') {
-        handleSearchUsers(query, sortByType, safeSearch, setUsers);
-        handleCallback(null); // Assuming no pagination for users yet
+        handleSearchUsers(
+          query,
+          sortByType,
+          safeSearch,
+          (newUsers) => handleFetchedData(newUsers, setUsers, isInitialFetch),
+          onComplete,
+          currentCursorId,
+        );
       }
     },
     [

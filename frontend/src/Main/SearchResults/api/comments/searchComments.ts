@@ -7,6 +7,7 @@ interface SearchCommentsResponse {
   message: string;
   error?: string;
   comments: DBCommentSearch[];
+  nextCursor: string;
 }
 
 export default async function searchComments(

@@ -6,15 +6,17 @@ interface SearchCommunitiesByRelevanceResponse {
   message: string;
   error?: string;
   communities: DBCommunity[];
+  nextCursor: string;
 }
 
 export default async function searchCommunities(
   query: string,
   timeframe: TimeFrame,
   safeSearch: boolean,
+  cursorId?: string,
 ) {
   const response = await fetch(
-    `${API_URL}/search/communities?q=${encodeURIComponent(query)}&t=${timeframe}&safeSearch=${safeSearch}`,
+    `${API_URL}/search/communities?q=${encodeURIComponent(query)}&t=${timeframe}&safeSearch=${safeSearch}&cId=${cursorId}`,
     {
       method: 'GET',
       headers: {

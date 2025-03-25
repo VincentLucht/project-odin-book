@@ -1,9 +1,11 @@
+import { useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import CommunityOverview from '@/Main/SearchResults/components/DisplaySearchResults/components/CommunityOverview';
 import NoSearchResults from '@/Main/SearchResults/components/DisplaySearchResults/components/NoSearchResults';
 import PostOverviewSearch from '@/Main/SearchResults/components/DisplaySearchResults/components/PostOverviewSearch';
 import UserOverview from '@/Main/SearchResults/components/DisplaySearchResults/components/UserOverview';
+import InfiniteLoader from '@/components/InfiniteLoader';
 
 import { DBPostSearch, QueryType } from '@/Main/SearchResults/SearchResults';
 import { DBCommunity, DBUser } from '@/interface/dbSchema';
@@ -18,6 +20,9 @@ interface DisplaySearchResultsProps {
   communities: DBCommunity[];
   comments: DBCommentSearch[];
   users: DBUser[];
+  loading: boolean;
+  hasMore: boolean;
+  loadMore: () => void;
 }
 
 export default function DisplaySearchResults({
@@ -27,8 +32,33 @@ export default function DisplaySearchResults({
   communities,
   comments,
   users,
+  loading,
+  hasMore,
+  loadMore,
 }: DisplaySearchResultsProps) {
   const navigate = useNavigate();
+  const observerRef = useRef<IntersectionObserver | null>(null);
+
+  const loaderRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (loading) return;
+
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+
+      observerRef.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          loadMore();
+        }
+      });
+
+      if (node) {
+        observerRef.current.observe(node);
+      }
+    },
+    [loadMore, loading],
+  );
 
   if (!query) return null;
 
@@ -60,6 +90,8 @@ export default function DisplaySearchResults({
             navigate={navigate}
           />
         ))}
+
+        <InfiniteLoader hasMore={hasMore} loading={loading} ref={loaderRef} />
       </div>
     );
   }
@@ -83,6 +115,8 @@ export default function DisplaySearchResults({
             navigate={navigate}
           />
         ))}
+
+        <InfiniteLoader hasMore={hasMore} loading={loading} ref={loaderRef} />
       </div>
     );
   }
@@ -102,6 +136,8 @@ export default function DisplaySearchResults({
             navigate={navigate}
           />
         ))}
+
+        <InfiniteLoader hasMore={hasMore} loading={loading} ref={loaderRef} />
       </div>
     );
   }
@@ -116,6 +152,8 @@ export default function DisplaySearchResults({
         {users?.map((user) => (
           <UserOverview key={user.username} user={user} navigate={navigate} />
         ))}
+
+        <InfiniteLoader hasMore={hasMore} loading={loading} ref={loaderRef} />
       </div>
     );
   }
