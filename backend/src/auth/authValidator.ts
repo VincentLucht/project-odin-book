@@ -1,15 +1,29 @@
 import { body } from 'express-validator';
 import vm from '@/util/validationMessage';
+import isValidName from '@/db/managers/util/isValidName';
 // prettier-ignore
 
 class AuthValidator {
   signUpRules() {
     return [
       body('username').trim()
-        .isLength({ min: 2 })
-        .withMessage(vm.minLen('username', 2))
-        .isLength({ max: 20 })
-        .withMessage(vm.maxLen('username', 20)),
+        .custom((username) => {
+          if (!username) {
+            throw new Error('Name is required');
+          }
+          if (username.length < 2) {
+            throw new Error(vm.minLen('Name', 3));
+          }
+          if (username.length > 20) {
+            throw new Error(vm.maxLen('Name', 21));
+          }
+
+          if (!isValidName(username)) {
+            throw new Error('Username can only contain letters, numbers, and underscores');
+          }
+
+          return true;
+        }),
 
       body('email').trim()
         .isLength({ min: 1 })

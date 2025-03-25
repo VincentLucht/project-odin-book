@@ -2,12 +2,14 @@ import { useEffect } from 'react';
 import { ValidationError } from '@/interface/backendErrors';
 
 interface UsePasswordValidationProps {
+  username: string;
   password: string;
   confirmPassword: string;
   setErrors: React.Dispatch<React.SetStateAction<ValidationError>>;
 }
 
-export const usePasswordValidation = ({
+export const useValidation = ({
+  username,
   password,
   confirmPassword,
   setErrors,
@@ -23,11 +25,29 @@ export const usePasswordValidation = ({
             confirmpassword: 'Passwords do not match',
           }));
         } else {
-          setErrors({});
+          setErrors((prev) => {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { password, confirmpassword, ...rest } = prev; 
+            return rest;
+          });
         }
       }, 500);
 
       return () => clearTimeout(timer);
     }
   }, [password, confirmPassword, setErrors]);
+
+  useEffect(() => {
+    if (username.includes(' ')) {
+      setErrors((prev) => ({
+        ...prev,
+        username: 'Username can only contain letters, numbers, and underscores',
+      }));
+    } else {
+      setErrors((prev) => ({
+        ...prev,
+        username: '',
+      }));
+    }
+  }, [username, setErrors]);
 };

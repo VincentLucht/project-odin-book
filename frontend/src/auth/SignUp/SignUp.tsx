@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '@/context/auth/hook/useAuth';
 import useGetScreenSize from '@/context/screen/hook/useGetScreenSize';
+import { useValidation } from '@/auth/SignUp/hook/usePasswordValidation';
 
 import signup from '@/auth/SignUp/api/signup';
 import login from '@/auth/Login/api/login';
@@ -15,7 +16,6 @@ import LoadingButton from '@/components/LoadingButton';
 
 import { ValidationError, ResponseError } from '@/interface/backendErrors';
 import { toast } from 'react-toastify';
-import { usePasswordValidation } from '@/auth/SignUp/hook/usePasswordValidation';
 
 export default function SignUp() {
   const [username, setUsername] = useState('');
@@ -29,7 +29,7 @@ export default function SignUp() {
   const navigate = useNavigate();
   const { login: loginAuth } = useAuth();
   const { isMobile } = useGetScreenSize();
-  usePasswordValidation({ password, confirmPassword, setErrors });
+  useValidation({ username, password, confirmPassword, setErrors });
 
   const handleSignUp = (username: string, password: string) => {
     setIsLoading(true);
