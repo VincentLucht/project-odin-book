@@ -27,14 +27,15 @@ export default class SearchResultsManager {
         AND NOT c.type = 'PRIVATE'
         ${timeframe ? Prisma.sql`AND p.created_at >= ${timeframe}` : Prisma.sql``}
         ${safeSearch ? Prisma.sql`AND NOT p.is_mature AND NOT c.is_mature` : Prisma.sql``}
-      ORDER BY
-        CASE
-          WHEN p.title = ${post_name} THEN 1
-          WHEN lower(p.title) = lower(${post_name}) THEN 2
-          WHEN p.title ILIKE ${`${post_name}%`} THEN 3
-          WHEN p.title ILIKE ${`%${post_name}%`} THEN 4
-          ELSE 5
-        END
+        ORDER BY 
+          CASE WHEN p.title = ${post_name} THEN 1 
+              WHEN lower(p.title) = lower(${post_name}) THEN 2 
+              WHEN p.title ILIKE ${`${post_name}%`} THEN 3 
+              WHEN p.title ILIKE ${`%${post_name}%`} THEN 4 
+              ELSE 5 
+          END,
+          p.created_at ASC,
+          p.id ASC      
       LIMIT ${take} OFFSET ${offset}
     `;
 
@@ -138,7 +139,9 @@ export default class SearchResultsManager {
           WHEN name ILIKE ${`${community_name}%`} THEN 3
           WHEN name ILIKE ${`%${community_name}%`} THEN 4
           ELSE 5
-        END
+        END,
+        created_at ASC,
+        id ASC
       LIMIT ${take} OFFSET ${offset}
     `;
 
@@ -196,7 +199,9 @@ export default class SearchResultsManager {
           WHEN c.content ILIKE ${`${comment_content}%`} THEN 3
           WHEN c.content ILIKE ${`%${comment_content}%`} THEN 4
           ELSE 5
-        END
+        END,
+        c.created_at ASC,
+        p.id ASC
       LIMIT ${take} OFFSET ${offset}
     `;
 
@@ -331,7 +336,9 @@ export default class SearchResultsManager {
         WHEN username ILIKE ${`${username}%`} THEN 3
         WHEN username ILIKE ${`%${username}%`} THEN 4
         ELSE 5
-      END
+      END,
+      created_at ASC,
+      id ASC
       LIMIT ${take} OFFSET ${offset}
     `;
 
