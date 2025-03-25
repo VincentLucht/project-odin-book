@@ -5,8 +5,8 @@ import { useNavigate } from 'react-router-dom';
 
 import CommunityHeader from '@/Main/Community/components/CommunityHeader/CommunityHeader';
 import SetSortByType from '@/Main/Community/components/CommunityHeader/components/SetSortByType';
-import PostOverview from '@/Main/Post/components/PostOverview/PostOverview';
 import CommunitySidebar from '@/Main/Community/components/CommunitySidebar/CommunitySidebar';
+import LazyPostOverview from '@/Main/Community/components/LazyPostOverview';
 
 import CommunityPostManager from '@/Main/Community/util/CommunityPostManager';
 import CommunityPostHandler from '@/Main/Community/handlers/CommunityPostHandler';
@@ -55,7 +55,7 @@ export default function Community() {
   }
 
   return (
-    <div className="-mt-3 overflow-y-scroll p-4 center-main">
+    <div className="overflow-y-scroll p-4 pt-1 center-main">
       <div className="w-full max-w-[1072px]">
         <CommunityHeader
           community={community}
@@ -76,31 +76,27 @@ export default function Community() {
               setTimeframe={setTimeframe}
             />
 
-            {posts.map((post, index) => {
-              return (
-                <PostOverview
-                  key={index}
-                  post={post}
-                  userId={user?.id}
-                  token={token}
-                  setPosts={setPosts}
-                  navigate={navigate}
-                  showPoster={true}
-                  showMembership={false}
-                  showEditDropdown={showEditDropdown}
-                  setShowEditDropdown={setShowEditDropdown}
-                  // Post edit functions
-                  deleteFunc={communityPostHandler.handleDeletePost(post.id)}
-                  spoilerFunc={communityPostHandler.handleSpoilerFunc(post)}
-                  matureFunc={communityPostHandler.handleMatureFunc(post)}
-                  removePostFlairFunc={communityPostHandler.handleDeletePostFlair(
-                    post,
-                    () =>
-                      navigate(`/r/${communityName}/${post.id}?edit-post-flair=true`),
-                  )}
-                />
-              );
-            })}
+            {posts.map((post, index) => (
+              <LazyPostOverview
+                key={index}
+                post={post}
+                userId={user?.id}
+                token={token}
+                setPosts={setPosts}
+                navigate={navigate}
+                showPoster={true}
+                showMembership={false}
+                showEditDropdown={showEditDropdown}
+                setShowEditDropdown={setShowEditDropdown}
+                deleteFunc={communityPostHandler.handleDeletePost(post.id)}
+                spoilerFunc={communityPostHandler.handleSpoilerFunc(post)}
+                matureFunc={communityPostHandler.handleMatureFunc(post)}
+                removePostFlairFunc={communityPostHandler.handleDeletePostFlair(
+                  post,
+                  () => navigate(`/r/${communityName}/${post.id}?edit-post-flair=true`),
+                )}
+              />
+            ))}
           </div>
 
           <CommunitySidebar community={community} navigate={navigate} />
