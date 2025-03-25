@@ -7,6 +7,7 @@ import CommunityHeader from '@/Main/Community/components/CommunityHeader/Communi
 import SetSortByType from '@/Main/Community/components/CommunityHeader/components/SetSortByType';
 import CommunitySidebar from '@/Main/Community/components/CommunitySidebar/CommunitySidebar';
 import LazyPostOverview from '@/Main/Community/components/LazyPostOverview';
+import EndMessage from '@/components/partials/EndMessage';
 
 import CommunityPostManager from '@/Main/Community/util/CommunityPostManager';
 import CommunityPostHandler from '@/Main/Community/handlers/CommunityPostHandler';
@@ -97,6 +98,8 @@ export default function Community() {
                 )}
               />
             ))}
+
+            <EndMessage />
           </div>
 
           <CommunitySidebar community={community} navigate={navigate} />
