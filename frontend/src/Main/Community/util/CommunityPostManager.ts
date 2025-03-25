@@ -54,12 +54,11 @@ export default class CommunityPostManager {
     body: string,
     isSpoiler: boolean,
     isMature: boolean,
-    flairId: string | null,
     cb: (postId: string) => void,
   ) {
     if (!this.isLoggedIn()) return;
 
-    editPost(postId, body, !isSpoiler, isMature, flairId, this.token!)
+    editPost(postId, body, !isSpoiler, isMature, this.token!)
       .then(() => {
         toast.success(
           isSpoiler
@@ -79,12 +78,11 @@ export default class CommunityPostManager {
     body: string,
     isSpoiler: boolean,
     isMature: boolean,
-    flairId: string | null,
     cb: (postId: string) => void,
   ) {
     if (!this.isLoggedIn()) return;
 
-    editPost(postId, body, isSpoiler, !isMature, flairId, this.token!)
+    editPost(postId, body, isSpoiler, !isMature, this.token!)
       .then(() => {
         toast.success(
           isMature
