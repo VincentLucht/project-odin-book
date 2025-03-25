@@ -15,12 +15,12 @@ export default async function createPosts(prisma: PrismaClient) {
       data: {
         community_id: '1',
         poster_id: '1',
-        title: `This should pop up as a search result ${i + 1}`,
+        title: `test ${i + 1}`,
         body: `${faker.lorem.paragraph({ min: 7, max: 25 })}`,
         is_mature: isMature,
         is_spoiler: isSpoiler,
         post_type: 'BASIC',
-        total_comment_score: i,
+        total_vote_score: i,
         created_at: createdAt,
       },
     });

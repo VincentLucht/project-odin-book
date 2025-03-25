@@ -2,6 +2,24 @@ import bcrypt from 'bcrypt';
 import { PrismaClient } from '@prisma/client/default';
 
 export default async function createUsers(prisma: PrismaClient) {
+  // Users for populating search results
+  for (let i = 0; i < 300; i++) {
+    const isMature = Math.random() < 0.1;
+
+    // Increment by 1 min for each iteration
+    const createdAt = new Date();
+    createdAt.setMinutes(createdAt.getMinutes() + i);
+
+    await prisma.user.create({
+      data: {
+        username: `test ${i + 1}`,
+        email: `email ${i}`,
+        password: 'i',
+        is_mature: isMature ? true : false,
+      },
+    });
+  }
+
   await prisma.user.create({
     data: {
       id: '1',

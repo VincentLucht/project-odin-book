@@ -1,6 +1,24 @@
 import { PrismaClient } from '@prisma/client/default';
 
 export default async function createComments(prisma: PrismaClient) {
+  // Comments for populating search results
+  for (let i = 0; i < 300; i++) {
+    // Increment by 1 min for each iteration
+    const createdAt = new Date();
+    createdAt.setMinutes(createdAt.getMinutes() + i);
+
+    await prisma.comment.create({
+      data: {
+        content: `test ${i + 1}`,
+        created_at: createdAt,
+        post_id: '1',
+        user_id: '1',
+        total_vote_score: i,
+      },
+    });
+  }
+
+  // Comments for nested comment structure
   await prisma.comment.create({
     data: {
       id: '1',

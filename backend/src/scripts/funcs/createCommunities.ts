@@ -4,6 +4,26 @@ import { PrismaClient } from '@prisma/client/default';
 import { CommunityType } from '@prisma/client/default';
 
 export default async function createCommunities(prisma: PrismaClient) {
+  // Communities for populating search results
+  for (let i = 0; i < 300; i++) {
+    const isMature = Math.random() < 0.1;
+    const isRestricted = Math.random() < 0.1;
+
+    // Increment by 1 min for each iteration
+    const createdAt = new Date();
+    createdAt.setMinutes(createdAt.getMinutes() + i);
+
+    await prisma.community.create({
+      data: {
+        name: `test${i + 1}`,
+        owner_id: '1',
+        is_mature: isMature,
+        created_at: createdAt,
+        type: isRestricted ? 'RESTRICTED' : 'PUBLIC',
+      },
+    });
+  }
+
   await prisma.community.create({
     data: {
       id: '1',
