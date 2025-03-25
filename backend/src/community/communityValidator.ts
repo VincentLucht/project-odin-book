@@ -3,6 +3,7 @@ import { body, param, query } from 'express-validator/lib';
 import vm from '@/util/validationMessage';
 import isTopicValid from '@/community/util/isTopicValid';
 import isSortByValid from '@/util/isSortByValid';
+import isValidName from '@/db/managers/util/isValidName';
 
 // prettier-ignore
 class CommunityValidator {
@@ -60,9 +61,7 @@ class CommunityValidator {
             throw new Error(vm.maxLen('Name', 21));
           }
 
-          // Only allow alphanumeric characters and underscores
-          const validNameRegex = /^[a-zA-Z0-9_]+$/;
-          if (!validNameRegex.test(name)) {
+          if (!isValidName(name)) {
             throw new Error('Name can only contain letters, numbers, and underscores');
           }
 
