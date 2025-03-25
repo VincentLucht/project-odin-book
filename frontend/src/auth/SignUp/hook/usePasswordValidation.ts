@@ -27,7 +27,7 @@ export const useValidation = ({
         } else {
           setErrors((prev) => {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const { password, confirmpassword, ...rest } = prev; 
+            const { password, confirmpassword, ...rest } = prev;
             return rest;
           });
         }
