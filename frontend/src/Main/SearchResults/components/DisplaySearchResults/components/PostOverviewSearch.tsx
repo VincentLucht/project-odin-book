@@ -45,7 +45,8 @@ export default function PostOverviewSearch({
       <Separator className="my-[3px]" />
 
       <div
-        className="flex cursor-pointer flex-col gap-2 rounded-2xl px-4 py-6 text-sm bg-transition-hover"
+        className="flex cursor-pointer flex-col gap-2 break-all rounded-2xl px-4 py-6 text-sm
+          bg-transition-hover"
         onClick={postRedirect}
       >
         <div className="flex items-center gap-1">

@@ -71,19 +71,23 @@ export default function CommentOverviewSearch({
         <div className="flex items-center gap-1">
           <PFP src={comment.post.community.profile_picture_url} />
 
-          <div className="font-semibold">r{comment.post.community.name}</div>
+          <div className="font-semibold">r/{comment.post.community.name}</div>
 
           <div className="gap-1 text-xs df text-gray-secondary">
             • {getRelativeTime(comment.post.created_at as Date)}
           </div>
         </div>
 
-        <div className="-mt-2 flex items-center gap-1">
-          {comment.post.is_spoiler && <SpoilerTag />}
-          {comment.post.is_mature && <MatureTag />}
-        </div>
+        {(comment.post.is_spoiler || comment.post.is_mature) && (
+          <div className="-mt-2 flex items-center gap-1">
+            {comment.post.is_spoiler && <SpoilerTag />}
+            {comment.post.is_mature && <MatureTag />}
+          </div>
+        )}
 
-        <div className="text-[17px] font-medium leading-7">{comment.post.title}</div>
+        <div className="break-all text-[17px] font-medium leading-7">
+          {comment.post.title}
+        </div>
 
         <div className="rounded-xl bg-neutral-950 p-4" onClick={commentRedirect}>
           <div className="flex items-center">
@@ -96,7 +100,7 @@ export default function CommentOverviewSearch({
             </div>
           </div>
 
-          <div className="mt-3 line-clamp-[9] max-h-[300px] overflow-hidden">
+          <div className="mt-3 line-clamp-[9] max-h-[300px] overflow-hidden break-all">
             {comment.content}
           </div>
 

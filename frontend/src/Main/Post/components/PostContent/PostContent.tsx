@@ -50,7 +50,7 @@ export default function PostContent({
           ) : (
             <div>
               <Transition show={showBody} {...transitionPropsHeight}>
-                <div>{post.body}</div>
+                <div className="break-all">{post.body}</div>
               </Transition>
 
               <Transition show={hideContent} {...transitionPropsHeight}>

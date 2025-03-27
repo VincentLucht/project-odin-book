@@ -107,7 +107,7 @@ export default function PostOverview({
       <Separator />
 
       <div
-        className="my-[6px] rounded-2xl px-2 py-2 transition-all hover:cursor-pointer
+        className="my-[6px] break-all rounded-2xl px-2 py-2 transition-all hover:cursor-pointer
           hover:bg-hover-gray-secondary"
         onClick={postRedirect}
       >

@@ -107,7 +107,7 @@ export default function CommentOverview({
           <div className="flex gap-[6px] text-sm">
             <span className="font-semibold">r/{comment.post.community.name}</span>
 
-            <span>• {comment.post.title}</span>
+            <span className="break-all">• {comment.post.title}</span>
           </div>
 
           <div className="flex gap-1 py-[6px]">

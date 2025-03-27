@@ -110,13 +110,14 @@ export default function Post() {
             />
           </div>
 
-          {/* TITLE */}
+          {/* TAGS */}
           <div className="flex items-center gap-1">
             {post.is_spoiler && <SpoilerTag />}
             {post.is_mature && <MatureTag />}
           </div>
 
-          <div className="mt-1 text-2xl font-medium">{post.title}</div>
+          {/* TITLE */}
+          <div className="mt-1 break-all text-2xl font-medium">{post.title}</div>
 
           <PostFlairTag
             showFlair={true}

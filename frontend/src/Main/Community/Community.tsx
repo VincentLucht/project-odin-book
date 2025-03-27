@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import CommunityHeader from '@/Main/Community/components/CommunityHeader/CommunityHeader';
 import SetSortByType from '@/Main/Community/components/CommunityHeader/components/SetSortByType';
 import CommunitySidebar from '@/Main/Community/components/CommunitySidebar/CommunitySidebar';
-import LazyPostOverview from '@/Main/Community/components/LazyPostOverview';
+import LazyLoadPostOverview from '@/Main/Community/components/LazyLoadPostOverview';
 import EndMessage from '@/components/partials/EndMessage';
 
 import CommunityPostManager from '@/Main/Community/util/CommunityPostManager';
@@ -78,7 +78,7 @@ export default function Community() {
             />
 
             {posts.map((post, index) => (
-              <LazyPostOverview
+              <LazyLoadPostOverview
                 key={index}
                 post={post}
                 userId={user?.id}
