@@ -1,7 +1,7 @@
 import { useInView } from 'react-intersection-observer';
 import PostOverview from '@/Main/Post/components/PostOverview/PostOverview';
 
-export default function LazyPostOverview(props: any) {
+export default function LazyLoadPostOverview(props: any) {
   const { ref, inView } = useInView({
     triggerOnce: true,
   });
