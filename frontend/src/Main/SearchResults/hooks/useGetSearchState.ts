@@ -5,6 +5,9 @@ import { QueryType } from '@/Main/SearchResults/SearchResults';
 import { SortByTypeSearch } from '@/Main/SearchResults/SearchResults';
 import { TimeFrame } from '@/Main/Community/Community';
 
+/**
+ * Hook for managing changes in the url for search results.
+ */
 export default function useGetSearchState(initialQuery: string | null) {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
