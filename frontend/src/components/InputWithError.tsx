@@ -53,8 +53,11 @@ export default function InputWithError({
 
   // Reset errors on value change
   useEffect(() => {
-    setErrors({});
-  }, [value, setErrors]);
+    setErrors((prev) => ({
+      ...prev,
+      [errorFieldName]: '',
+    }));
+  }, [value, setErrors, errorFieldName]);
 
   return (
     <div className="w-full">
