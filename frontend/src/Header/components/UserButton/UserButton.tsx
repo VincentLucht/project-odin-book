@@ -40,7 +40,7 @@ export default function UserButton({
       </div>
 
       <DropdownMenu
-        className={`right-[20px] min-w-[256px] rounded-md transition-all duration-300 df
+        className={`right-[20px] min-w-[256px] rounded-md transition-opacity duration-300 df
           ${showDropDown ? 'z-10 opacity-100' : '-z-10 opacity-0'} `}
       >
         <DropdownButton

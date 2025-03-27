@@ -61,8 +61,8 @@ export default function Ellipsis({
       </div>
 
       <DropdownMenu
-        className={`!-left-[216px] !top-9 min-w-[256px] rounded-md text-white transition-all duration-300 df
-          ${show ? '!z-10 opacity-100' : '!-z-10 opacity-0'} `}
+        className={`!-left-[216px] !top-9 min-w-[256px] rounded-md text-white transition-opacity
+          duration-300 df ${show ? '!z-10 opacity-100' : '!-z-10 opacity-0'} `}
       >
         {isUserSelf ? (
           <div
