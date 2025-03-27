@@ -58,11 +58,10 @@ export default function UserProfile() {
           {fetchedUser ? (
             <div className="w-full min-w-0">
               <div className="flex gap-2">
-                {/* TODO: Img is a bit distorted?? use object-cover?? */}
                 <img
                   src={`${fetchedUser?.profile_picture_url ? fetchedUser?.profile_picture_url : '/user.svg'}`}
                   alt="User Profile Pictures"
-                  className="h-24 w-24 rounded-full border-2"
+                  className="h-24 w-24 rounded-full border-2 object-cover"
                 />
                 <div className="flex-col df">
                   <h2 className="text-xl font-bold">

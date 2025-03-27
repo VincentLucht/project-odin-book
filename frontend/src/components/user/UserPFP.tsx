@@ -14,7 +14,7 @@ export default function UserPFP({ url, onClick, classname }: UserPFPProps) {
       <img
         src={`${url ? url : '/user.svg'}`}
         alt="User profile picture"
-        className="h-8 w-8 rounded-full border"
+        className="h-8 w-8 rounded-full border object-cover"
       />
     </div>
   );

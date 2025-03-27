@@ -18,13 +18,13 @@ export default function PFP({
   className,
 }: CommunityPFPProps) {
   const pfp =
-    mode === 'user' ? (src ?? '/user-default.svg') : (src ?? '/community-default.svg');
+    mode === 'user' ? (src ?? '/user.svg') : (src ?? '/community-default.svg');
 
   return (
     <img
       src={pfp}
       alt={`${mode === 'community' ? 'Community Profile Picture' : 'User Profile Picture'}`}
-      className={`${sizeClasses[size] ?? sizeClasses.normal} ${className} rounded-full border`}
+      className={`${sizeClasses[size] ?? sizeClasses.normal} ${className} rounded-full border object-cover`}
       loading="lazy"
     />
   );

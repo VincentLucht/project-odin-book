@@ -54,7 +54,7 @@ export default function DropdownButton({
 
       {src && (
         <div className="h-[32px] w-[32px] df">
-          <img src={src} alt={alt} className={`${imgClassName} h-6 w-6`} />
+          <img src={src} alt={alt} className={`${imgClassName} h-6 w-6 object-cover`} />
         </div>
       )}
 
