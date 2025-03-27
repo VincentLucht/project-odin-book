@@ -138,9 +138,9 @@ export default function Level1({
           onChange={(e) => setDescription(e.target.value)}
           minRows={8}
           placeholder="Description"
-          maxLength={500}
+          maxLength={300}
         />
-        <MaxLengthIndicator length={description.length} maxLength={500} />
+        <MaxLengthIndicator length={description.length} maxLength={300} />
       </div>
 
       <div className="max-h-[328px]">
