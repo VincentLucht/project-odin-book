@@ -15,7 +15,7 @@ interface SetSortByTypeProps {
   setSortByType: (sortBy: SortByType) => void;
   timeframe: TimeFrame;
   setTimeframe: React.Dispatch<React.SetStateAction<TimeFrame>>;
-  excludeSortOptions: boolean;
+  excludeSortOptions?: boolean;
   mode?: 'community' | 'search';
   safeSearch?: boolean;
   setSafeSearch?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -26,7 +26,7 @@ export default function SetSortByType({
   setSortByType,
   timeframe,
   setTimeframe,
-  excludeSortOptions,
+  excludeSortOptions = false,
   mode = 'community',
   safeSearch,
   setSafeSearch,
