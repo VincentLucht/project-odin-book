@@ -46,19 +46,20 @@ export default function SearchResults() {
   const [comments, setComments] = useState<DBCommentSearch[]>([]);
   const [users, setUsers] = useState<DBUser[]>([]);
 
-  const { loading, hasMore, loadMore } = useSearchBy(
-    query,
-    queryType,
-    sortByType,
-    timeframe,
-    safeSearch,
-    cursorId,
-    setPosts,
-    setCommunities,
-    setComments,
-    setUsers,
-    setCursorId,
-  );
+  const { loading, hasMore, initialLoad, noResults, requestInProgress, loadMore } =
+    useSearchBy(
+      query,
+      queryType,
+      sortByType,
+      timeframe,
+      safeSearch,
+      cursorId,
+      setPosts,
+      setCommunities,
+      setComments,
+      setUsers,
+      setCursorId,
+    );
 
   const excludeSortOptions =
     queryType === 'posts' || queryType === 'comments' ? false : true;
@@ -85,12 +86,16 @@ export default function SearchResults() {
           <DisplaySearchResults
             query={query}
             queryType={queryType}
+            safeSearch={safeSearch}
             posts={posts}
             communities={communities}
             comments={comments}
             users={users}
             loading={loading}
             hasMore={hasMore}
+            initialLoad={initialLoad}
+            noResults={noResults}
+            requestInProgress={requestInProgress}
             loadMore={loadMore}
           />
         </div>

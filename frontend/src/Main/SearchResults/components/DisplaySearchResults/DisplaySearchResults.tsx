@@ -16,24 +16,32 @@ import CommentOverviewSearch, {
 interface DisplaySearchResultsProps {
   query: string | null;
   queryType: QueryType;
+  safeSearch: boolean;
   posts: DBPostSearch[];
   communities: DBCommunity[];
   comments: DBCommentSearch[];
   users: DBUser[];
   loading: boolean;
   hasMore: boolean;
+  initialLoad: boolean;
+  noResults: boolean;
+  requestInProgress: boolean;
   loadMore: () => void;
 }
 
 export default function DisplaySearchResults({
   query,
   queryType,
+  safeSearch,
   posts,
   communities,
   comments,
   users,
   loading,
   hasMore,
+  initialLoad,
+  noResults,
+  requestInProgress,
   loadMore,
 }: DisplaySearchResultsProps) {
   const navigate = useNavigate();
@@ -63,7 +71,7 @@ export default function DisplaySearchResults({
   if (!query) return null;
 
   if (queryType === 'posts') {
-    if (posts?.length === 0) {
+    if (noResults) {
       return <NoSearchResults notFoundName={query} />;
     }
 
@@ -91,13 +99,21 @@ export default function DisplaySearchResults({
           />
         ))}
 
-        <InfiniteLoader hasMore={hasMore} loading={loading} ref={loaderRef} />
+        <InfiniteLoader
+          hasMore={hasMore}
+          loading={loading}
+          safeSearch={safeSearch}
+          isInitialLoad={initialLoad}
+          queryType="posts"
+          requestInProgress={requestInProgress}
+          ref={loaderRef}
+        />
       </div>
     );
   }
 
   if (queryType === 'communities') {
-    if (communities?.length === 0) {
+    if (noResults) {
       return <NoSearchResults notFoundName={query} />;
     }
 
@@ -116,14 +132,22 @@ export default function DisplaySearchResults({
           />
         ))}
 
-        <InfiniteLoader hasMore={hasMore} loading={loading} ref={loaderRef} />
+        <InfiniteLoader
+          hasMore={hasMore}
+          loading={loading}
+          safeSearch={safeSearch}
+          isInitialLoad={initialLoad}
+          queryType="communities"
+          requestInProgress={requestInProgress}
+          ref={loaderRef}
+        />
       </div>
     );
   }
 
   // Comments
   if (queryType === 'comments') {
-    if (comments?.length === 0) {
+    if (noResults) {
       return <NoSearchResults notFoundName={query} />;
     }
 
@@ -137,13 +161,21 @@ export default function DisplaySearchResults({
           />
         ))}
 
-        <InfiniteLoader hasMore={hasMore} loading={loading} ref={loaderRef} />
+        <InfiniteLoader
+          hasMore={hasMore}
+          loading={loading}
+          safeSearch={safeSearch}
+          isInitialLoad={initialLoad}
+          queryType="comments"
+          requestInProgress={requestInProgress}
+          ref={loaderRef}
+        />
       </div>
     );
   }
 
   if (queryType === 'people') {
-    if (users?.length === 0) {
+    if (noResults) {
       return <NoSearchResults notFoundName={query} />;
     }
 
@@ -153,7 +185,15 @@ export default function DisplaySearchResults({
           <UserOverview key={user.username} user={user} navigate={navigate} />
         ))}
 
-        <InfiniteLoader hasMore={hasMore} loading={loading} ref={loaderRef} />
+        <InfiniteLoader
+          hasMore={hasMore}
+          loading={loading}
+          safeSearch={safeSearch}
+          isInitialLoad={initialLoad}
+          queryType="people"
+          requestInProgress={requestInProgress}
+          ref={loaderRef}
+        />
       </div>
     );
   }
