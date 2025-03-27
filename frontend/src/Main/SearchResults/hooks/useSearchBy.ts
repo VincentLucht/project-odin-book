@@ -12,6 +12,9 @@ import { DBCommunity } from '@/interface/dbSchema';
 import { DBCommentSearch } from '@/Main/SearchResults/components/DisplaySearchResults/components/CommentOverviewSearch';
 import { DBUser } from '@/interface/dbSchema';
 
+/**
+ * Hook for handling fetching search results, handles loading and setting state.
+ */
 export default function useSearchBy(
   query: string | null,
   queryType: QueryType,
@@ -29,6 +32,9 @@ export default function useSearchBy(
   const [hasMore, setHasMore] = useState(true);
   const [initialLoad, setInitialLoad] = useState(true);
   const [searchParamsChanged, setSearchParamsChanged] = useState(false);
+
+  const requestInProgressRef = useRef(false);
+  const noResultsRef = useRef(false);
 
   // Track previous search parameters to detect changes
   const searchParamsRef = useRef({
@@ -59,8 +65,12 @@ export default function useSearchBy(
       };
 
       setSearchParamsChanged(true);
-      // Reset cursor on search parameter changes
       setCursorId('');
+      setHasMore(true);
+      if (prevParams.queryType !== queryType) {
+        setInitialLoad(true);
+        noResultsRef.current = false;
+      }
     }
   }, [query, queryType, sortByType, timeframe, safeSearch, setCursorId]);
 
@@ -79,10 +89,16 @@ export default function useSearchBy(
         isInitialFetch: boolean,
       ) => {
         if (isInitialFetch) {
+          newItems.length === 0
+            ? (noResultsRef.current = true)
+            : (noResultsRef.current = false);
+
           setItems(newItems);
         } else {
           setItems((prev) => [...prev, ...newItems]);
         }
+
+        requestInProgressRef.current = false;
       };
 
       const onComplete = (nextCursor: string | null) => {
@@ -151,6 +167,7 @@ export default function useSearchBy(
 
   const loadMore = useCallback(() => {
     if (!loading && hasMore && query) {
+      requestInProgressRef.current = true;
       fetchResults(false);
     }
   }, [loading, hasMore, query, fetchResults]);
@@ -182,5 +199,12 @@ export default function useSearchBy(
     setUsers,
   ]);
 
-  return { loading, hasMore, loadMore };
+  return {
+    loading,
+    hasMore,
+    initialLoad,
+    noResults: noResultsRef.current,
+    requestInProgress: requestInProgressRef.current,
+    loadMore,
+  };
 }
