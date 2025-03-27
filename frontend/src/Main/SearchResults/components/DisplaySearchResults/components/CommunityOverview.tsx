@@ -47,9 +47,7 @@ export default function CommunityOverview({
         </div>
 
         <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-1">
-            <div className="text-lg font-semibold">r/{name}</div>
-          </div>
+          <div className="text-lg font-semibold">r/{name}</div>
 
           <div className="flex gap-2">
             {is_mature && (
