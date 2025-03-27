@@ -19,7 +19,10 @@ export default function CommunitySidebar({
   navigate,
 }: CommunitySidebarProps) {
   return (
-    <div className="max-h-[calc(100dvh-84px)] !gap-0 overflow-y-auto rounded-md bg-black px-4 py-2 sidebar">
+    <div
+      className="max-h-[calc(100dvh-84px)] !gap-0 overflow-y-auto rounded-md bg-black px-4 py-2 pb-3
+        sidebar"
+    >
       <div className="font-medium">{community.name}</div>
 
       <div className="font-light">{community.description}</div>
