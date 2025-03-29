@@ -8,11 +8,13 @@ export default function useClickOutside(
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        ref.current &&
-        !ref.current.contains(event.target as Node) &&
-        !ignoredElementRef?.current?.contains(event.target as Node)
-      ) {
+      const isInMainRef = ref.current?.contains(event.target as Node);
+
+      // Only check ignored ref if provided
+      const isInIgnoredRef =
+        ignoredElementRef?.current?.contains(event.target as Node) ?? false;
+
+      if (!isInMainRef && !isInIgnoredRef) {
         closeFunction();
       }
     };
