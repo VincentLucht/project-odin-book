@@ -68,18 +68,24 @@ class CommunityController {
       if (sort_by_type === 'new') {
         ({ community, pagination } = await db.community.fetchByNew(
           name,
+          foundCommunity.id,
           requestUserId,
           cursorId,
         ));
       } else if (sort_by_type === 'top') {
         ({ community, pagination } = await db.community.fetchByTop(
           name,
+          foundCommunity.id,
           validTimeframe,
           requestUserId,
           cursorId,
         ));
       } else if (sort_by_type === 'hot') {
-        ({ community } = await db.community.fetchByHot(name, requestUserId));
+        ({ community } = await db.community.fetchByHot(
+          name,
+          foundCommunity.id,
+          requestUserId,
+        ));
         pagination.hasMore = false;
       }
 

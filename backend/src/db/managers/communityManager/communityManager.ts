@@ -91,12 +91,13 @@ export default class CommunityManager {
 
   async fetchByNew(
     name: string,
+    communityId: string,
     requestUserId: string | undefined,
     cursorId: string | undefined,
   ) {
     const limit = 30;
 
-    const query = baseQuery(name, requestUserId, {
+    const query = baseQuery(name, requestUserId, communityId, {
       sort: 'new',
       limit,
       ...(cursorId && { cursor: cursorId }),
@@ -115,6 +116,7 @@ export default class CommunityManager {
 
   async fetchByTop(
     name: string,
+    communityId: string,
     timeframe: TimeFrame,
     requestUserId: string | undefined,
     cursorId: string,
@@ -122,7 +124,7 @@ export default class CommunityManager {
     const limit = 10;
     const startDate = getStartDate(timeframe);
 
-    const query = baseQuery(name, requestUserId, {
+    const query = baseQuery(name, requestUserId, communityId, {
       sort: 'top',
       ...(cursorId && { cursor: cursorId }),
       ...(startDate && { timeFilter: startDate }),
@@ -138,68 +140,21 @@ export default class CommunityManager {
     };
   }
 
-  async fetchByHot(name: string, requestUserId: string | undefined) {
+  async fetchByHot(
+    name: string,
+    communityId: string,
+    requestUserId: string | undefined,
+  ) {
     const currentDate = new Date();
     const threeDaysAgo = new Date();
     threeDaysAgo.setDate(currentDate.getDate() - 3);
 
-    const query = baseQuery(name, requestUserId, {
+    const query = baseQuery(name, requestUserId, communityId, {
       sort: 'hot',
       timeFilter: threeDaysAgo,
     });
 
-    // hot means: number of upvotes/downvotes and comments
-    const community = await this.prisma.community.findUnique({
-      where: { name },
-      include: {
-        ...(requestUserId && {
-          user_communities: {
-            where: { user_id: requestUserId },
-            select: { user_id: true, role: true },
-          },
-        }),
-        posts: {
-          include: {
-            ...(requestUserId && {
-              post_votes: {
-                where: { user_id: requestUserId },
-                select: { user_id: true, vote_type: true },
-              },
-            }),
-            poster: {
-              select: {
-                id: true,
-                username: true,
-                profile_picture_url: true,
-              },
-            },
-            community: {
-              select: {
-                id: true,
-                name: true,
-                profile_picture_url: true,
-                ...(requestUserId && {
-                  user_communities: {
-                    where: { user_id: requestUserId },
-                    select: { user_id: true },
-                  },
-                }),
-              },
-            },
-            // TODO: ADD this to all
-            post_assigned_flair: {
-              select: {
-                id: true,
-                community_flair: true,
-              },
-            },
-          },
-          where: {
-            deleted_at: null,
-          },
-        },
-      },
-    });
+    const community = await this.prisma.community.findUnique(query);
 
     const postsWithHotScore = community?.posts.map((post) => {
       return {
