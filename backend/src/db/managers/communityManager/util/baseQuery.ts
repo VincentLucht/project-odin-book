@@ -4,6 +4,7 @@ const { SortOrder } = Prisma;
 export default function baseQuery(
   name: string,
   requestUserId: string | undefined,
+  communityId: string,
   options: {
     sort: 'new' | 'hot' | 'top';
     timeFilter?: Date;
@@ -27,11 +28,40 @@ export default function baseQuery(
     where: { name },
     include: {
       ...(requestUserId && {
+        community_moderators: {
+          where: { user_id: requestUserId },
+          select: {
+            user: {
+              select: { id: true, username: true, profile_picture_url: true },
+            },
+          },
+        },
         user_communities: {
           where: { user_id: requestUserId },
           select: { user_id: true, role: true },
         },
       }),
+      community_moderators: {
+        select: {
+          user: {
+            select: {
+              id: true,
+              username: true,
+              profile_picture_url: true,
+              user_assigned_flair: {
+                where: {
+                  community_flair: {
+                    community_id: communityId,
+                  },
+                },
+                select: { id: true, community_flair: true },
+              },
+            },
+          },
+        },
+        take: 10,
+      },
+      community_rules: true,
       posts: {
         ...pagination,
         include: {
@@ -59,6 +89,12 @@ export default function baseQuery(
                   select: { user_id: true },
                 },
               }),
+            },
+          },
+          post_assigned_flair: {
+            select: {
+              id: true,
+              community_flair: true,
             },
           },
         },
