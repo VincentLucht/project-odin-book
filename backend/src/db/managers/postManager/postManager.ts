@@ -18,7 +18,7 @@ export default class PostManager {
       select: {
         ...postSelectFields,
         poster: {
-          select: { username: true },
+          select: { username: true, deleted_at: true },
         },
         ...(user_id && {
           post_votes: {
@@ -55,6 +55,14 @@ export default class PostManager {
     });
 
     return postAndCommunity;
+  }
+
+  async getPopular(cursorId?: string, take = 50) {
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    return this.prisma.post.findMany({
+      where: { created_at: { gte: twentyFourHoursAgo }, deleted_at: null },
+    });
   }
 
   // ! POST

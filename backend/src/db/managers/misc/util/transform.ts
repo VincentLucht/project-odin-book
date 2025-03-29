@@ -60,6 +60,7 @@ export function transformCommentsSearch(comments: any[]) {
       user: {
         username: comment.username,
         profile_picture_url: comment.user_pfp,
+        deleted_at: comment.user_deleted_at,
       },
     };
   });

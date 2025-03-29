@@ -28,6 +28,7 @@ export interface DBCommentSearch extends DBComment {
   user: {
     username: string;
     profile_picture_url: string | null;
+    deleted_at: string | null;
   };
 }
 
@@ -93,7 +94,11 @@ export default function CommentOverviewSearch({
           <div className="flex items-center">
             <PFP src={comment.user.profile_picture_url} />
 
-            <div className="ml-[6px] mr-1">{comment.user.username}</div>
+            <div className="ml-[6px] mr-1">
+              {comment.is_deleted || comment.user.deleted_at
+                ? '[deleted]'
+                : comment.user.username}
+            </div>
 
             <div className="gap-1 text-xs df text-gray-secondary">
               • {getRelativeTime(comment.post.created_at as Date)}

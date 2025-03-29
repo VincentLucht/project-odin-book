@@ -159,7 +159,7 @@ export interface DBCommentWithCommunityName extends DBComment {
 }
 
 export interface DBPostWithCommunity extends DBPost {
-  poster: { username: string } | null;
+  poster: { username: string; deleted_at: string | null } | null;
   post_votes: VotingRecord[];
   community: {
     id: string;
@@ -174,7 +174,11 @@ export interface DBPostWithCommunity extends DBPost {
 }
 
 export interface DBCommentWithReplies extends DBComment {
-  user: { username: string; profile_picture_url: string | null } | null;
+  user: {
+    username: string;
+    profile_picture_url: string | null;
+    deleted_at: string | null;
+  } | null;
   comment_votes: VotingRecord[];
   replies: DBCommentWithReplies[];
   _count: { replies: number };

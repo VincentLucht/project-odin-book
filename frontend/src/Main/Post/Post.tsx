@@ -90,7 +90,9 @@ export default function Post() {
               </div>
 
               <div className="font-extralight text-gray-300">
-                {post?.poster?.username}
+                {(post.deleted_at ?? post.poster?.deleted_at)
+                  ? '[deleted]'
+                  : post?.poster?.username}
               </div>
             </div>
 

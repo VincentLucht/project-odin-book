@@ -169,4 +169,25 @@ export default class UserManager {
       },
     });
   }
+
+  // ! DELETE
+  async delete(user_id: string) {
+    await this.prisma.user.update({
+      where: { id: user_id },
+      data: {
+        deleted_at: new Date(),
+        username: `deleted_${user_id.substring(0, 8)}`,
+        email: '',
+        password: '',
+        display_name: null,
+        profile_picture_url: null,
+        description: null,
+        cake_day: null,
+      },
+    });
+
+    await this.prisma.recentCommunities.deleteMany({ where: { user_id } });
+
+    await this.prisma.communityModerator.deleteMany({ where: { user_id } });
+  }
 }

@@ -63,9 +63,12 @@ export default function Comment({
 
   const hasReplyAtAll = comment.replies === undefined && comment._count.replies >= 1;
   const hasReply = comment.replies?.length > 0;
+  const userDeleted = comment.user?.deleted_at;
 
   const redirectToUser = (username: string) => {
-    navigate(`/user/${username}`);
+    if (!userDeleted) {
+      navigate(`/user/${username}`);
+    }
   };
 
   const toggleShow = (wasSubmitted = false) => {
@@ -106,7 +109,7 @@ export default function Comment({
           />
 
           <div className={`text-sm font-bold ${depth === 0 ? '' : 'ml-[4px]'}`}>
-            {comment.is_deleted ? (
+            {comment.is_deleted || userDeleted ? (
               <span className="text-gray-300">[deleted]</span>
             ) : (
               comment.user?.username

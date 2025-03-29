@@ -25,6 +25,7 @@ export default class SearchResultsManager {
       INNER JOIN "Community" AS c ON c.id = p.community_id 
       WHERE p.title ILIKE ${`%${post_name}%`}
         AND NOT c.type = 'PRIVATE'
+        AND p.deleted_at IS NULL
         ${timeframe ? Prisma.sql`AND p.created_at >= ${timeframe}` : Prisma.sql``}
         ${safeSearch ? Prisma.sql`AND NOT p.is_mature AND NOT c.is_mature` : Prisma.sql``}
         ORDER BY 
@@ -58,6 +59,7 @@ export default class SearchResultsManager {
           ...(safeSearch && { is_mature: false }),
         },
         ...(safeSearch && { is_mature: false }),
+        deleted_at: null,
       },
       include: {
         community: {
@@ -97,6 +99,7 @@ export default class SearchResultsManager {
         },
         ...(safeSearch && { is_mature: false }),
         ...(timeframe && { created_at: { gte: timeframe } }),
+        deleted_at: null,
       },
       include: {
         community: {
@@ -183,7 +186,8 @@ export default class SearchResultsManager {
           p.is_spoiler AS post_is_spoiler,
           p.community_id AS post_community_id,
           u.username,
-          u.profile_picture_url AS user_pfp
+          u.profile_picture_url AS user_pfp,
+          u.deleted_at AS user_deleted_at
       FROM "Comment" AS c
         INNER JOIN "Post" AS p ON p.id = c.post_id
         INNER JOIN "Community" AS cmty ON cmty.id = p.community_id
@@ -242,6 +246,7 @@ export default class SearchResultsManager {
           select: {
             profile_picture_url: true,
             username: true,
+            deleted_at: true,
           },
         },
       },
@@ -292,6 +297,7 @@ export default class SearchResultsManager {
           select: {
             profile_picture_url: true,
             username: true,
+            deleted_at: true,
           },
         },
       },
@@ -328,6 +334,7 @@ export default class SearchResultsManager {
         is_mature
       FROM "User"
       WHERE username ILIKE ${`%${username}%`}
+      AND deleted_at IS NULL
       ${safeSearch ? Prisma.sql`AND NOT is_mature` : Prisma.sql``}
       ORDER BY
       CASE

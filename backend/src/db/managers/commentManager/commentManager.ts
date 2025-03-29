@@ -17,12 +17,18 @@ export default class CommentManager {
     return comment;
   }
 
-  //* * Fetches comment thread with up to 30 main comments, each with 8 replies */
+  /** Fetches comment thread with up to 30 main comments, each with 8 replies. */
   async getCommentThreads(post_id: string, user_id: string | undefined) {
     return this.prisma.comment.findMany({
       where: { post_id, parent_comment_id: null },
       include: {
-        user: { select: { username: true, profile_picture_url: true } },
+        user: {
+          select: {
+            username: true,
+            profile_picture_url: true,
+            deleted_at: true,
+          },
+        },
         comment_votes: user_id
           ? {
               where: { user_id },
