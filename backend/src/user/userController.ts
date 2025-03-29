@@ -53,15 +53,21 @@ class UserController {
 
     try {
       const { user_id } = getAuthUser(req.authData);
+      const user = await db.user.getById(user_id);
+      if (user?.deleted_at) {
+        return res.status(400).json({ message: 'User is already deleted' });
+      }
       if (!(await db.user.getById(user_id))) {
         return res.status(404).json({ message: 'User not found' });
       }
+
+      await db.user.delete(user_id);
 
       return res.status(200).json({ message: 'Successfully deleted user' });
     } catch (error) {
       console.error(error);
       return res.status(500).json({
-        message: 'Failed to fetch user',
+        message: 'Failed to delete user',
         error: error instanceof Error ? error.message : String(error),
       });
     }

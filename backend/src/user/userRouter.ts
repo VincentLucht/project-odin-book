@@ -13,6 +13,6 @@ userRouter.get(
   userController.get,
 );
 
-userRouter.delete('', token.authenticate);
+userRouter.delete('', token.authenticate, userController.delete);
 
 export default userRouter;
