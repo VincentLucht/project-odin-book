@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 export default function useAuthGuard() {
-  const { user, token } = useAuth();
+  const { user, token, logout } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -14,5 +14,5 @@ export default function useAuthGuard() {
     }
   }, [user, token, navigate]);
 
-  return { user: user!, token: token! };
+  return { user: user!, token: token!, logout };
 }
