@@ -4,6 +4,7 @@ import {
   sortByNew,
   userSelectFields,
 } from '@/db/managers/userManager/util/userUtils';
+import bcrypt from 'bcrypt';
 import { Comment, Post } from '@prisma/client/default';
 
 export default class UserManager {
@@ -139,6 +140,18 @@ export default class UserManager {
     };
   }
 
+  async getSettings(user_id: string) {
+    const userWithPassword = await this.prisma.user.findUnique({
+      where: { id: user_id },
+    });
+
+    const userWithoutPassword = {
+      ...userWithPassword,
+      password: null,
+    };
+    return userWithoutPassword;
+  }
+
   async getByEmail(email: string) {
     const user = await this.prisma.user.findUnique({
       where: {
@@ -170,6 +183,25 @@ export default class UserManager {
     });
   }
 
+  // ! UPDATE
+  async edit(
+    user_id: string,
+    updateData: Partial<{
+      email: string;
+      display_name: string;
+      password: string;
+    }>,
+  ) {
+    if (updateData.password) {
+      updateData.password = await bcrypt.hash(updateData.password, 10);
+    }
+
+    await this.prisma.user.update({
+      where: { id: user_id },
+      data: updateData,
+    });
+  }
+
   // ! DELETE
   async delete(user_id: string) {
     await this.prisma.user.update({
@@ -177,7 +209,7 @@ export default class UserManager {
       data: {
         deleted_at: new Date(),
         username: `deleted_${user_id.substring(0, 8)}`,
-        email: '',
+        email: `deleted_${user_id}@deleted.com`,
         password: '',
         display_name: null,
         profile_picture_url: null,

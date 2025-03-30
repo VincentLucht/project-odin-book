@@ -13,6 +13,10 @@ userRouter.get(
   userController.get,
 );
 
+userRouter.get('/settings', token.authenticate, userController.getSettings);
+
+userRouter.post('/settings', token.authenticate, userController.editSettings);
+
 userRouter.delete('', token.authenticate, userController.delete);
 
 export default userRouter;
