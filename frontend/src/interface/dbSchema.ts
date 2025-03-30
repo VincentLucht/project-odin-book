@@ -144,7 +144,12 @@ export interface DBPostWithCommunityName extends DBPost {
     user_communities: CommunityMembership[] | undefined;
   };
   post_votes: VotingRecord[] | undefined;
-  poster: { id: string; username: string; profile_picture_url: string | null } | null;
+  poster: {
+    id: string;
+    username: string;
+    profile_picture_url: string | null;
+    deleted_at: string | null;
+  } | null;
   post_assigned_flair: PostAssignedFlair;
 }
 
