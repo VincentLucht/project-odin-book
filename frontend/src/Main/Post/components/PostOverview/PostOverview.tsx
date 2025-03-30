@@ -122,7 +122,9 @@ export default function PostOverview({
             />
 
             {showPoster ? (
-              <div className="font-medium">u/{post.poster?.username}</div>
+              <div className="font-medium">
+                {post.poster?.deleted_at ? '[deleted]' : `u/${post.poster?.username}`}
+              </div>
             ) : (
               <div className="font-semibold">r/{post.community.name}</div>
             )}

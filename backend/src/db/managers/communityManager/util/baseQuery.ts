@@ -76,6 +76,7 @@ export default function baseQuery(
               id: true,
               username: true,
               profile_picture_url: true,
+              deleted_at: true,
             },
           },
           community: {
