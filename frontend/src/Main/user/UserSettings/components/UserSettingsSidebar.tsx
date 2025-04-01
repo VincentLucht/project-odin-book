@@ -13,7 +13,7 @@ export default function UserSettingsSidebar({ user }: UserSettingsSidebarProps) 
   if (!user) return;
 
   return (
-    <div className="rounded-2xl bg-neutral-900 p-4 sidebar">
+    <div className="mt-14 rounded-2xl bg-neutral-900 p-4 sidebar">
       <div className="flex gap-3">
         <PFP src={user.profile_picture_url} mode="user" className="!h-20 !w-20" />
 
