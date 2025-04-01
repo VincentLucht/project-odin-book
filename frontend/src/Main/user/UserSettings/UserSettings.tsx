@@ -56,7 +56,7 @@ export default function UserSettings() {
             <EditUserDescription setSettings={setSettings} token={token} />
 
             <EditUserCakeDay
-              cakeDay={settings?.cake_day ? formatDate(settings?.cake_day) : ''}
+              cakeDay={settings?.cake_day ? formatDate(settings?.cake_day) : 'Not set'}
               setSettings={setSettings}
               token={token}
             />
