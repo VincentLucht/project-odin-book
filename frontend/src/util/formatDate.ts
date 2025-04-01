@@ -1,5 +1,9 @@
 import dayjs from 'dayjs';
 
 export default function formatDate(date: string | Date) {
-  return dayjs(date).format('MMM D, YYYY');
+  if (date && dayjs(date).isValid()) {
+    return dayjs(date).format('MMM D, YYYY');
+  }
+
+  return '';
 }
