@@ -65,7 +65,7 @@ export default function JoinedCommunities({ navigate, token }: JoinedCommunities
         ))}
         {joinedCommunities.length === 0 ? (
           // TODO: Add better?
-          <div>Join a community!</div>
+          <div className="px-4 py-2 df">Join a community!</div>
         ) : (
           hasMore && (
             <SidebarButton
