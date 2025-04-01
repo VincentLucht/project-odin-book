@@ -13,9 +13,10 @@ export default async function createUsers(prisma: PrismaClient) {
     await prisma.user.create({
       data: {
         username: `test ${i + 1}`,
-        email: `email ${i}`,
-        password: 'i',
+        email: `email${i}@gmail.com`,
+        password: `${i + 1}`,
         is_mature: isMature ? true : false,
+        created_at: createdAt,
       },
     });
   }
@@ -24,7 +25,7 @@ export default async function createUsers(prisma: PrismaClient) {
     data: {
       id: '1',
       username: 't1',
-      email: 't1',
+      email: 't1@gmail.com',
       password: await bcrypt.hash('1', 10),
       display_name: 't1_display',
       profile_picture_url: 'https://images3.alphacoders.com/999/999707.png',
@@ -38,10 +39,25 @@ export default async function createUsers(prisma: PrismaClient) {
     data: {
       id: '2',
       username: 't2',
-      email: 't2',
+      email: 't2@gmail.com',
       password: await bcrypt.hash('1', 10),
       display_name: 't2_display',
-      profile_picture_url: 'https://images3.alphacoders.com/999/999707.png',
+      profile_picture_url: 'https://i.imgflip.com/47ouuh.jpg?a484128',
+      description: "I'm the second test user",
+      cake_day: '23/7',
+      created_at: new Date('2022-06-01T00:00:00Z'), // 06/2022
+    },
+  });
+
+  await prisma.user.create({
+    data: {
+      id: '5',
+      username: 't3',
+      email: 't3@gmail.com',
+      password: await bcrypt.hash('1', 10),
+      display_name: 't3_display',
+      profile_picture_url:
+        'https://upload.wikimedia.org/wikipedia/ms/7/7e/Saber_FSN.JPG',
       description: "I'm the second test user",
       cake_day: '23/7',
       created_at: new Date('2022-06-01T00:00:00Z'), // 06/2022
@@ -52,7 +68,7 @@ export default async function createUsers(prisma: PrismaClient) {
     data: {
       id: '3',
       username: 'guest',
-      email: 'guest',
+      email: 'guest@gmail.com',
       password: await bcrypt.hash('pass123', 10),
       display_name: 'Guest User',
       description: "Hi, I'm the guest user!",
@@ -64,7 +80,7 @@ export default async function createUsers(prisma: PrismaClient) {
     data: {
       id: '4',
       username: 'guest_admin',
-      email: 'guest_admin',
+      email: 'guest_admin@gmail.com',
       password: await bcrypt.hash('adminpw', 10),
       display_name: 'Guest Admin User',
       description: "Hi, I'm the guest admin user!",
