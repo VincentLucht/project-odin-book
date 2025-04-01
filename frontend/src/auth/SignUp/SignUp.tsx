@@ -101,6 +101,7 @@ export default function SignUp() {
             placeholder="Username"
             className="h-[52px] w-full"
             errors={errors}
+            maxLength={20}
             setErrors={setErrors}
           />
 
@@ -113,6 +114,7 @@ export default function SignUp() {
             placeholder="Email"
             className="h-[52px] w-full"
             errors={errors}
+            maxLength={320}
             setErrors={setErrors}
           />
 

@@ -1,3 +1,4 @@
+import MaxLengthIndicator from '@/components/MaxLengthIndicator';
 import { ValidationError } from '@/interface/backendErrors';
 import { useState, useRef, useEffect } from 'react';
 
@@ -11,6 +12,7 @@ interface SearchBarWithImgProps {
   imgClassName?: string;
   styling?: boolean;
   errors?: ValidationError;
+  maxLength?: number;
   setErrors: React.Dispatch<React.SetStateAction<ValidationError>>;
 }
 
@@ -23,6 +25,7 @@ export default function InputWithError({
   className = '',
   styling = true,
   errors,
+  maxLength,
   setErrors,
 }: SearchBarWithImgProps) {
   const [isFocused, setIsFocused] = useState(false);
@@ -92,7 +95,12 @@ export default function InputWithError({
           value={value}
           onChange={(e) => setterFunc(e.target.value)}
           placeholder={placeholder}
+          maxLength={maxLength}
         />
+
+        {maxLength && (
+          <MaxLengthIndicator length={value.length} maxLength={maxLength} />
+        )}
       </div>
 
       {error ? (
