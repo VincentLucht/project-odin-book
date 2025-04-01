@@ -51,7 +51,7 @@ export default function UserSettings() {
               token={token}
             />
 
-            <EditUserPFP setSettings={setSettings} token={token} />
+            <EditUserPFP logout={logout} setSettings={setSettings} token={token} />
 
             <EditUserDescription setSettings={setSettings} token={token} />
 
