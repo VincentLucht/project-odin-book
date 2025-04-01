@@ -60,7 +60,6 @@ class UserController {
       }
 
       const settings = await db.user.getSettings(user_id);
-      console.log(settings);
 
       return res.status(200).json({
         message: 'Found user settings',
