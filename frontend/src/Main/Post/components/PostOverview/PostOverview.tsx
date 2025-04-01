@@ -96,6 +96,10 @@ export default function PostOverview({
     }
   };
 
+  const userRedirect = () => {
+    navigate(`/user/${post.poster?.username}`);
+  };
+
   const commentToPostRedirect = () => {
     navigate(
       `/r/${post.community.name}/${post.id}/${slugify(post.title, { lower: true })}`,
@@ -122,9 +126,9 @@ export default function PostOverview({
             />
 
             {showPoster ? (
-              <div className="font-medium">
+              <button className="font-medium hover:underline" onClick={userRedirect}>
                 {post.poster?.deleted_at ? '[deleted]' : `u/${post.poster?.username}`}
-              </div>
+              </button>
             ) : (
               <div className="font-semibold">r/{post.community.name}</div>
             )}
