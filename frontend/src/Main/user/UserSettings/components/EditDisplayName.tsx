@@ -1,7 +1,7 @@
 import UserSettingsOption from '@/Main/user/UserSettings/components/UserSettingsOption';
 import Swal from 'sweetalert2';
 import swalDefaultProps from '@/util/swalDefaultProps';
-import editSettings from '@/Main/user/UserSettings/api/editUserSettings';
+import editUserSettings from '@/Main/user/UserSettings/api/editUserSettings';
 import { toast } from 'react-toastify';
 import { DBUser } from '@/interface/dbSchema';
 
@@ -25,7 +25,7 @@ export default function EditDisplayName({
           title: 'Display Name',
           confirmButtonText: 'Save',
           html: `
-              <input id="swal-input1" class="swal2-input" placeholder="Password*" autocomplete="off" required>
+              <input id="swal-input1" class="swal2-input" placeholder="Password*" autocomplete="new-password" type="password" required>
               <input id="swal-input2" class="swal2-input" type="text" placeholder="New Display Name" autocomplete="off">
               <div style="font-size:12px; margin-top:4px">(Leave empty to remove)</div>
             `,
@@ -43,19 +43,19 @@ export default function EditDisplayName({
               return false;
             }
 
-            const toastId = toast.loading('Changing password...');
+            const toastId = toast.loading('Changing Display Name...');
             try {
-              await editSettings(token, { password, display_name: newDisplayName });
+              await editUserSettings(token, { password, description: newDisplayName });
               toast.update(toastId, {
                 type: 'success',
-                render: 'Successfully updated Email',
+                render: 'Successfully updated Display Name',
                 isLoading: false,
                 autoClose: 5000,
               });
 
               setSettings((prev) => {
                 if (!prev) return prev;
-                return { ...prev, display_name: newDisplayName };
+                return { ...prev, description: newDisplayName };
               });
 
               return true;
@@ -68,7 +68,7 @@ export default function EditDisplayName({
               }
               toast.update(toastId, {
                 type: 'error',
-                render: 'Failed to update email',
+                render: 'Failed to update Display Name',
                 isLoading: false,
                 autoClose: 5000,
               });

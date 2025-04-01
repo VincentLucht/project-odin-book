@@ -19,8 +19,9 @@ export default function DeleteUserAccount({ logout, token }: DeleteUserAccountPr
           confirmButtonText: 'Delete',
           html: `
               <div style="margin-bottom:12px">We'll miss you :(</div>
-              <div style="font-size: 14px; line-height: 20px; text-align: justify;">Deleting your account is permanent and irreversible. Your username and profile will be deleted, but your posts, comments, and messages are disassociated (not deleted) from your account unless you delete them beforehand.</div>
-              
+              <div style="display:flex; justify-content:center; align-items-center">
+                <div style="max-width:250px; font-size: 14px; line-height: 20px; text-align: justify;">Deleting your account is permanent and irreversible. Your username and profile will be deleted, but your posts, comments, and messages are disassociated (not deleted) from your account unless you delete them beforehand.</div>
+              </div>
               <input id="swal-input1" class="swal2-input" placeholder="Username*" autocomplete="off" required>
               <input id="swal-input2" class="swal2-input" type="email" placeholder="Password*" autocomplete="off" required>
               <div class="swal2-checkbox-container" style="margin-top:15px; display:flex; align-items:center; justify-content:center">

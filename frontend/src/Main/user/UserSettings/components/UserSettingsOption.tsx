@@ -13,14 +13,14 @@ export default function UserSettingsOption({
 }: UserSettingsCompartmentProps) {
   return (
     <button
-      className="-ml-2 flex cursor-pointer items-center justify-between rounded py-2 pl-2 text-sm
+      className="-ml-2 flex cursor-pointer items-center justify-between gap-2 rounded py-2 pl-2 text-sm
         bg-transition-hover"
       onClick={onClick}
     >
       <span>{name}</span>
 
       <div className="flex items-center gap-4">
-        <span className="text-xs">{additionalName}</span>
+        <span className="break-all text-xs">{additionalName}</span>
 
         <ChevronRightIcon />
       </div>

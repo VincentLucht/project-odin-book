@@ -1,17 +1,20 @@
-import editSettings from '@/Main/user/UserSettings/api/editUserSettings';
+import editUserSettings from '@/Main/user/UserSettings/api/editUserSettings';
 import catchError from '@/util/catchError';
 
 export interface UserSettings {
   email: string;
-  display_name: string;
   password: string;
+  display_name: string | null;
+  description: string | null;
+  profile_picture_url: string | null;
+  cake_day: string | null;
 }
 
 export default function handleEditSettings(
   token: string,
   updateData: Partial<UserSettings>,
 ) {
-  editSettings(token, updateData)
+  editUserSettings(token, updateData)
     .then((response) => {
       console.log(response);
     })

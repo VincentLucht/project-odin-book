@@ -6,7 +6,7 @@ interface EditSettingsResponse {
   error?: string;
 }
 
-export default async function editSettings(
+export default async function editUserSettings(
   token: string,
   updateData: Partial<UserSettings>,
 ) {

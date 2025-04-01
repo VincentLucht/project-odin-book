@@ -188,8 +188,11 @@ export default class UserManager {
     user_id: string,
     updateData: Partial<{
       email: string;
-      display_name: string;
       password: string;
+      display_name: string | null;
+      description: string | null;
+      profile_picture_url: string | null;
+      cake_day: string | null;
     }>,
   ) {
     if (updateData.password) {

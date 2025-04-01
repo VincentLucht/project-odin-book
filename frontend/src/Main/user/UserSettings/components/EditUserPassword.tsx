@@ -1,7 +1,7 @@
 import UserSettingsOption from '@/Main/user/UserSettings/components/UserSettingsOption';
 import Swal from 'sweetalert2';
 import swalDefaultProps from '@/util/swalDefaultProps';
-import editSettings from '@/Main/user/UserSettings/api/editUserSettings';
+import editUserSettings from '@/Main/user/UserSettings/api/editUserSettings';
 import { toast } from 'react-toastify';
 
 interface EditUserPasswordProps {
@@ -55,7 +55,7 @@ export default function EditUserPassword({ token }: EditUserPasswordProps) {
 
             const toastId = toast.loading('Changing password...');
             try {
-              await editSettings(token, { password: newPassword });
+              await editUserSettings(token, { password: newPassword });
               toast.update(toastId, {
                 type: 'success',
                 render: 'Successfully updated password',
@@ -66,10 +66,11 @@ export default function EditUserPassword({ token }: EditUserPasswordProps) {
             } catch (error) {
               const errorObj = error as { message: string };
               if (errorObj.message === 'Incorrect password') {
-                Swal.showValidationMessage('Passwords do not match');
+                Swal.showValidationMessage('Incorrect password');
               } else {
                 Swal.showValidationMessage('Network error, please try again later');
               }
+
               toast.update(toastId, {
                 type: 'error',
                 render: 'Failed to update password',

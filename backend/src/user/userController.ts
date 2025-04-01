@@ -78,7 +78,14 @@ class UserController {
   editSettings = asyncHandler(async (req: Request, res: Response) => {
     if (checkValidationError(req, res)) return;
 
-    const { email, display_name, password } = req.body;
+    const {
+      email,
+      display_name,
+      password,
+      description,
+      cake_day,
+      profile_picture_url,
+    } = req.body;
 
     try {
       const { user_id } = getAuthUser(req.authData);
@@ -91,7 +98,14 @@ class UserController {
         return res.status(400).json({ message: 'Incorrect password' });
       }
 
-      await db.user.edit(user_id, { email, display_name, password });
+      await db.user.edit(user_id, {
+        email,
+        display_name,
+        password,
+        description,
+        cake_day,
+        profile_picture_url,
+      });
 
       return res.status(200).json({
         message: 'Successfully edited settings',

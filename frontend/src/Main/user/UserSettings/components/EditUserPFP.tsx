@@ -1,38 +1,38 @@
 import UserSettingsOption from '@/Main/user/UserSettings/components/UserSettingsOption';
 import Swal from 'sweetalert2';
 import swalDefaultProps from '@/util/swalDefaultProps';
-import editUserSettings from '@/Main/user/UserSettings/api/editUserSettings';
+import editSettings from '@/Main/user/UserSettings/api/editUserSettings';
 import { toast } from 'react-toastify';
 import { DBUser } from '@/interface/dbSchema';
 
-interface EditUserEmailProps {
-  email: string;
+interface EditUserPFPProps {
   setSettings: React.Dispatch<React.SetStateAction<DBUser | null>>;
   token: string;
 }
 
-export default function EditUserEmail({
-  email,
-  setSettings,
-  token,
-}: EditUserEmailProps) {
+export default function EditUserPFP({ setSettings, token }: EditUserPFPProps) {
   return (
     <UserSettingsOption
-      name="Email"
-      additionalName={email}
+      name="Profile Picture"
       onClick={() =>
         Swal.fire({
-          title: 'Email',
+          title: 'Profile Picture',
           confirmButtonText: 'Save',
           html: `
-              <input id="swal-input1" class="swal2-input" placeholder="Password*" autocomplete="off" required>
-              <input id="swal-input2" class="swal2-input" type="email" placeholder="New Email*" autocomplete="off" required>
+             <input id="swal-input1" class="swal2-input" placeholder="Password*" type="password" autocomplete="new-password" required>
+             <div style="width:100%; display:flex align-items:center; justify-content:center">
+              <input id="swal-input2" class="swal2-input" placeholder="Profile Picture URL">
+
+              <div style="font-size:12px; margin-top:8px; text-align: center;">
+                (Leave empty to remove)
+              </div>
+             </div
             `,
           preConfirm: async () => {
             const password = (
               document.getElementById('swal-input1') as HTMLInputElement
             ).value;
-            const newEmail = (
+            const newPFPUrl = (
               document.getElementById('swal-input2') as HTMLInputElement
             ).value;
 
@@ -42,24 +42,22 @@ export default function EditUserEmail({
               return false;
             }
 
-            if (!newEmail) {
-              Swal.showValidationMessage('New Email is required');
-              return false;
-            }
-
-            const toastId = toast.loading('Changing password...');
+            const toastId = toast.loading('Changing Profile Picture...');
             try {
-              await editUserSettings(token, { password, email: newEmail });
+              await editSettings(token, {
+                password,
+                profile_picture_url: newPFPUrl ? newPFPUrl : null,
+              });
               toast.update(toastId, {
                 type: 'success',
-                render: 'Successfully updated Email',
+                render: 'Successfully updated Profile Picture',
                 isLoading: false,
                 autoClose: 5000,
               });
 
               setSettings((prev) => {
                 if (!prev) return prev;
-                return { ...prev, email: newEmail };
+                return { ...prev, profile_picture_url: newPFPUrl ? newPFPUrl : null };
               });
 
               return true;
@@ -72,7 +70,7 @@ export default function EditUserEmail({
               }
               toast.update(toastId, {
                 type: 'error',
-                render: 'Failed to update email',
+                render: 'Failed to update Profile Picture',
                 isLoading: false,
                 autoClose: 5000,
               });
