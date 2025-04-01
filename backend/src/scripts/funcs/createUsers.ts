@@ -30,7 +30,6 @@ export default async function createUsers(prisma: PrismaClient) {
       display_name: 't1_display',
       profile_picture_url: 'https://images3.alphacoders.com/999/999707.png',
       description: "I'm a test user",
-      cake_day: '21/2',
       created_at: new Date('2022-06-01T00:00:00Z'), // 06/2022
     },
   });
@@ -44,7 +43,6 @@ export default async function createUsers(prisma: PrismaClient) {
       display_name: 't2_display',
       profile_picture_url: 'https://i.imgflip.com/47ouuh.jpg?a484128',
       description: "I'm the second test user",
-      cake_day: '23/7',
       created_at: new Date('2022-06-01T00:00:00Z'), // 06/2022
     },
   });
@@ -59,7 +57,6 @@ export default async function createUsers(prisma: PrismaClient) {
       profile_picture_url:
         'https://upload.wikimedia.org/wikipedia/ms/7/7e/Saber_FSN.JPG',
       description: "I'm the second test user",
-      cake_day: '23/7',
       created_at: new Date('2022-06-01T00:00:00Z'), // 06/2022
     },
   });
