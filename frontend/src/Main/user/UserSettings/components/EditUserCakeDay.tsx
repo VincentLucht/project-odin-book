@@ -26,12 +26,14 @@ export default function EditUserCakeDay({
           confirmButtonText: 'Save',
           html: `
              <input id="swal-input1" class="swal2-input" placeholder="Password*" type="password" autocomplete="new-password" required>
+
              <div style="width:100%; display:flex align-items:center; justify-content:center">
               <input id="swal-input2" class="swal2-input" type="date">
+
               <div style="font-size:12px; margin-top:8px; text-align: center;">
                 (Leave empty to remove)
               </div>
-             </div
+             </div>
             `,
           preConfirm: async () => {
             const password = (

@@ -25,20 +25,22 @@ export default function EditUserDescription({
           confirmButtonText: 'Save',
           html: `
              <input id="swal-input1" class="swal2-input" placeholder="Password*" type="password" autocomplete="new-password" required>
+
              <div style="width:100%; display:flex align-items:center; justify-content:center">
               <textarea 
                 style="width:100%; margin-left:0px; margin-right:0px" 
                 id="swal-input2" 
                 class="swal2-textarea" 
                 placeholder="New Description" 
-                autocomplete="off" 
-                maxlength="200"
-                ></textarea>
+                autocomplete="off" maxlength="200"></textarea>
+
               <div style="display:flex; justify-content: space-between; width: 100%;">
                 <div style="flex: 1;"></div>
+
                 <div style="font-size:12px; margin-top:8px; text-align: center;">
                   (Leave empty to remove)
                 </div>
+
                 <div style="flex: 1; display: flex; justify-content: flex-end;">
                   <div id="maxlength-indicator-container"></div>
                 </div>
