@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import useAuth from '@/context/auth/hook/useAuth';
 
 import PostSidebar from '@/Main/Post/components/PostSidebar/PostSidebar';
@@ -28,6 +28,7 @@ export default function Post() {
   const [showEditDropdown, setShowEditDropdown] = useState<string | null>(null);
   const [isEditActive, setIsEditActive] = useState(false);
   const [showPostFlairSelection, setShowPostFlairSelection] = useState(false);
+  const navigate = useNavigate();
 
   const { postId } = useParams();
   const [searchParams] = useSearchParams();
@@ -68,6 +69,14 @@ export default function Post() {
     );
   };
 
+  const communityRedirect = () => {
+    navigate(`/r/${post.community.name}`);
+  };
+
+  const userRedirect = () => {
+    navigate(`/user/${post.poster?.username}`);
+  };
+
   return (
     <div className="overflow-y-scroll p-4 center-main">
       <div className="center-main-content">
@@ -77,7 +86,12 @@ export default function Post() {
 
             <div className="flex-1 text-xs">
               <div className="flex gap-1">
-                <div className="text-sm font-semibold">r/{post.community.name}</div>
+                <button
+                  className="text-sm font-semibold hover:underline"
+                  onClick={communityRedirect}
+                >
+                  r/{post.community.name}
+                </button>
 
                 <div className="mt-[2px] gap-1 df text-gray-secondary">
                   <div className="df">• {getRelativeTime(post.created_at)}</div>
@@ -89,11 +103,18 @@ export default function Post() {
                 </div>
               </div>
 
-              <div className="font-extralight text-gray-300">
+              <button
+                className={`font-extralight text-gray-300 ${post.poster?.username && 'hover:underline'}`}
+                onClick={() => {
+                  if (post.poster?.username) {
+                    userRedirect();
+                  }
+                }}
+              >
                 {(post.deleted_at ?? post.poster?.deleted_at)
                   ? '[deleted]'
-                  : post?.poster?.username}
-              </div>
+                  : `u/${post?.poster?.username}`}
+              </button>
             </div>
 
             {/* TODO: Add saved */}
