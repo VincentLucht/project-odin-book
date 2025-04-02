@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import CommunityHeader from '@/Main/Community/components/CommunityHeader/CommunityHeader';
 import SetSortByType from '@/Main/Community/components/CommunityHeader/components/SetSortByType';
 import CommunitySidebar from '@/Main/Community/components/CommunitySidebar/CommunitySidebar';
-import LazyLoadPostOverview from '@/Main/Community/components/LazyLoadPostOverview';
+import VirtualizedPostOverview from '@/Main/Community/components/Virtualization/VirtualizedPostOverview';
 import EndMessage from '@/components/partials/EndMessage';
 
 import CommunityPostManager from '@/Main/Community/util/CommunityPostManager';
@@ -56,7 +56,7 @@ export default function Community() {
   }
 
   return (
-    <div className="overflow-y-scroll p-4 pt-1 center-main">
+    <div className="p-4 pt-1 center-main">
       <div className="w-full max-w-[1072px]">
         <CommunityHeader
           community={community}
@@ -77,27 +77,17 @@ export default function Community() {
               setTimeframe={setTimeframe}
             />
 
-            {posts.map((post, index) => (
-              <LazyLoadPostOverview
-                key={index}
-                post={post}
-                userId={user?.id}
-                token={token}
-                setPosts={setPosts}
-                navigate={navigate}
-                showPoster={true}
-                showMembership={false}
-                showEditDropdown={showEditDropdown}
-                setShowEditDropdown={setShowEditDropdown}
-                deleteFunc={communityPostHandler.handleDeletePost(post.id)}
-                spoilerFunc={communityPostHandler.handleSpoilerFunc(post)}
-                matureFunc={communityPostHandler.handleMatureFunc(post)}
-                removePostFlairFunc={communityPostHandler.handleDeletePostFlair(
-                  post,
-                  () => navigate(`/r/${communityName}/${post.id}?edit-post-flair=true`),
-                )}
-              />
-            ))}
+            <VirtualizedPostOverview
+              posts={posts}
+              userId={user?.id}
+              token={token}
+              setPosts={setPosts}
+              navigate={navigate}
+              showEditDropdown={showEditDropdown}
+              setShowEditDropdown={setShowEditDropdown}
+              communityPostHandler={communityPostHandler}
+              communityName={communityName}
+            />
 
             <EndMessage />
           </div>
