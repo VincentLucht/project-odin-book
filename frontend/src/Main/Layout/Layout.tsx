@@ -55,24 +55,20 @@ export default function Layout() {
         headerRef={headerRef}
       />
 
-      <div
-        className={`grid flex-1 overflow-hidden
-          ${isDesktop ? 'grid-cols-[270px_auto]' : 'grid-cols-[auto]'} `}
-      >
-        <div
-          ref={sidebarRef}
-          className={`z-20 h-full transform transition-transform duration-200 ${
-            showSidebar
-              ? isDesktop
-                ? 'relative'
-                : 'absolute translate-x-0'
-              : 'absolute -translate-x-full'
-            }`}
-        >
-          <Sidebar />
-        </div>
+      <div className="flex-1 pt-[56px]">
+        <div className="flex h-full">
+          <div
+            ref={sidebarRef}
+            className={`fixed top-[56px] z-20 w-[270px] transition-transform duration-200
+              ${showSidebar ? 'translate-x-0' : '-translate-x-full'}`}
+          >
+            <Sidebar />
+          </div>
 
-        <Outlet />
+          <div className={`flex-1 ${isDesktop && showSidebar ? 'ml-[270px]' : ''}`}>
+            <Outlet />
+          </div>
+        </div>
       </div>
 
       {/* Overlay: Only render on non‑desktop when the sidebar is open */}

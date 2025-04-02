@@ -48,7 +48,7 @@ export default function Header({
 
   return (
     <header
-      className={`grid max-h-[56px] min-h-[56px]
+      className={`fixed left-0 right-0 top-0 z-30 grid max-h-[56px] min-h-[56px] bg-gray
         ${isDesktop ? 'grid-cols-[30%_40%_30%]' : 'grid-cols-[5%_25%_40%_30%]'} border-b px-4
         py-2`}
       ref={headerRef}
