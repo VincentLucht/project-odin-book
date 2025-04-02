@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, forwardRef } from 'react';
 import useAuth from '@/context/auth/hook/useAuth';
 import './css/dropdown.css';
 
@@ -7,16 +7,21 @@ interface DropdownMenuProps {
   className?: string;
 }
 
-export default function DropdownMenu({ children, className }: DropdownMenuProps) {
-  const { user } = useAuth();
+const DropdownMenu = forwardRef<HTMLDivElement, DropdownMenuProps>(
+  ({ children, className }, ref) => {
+    const { user } = useAuth();
+    if (!user) return null;
 
-  if (!user) return;
+    return (
+      <div
+        ref={ref}
+        className={`dropdown-menu-shadow absolute top-[58px] flex-col py-2 df bg-accent-gray ${className}`}
+      >
+        {children}
+      </div>
+    );
+  },
+);
 
-  return (
-    <div
-      className={`dropdown-menu-shadow absolute top-[58px] flex-col py-2 df bg-accent-gray ${className}`}
-    >
-      {children}
-    </div>
-  );
-}
+DropdownMenu.displayName = 'DropdownMenu';
+export default DropdownMenu;
