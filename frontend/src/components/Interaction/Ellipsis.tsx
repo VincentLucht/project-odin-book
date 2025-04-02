@@ -4,6 +4,7 @@ import DropdownMenu from '@/components/DropdownMenu/DropdownMenu';
 import DropdownButton from '@/components/DropdownMenu/components/DropdownButton';
 import { EllipsisIcon, PencilIcon, BookmarkIcon, TrashIcon } from 'lucide-react';
 import { SquarePenIcon, TagIcon, CircleAlertIcon, BanIcon } from 'lucide-react';
+import { useRef } from 'react';
 
 interface EllipsisProps {
   isUserSelf: boolean;
@@ -38,9 +39,10 @@ export default function Ellipsis({
   matureFunc,
   editFunc,
 }: EllipsisProps) {
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
   const divRef = useClickOutside(() => {
     setShowDropdown(null);
-  });
+  }, dropdownRef);
 
   const show = showDropdown === id;
 
@@ -63,11 +65,13 @@ export default function Ellipsis({
       <DropdownMenu
         className={`!-left-[216px] !top-9 min-w-[256px] rounded-md text-white transition-opacity
           duration-300 df ${show ? '!z-10 opacity-100' : '!-z-10 opacity-0'} `}
+        ref={dropdownRef}
       >
         {isUserSelf ? (
           <div
             className="w-full"
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               setIsEditActive && setIsEditActive(true);
               editFunc && editFunc();
             }}
@@ -95,7 +99,13 @@ export default function Ellipsis({
           />
         }
         {isUserSelf ? (
-          <div className="w-full" onClick={() => deleteFunc(id)}>
+          <div
+            className="w-full"
+            onClick={(e) => {
+              e.stopPropagation();
+              deleteFunc(id);
+            }}
+          >
             <DropdownButton
               text={`${mode === 'post' ? 'Delete post' : 'Delete comment'}`}
               icon={<TrashIcon />}
@@ -111,7 +121,13 @@ export default function Ellipsis({
 
         {/* POST ADDITIONS */}
         {mode === 'post' && isUserSelf ? (
-          <div className="w-full" onClick={() => postFlairFunc && postFlairFunc()}>
+          <div
+            className="w-full"
+            onClick={(e) => {
+              e.stopPropagation();
+              postFlairFunc && postFlairFunc();
+            }}
+          >
             <DropdownButton
               text={`${hasPostFlair ? 'Remove post flair' : 'Edit Post Flair'}`}
               icon={<TagIcon />}
@@ -126,7 +142,13 @@ export default function Ellipsis({
         )}
 
         {mode === 'post' && isUserSelf ? (
-          <div className="w-full" onClick={() => matureFunc && matureFunc()}>
+          <div
+            className="w-full"
+            onClick={(e) => {
+              e.stopPropagation();
+              matureFunc && matureFunc();
+            }}
+          >
             <DropdownButton
               text={`${isMature ? 'Remove NSFW tag' : 'Add NSFW tag'}`}
               icon={<BanIcon />}
@@ -141,7 +163,13 @@ export default function Ellipsis({
         )}
 
         {mode === 'post' && isUserSelf ? (
-          <div className="w-full" onClick={() => spoilerFunc && spoilerFunc()}>
+          <div
+            className="w-full"
+            onClick={(e) => {
+              e.stopPropagation();
+              spoilerFunc && spoilerFunc();
+            }}
+          >
             <DropdownButton
               text={`${isSpoiler ? 'Remove spoiler tag' : 'Add spoiler tag'}`}
               icon={<CircleAlertIcon />}
