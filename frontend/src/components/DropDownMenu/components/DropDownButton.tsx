@@ -42,13 +42,14 @@ export default function DropdownButton({
           navigate(route);
           return;
         }
-        if (show && setterFunc) {
-          setterFunc(null);
-        }
         if (show && customFunc) {
           customFunc();
         }
+        if (show && setterFunc) {
+          setterFunc(null);
+        }
       }}
+      onMouseDown={(e) => e.stopPropagation()}
     >
       {icon && <div className="h-[32px] w-[32px] df">{icon}</div>}
 
