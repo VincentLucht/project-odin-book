@@ -63,7 +63,7 @@ export default function Comments({
       return;
     }
 
-    if (confirmDelete('post')) {
+    if (confirmDelete('comment')) {
       handleDeleteComment(token, commentId, setComments);
     }
   };
