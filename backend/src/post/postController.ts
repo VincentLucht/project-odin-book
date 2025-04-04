@@ -8,9 +8,98 @@ import isFlairValid from '@/post/util/isFlairValid';
 import isPostTypeValid from '@/post/util/isPostTypeValid';
 import checkCommunityPermissions from '@/util/checkCommunityPermissions';
 import checkPrivateCommunityMembership from '@/util/checkPrivateCommunityMembership';
+import { SortBy } from '@/db/managers/util/types';
+import { Pagination } from '@/db/managers/util/types';
 
 class PostController {
   get = asyncHandler(async (req: Request, res: Response) => {
+    if (checkValidationError(req, res)) return;
+
+    const { post_id } = req.params;
+
+    try {
+      const post = await db.post.getById(post_id);
+      if (!post) {
+        return res.status(404).json({ message: 'Post not found' });
+      }
+
+      const response = await checkPrivateCommunityMembership(
+        db,
+        post,
+        req.authData,
+        true,
+      );
+      if (!response.ok) {
+        return res
+          .status(response?.status ?? 500)
+          .json({ message: response?.message });
+      }
+
+      const postAndCommunity = await db.post.getByIdAndCommunity(
+        post.id,
+        response.user_id,
+      );
+
+      return res
+        .status(200)
+        .json({ message: 'Successfully fetched post', postAndCommunity });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        message: 'Failed to fetch post',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  });
+
+  getBy = asyncHandler(async (req: Request, res: Response) => {
+    if (checkValidationError(req, res)) return;
+
+    const {
+      cyId: community_id,
+      sbt: sortByType,
+      cId: cursorId,
+    } = req.query as {
+      cyId: string;
+      sbt: 'new' | 'top';
+      cId: string | undefined;
+    };
+
+    try {
+      const response = await checkPrivateCommunityMembership(
+        db,
+        { community_id },
+        req.authData,
+        true,
+      );
+      if (!response.ok) {
+        return res
+          .status(response?.status ?? 500)
+          .json({ message: response?.message });
+      }
+
+      const { posts, pagination } = await db.post.getBy(
+        community_id,
+        sortByType,
+        response.user_id,
+        cursorId,
+      );
+
+      return res.status(200).json({
+        message: 'Successfully fetched posts',
+        posts,
+        pagination,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        message: 'Failed to fetch posts',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  });
+
+  getPopular = asyncHandler(async (req: Request, res: Response) => {
     if (checkValidationError(req, res)) return;
 
     const { post_id } = req.params;

@@ -7,6 +7,13 @@ import postController from '@/post/postController';
 const postRouter = express.Router();
 
 postRouter.get(
+  '',
+  token.authenticateOptional,
+  postValidator.getByRules(),
+  postController.getBy,
+);
+
+postRouter.get(
   '/:post_id',
   token.authenticateOptional,
   postValidator.fetchRules(),

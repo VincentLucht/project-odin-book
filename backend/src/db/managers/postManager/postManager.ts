@@ -1,3 +1,4 @@
+import { getPostInfo } from '@/db/managers/communityManager/util/baseQuery';
 import { PostType, PrismaClient } from '@prisma/client/default';
 import { postSelectFields } from '@/db/managers/postManager/util/postUtils';
 
@@ -57,6 +58,48 @@ export default class PostManager {
     return postAndCommunity;
   }
 
+  /**
+   * Pagination based post fetching. Can fetch by new or top.
+   */
+  async getBy(
+    community_id: string,
+    sortBy: 'new' | 'top',
+    requestUserId: string | undefined,
+    cursorId?: string,
+    take = 30,
+  ) {
+    const orderMap = {
+      new: { created_at: 'desc' as const },
+      top: { total_vote_score: 'desc' as const },
+    };
+    const orderBy = orderMap[sortBy];
+
+    const posts = await this.prisma.post.findMany({
+      where: { community_id, deleted_at: null },
+      orderBy,
+      include: getPostInfo(requestUserId),
+      ...(cursorId && {
+        cursor: {
+          id: cursorId,
+        },
+        skip: 1,
+      }),
+      take,
+    });
+
+    const lastPost = posts[posts.length - 1];
+    const nextCursor = lastPost?.id;
+
+    return {
+      posts,
+      pagination: {
+        nextCursor,
+        hasMore: posts.length === take,
+      },
+    };
+  }
+
+  // TODO: Put into getBy bc of similarity?
   async getPopular(cursorId?: string, take = 50) {
     const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 

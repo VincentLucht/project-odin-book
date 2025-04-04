@@ -1,6 +1,7 @@
-import { body, param } from 'express-validator/lib';
+import { body, param, query } from 'express-validator/lib';
 import vm from '@/util/validationMessage';
 import isPostTypeValid from '@/post/util/isPostTypeValid';
+import isSortByValid from '@/util/isSortByValid';
 
 // prettier-ignore
 class PostValidator {
@@ -9,6 +10,19 @@ class PostValidator {
       param('post_id').trim()
         .notEmpty()
         .withMessage(vm.postIdReq()),
+    ];
+  }
+
+  getByRules() {
+    return [
+      query('cyId').trim()
+        .notEmpty()
+        .withMessage(vm.communityIdReq()),
+      query('sbt').trim()
+        .custom((type: string) => {
+          return isSortByValid(type);
+        }),
+
     ];
   }
 
