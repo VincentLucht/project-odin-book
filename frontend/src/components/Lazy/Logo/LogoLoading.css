@@ -1,0 +1,16 @@
+@keyframes spinAndPause {
+  0% {
+    transform: rotate(0deg);
+  }
+  40% {
+    transform: rotate(360deg);
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.spin-animation {
+  animation: spinAndPause 1.2s infinite;
+}
