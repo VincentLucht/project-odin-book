@@ -11,3 +11,5 @@ export type SortByUser = 'new' | 'top';
 export type CommentWithReplies = Comment & {
   replies?: Comment[];
 };
+
+export type Pagination = { nextCursor: string | undefined; hasMore: boolean };
