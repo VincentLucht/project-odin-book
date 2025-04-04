@@ -7,7 +7,7 @@ import { AuthPayload } from '@/comment/commentController';
 
 export default async function checkPrivateCommunityMembership(
   db: DB,
-  post: Post,
+  post: { community_id: string } | Post,
   authData: string | JwtPayload | undefined,
   returnUserId = false,
 ) {
