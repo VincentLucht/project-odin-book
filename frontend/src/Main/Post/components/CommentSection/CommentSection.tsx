@@ -3,6 +3,7 @@ import { useNavigate, useLocation, useParams } from 'react-router-dom';
 
 import Comments from '@/Main/Post/components/CommentSection/components/Comments/Comments';
 import AddComment from '@/Main/Post/components/CommentSection/components/AddComment/AddComment';
+import LogoLoading from '@/components/Lazy/Logo/LogoLoading';
 
 import handleFetchComments from '@/Main/Post/components/CommentSection/api/handleFetchComments';
 import handleFetchReplies from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/components/MoreRepliesButton/api/handleFetchReplies';
@@ -29,6 +30,7 @@ export default function CommentSection({
   token,
   setPost,
 }: CommentSectionProps) {
+  const [loading, setLoading] = useState(true);
   const [comments, setComments] = useState<DBCommentWithReplies[] | null>(null);
 
   const { parentCommentId } = useParams();
@@ -36,12 +38,20 @@ export default function CommentSection({
   const location = useLocation();
 
   useEffect(() => {
+    setLoading(true);
+
+    const onComplete = () => setLoading(false);
+
     if (parentCommentId) {
-      handleFetchReplies(token, postId, parentCommentId, setComments);
+      handleFetchReplies(token, postId, parentCommentId, setComments, onComplete);
     } else {
-      handleFetchComments(postId, token, setComments);
+      handleFetchComments(postId, token, setComments, onComplete);
     }
   }, [postId, token, parentCommentId]);
+
+  if (loading) {
+    return <LogoLoading />;
+  }
 
   return (
     <div className="pt-2">

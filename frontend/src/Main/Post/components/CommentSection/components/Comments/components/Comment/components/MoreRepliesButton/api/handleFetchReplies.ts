@@ -7,12 +7,15 @@ export default function handleFetchReplies(
   post_id: string,
   parent_comment_id: string,
   setterFunc: React.Dispatch<React.SetStateAction<DBCommentWithReplies[] | null>>,
+  onComplete: () => void,
 ) {
   fetchReplies(token, post_id, parent_comment_id)
     .then((response) => {
       setterFunc(response.comments);
+      onComplete();
     })
     .catch((error) => {
       catchError(error);
+      onComplete();
     });
 }

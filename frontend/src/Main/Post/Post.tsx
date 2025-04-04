@@ -12,6 +12,7 @@ import PostContent from '@/Main/Post/components/PostContent/PostContent';
 import PostFlairTag from '@/Main/Post/components/PostFlairTag/PostFlairTag';
 import SpoilerTag from '@/Main/Post/components/tags/common/SpoilerTag';
 import MatureTag from '@/Main/Post/components/tags/common/MatureTag';
+import PostLazy from '@/Main/Post/components/Loading/PostLazy';
 
 import handleFetchPost from '@/Main/Post/api/fetch/handleFetchPost';
 import handlePostVote from '@/Main/Post/api/vote/handlePostVote';
@@ -28,15 +29,21 @@ export default function Post() {
   const [showEditDropdown, setShowEditDropdown] = useState<string | null>(null);
   const [isEditActive, setIsEditActive] = useState(false);
   const [showPostFlairSelection, setShowPostFlairSelection] = useState(false);
+
+  const [postLoading, setPostLoading] = useState(true);
   const navigate = useNavigate();
 
-  const { postId } = useParams();
+  const { postId, communityName } = useParams();
   const [searchParams] = useSearchParams();
   const { user, token } = useAuth();
   const isUserPoster = user?.id === post?.poster_id;
 
   useEffect(() => {
-    handleFetchPost(postId ?? '', token, setPost);
+    setPostLoading(true);
+
+    const onComplete = () => setPostLoading(false);
+
+    handleFetchPost(postId ?? '', token, setPost, onComplete);
   }, [postId, token]);
 
   useEffect(() => {
@@ -54,8 +61,8 @@ export default function Post() {
     }
   }, [post, user, searchParams]);
 
-  if (!post) {
-    return <div>Not found</div>;
+  if (!post || postLoading) {
+    return <PostLazy communityNameLengthProp={communityName?.length ?? 0} />;
   }
 
   const onVote = (voteType: VoteType) => {
@@ -78,7 +85,7 @@ export default function Post() {
   };
 
   return (
-    <div className="overflow-y-scroll p-4 center-main">
+    <div className="p-4 center-main">
       <div className="center-main-content">
         <div className="flex flex-col">
           <div className="flex gap-1 text-sm">
