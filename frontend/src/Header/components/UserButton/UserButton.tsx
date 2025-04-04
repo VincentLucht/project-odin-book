@@ -41,7 +41,7 @@ export default function UserButton({
 
       <DropdownMenu
         className={`right-[20px] min-w-[256px] rounded-md transition-opacity duration-300 df
-          ${showDropDown ? 'z-10 opacity-100' : '-z-10 opacity-0'} `}
+          ${showDropDown ? 'pointer-events-auto z-10 opacity-100' : 'pointer-events-none -z-10 opacity-0'} `}
       >
         <DropdownButton
           text="View Profile"
