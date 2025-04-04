@@ -16,14 +16,23 @@ import IsCommunityMember from '@/Main/Post/components/IsCommunityMember/IsCommun
 import slugify from 'slugify';
 import handlePostVote from '@/Main/Post/api/vote/handlePostVote';
 
-import { DBPostWithCommunityName } from '@/interface/dbSchema';
+import { CommunityMembership, DBPostWithCommunityName } from '@/interface/dbSchema';
+import { FetchedPost } from '@/Main/Community/Community';
 import { UserAndHistory } from '@/Main/user/UserProfile/api/fetchUserProfile';
 import { VoteType } from '@/interface/backendTypes';
 import { NavigateFunction } from 'react-router-dom';
 import { HandlePostVoteType } from '@/Main/Post/api/vote/handlePostVote';
 
+export interface CommunityInfo {
+  id: string;
+  name: string;
+  profile_picture_url: string | null;
+  user_communities: CommunityMembership[] | undefined;
+}
+
 interface PostOverviewProps {
-  post: DBPostWithCommunityName;
+  post: DBPostWithCommunityName | FetchedPost;
+  community: CommunityInfo;
   userId: string | undefined;
   token: string | null;
   setFetchedUser?: React.Dispatch<React.SetStateAction<UserAndHistory | null>>;
@@ -43,6 +52,7 @@ interface PostOverviewProps {
 
 export default function PostOverview({
   post,
+  community,
   userId,
   token,
   setFetchedUser,
@@ -69,7 +79,11 @@ export default function PostOverview({
   const hideContent = !showMature && !showSpoiler && (isMature || isSpoiler);
 
   const isUserPoster = userId === post.poster_id ? true : false;
-  const userMember = post.community.user_communities ?? [];
+  const userMember =
+    showMembership && 'community' in post
+      ? (post.community.user_communities ?? [])
+      : null;
+
   const onVote = (voteType: VoteType) => {
     if (!token || !userId) {
       navigate('/login');
@@ -91,7 +105,7 @@ export default function PostOverview({
     // Only redirect by clicking the div directly and NOT a button
     if (!(e.target as HTMLElement).closest('button')) {
       navigate(
-        `/r/${post.community.name}/${post.id}/${slugify(post.title, { lower: true })}`,
+        `/r/${community.name}/${post.id}/${slugify(post.title, { lower: true })}`,
       );
     }
   };
@@ -101,9 +115,7 @@ export default function PostOverview({
   };
 
   const commentToPostRedirect = () => {
-    navigate(
-      `/r/${post.community.name}/${post.id}/${slugify(post.title, { lower: true })}`,
-    );
+    navigate(`/r/${community.name}/${post.id}/${slugify(post.title, { lower: true })}`);
   };
 
   return (
@@ -121,7 +133,7 @@ export default function PostOverview({
               src={
                 post.poster
                   ? post.poster?.profile_picture_url
-                  : post.community.profile_picture_url
+                  : community.profile_picture_url
               }
             />
 
@@ -130,7 +142,7 @@ export default function PostOverview({
                 {post.poster?.deleted_at ? '[deleted]' : `u/${post.poster?.username}`}
               </button>
             ) : (
-              <div className="font-semibold">r/{post.community.name}</div>
+              <div className="font-semibold">r/{community.name}</div>
             )}
 
             <div className="gap-1 text-xs df text-gray-secondary">
@@ -144,7 +156,7 @@ export default function PostOverview({
           </div>
 
           <div className="flex items-center gap-2">
-            {showMembership && setFetchedUser && (
+            {showMembership && userMember && setFetchedUser && (
               <IsCommunityMember
                 userMember={userMember}
                 userId={userId}
@@ -158,7 +170,7 @@ export default function PostOverview({
             {/* TODO: Add saved stuff */}
             <PostEditDropdownMenuPost
               isUserPoster={isUserPoster}
-              communityName={post.community.name}
+              communityName={community.name}
               postId={post.id}
               postName={post.title}
               hasPostFlair={Boolean(post.post_assigned_flair?.length)}
