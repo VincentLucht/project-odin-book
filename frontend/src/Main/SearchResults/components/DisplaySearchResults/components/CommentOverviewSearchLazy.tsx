@@ -3,6 +3,8 @@ import { useMemo } from 'react';
 import Separator from '@/components/Separator';
 import PFPLazy from '@/components/Lazy/PFPLazy';
 import LazyCompartment from '@/components/Lazy/LazyCompartment';
+import LazyTags from '@/components/Lazy/LazyTags';
+
 import getBiasedRandomNumber from '@/util/getBiasedRandomNumber';
 
 interface CommentOverviewSearchLazyProps {
@@ -50,12 +52,11 @@ export default function CommentOverviewSearchLazy({
         </div>
 
         {/* Tags */}
-        {(isMature || isSpoiler) && (
-          <div className="my-1 flex items-center gap-1">
-            {isMature && includeMatureTag && <LazyCompartment width={62} height={22} />}
-            {isSpoiler && <LazyCompartment width={73} height={22} />}
-          </div>
-        )}
+        <LazyTags
+          isMature={isMature}
+          isSpoiler={isSpoiler}
+          includeMatureTag={includeMatureTag}
+        />
 
         {/* Post Title */}
         <LazyCompartment height={26 * postTitleLength} />
