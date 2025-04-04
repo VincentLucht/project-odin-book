@@ -121,7 +121,7 @@ export default class CommunityManager {
     requestUserId: string | undefined,
     cursorId: string,
   ) {
-    const limit = 10;
+    const limit = 30;
     const startDate = getStartDate(timeframe);
 
     const query = baseQuery(name, requestUserId, communityId, {
