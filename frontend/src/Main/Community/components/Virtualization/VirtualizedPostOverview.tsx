@@ -1,26 +1,44 @@
 import { useState, useRef, useCallback } from 'react';
-import { Virtuoso } from 'react-virtuoso';
 
+import { Virtuoso } from 'react-virtuoso';
 import PostOverview from '@/Main/Post/components/PostOverview/PostOverview';
+import LogoLoading from '@/components/Lazy/Logo/LogoLoading';
+
+import handleFetchMorePosts from '@/Main/Community/api/fetch/posts/handleFetchMorePosts';
 
 import CommunityPostHandler from '@/Main/Community/handlers/CommunityPostHandler';
 import { NavigateFunction } from 'react-router-dom';
-import { DBPostWithCommunityName } from '@/interface/dbSchema';
+import { CommunityInfo } from '@/Main/Post/components/PostOverview/PostOverview';
+import { FetchedPost, SortByType } from '@/Main/Community/Community';
 
 interface VirtualizedPostOverviewProps {
-  posts: DBPostWithCommunityName[];
+  community: CommunityInfo;
+  posts: FetchedPost[];
+  sortByType: SortByType;
+  cursorId: string;
+  hasMore: boolean;
+  loadingMore: boolean;
+  setLoadingMore: React.Dispatch<React.SetStateAction<boolean>>;
+  onComplete: (posts?: FetchedPost[], cursorId?: string, hasMore?: boolean) => void;
   userId: string | undefined;
   token: string | null;
   setPosts: React.Dispatch<React.SetStateAction<any[]>>;
   navigate: NavigateFunction;
   showEditDropdown: string | null;
   setShowEditDropdown: React.Dispatch<React.SetStateAction<string | null>>;
-  communityPostHandler: CommunityPostHandler;
+  communityPostHandler: CommunityPostHandler<FetchedPost>;
   communityName: string;
 }
 
 export default function VirtualizedPostOverview({
+  community,
   posts,
+  sortByType,
+  cursorId,
+  hasMore,
+  loadingMore,
+  setLoadingMore,
+  onComplete,
   userId,
   token,
   setPosts,
@@ -33,16 +51,21 @@ export default function VirtualizedPostOverview({
   // Keep track of item heights for better rendering
   const [itemHeights, setItemHeights] = useState<Record<string, number>>({});
 
-  // Reference to virtuoso component for potential scrolling operations
+  // Reference to virtuoso component for scrolling
   const virtuosoRef = useRef(null);
 
-  // Callback to update item height when it changes
+  // Cb to update item height on changes
   const handleItemResize = useCallback((postId: string, height: number) => {
     setItemHeights((prev) => {
       if (prev[postId] === height) return prev;
       return { ...prev, [postId]: height };
     });
   }, []);
+
+  const loadMore = () => {
+    setLoadingMore(true);
+    handleFetchMorePosts(community.id, sortByType, token, cursorId, onComplete);
+  };
 
   // Item content renderer for Virtuoso
   const ItemRenderer = useCallback(
@@ -55,6 +78,7 @@ export default function VirtualizedPostOverview({
           <PostOverview
             key={post.id}
             post={post}
+            community={community}
             userId={userId}
             token={token}
             setPosts={setPosts}
@@ -88,6 +112,7 @@ export default function VirtualizedPostOverview({
       );
     },
     [
+      community,
       posts,
       userId,
       token,
@@ -104,17 +129,25 @@ export default function VirtualizedPostOverview({
   return (
     <div>
       {posts.length > 0 ? (
-        <Virtuoso
-          ref={virtuosoRef}
-          data={posts}
-          totalCount={posts.length}
-          itemContent={(index) => ItemRenderer(index)}
-          overscan={200} // Pre-render items outside viewport for smoother scrolling
-          useWindowScroll
-          scrollerRef={() => window}
-          computeItemKey={(index) => posts[index]?.id || index.toString()}
-          endReached={() => console.log('You reached the end!')}
-        />
+        <>
+          <Virtuoso
+            ref={virtuosoRef}
+            data={posts}
+            totalCount={posts.length}
+            itemContent={(index) => ItemRenderer(index)}
+            overscan={200} // Pre-render items outside viewport for smoother scrolling
+            useWindowScroll
+            scrollerRef={() => window}
+            computeItemKey={(index) => posts[index]?.id || index.toString()}
+            endReached={() => {
+              if (hasMore) {
+                loadMore();
+              }
+            }}
+          />
+
+          {loadingMore && <LogoLoading className="mt-8" />}
+        </>
       ) : (
         <div className="no-posts-message">No posts available</div>
       )}

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import useAuth from '@/context/auth/hook/useAuth';
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
@@ -20,38 +20,75 @@ import { DBPostWithCommunityName } from '@/interface/dbSchema';
 export type SortByType = 'hot' | 'new' | 'top';
 export type TimeFrame = 'day' | 'week' | 'month' | 'year' | 'all';
 
+export type FetchedPost = Omit<DBPostWithCommunityName, 'community'>;
+
 // TODO: Add no posts
 export default function Community() {
   const location = useLocation();
   const [showEditDropdown, setShowEditDropdown] = useState<string | null>(null);
 
   const [community, setCommunity] = useState<FetchedCommunity | null>(null);
-  const [posts, setPosts] = useState<DBPostWithCommunityName[]>([]);
+  const [posts, setPosts] = useState<FetchedPost[]>([]);
 
   const communityName = getCommunityName(location.pathname);
   const [sortByType, setSortByType] = useState<SortByType>('hot');
   const [timeframe, setTimeframe] = useState<TimeFrame>('day');
 
+  const [cursorId, setCursorId] = useState('');
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+
   const { user, token } = useAuth();
   const navigate = useNavigate();
 
   const communityPostHandler = useMemo(
-    () => new CommunityPostHandler(new CommunityPostManager(token), setPosts),
+    () =>
+      new CommunityPostHandler<FetchedPost>(new CommunityPostManager(token), setPosts),
     [token],
   );
 
+  const onComplete = useCallback(
+    (
+      posts?: FetchedPost[],
+      cursorId?: string,
+      hasMore?: boolean,
+      isRefetch = false,
+    ) => {
+      if (posts) {
+        if (isRefetch) {
+          setPosts(posts);
+        } else {
+          setPosts((prev) => {
+            if (!prev) return posts;
+            return [...prev, ...posts];
+          });
+        }
+      }
+
+      if (cursorId !== undefined) setCursorId(cursorId);
+      if (hasMore !== undefined) setHasMore(hasMore);
+      setLoading(false);
+      setLoadingMore(false);
+    },
+    [],
+  );
+
   useEffect(() => {
+    setCursorId('');
+    setHasMore(true);
+
     handleFetchCommunity(
       communityName,
       sortByType,
       timeframe,
       token,
       setCommunity,
-      setPosts,
+      onComplete,
     );
-  }, [communityName, sortByType, timeframe, token]);
+  }, [communityName, sortByType, timeframe, token, onComplete]);
 
-  if (!community) {
+  if (!community || loading) {
     return <div>No community found!</div>;
   }
 
@@ -78,7 +115,19 @@ export default function Community() {
             />
 
             <VirtualizedPostOverview
+              community={{
+                id: community.id,
+                name: community.name,
+                profile_picture_url: community.profile_picture_url,
+                user_communities: community.user_communities,
+              }}
               posts={posts}
+              sortByType={sortByType}
+              cursorId={cursorId}
+              hasMore={hasMore}
+              loadingMore={loadingMore}
+              setLoadingMore={setLoadingMore}
+              onComplete={onComplete}
               userId={user?.id}
               token={token}
               setPosts={setPosts}
@@ -89,7 +138,7 @@ export default function Community() {
               communityName={communityName}
             />
 
-            <EndMessage />
+            {!hasMore && <EndMessage className="mt-5" />}
           </div>
 
           <CommunitySidebar community={community} navigate={navigate} />

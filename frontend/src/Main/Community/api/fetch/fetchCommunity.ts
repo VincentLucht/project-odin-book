@@ -2,6 +2,7 @@ import API_URL from '@/auth/ApiUrl';
 import { CommunityTypes, DBCommunityRule, UserRoles } from '@/interface/dbSchema';
 import { SortByType } from '@/Main/Community/Community';
 import { DBPostWithCommunityName, UserAssignedFlair } from '@/interface/dbSchema';
+import { Pagination } from '@/interface/backendTypes';
 
 export type FetchedCommunity = Omit<FetchedCommunityWithPosts, 'posts'>;
 
@@ -37,7 +38,7 @@ interface FetchCommunityResponse {
   message: string;
   error?: string;
   community: FetchedCommunityWithPosts;
-  hasMore: boolean;
+  pagination: Pagination;
 }
 
 export default async function fetchCommunity(
