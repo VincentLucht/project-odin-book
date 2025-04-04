@@ -10,6 +10,7 @@ import isSortByValid from '@/util/isSortByValid';
 import { TimeFrame } from '@/db/managers/util/types';
 import { JwtPayload } from 'jsonwebtoken';
 import { AuthPayload } from '@/comment/commentController';
+import { Pagination } from '@/db/managers/util/types';
 
 class CommunityController {
   // ! GET
@@ -39,6 +40,7 @@ class CommunityController {
         return res.status(404).json({ message: 'Community not found' });
       }
 
+      // TODO: Change to checkPrivate Com membership
       let requestUserId = undefined;
       if (req.authData) {
         const { id } = req.authData as AuthPayload;
@@ -63,7 +65,7 @@ class CommunityController {
       }
 
       let community;
-      let pagination = { nextCursor: '' as string | undefined, hasMore: false };
+      let pagination = { nextCursor: undefined, hasMore: false } as Pagination;
 
       if (sort_by_type === 'new') {
         ({ community, pagination } = await db.community.fetchByNew(
