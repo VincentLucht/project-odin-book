@@ -1,17 +1,25 @@
 import CommunityPostManager from '@/Main/Community/util/CommunityPostManager';
-import { DBPostWithCommunityName } from '@/interface/dbSchema';
 
 /**
  * Creates callback functions for Post edit API functions, uses {@link DBPostWithCommunityName} as the setter function type.
  *
  * Uses {@link CommunityPostManager} methods.
  */
-export default class CommunityPostHandler {
+export default class CommunityPostHandler<
+  T extends {
+    id: string;
+    body: string;
+    is_spoiler: boolean;
+    is_mature: boolean;
+    edited_at?: Date;
+    post_assigned_flair: { id: string }[];
+  },
+> {
   private postManager: CommunityPostManager;
-  private setPosts: React.Dispatch<React.SetStateAction<DBPostWithCommunityName[]>>;
+  private setPosts: React.Dispatch<React.SetStateAction<T[]>>;
   constructor(
     postManager: CommunityPostManager,
-    setPosts: React.Dispatch<React.SetStateAction<DBPostWithCommunityName[]>>,
+    setPosts: React.Dispatch<React.SetStateAction<T[]>>,
   ) {
     this.postManager = postManager;
     this.setPosts = setPosts;
@@ -29,7 +37,7 @@ export default class CommunityPostHandler {
     };
   };
 
-  handleSpoilerFunc = (post: DBPostWithCommunityName) => {
+  handleSpoilerFunc = (post: T) => {
     return () => {
       this.postManager.toggleSpoiler(
         post.id,
@@ -57,7 +65,7 @@ export default class CommunityPostHandler {
     };
   };
 
-  handleMatureFunc = (post: DBPostWithCommunityName) => {
+  handleMatureFunc = (post: T) => {
     return () => {
       this.postManager.toggleMature(
         post.id,
@@ -85,10 +93,7 @@ export default class CommunityPostHandler {
     };
   };
 
-  handleDeletePostFlair = (
-    post: DBPostWithCommunityName,
-    navigateToEdit: () => void,
-  ) => {
+  handleDeletePostFlair = (post: T, navigateToEdit: () => void) => {
     return () => {
       if (!post.post_assigned_flair.length) {
         navigateToEdit();
