@@ -1,13 +1,26 @@
-import { body, param } from 'express-validator/lib';
+import { body, query, param } from 'express-validator/lib';
 import vm from '@/util/validationMessage';
 
 // prettier-ignore
 class CommentValidator {
   fetchRules() {
     return [
-      param('post_id').trim()
+      query('pId').trim()
         .notEmpty()
         .withMessage(vm.postIdReq()),
+
+      query('sbt').trim()
+        .custom((sort_by_type) => {
+          if (!sort_by_type) {
+            throw new Error('Sort by type is required');
+          }
+
+          if (sort_by_type !== 'top' && sort_by_type !== 'new') {
+            throw new Error('Incorrect sort by type');
+          }
+
+          return true;
+        }),
     ];
   }
 

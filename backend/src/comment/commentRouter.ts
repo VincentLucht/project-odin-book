@@ -7,7 +7,7 @@ import commentController from '@/comment/commentController';
 const commentRouter = express.Router();
 
 commentRouter.get(
-  '/:post_id',
+  '', // ? pId=postId&sbt=sortByType&cId=cursorId
   token.authenticateOptional,
   commentValidator.fetchRules(),
   commentController.get,

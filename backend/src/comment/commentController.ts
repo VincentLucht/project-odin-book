@@ -6,6 +6,7 @@ import { asyncHandler } from '@/util/asyncHandler';
 import getAuthUser from '@/util/getAuthUser';
 import checkCommunityPermissions from '@/util/checkCommunityPermissions';
 import checkPrivateCommunityMembership from '@/util/checkPrivateCommunityMembership';
+import { Pagination, TimeFrame } from '@/db/managers/util/types';
 
 export interface AuthPayload {
   id: string | undefined;
@@ -16,10 +17,20 @@ class CommentController {
   get = asyncHandler(async (req: Request, res: Response) => {
     if (checkValidationError(req, res)) return;
 
-    const { post_id } = req.params;
+    const {
+      pId: postId,
+      sbt: sortByType,
+      cId: cursorId,
+      t: timeframe,
+    } = req.query as {
+      pId: string;
+      sbt: 'top' | 'new';
+      cId: string;
+      t: TimeFrame;
+    };
 
     try {
-      const post = await db.post.getById(post_id);
+      const post = await db.post.getById(postId);
       if (!post) {
         return res.status(404).json({ message: 'Post not found' });
       }
@@ -38,17 +49,32 @@ class CommentController {
       }
 
       let comments;
+      let pagination = { nextCursor: undefined, hasMore: false } as Pagination;
+
       if (req.authData) {
         const { id: userId } = req.authData as AuthPayload;
 
-        comments = await db.comment.getCommentThreads(post.id, userId);
+        ({ comments, pagination } = await db.comment.getCommentThreads(
+          post.id,
+          sortByType,
+          userId,
+          cursorId,
+          timeframe,
+        ));
       } else {
-        comments = await db.comment.getCommentThreads(post.id, undefined);
+        ({ comments, pagination } = await db.comment.getCommentThreads(
+          post.id,
+          sortByType,
+          undefined,
+          cursorId,
+          timeframe,
+        ));
       }
 
       return res.status(200).json({
         message: 'Successfully fetched comments',
         comments,
+        pagination,
       });
     } catch (error) {
       console.error(error);

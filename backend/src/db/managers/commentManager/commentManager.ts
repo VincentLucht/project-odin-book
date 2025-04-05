@@ -1,6 +1,8 @@
 import { PrismaClient, Comment } from '@prisma/client/default';
-import { CommentWithReplies } from '@/db/managers/util/types';
+import { CommentWithReplies, TimeFrame } from '@/db/managers/util/types';
 import { get7Replies } from '@/db/managers/commentManager/util/commentUtils';
+import isTimeFrameValid from '@/util/isTimeFrameValid';
+import getStartDate from '@/db/managers/util/getStartDate';
 
 export default class CommentManager {
   constructor(private prisma: PrismaClient) {}
@@ -18,9 +20,33 @@ export default class CommentManager {
   }
 
   /** Fetches comment thread with up to 30 main comments, each with 8 replies. */
-  async getCommentThreads(post_id: string, user_id: string | undefined) {
-    return this.prisma.comment.findMany({
-      where: { post_id, parent_comment_id: null },
+  async getCommentThreads(
+    post_id: string,
+    sort_by_type: 'top' | 'new',
+    user_id?: string,
+    cursorId?: string,
+    timeframe?: TimeFrame,
+    take = 30,
+  ) {
+    let convertedTimeframe;
+    if (sort_by_type === 'top' && timeframe) {
+      if (!isTimeFrameValid(timeframe)) {
+        throw new Error('Invalid timeframe detected');
+      } else {
+        convertedTimeframe = getStartDate(timeframe);
+      }
+    }
+
+    const comments = await this.prisma.comment.findMany({
+      where: {
+        post_id,
+        parent_comment_id: null,
+        ...(convertedTimeframe && sort_by_type === 'top'
+          ? {
+              created_at: { gte: convertedTimeframe },
+            }
+          : {}),
+      },
       include: {
         user: {
           select: {
@@ -41,9 +67,34 @@ export default class CommentManager {
         _count: { select: { replies: true } },
         ...get7Replies,
       },
-      orderBy: { created_at: 'desc' },
-      take: 30,
+      orderBy:
+        sort_by_type === 'top'
+          ? { total_vote_score: 'desc' }
+          : { created_at: 'desc' },
+      ...(cursorId && {
+        cursor: {
+          id: cursorId,
+        },
+        skip: 1,
+      }),
+      take,
     });
+
+    let nextCursor;
+    if (comments.length > 0) {
+      const lastComment = comments[comments.length - 1];
+      nextCursor = lastComment.id;
+    } else {
+      nextCursor = undefined;
+    }
+
+    return {
+      comments,
+      pagination: {
+        nextCursor,
+        hasMore: comments.length === take,
+      },
+    };
   }
 
   async getMoreReplies(
