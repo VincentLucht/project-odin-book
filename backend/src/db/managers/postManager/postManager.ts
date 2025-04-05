@@ -1,6 +1,9 @@
 import { getPostInfo } from '@/db/managers/communityManager/util/baseQuery';
 import { PostType, PrismaClient } from '@prisma/client/default';
 import { postSelectFields } from '@/db/managers/postManager/util/postUtils';
+import { TimeFrame } from '@/db/managers/util/types';
+import isTimeFrameValid from '@/util/isTimeFrameValid';
+import getStartDate from '@/db/managers/util/getStartDate';
 
 export default class PostManager {
   constructor(private prisma: PrismaClient) {}
@@ -66,16 +69,37 @@ export default class PostManager {
     sortBy: 'new' | 'top',
     requestUserId: string | undefined,
     cursorId?: string,
+    timeframe?: TimeFrame,
     take = 30,
   ) {
+    let convertedTimeframe;
+    if (sortBy === 'top' && timeframe) {
+      if (!isTimeFrameValid(timeframe)) {
+        throw new Error('Invalid timeframe detected');
+      } else {
+        convertedTimeframe = getStartDate(timeframe);
+      }
+    }
+
     const orderMap = {
-      new: { created_at: 'desc' as const },
-      top: { total_vote_score: 'desc' as const },
+      new: [{ created_at: 'desc' as const }],
+      top: [
+        { total_vote_score: 'desc' as const },
+        { id: 'asc' as const }, // tiebreaker
+      ],
     };
     const orderBy = orderMap[sortBy];
 
     const posts = await this.prisma.post.findMany({
-      where: { community_id, deleted_at: null },
+      where: {
+        community_id,
+        deleted_at: null,
+        ...(convertedTimeframe && sortBy === 'top'
+          ? {
+              created_at: { gte: convertedTimeframe },
+            }
+          : {}),
+      },
       orderBy,
       include: getPostInfo(requestUserId),
       ...(cursorId && {
