@@ -16,7 +16,7 @@ interface SetSortByTypeProps {
   timeframe: TimeFrame;
   setTimeframe: React.Dispatch<React.SetStateAction<TimeFrame>>;
   excludeSortOptions?: boolean;
-  mode?: 'community' | 'search';
+  mode?: 'community' | 'search' | 'comments';
   safeSearch?: boolean;
   setSafeSearch?: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -83,13 +83,15 @@ export default function SetSortByType({
                 isSelected={sortByType === 'hot'}
                 customFunc={() => onSortByClick('hot')}
               />
-            ) : (
+            ) : mode === 'search' ? (
               <DropdownButton
                 text="Relevance"
                 show={showSortBy}
                 isSelected={sortByType === 'relevance'}
                 customFunc={() => onSortByClick('relevance')}
               />
+            ) : (
+              <></>
             )}
 
             <DropdownButton
