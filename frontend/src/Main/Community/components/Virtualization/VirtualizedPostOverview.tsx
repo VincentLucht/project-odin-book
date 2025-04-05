@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useRef, useCallback } from 'react';
 
 import { Virtuoso } from 'react-virtuoso';
 import PostOverview from '@/Main/Post/components/PostOverview/PostOverview';
@@ -9,12 +9,13 @@ import handleFetchMorePosts from '@/Main/Community/api/fetch/posts/handleFetchMo
 import CommunityPostHandler from '@/Main/Community/handlers/CommunityPostHandler';
 import { NavigateFunction } from 'react-router-dom';
 import { CommunityInfo } from '@/Main/Post/components/PostOverview/PostOverview';
-import { FetchedPost, SortByType } from '@/Main/Community/Community';
+import { FetchedPost, SortByType, TimeFrame } from '@/Main/Community/Community';
 
 interface VirtualizedPostOverviewProps {
   community: CommunityInfo;
   posts: FetchedPost[];
   sortByType: SortByType;
+  timeframe: TimeFrame;
   cursorId: string;
   hasMore: boolean;
   loadingMore: boolean;
@@ -34,6 +35,7 @@ export default function VirtualizedPostOverview({
   community,
   posts,
   sortByType,
+  timeframe,
   cursorId,
   hasMore,
   loadingMore,
@@ -48,23 +50,19 @@ export default function VirtualizedPostOverview({
   communityPostHandler,
   communityName,
 }: VirtualizedPostOverviewProps) {
-  // Keep track of item heights for better rendering
-  const [itemHeights, setItemHeights] = useState<Record<string, number>>({});
-
   // Reference to virtuoso component for scrolling
   const virtuosoRef = useRef(null);
 
-  // Cb to update item height on changes
-  const handleItemResize = useCallback((postId: string, height: number) => {
-    setItemHeights((prev) => {
-      if (prev[postId] === height) return prev;
-      return { ...prev, [postId]: height };
-    });
-  }, []);
-
   const loadMore = () => {
     setLoadingMore(true);
-    handleFetchMorePosts(community.id, sortByType, token, cursorId, onComplete);
+    handleFetchMorePosts(
+      community.id,
+      sortByType,
+      timeframe,
+      token,
+      cursorId,
+      onComplete,
+    );
   };
 
   // Item content renderer for Virtuoso
@@ -74,7 +72,7 @@ export default function VirtualizedPostOverview({
       if (!post) return null;
 
       return (
-        <div className="post-item-container" data-post-id={post.id}>
+        <div data-post-id={post.id}>
           <PostOverview
             key={post.id}
             post={post}
@@ -106,7 +104,6 @@ export default function VirtualizedPostOverview({
               );
               return removeFlairHandler();
             }}
-            onHeightChange={(height: number) => handleItemResize(post.id, height)}
           />
         </div>
       );
@@ -122,7 +119,6 @@ export default function VirtualizedPostOverview({
       setShowEditDropdown,
       communityPostHandler,
       communityName,
-      handleItemResize,
     ],
   );
 
@@ -140,7 +136,7 @@ export default function VirtualizedPostOverview({
             scrollerRef={() => window}
             computeItemKey={(index) => posts[index]?.id || index.toString()}
             endReached={() => {
-              if (hasMore) {
+              if (hasMore && !loadingMore) {
                 loadMore();
               }
             }}
@@ -149,7 +145,7 @@ export default function VirtualizedPostOverview({
           {loadingMore && <LogoLoading className="mt-8" />}
         </>
       ) : (
-        <div className="no-posts-message">No posts available</div>
+        <div>No posts available</div>
       )}
     </div>
   );
