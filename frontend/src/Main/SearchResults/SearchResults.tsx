@@ -65,7 +65,7 @@ export default function SearchResults() {
     queryType === 'posts' || queryType === 'comments' ? false : true;
 
   return (
-    <div className="overflow-y-scroll p-4 center-main">
+    <div className="p-4 center-main">
       <div className="w-full max-w-[1072px]">
         <div>
           <SearchResultsSelector queryType={queryType} setQueryType={setQueryType} />
