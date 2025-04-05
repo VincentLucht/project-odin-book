@@ -123,6 +123,7 @@ export default function Community() {
               }}
               posts={posts}
               sortByType={sortByType}
+              timeframe={timeframe}
               cursorId={cursorId}
               hasMore={hasMore}
               loadingMore={loadingMore}
