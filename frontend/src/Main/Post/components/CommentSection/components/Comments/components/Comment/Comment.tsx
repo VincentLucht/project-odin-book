@@ -31,7 +31,7 @@ interface CommentProps {
     previousVoteType: VoteType | undefined,
   ) => void;
   onDelete: (commentId: string) => void;
-  setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[] | null>>;
+  setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[]>>;
   setPost: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>;
   showDropdown: string | null;
   setShowDropdown: React.Dispatch<React.SetStateAction<string | null>>;

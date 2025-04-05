@@ -6,7 +6,7 @@ export default function handleFetchReplies(
   token: string | null,
   post_id: string,
   parent_comment_id: string,
-  setterFunc: React.Dispatch<React.SetStateAction<DBCommentWithReplies[] | null>>,
+  setterFunc: React.Dispatch<React.SetStateAction<DBCommentWithReplies[]>>,
   onComplete: () => void,
 ) {
   fetchReplies(token, post_id, parent_comment_id)

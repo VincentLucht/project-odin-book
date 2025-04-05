@@ -15,7 +15,7 @@ export default async function handlePostComment(
   username: string | undefined,
   userPFP: string | undefined,
   token: string | null,
-  setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[] | null>>,
+  setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[]>>,
   setPost: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>,
   toggleShow: (wasSubmitted?: boolean) => void,
 ) {

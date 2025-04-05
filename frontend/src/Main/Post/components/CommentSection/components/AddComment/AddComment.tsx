@@ -10,7 +10,7 @@ interface AddCommentProps {
   postId: string;
   user: TokenUser | null;
   token: string | null;
-  setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[] | null>>;
+  setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[]>>;
   setPost: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>;
 }
 

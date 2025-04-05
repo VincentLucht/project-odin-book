@@ -15,7 +15,7 @@ interface CommentContentProps {
   depth: number;
   isEditActive: boolean;
   setIsEditActive: React.Dispatch<React.SetStateAction<boolean>>;
-  setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[] | null>>;
+  setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[]>>;
   token: string | null;
 }
 

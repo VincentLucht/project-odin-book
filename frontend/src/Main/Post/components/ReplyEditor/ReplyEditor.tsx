@@ -22,7 +22,7 @@ interface ReplyEditorProps {
   postId: string;
   commentId: string;
   parentCommentId: string | undefined;
-  setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[] | null>>;
+  setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[]>>;
   setPost: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>;
   user: TokenUser | null;
   token: string | null;

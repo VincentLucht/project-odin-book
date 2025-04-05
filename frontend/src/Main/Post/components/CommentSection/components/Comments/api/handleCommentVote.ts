@@ -12,7 +12,7 @@ export default async function handleCommentVote(
   userId: string | undefined,
   voteType: VoteType,
   token: string | null,
-  setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[] | null>>,
+  setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[]>>,
   previousVoteType: VoteType | undefined,
 ) {
   if (!token || !userId) {

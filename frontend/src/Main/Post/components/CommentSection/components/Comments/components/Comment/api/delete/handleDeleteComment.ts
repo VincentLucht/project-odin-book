@@ -5,7 +5,7 @@ import catchError from '@/util/catchError';
 export default function handleDeleteComment(
   token: string,
   commentId: string,
-  setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[] | null>>,
+  setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[]>>,
 ) {
   deleteComment(token, commentId)
     .then(() => {
