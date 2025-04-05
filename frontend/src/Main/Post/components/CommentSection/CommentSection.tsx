@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useCompletionHandler, GenericOnComplete } from '@/hooks/useCompletionHandler';
 
-import Comments from '@/Main/Post/components/CommentSection/components/Comments/Comments';
+import VirtualizedComments from '@/Main/Post/components/CommentSection/components/Comments/VirtualizedComments';
 import AddComment from '@/Main/Post/components/CommentSection/components/AddComment/AddComment';
-import LogoLoading from '@/components/Lazy/Logo/LogoLoading';
+import SetSortByType from '@/Main/Community/components/CommunityHeader/components/SetSortByType';
 
 import handleFetchComments from '@/Main/Post/components/CommentSection/api/handleFetchComments';
 import handleFetchReplies from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/components/MoreRepliesButton/api/handleFetchReplies';
@@ -12,6 +13,11 @@ import getBaseURL from '@/Main/Post/components/CommentSection/util/getBaseURL';
 import { DBCommentWithReplies } from '@/interface/dbSchema';
 import { DBPostWithCommunity } from '@/interface/dbSchema';
 import { TokenUser } from '@/context/auth/AuthProvider';
+import { TimeFrame } from '@/Main/Community/Community';
+
+export type CommentSortBy = 'top' | 'new';
+
+export type OnCompleteCommentSection = GenericOnComplete<DBCommentWithReplies>;
 
 interface CommentSectionProps {
   postId: string;
@@ -31,27 +37,48 @@ export default function CommentSection({
   setPost,
 }: CommentSectionProps) {
   const [loading, setLoading] = useState(true);
-  const [comments, setComments] = useState<DBCommentWithReplies[] | null>(null);
+  const [sortByType, setSortByType] = useState<CommentSortBy>('top');
+  const [hasMore, setHasMore] = useState(true);
+  const [cursorId, setCursorId] = useState('');
+  const [timeframe, setTimeframe] = useState<TimeFrame>('all');
+
+  const [comments, setComments] = useState<DBCommentWithReplies[]>([]);
 
   const { parentCommentId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
 
+  const handleCompletion = useCompletionHandler();
+  const onComplete: OnCompleteCommentSection = useCallback(
+    (
+      comments?: DBCommentWithReplies[],
+      cursorId?: string,
+      hasMore?: boolean,
+      isRefetch = false,
+    ) => {
+      handleCompletion(
+        comments,
+        setComments,
+        cursorId,
+        setCursorId,
+        hasMore,
+        setHasMore,
+        setLoading,
+        isRefetch,
+      );
+    },
+    [handleCompletion],
+  );
+
   useEffect(() => {
     setLoading(true);
-
-    const onComplete = () => setLoading(false);
 
     if (parentCommentId) {
       handleFetchReplies(token, postId, parentCommentId, setComments, onComplete);
     } else {
-      handleFetchComments(postId, token, setComments, onComplete);
+      handleFetchComments(postId, token, sortByType, '', timeframe, true, onComplete);
     }
-  }, [postId, token, parentCommentId]);
-
-  if (loading) {
-    return <LogoLoading />;
-  }
+  }, [token, postId, parentCommentId, onComplete, sortByType, timeframe]);
 
   return (
     <div className="pt-2">
@@ -62,6 +89,16 @@ export default function CommentSection({
         setComments={setComments}
         setPost={setPost}
       />
+
+      <div className="relative -mb-5 mt-3">
+        <SetSortByType
+          sortByType={sortByType}
+          setSortByType={(sortBy) => setSortByType(sortBy as CommentSortBy)}
+          timeframe={timeframe}
+          setTimeframe={setTimeframe}
+          mode="comments"
+        />
+      </div>
 
       {parentCommentId && (
         <div className="-mb-4 mt-4 df">
@@ -74,7 +111,7 @@ export default function CommentSection({
         </div>
       )}
 
-      <Comments
+      <VirtualizedComments
         comments={comments}
         user={user}
         token={token}
@@ -83,6 +120,13 @@ export default function CommentSection({
         originalPoster={originalPoster}
         setComments={setComments}
         setPost={setPost}
+        sortByType={sortByType}
+        timeframe={timeframe}
+        cursorId={cursorId}
+        hasMore={hasMore}
+        loading={loading}
+        setLoading={setLoading}
+        onComplete={onComplete}
       />
     </div>
   );
