@@ -23,6 +23,15 @@ export function getPostInfo(requestUserId: string | undefined) {
         community_flair: true,
       },
     },
+    moderation: {
+      include: {
+        moderator: {
+          select: {
+            user: { select: { username: true, profile_picture_url: true } },
+          },
+        },
+      },
+    },
   };
 }
 
@@ -70,6 +79,7 @@ export default function baseQuery(
       }),
       community_moderators: {
         select: {
+          is_active: true,
           user: {
             select: {
               id: true,
@@ -94,6 +104,10 @@ export default function baseQuery(
         include: getPostInfo(requestUserId),
         where: {
           deleted_at: null,
+          OR: [
+            { moderation: null },
+            { moderation: { action: { not: 'REMOVED' } } },
+          ] as any,
           ...(options.timeFilter && {
             created_at: { gte: options.timeFilter },
           }),
