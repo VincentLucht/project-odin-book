@@ -18,8 +18,9 @@ module.exports = {
     project: ['./tsconfig.json', './tsconfig.node.json'],
     tsconfigRootDir: __dirname,
   },
-  plugins: ['react-refresh', 'prettier', 'react'],
+  plugins: ['react-refresh', 'prettier', 'react', 'jsdoc'],
   rules: {
+    "jsdoc/no-undefined-types": 1,
     "@typescript-eslint/await-thenable": "error",
     'prettier/prettier': 'error',
     semi: [2, 'always'], // Enforce semicolons at the end of statements
