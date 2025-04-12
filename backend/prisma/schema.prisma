@@ -29,6 +29,19 @@ enum CommunityType {
   RESTRICTED
 }
 
+model UserSettings {
+  id                String  @id @default(uuid())
+  community_enabled Boolean @default(true)
+  posts_enabled     Boolean @default(true)
+  comments_enabled  Boolean @default(true)
+  mods_enabled      Boolean @default(true)
+  chats_enabled     Boolean @default(true)
+  follows_enabled   Boolean @default(true)
+
+  user_id String @unique
+  user    User   @relation(fields: [user_id], references: [id])
+}
+
 model User {
   id                  String    @id @default(uuid())
   username            String    @unique @db.VarChar(20)
@@ -45,21 +58,24 @@ model User {
   post_karma    Int @default(0)
   comment_karma Int @default(0)
 
-  banned_users        BannedUser[]
-  user_communities    UserCommunity[]
-  community           Community[]
-  community_moderator CommunityModerator[]
-  comment             Comment[]
-  post_vote           PostVote[]
-  comment_votes       CommentVote[]
-  chat                Chat[]
-  message             Message[]
-  user_chats          UserChats[]
-  chat_admin          ChatAdmin[]
-  join_request        JoinRequest[]
-  user_assigned_flair UserAssignedFlair[]
-  post                Post[]
-  recent_communities  RecentCommunities[]
+  banned_users           BannedUser[]
+  user_communities       UserCommunity[]
+  community              Community[]
+  community_moderator    CommunityModerator[]
+  comment                Comment[]
+  post_vote              PostVote[]
+  comment_votes          CommentVote[]
+  chat                   Chat[]
+  message                Message[]
+  user_chats             UserChats[]
+  chat_admin             ChatAdmin[]
+  join_request           JoinRequest[]
+  user_assigned_flair    UserAssignedFlair[]
+  post                   Post[]
+  recent_communities     RecentCommunities[]
+  user_settings          UserSettings?
+  sent_notifications     Notification[]       @relation("Sender")
+  received_notifications Notification[]       @relation("Receiver")
 }
 
 enum RequestStatus {
@@ -182,8 +198,31 @@ model CommunityModerator {
   user         User      @relation(fields: [user_id], references: [id])
   community_id String
   community    Community @relation(fields: [community_id], references: [id])
+  is_active    Boolean   @default(true)
+
+  post_moderations    PostModeration[]
+  comment_moderations CommentModeration[]
 
   @@unique([community_id, user_id])
+}
+
+enum ModerationType {
+  APPROVED
+  REMOVED
+}
+
+model PostModeration {
+  id           String             @id @default(uuid())
+  post_id      String             @unique
+  post         Post               @relation(fields: [post_id], references: [id])
+  moderator_id String
+  moderator    CommunityModerator @relation(fields: [moderator_id], references: [id])
+  action       ModerationType
+  reason       String?            @db.VarChar(20)
+  created_at   DateTime           @default(now())
+
+  @@index([post_id])
+  @@index([moderator_id])
 }
 
 enum PostType {
@@ -212,10 +251,14 @@ model Post {
   total_vote_score    Int       @default(0)
   total_comment_score Int       @default(0)
 
+  lock_comments Boolean @default(false)
+
   post_type           PostType
   comments            Comment[]
   post_votes          PostVote[]
   post_assigned_flair PostAssignedFlair[]
+
+  moderation PostModeration?
 
   @@index([title])
   @@index([created_at])
@@ -241,6 +284,20 @@ model PostVote {
   @@index([post_id])
 }
 
+model CommentModeration {
+  id           String             @id @default(uuid())
+  comment_id   String             @unique
+  post         Comment            @relation(fields: [comment_id], references: [id])
+  moderator_id String
+  moderator    CommunityModerator @relation(fields: [moderator_id], references: [id])
+  action       ModerationType
+  reason       String             @db.VarChar(1000)
+  created_at   DateTime           @default(now())
+
+  @@index([comment_id])
+  @@index([moderator_id])
+}
+
 model Comment {
   id               String    @id @default(uuid())
   content          String    @db.VarChar(10000)
@@ -251,6 +308,9 @@ model Comment {
   upvote_count     Int       @default(0)
   downvote_count   Int       @default(0)
   total_vote_score Int       @default(0)
+
+  moderator_id String?
+  moderation   CommentModeration?
 
   post_id       String
   post          Post          @relation(fields: [post_id], references: [id])
@@ -285,6 +345,29 @@ model CommentVote {
 
   @@unique([comment_id, user_id])
   @@index([comment_id])
+}
+
+enum NotificationType {
+  COMMUNITYMESSAGE
+  POSTREPLY
+  COMMENTREPLY
+  MODMESSAGE
+  CHATMESSAGE
+  NEWFOLLOWER
+}
+
+model Notification {
+  id         String           @id @default(uuid())
+  message    String?
+  created_at DateTime         @default(now())
+  type       NotificationType
+
+  sender_id   String
+  sender      User   @relation("Sender", fields: [sender_id], references: [id])
+  receiver_id String
+  receiver    User   @relation("Receiver", fields: [receiver_id], references: [id])
+
+  @@index([sender_id, receiver_id])
 }
 
 model BannedUser {

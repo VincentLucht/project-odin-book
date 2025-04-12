@@ -6,6 +6,7 @@ import TopicManager from '@/db/managers/topicManager';
 import UserCommunityManager from '@/db/managers/userCommunityManager';
 import BannedUsersManager from '@/db/managers/bannedUsersManager';
 import CommunityModeratorManager from '@/db/managers/communityModeratorManager';
+import PostModerationManager from '@/db/managers/postModerationManager';
 import CommunityFlairManager from '@/db/managers/communityFlairManager';
 import PostManager from '@/db/managers/postManager/postManager';
 import PostVoteManager from '@/db/managers/postVoteManager';
@@ -16,6 +17,7 @@ import PostAssignedFlairManager from '@/db/managers/postAssignedFlairManager';
 import RecentCommunitiesManager from '@/db/managers/recentCommunitiesManager';
 import JoinRequestManager from '@/db/managers/joinRequestManager';
 import SearchResultsManager from '@/db/managers/misc/searchResultsManager';
+import NotificationManager from '@/db/managers/notificationManager';
 
 export class DB {
   private prisma: PrismaClient;
@@ -23,6 +25,7 @@ export class DB {
   public community: CommunityManager;
   public userCommunity: UserCommunityManager;
   public communityModerator: CommunityModeratorManager;
+  public postModeration: PostModerationManager;
   public bannedUsers: BannedUsersManager;
   public topic: TopicManager;
   public communityFlair: CommunityFlairManager;
@@ -35,6 +38,7 @@ export class DB {
   public recentCommunities: RecentCommunitiesManager;
   public joinRequest: JoinRequestManager;
   public searchResults: SearchResultsManager;
+  public notifications: NotificationManager;
 
   constructor() {
     this.prisma = new PrismaClient();
@@ -42,6 +46,7 @@ export class DB {
     this.community = new CommunityManager(this.prisma);
     this.userCommunity = new UserCommunityManager(this.prisma);
     this.communityModerator = new CommunityModeratorManager(this.prisma);
+    this.postModeration = new PostModerationManager(this.prisma);
     this.bannedUsers = new BannedUsersManager(this.prisma);
     this.topic = new TopicManager(this.prisma);
     this.communityFlair = new CommunityFlairManager(this.prisma);
@@ -54,6 +59,7 @@ export class DB {
     this.recentCommunities = new RecentCommunitiesManager(this.prisma);
     this.joinRequest = new JoinRequestManager(this.prisma);
     this.searchResults = new SearchResultsManager(this.prisma);
+    this.notifications = new NotificationManager(this.prisma, this.user);
   }
 }
 
