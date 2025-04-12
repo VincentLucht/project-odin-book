@@ -11,10 +11,39 @@ export default class CommunityModeratorManager {
     return count > 0;
   }
 
-  // ! DELETE
-  async delete(user_id: string, community_id: string) {
-    await this.prisma.communityModerator.delete({
-      where: { community_id_user_id: { user_id, community_id } },
+  async getById(user_id: string, community_id: string) {
+    const moderator = await this.prisma.communityModerator.findUnique({
+      where: {
+        community_id_user_id: { user_id, community_id },
+      },
+    });
+
+    return moderator;
+  }
+
+  // ! CREATE
+  async makeMod(community_id: string, target_user_id: string) {
+    await this.prisma.communityModerator.create({
+      data: {
+        community_id,
+        user_id: target_user_id,
+        is_active: true,
+      },
+    });
+  }
+
+  // ! Update
+  async activateMod(community_id: string, user_id: string) {
+    await this.prisma.communityModerator.update({
+      where: { community_id_user_id: { community_id, user_id } },
+      data: { is_active: true },
+    });
+  }
+
+  async deactivateMod(community_id: string, user_id: string) {
+    await this.prisma.communityModerator.update({
+      where: { community_id_user_id: { community_id, user_id } },
+      data: { is_active: false },
     });
   }
 }
