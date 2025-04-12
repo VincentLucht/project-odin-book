@@ -43,6 +43,14 @@ export default {
           '@apply transform rounded-full bg-white px-4 text-gray-800 transition-all duration-200 ease-in-out hover:bg-gray-100 active:scale-95 active:bg-gray-200 border border-gray-200': 
           {},
         },
+        '.cancel-button': {
+          '@apply !px-3 py-2 text-xs prm-button-red': 
+          {},
+        },
+        '.confirm-button': {
+          '@apply !px-3 py-2 text-xs prm-button-blue': 
+          {},
+        },
         '.bg-gray': {
           backgroundColor: 'rgba(37,37,37,255)'
         },
@@ -64,6 +72,9 @@ export default {
         '.text-bg-gray': {
           color: 'rgba(37,37,37,255)'
         },
+        '.text-bg-accent-gray': {
+          color: '#3F4246'
+        },
         '.text-gray-secondary': {
           color: '#B0B5BB'
         },
@@ -83,6 +94,9 @@ export default {
         },
         '.bg-transition-hover-2' :{
           '@apply transition-colors hover:bg-gray-600/45 active:bg-gray-600/60' : {}
+        },
+        '.bg-transition-hover-alternate' :{ // brighter to stand out more
+          '@apply transition-colors hover:bg-gray-500/45 active:bg-gray-500/60' : {}
         },
         '.center-main': {
           '@apply w-full flex justify-center': {}
@@ -150,6 +164,10 @@ export default {
         '.sidebar-btn-stone': {
           '@apply h-8 w-full rounded-full bg-stone-800 px-2 text-xs font-medium transition-colors hover:bg-stone-700 active:bg-stone-600': {}
         },
+        '.post-message': {
+          '@apply flex items-center gap-3 rounded-md border border-gray-600 p-4 text-sm text-gray-400': {}
+        },
+        
       };
 
       addUtilities(newUtilities, ['responsive', 'hover']);
