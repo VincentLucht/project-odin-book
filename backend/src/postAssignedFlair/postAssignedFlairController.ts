@@ -21,14 +21,21 @@ class PostAssignedFlairController {
       if (!post) {
         return res.status(404).json({ message: 'Post not found' });
       }
-      if (post.poster_id !== user_id) {
-        return res.status(403).json({ message: 'You are not the post author' });
-      }
 
       const community = await db.community.getById(post.community_id);
       if (!community) {
         return res.status(404).json({ message: 'Community not found' });
       }
+
+      if (
+        post.poster_id !== user_id &&
+        !(await db.communityModerator.isMod(user_id, post.community_id))
+      ) {
+        return res
+          .status(403)
+          .json({ message: 'You are not allowed to edit this post flair' });
+      }
+
       if (
         community.type === 'PRIVATE' &&
         !(await db.userCommunity.isMember(user_id, post.community_id))
@@ -56,10 +63,7 @@ class PostAssignedFlairController {
           .json({ message: 'Flair is only assignable to users' });
       }
 
-      const postFlair = await db.postAssignedFlair.getPostFlairInCommunity(
-        post_id,
-        post.community_id,
-      );
+      const postFlair = await db.postAssignedFlair.hasPostFlair(post_id);
       if (postFlair) {
         if (postFlair.post_id !== post_id) {
           return res
@@ -102,7 +106,7 @@ class PostAssignedFlairController {
   delete = asyncHandler(async (req: Request, res: Response) => {
     if (checkValidationError(req, res)) return;
 
-    const { post_id, post_assigned_flair_id } = req.body;
+    const { post_id, community_flair_id } = req.body;
 
     try {
       const { user_id } = getAuthUser(req.authData);
@@ -114,14 +118,21 @@ class PostAssignedFlairController {
       if (!post) {
         return res.status(404).json({ message: 'Post not found' });
       }
-      if (post.poster_id !== user_id) {
-        return res.status(403).json({ message: 'You are not the post author' });
-      }
 
       const community = await db.community.getById(post.community_id);
       if (!community) {
         return res.status(404).json({ message: 'Community not found' });
       }
+
+      if (
+        post.poster_id !== user_id &&
+        !(await db.communityModerator.isMod(user_id, post.community_id))
+      ) {
+        return res
+          .status(403)
+          .json({ message: 'You are not allowed to edit this post flair' });
+      }
+
       if (!(await db.userCommunity.isMember(user_id, post.community_id))) {
         return res
           .status(403)
@@ -140,9 +151,7 @@ class PostAssignedFlairController {
           .json({ message: 'Post Flairs are required for this community' });
       }
 
-      const postFlair = await db.postAssignedFlair.getById(
-        post_assigned_flair_id,
-      );
+      const postFlair = await db.postAssignedFlair.hasPostFlair(post_id);
       if (!postFlair) {
         return res.status(404).json({ message: 'Flair not found' });
       }
@@ -152,7 +161,7 @@ class PostAssignedFlairController {
           .json({ message: 'This flair does not belong to this post' });
       }
 
-      await db.postAssignedFlair.delete(post_assigned_flair_id);
+      await db.postAssignedFlair.delete(post_id, community_flair_id);
 
       return res
         .status(200)

@@ -21,9 +21,9 @@ class PostAssignedFlairValidator {
       .notEmpty()
       .withMessage(vm.req('Post ID')),
 
-      body('post_assigned_flair_id').trim()
+      body('community_flair_id').trim()
         .notEmpty()
-        .withMessage(vm.req('Post assigned flair ID')),
+        .withMessage(vm.req('Community flair ID')),
     ];
   }
 }

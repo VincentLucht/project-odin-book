@@ -27,6 +27,7 @@ import db from '@/db/db';
 // prettier-ignore
 describe('/community/post/flair', () => {
   const token = generateToken(mockUser.id, mockUser.username);
+  const modToken = generateToken('2', 't2');
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -42,16 +43,17 @@ describe('/community/post/flair', () => {
     beforeEach(() => {
       mockDb.user.getById.mockResolvedValue(true);
       mockDb.post.getById.mockResolvedValue({ community_id: '1', poster_id: 't1' });
-      mockDb.community.doesExistById.mockResolvedValue(true);
+      mockDb.community.getById.mockResolvedValue(true);
+      mockDb.communityModerator.isMod.mockResolvedValue(false);
       mockDb.userCommunity.isMember.mockResolvedValue(true);
       mockDb.bannedUsers.isBanned.mockResolvedValue(false);
       mockDb.communityFlair.getById.mockResolvedValue({ is_assignable_to_posts: true });
     });
 
-    const sendRequest = (body: any) => {
+    const sendRequest = (body: any, useModToken = false) => {
       return request(app)
         .post('/community/post/flair')
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${useModToken ? modToken : token}`)
         .send(body);
     };
 
@@ -59,14 +61,32 @@ describe('/community/post/flair', () => {
       it('should successfully assign a flair to a post', async () => {
         const response = await sendRequest(mockRequest);
 
-        assert.exp(response, 201, 'Successfully assigned flair');
+        assert.exp(response, 201, 'Successfully assigned post flair');
       });
 
       it('should successfully update a flair', async () => {
-        mockDb.postAssignedFlair.getPostFlairInCommunity.mockResolvedValue({ community_flair_id: '2', post_id: '1' });
+        mockDb.postAssignedFlair.hasPostFlair.mockResolvedValue({ community_flair_id: '2', post_id: '1' });
         const response = await sendRequest(mockRequest);
 
-        assert.exp(response, 200, 'Successfully updated flair');
+        assert.exp(response, 200, 'Successfully updated post flair');
+        expect(db.postAssignedFlair.update).toHaveBeenCalled();
+      });
+
+      it('should successfully assign a flair to a post as a MODERATOR', async () => {
+        mockDb.communityModerator.isMod.mockResolvedValue(true);
+
+        const response = await sendRequest(mockRequest, true);
+
+        assert.exp(response, 201, 'Successfully assigned post flair');
+      });
+
+      it('should successfully update a flair as a MODERATOR', async () => {
+        mockDb.postAssignedFlair.hasPostFlair.mockResolvedValue({ community_flair_id: '2', post_id: '1' });
+        mockDb.communityModerator.isMod.mockResolvedValue(true);
+
+        const response = await sendRequest(mockRequest, true);
+
+        assert.exp(response, 200, 'Successfully updated post flair');
         expect(db.postAssignedFlair.update).toHaveBeenCalled();
       });
     });
@@ -90,17 +110,18 @@ describe('/community/post/flair', () => {
         mockDb.post.getById.mockResolvedValue({ community_id: '1', poster_id: 'otherUser' });
         const response = await sendRequest(mockRequest);
 
-        assert.exp(response, 403, 'You are not the post author');
+        assert.exp(response, 403, 'You are not allowed to edit this post flair');
       });
 
       it('should handle community not existing', async () => {
-        mockDb.community.doesExistById.mockResolvedValue(false);
+        mockDb.community.getById.mockResolvedValue(false);
         const response = await sendRequest(mockRequest);
 
         assert.community.notFound(response);
       });
 
-      it('should handle user not being member', async () => {
+      it('should handle user not being member in a private community', async () => {
+        mockDb.community.getById.mockResolvedValue({ type: 'PRIVATE' });
         mockDb.userCommunity.isMember.mockResolvedValue(false);
         const response = await sendRequest(mockRequest);
 
@@ -129,17 +150,17 @@ describe('/community/post/flair', () => {
       });
 
       it('should handle flair not belonging to post', async () => {
-        mockDb.postAssignedFlair.getPostFlairInCommunity.mockResolvedValue({ community_flair_id: '1', post_id: 'someOtherPost' });
+        mockDb.postAssignedFlair.hasPostFlair.mockResolvedValue({ community_flair_id: '1', post_id: 'someOtherPost' });
         const response = await sendRequest(mockRequest);
 
         assert.exp(response, 400, 'This flair does not belong to this post');
       });
 
       it('should handle post already having a flair', async () => {
-        mockDb.postAssignedFlair.getPostFlairInCommunity.mockResolvedValue({ community_flair_id: '1', post_id: '1' });
+        mockDb.postAssignedFlair.hasPostFlair.mockResolvedValue({ community_flair_id: '1', post_id: '1' });
         const response = await sendRequest(mockRequest);
 
-        assert.exp(response, 409, 'You already use this flair');
+        assert.exp(response, 409, 'You already use this post flair');
       });
 
       it('should handle missing inputs', async () => {
@@ -174,19 +195,20 @@ describe('/community/post/flair', () => {
     });
   });
 
-  describe('POST /community/post/flair', () => {
+  describe('DELETE /community/post/flair', () => {
     const mockRequest = {
       post_id: '1',
-      post_assigned_flair_id: '1',
+      community_flair_id: '1',
     };
 
     beforeEach(() => {
       mockDb.user.getById.mockResolvedValue(true);
       mockDb.post.getById.mockResolvedValue({ community_id: '1', poster_id: 't1' });
-      mockDb.community.doesExistById.mockResolvedValue(true);
+      mockDb.community.getById.mockResolvedValue(true);
+      mockDb.communityModerator.isMod.mockResolvedValue(false);
       mockDb.userCommunity.isMember.mockResolvedValue(true);
       mockDb.bannedUsers.isBanned.mockResolvedValue(false);
-      mockDb.postAssignedFlair.getById.mockResolvedValue({ post_id: '1' });
+      mockDb.communityFlair.getById.mockResolvedValue({ is_assignable_to_posts: true });
     });
 
     const sendRequest = (body: any) => {
@@ -198,6 +220,14 @@ describe('/community/post/flair', () => {
 
     describe('Success cases', () => {
       it('should successfully delete post flair', async () => {
+        mockDb.postAssignedFlair.hasPostFlair.mockResolvedValue({ post_id: '1' });
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 200, 'Successfully removed post flair');
+      });
+
+      it('should successfully delete post flair AS a moderator', async () => {
+        mockDb.postAssignedFlair.hasPostFlair.mockResolvedValue({ post_id: '1' });
         const response = await sendRequest(mockRequest);
 
         assert.exp(response, 200, 'Successfully removed post flair');
@@ -223,11 +253,11 @@ describe('/community/post/flair', () => {
         mockDb.post.getById.mockResolvedValue({ community_id: '1', poster_id: 'otherUser' });
         const response = await sendRequest(mockRequest);
 
-        assert.exp(response, 403, 'You are not the post author');
+        assert.exp(response, 403, 'You are not allowed to edit this post flair');
       });
 
       it('should handle community not existing', async () => {
-        mockDb.community.doesExistById.mockResolvedValue(false);
+        mockDb.community.getById.mockResolvedValue(false);
         const response = await sendRequest(mockRequest);
 
         assert.community.notFound(response);
@@ -248,7 +278,7 @@ describe('/community/post/flair', () => {
       });
 
       it('should handle flair not belonging to post', async () => {
-        mockDb.postAssignedFlair.getById.mockResolvedValue({ community_flair_id: '1', post_id: 'someOtherPost' });
+        mockDb.postAssignedFlair.hasPostFlair.mockResolvedValue({ community_flair_id: '1', post_id: 'someOtherPost' });
         const response = await sendRequest(mockRequest);
 
         assert.exp(response, 400, 'This flair does not belong to this post');
@@ -269,8 +299,8 @@ describe('/community/post/flair', () => {
               {
                   'type': 'field',
                   'value': '',
-                  'msg': 'Post assigned flair ID is required',
-                  'path': 'post_assigned_flair_id',
+                  'msg': 'Community flair ID is required',
+                  'path': 'community_flair_id',
                   'location': 'body',
               },
           ],
