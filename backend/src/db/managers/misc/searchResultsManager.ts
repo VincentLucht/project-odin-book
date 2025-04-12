@@ -23,9 +23,11 @@ export default class SearchResultsManager {
       SELECT p.*, c.name AS community_name, c.profile_picture_url, c.is_mature AS community_is_mature, c.type as community_type
       FROM "Post" AS p
       INNER JOIN "Community" AS c ON c.id = p.community_id 
+      LEFT JOIN "PostModeration" AS pm ON pm.post_id = p.id
       WHERE p.title ILIKE ${`%${post_name}%`}
         AND NOT c.type = 'PRIVATE'
         AND p.deleted_at IS NULL
+        AND (pm.action != 'REMOVED' OR pm.id IS NULL)
         ${timeframe ? Prisma.sql`AND p.created_at >= ${timeframe}` : Prisma.sql``}
         ${safeSearch ? Prisma.sql`AND NOT p.is_mature AND NOT c.is_mature` : Prisma.sql``}
         ORDER BY 
@@ -54,6 +56,10 @@ export default class SearchResultsManager {
     const posts = await this.prisma.post.findMany({
       where: {
         title: { contains: post_name, mode: 'insensitive' },
+        OR: [
+          { moderation: null },
+          { moderation: { action: { not: 'REMOVED' } } },
+        ],
         community: {
           type: { not: 'PRIVATE' },
           ...(safeSearch && { is_mature: false }),
@@ -93,6 +99,10 @@ export default class SearchResultsManager {
     const posts = await this.prisma.post.findMany({
       where: {
         title: { contains: post_name, mode: 'insensitive' },
+        OR: [
+          { moderation: null },
+          { moderation: { action: { not: 'REMOVED' } } },
+        ],
         community: {
           type: { not: 'PRIVATE' },
           ...(safeSearch && { is_mature: false }),
@@ -223,6 +233,7 @@ export default class SearchResultsManager {
       where: {
         content: { contains: comment_content, mode: 'insensitive' },
         post: {
+          // moderation: { action: { not: 'REMOVED' } },
           community: { NOT: { type: 'PRIVATE' } },
           ...(safeSearch && { is_mature: false }),
         },
