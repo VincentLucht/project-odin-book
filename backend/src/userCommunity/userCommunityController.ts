@@ -34,6 +34,13 @@ class UserCommunityController {
           .status(403)
           .json({ message: 'You are banned from this community' });
       }
+      const moderator = await db.communityModerator.getById(
+        user_id,
+        community_id,
+      );
+      if (moderator && !moderator.is_active) {
+        await db.communityModerator.activateMod(community_id, user_id);
+      }
 
       await db.userCommunity.join(user_id, community_id);
 
@@ -104,7 +111,7 @@ class UserCommunityController {
       const isMod = await db.communityModerator.isMod(user_id, community_id);
       if (isMod) {
         await Promise.all([
-          db.communityModerator.delete(user_id, community_id),
+          db.communityModerator.deactivateMod(user_id, community_id),
           db.userCommunity.leave(user_id, community_id),
         ]);
       } else {
