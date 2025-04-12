@@ -26,13 +26,10 @@ export default class PostAssignedFlairManager {
     return postFlair;
   }
 
-  async getPostFlairInCommunity(post_id: string, community_id: string) {
+  async hasPostFlair(post_id: string) {
     const postFlair = await this.prisma.postAssignedFlair.findFirst({
       where: {
         post_id,
-        community_flair: {
-          community_id,
-        },
       },
     });
 
@@ -65,9 +62,9 @@ export default class PostAssignedFlairManager {
   }
 
   // ! DELETE
-  async delete(post_assigned_flair_id: string) {
+  async delete(post_id: string, community_flair_id: string) {
     await this.prisma.postAssignedFlair.delete({
-      where: { id: post_assigned_flair_id },
+      where: { post_id_community_flair_id: { post_id, community_flair_id } },
     });
   }
 }
