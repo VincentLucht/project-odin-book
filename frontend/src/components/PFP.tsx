@@ -24,7 +24,8 @@ export default function PFP({
     <img
       src={pfp}
       alt={`${mode === 'community' ? 'Community Profile Picture' : 'User Profile Picture'}`}
-      className={`${sizeClasses[size] ?? sizeClasses.normal} ${className} rounded-full border object-cover`}
+      className={`${sizeClasses[size] ?? sizeClasses.normal} ${className} flex-shrink-0 rounded-full
+        border object-cover`}
       loading="lazy"
     />
   );
