@@ -8,8 +8,7 @@ import isFlairValid from '@/post/util/isFlairValid';
 import isPostTypeValid from '@/post/util/isPostTypeValid';
 import checkCommunityPermissions from '@/util/checkCommunityPermissions';
 import checkPrivateCommunityMembership from '@/util/checkPrivateCommunityMembership';
-import { SortBy } from '@/db/managers/util/types';
-import { Pagination } from '@/db/managers/util/types';
+import { TimeFrame } from '@/db/managers/util/types';
 
 class PostController {
   get = asyncHandler(async (req: Request, res: Response) => {
@@ -58,10 +57,12 @@ class PostController {
     const {
       cyId: community_id,
       sbt: sortByType,
+      t: timeframe,
       cId: cursorId,
     } = req.query as {
       cyId: string;
       sbt: 'new' | 'top';
+      t: TimeFrame;
       cId: string | undefined;
     };
 
@@ -83,6 +84,7 @@ class PostController {
         sortByType,
         response.user_id,
         cursorId,
+        timeframe,
       );
 
       return res.status(200).json({
