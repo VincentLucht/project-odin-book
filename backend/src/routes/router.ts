@@ -14,6 +14,8 @@ import recentCommunitiesRouter from '@/recentCommunities/recentCommunitiesRouter
 import topicRouter from '@/topic/topicRouter';
 import joinRequestRouter from '@/joinRequest/joinRequestRouter';
 import searchResultsRouter from '@/searchResults/searchResultsRouter';
+import communityModeratorRouter from '@/communityModerator/communityModeratorRouter';
+import postModerationRouter from '@/postModeration/postModerationRouter';
 
 const router = express.Router();
 
@@ -31,6 +33,8 @@ router.use('/community/post/flair', postAssignedFlairRouter);
 router.use('/comment', commentRouter);
 router.use('/comment/vote', commentVoteRouter);
 router.use('/community/user/flair', userAssignedFlairRouter);
+router.use('/community/mod', communityModeratorRouter);
+router.use('/community/mod/post', postModerationRouter);
 router.use('/topic', topicRouter);
 
 router.get('/test', (req, res) => {
