@@ -138,7 +138,7 @@ describe('/community', () => {
         const response = await sendRequest(mockRequest);
 
         assert.exp(response, 200, 'Successfully left community');
-        expect(db.communityModerator.delete).toHaveBeenCalled();
+        expect(db.communityModerator.deactivateMod).toHaveBeenCalled();
         expect(db.userCommunity.leave).toHaveBeenCalled();
       });
     });
