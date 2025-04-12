@@ -40,7 +40,6 @@ class CommunityController {
         return res.status(404).json({ message: 'Community not found' });
       }
 
-      // TODO: Change to checkPrivate Com membership
       let requestUserId = undefined;
       if (req.authData) {
         const { id } = req.authData as AuthPayload;
