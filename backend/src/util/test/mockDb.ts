@@ -24,7 +24,14 @@ const mockDb = {
   },
   communityModerator: {
     isMod: jest.fn(),
+    getById: jest.fn(),
     delete: jest.fn(),
+    makeMod: jest.fn(),
+  },
+  postModeration: {
+    moderate: jest.fn(),
+    updateModeration: jest.fn(),
+    updatePostAsModerator: jest.fn(),
   },
   communityFlair: {
     doesExistByName: jest.fn(),
@@ -36,6 +43,7 @@ const mockDb = {
   },
   post: {
     getById: jest.fn(),
+    getByIdAndModerator: jest.fn(),
     create: jest.fn(),
     edit: jest.fn(),
     getByIdAndCommunity: jest.fn(),
@@ -62,7 +70,7 @@ const mockDb = {
   },
   postAssignedFlair: {
     getById: jest.fn(),
-    getPostFlairInCommunity: jest.fn(),
+    hasPostFlair: jest.fn(),
     create: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
