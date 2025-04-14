@@ -10,7 +10,7 @@ export default async function createUsers(prisma: PrismaClient) {
     const createdAt = new Date();
     createdAt.setMinutes(createdAt.getMinutes() + i);
 
-    await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         username: `test ${i + 1}`,
         email: `email${i}@gmail.com`,
@@ -19,9 +19,15 @@ export default async function createUsers(prisma: PrismaClient) {
         created_at: createdAt,
       },
     });
+    await prisma.userSettings.create({
+      data: {
+        user_id: user.id,
+      },
+    });
   }
 
-  await prisma.user.create({
+  // Create user 1
+  const user1 = await prisma.user.create({
     data: {
       id: '1',
       username: 't1',
@@ -33,8 +39,14 @@ export default async function createUsers(prisma: PrismaClient) {
       created_at: new Date('2022-06-01T00:00:00Z'), // 06/2022
     },
   });
+  await prisma.userSettings.create({
+    data: {
+      user_id: user1.id,
+    },
+  });
 
-  await prisma.user.create({
+  // Create user 2
+  const user2 = await prisma.user.create({
     data: {
       id: '2',
       username: 't2',
@@ -46,8 +58,14 @@ export default async function createUsers(prisma: PrismaClient) {
       created_at: new Date('2022-06-01T00:00:00Z'), // 06/2022
     },
   });
+  await prisma.userSettings.create({
+    data: {
+      user_id: user2.id,
+    },
+  });
 
-  await prisma.user.create({
+  // Create user 3
+  const user3 = await prisma.user.create({
     data: {
       id: '5',
       username: 't3',
@@ -60,8 +78,14 @@ export default async function createUsers(prisma: PrismaClient) {
       created_at: new Date('2022-06-01T00:00:00Z'), // 06/2022
     },
   });
+  await prisma.userSettings.create({
+    data: {
+      user_id: user3.id,
+    },
+  });
 
-  await prisma.user.create({
+  // Create guest user
+  const guestUser = await prisma.user.create({
     data: {
       id: '3',
       username: 'guest',
@@ -72,8 +96,14 @@ export default async function createUsers(prisma: PrismaClient) {
       cake_day: '1/1',
     },
   });
+  await prisma.userSettings.create({
+    data: {
+      user_id: guestUser.id,
+    },
+  });
 
-  await prisma.user.create({
+  // Create guest admin user
+  const guestAdmin = await prisma.user.create({
     data: {
       id: '4',
       username: 'guest_admin',
@@ -84,6 +114,11 @@ export default async function createUsers(prisma: PrismaClient) {
       cake_day: '1/1',
     },
   });
+  await prisma.userSettings.create({
+    data: {
+      user_id: guestAdmin.id,
+    },
+  });
 
-  console.log('Successfully created Users');
+  console.log('Successfully created Users and their Settings');
 }

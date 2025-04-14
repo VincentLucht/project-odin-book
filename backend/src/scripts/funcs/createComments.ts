@@ -3,9 +3,11 @@ import { PrismaClient } from '@prisma/client/default';
 export default async function createComments(prisma: PrismaClient) {
   // Comments for populating search results
   for (let i = 0; i < 300; i++) {
-    // Increment by 1 min for each iteration
+    // Generate random number of minutes within last month
+    const randomMinutesAgo = Math.floor(Math.random() * 43200); // 43200 minutes = 30 days
+
     const createdAt = new Date();
-    createdAt.setMinutes(createdAt.getMinutes() + i);
+    createdAt.setMinutes(createdAt.getMinutes() - randomMinutesAgo);
 
     await prisma.comment.create({
       data: {
