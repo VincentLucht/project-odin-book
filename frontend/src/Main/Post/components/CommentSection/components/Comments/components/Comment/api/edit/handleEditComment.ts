@@ -6,7 +6,7 @@ export default function handleEditComment(
   token: string,
   commentId: string,
   newContent: string,
-  setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[] | null>>,
+  setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[]>>,
   setIsEditActive: React.Dispatch<React.SetStateAction<boolean>>,
 ) {
   editComment(token, commentId, newContent)

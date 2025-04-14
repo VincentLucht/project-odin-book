@@ -14,7 +14,7 @@ interface CommentEditorProps {
   editText: string;
   setEditText: React.Dispatch<React.SetStateAction<string>>;
   commentId: string;
-  setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[] | null>>;
+  setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[]>>;
   token: string | null;
   setIsEditActive: React.Dispatch<React.SetStateAction<boolean>>;
 }
