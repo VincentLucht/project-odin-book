@@ -1,6 +1,6 @@
 import { PrismaClient, Comment } from '@prisma/client/default';
 import { CommentWithReplies, TimeFrame } from '@/db/managers/util/types';
-import { get7Replies } from '@/db/managers/commentManager/util/commentUtils';
+import { get8Replies } from '@/db/managers/commentManager/util/get8Replies';
 import isTimeFrameValid from '@/util/isTimeFrameValid';
 import getStartDate from '@/db/managers/util/getStartDate';
 
@@ -87,7 +87,7 @@ export default class CommentManager {
               where: { user_id: 'someuseridthatwillneverexist1234_2' }, // ? ensure empty arr
             },
         _count: { select: { replies: true } },
-        ...get7Replies,
+        ...get8Replies(user_id),
       },
       orderBy:
         sort_by_type === 'top'
@@ -139,7 +139,7 @@ export default class CommentManager {
               where: { user_id: 'someuseridthatwillneverexist1234_2' }, // ? ensure empty arr
             },
         _count: { select: { replies: true } },
-        ...get7Replies,
+        ...get8Replies(user_id),
       },
       orderBy: { created_at: 'desc' },
       take: limit,
