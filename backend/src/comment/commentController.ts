@@ -151,6 +151,10 @@ class CommentController {
         return res.status(404).json({ message: 'Community not found' });
       }
 
+      if (post.lock_comments) {
+        return res.status(403).json({ message: 'Comments are locked' });
+      }
+
       if (await db.bannedUsers.isBanned(user_id, community.id)) {
         return res
           .status(403)
@@ -236,6 +240,9 @@ class CommentController {
       const post = await db.post.getById(comment.post_id);
       if (!post) {
         return res.status(404).json({ message: 'Post not found' });
+      }
+      if (post.lock_comments) {
+        return res.status(403).json({ message: 'Comments are locked' });
       }
 
       const community = await db.community.getById(post.community_id);
