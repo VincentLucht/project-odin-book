@@ -24,7 +24,7 @@ function onCommentModeration(
       }
 
       // comment not found &&  has replies
-      if (comment.replies.length > 0) {
+      if (comment.replies?.length > 0) {
         const updatedReplies = editComment(comment_id, comment.replies);
         return { ...comment, replies: updatedReplies };
       }
