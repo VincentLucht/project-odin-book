@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Virtuoso } from 'react-virtuoso';
@@ -20,13 +20,13 @@ import {
 } from '@/Main/Post/components/CommentSection/CommentSection';
 import { TokenUser } from '@/context/auth/AuthProvider';
 import { TimeFrame } from '@/Main/Community/Community';
+import { IsModPost } from '@/Main/Post/Post';
 
 interface VirtualizedComments {
   comments: DBCommentWithReplies[];
+  post: { id: string; title: string; lock_comments: boolean };
   user: TokenUser | null;
   token: string | null;
-  postId: string;
-  postName: string;
   originalPoster: string | null;
   setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[]>>;
   setPost: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>;
@@ -37,14 +37,14 @@ interface VirtualizedComments {
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   onComplete: OnCompleteCommentSection;
+  isMod: IsModPost;
 }
 
 export default function VirtualizedComments({
   comments,
+  post,
   user,
   token,
-  postId,
-  postName,
   originalPoster,
   setComments,
   setPost,
@@ -55,11 +55,21 @@ export default function VirtualizedComments({
   loading,
   setLoading,
   onComplete,
+  isMod,
 }: VirtualizedComments) {
-  const [showDropdown, setShowDropdown] = useState<string | null>(null);
-  const virtuosoRef = useRef(null);
+  const { id: postId } = post;
 
+  const [showDropdown, setShowDropdown] = useState<string | null>(null);
+  const [showModDropdown, setShowModDropdown] = useState<string | null>(null);
+
+  const virtuosoRef = useRef(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (showModDropdown && showDropdown) {
+      setShowModDropdown?.(null);
+    }
+  }, [showModDropdown, showDropdown, setShowModDropdown]);
 
   const loadMore = () => {
     setLoading(true);
@@ -112,10 +122,9 @@ export default function VirtualizedComments({
           <Comment
             comment={comment}
             depth={0}
+            post={{ ...post }}
             user={user}
             token={token}
-            postId={postId}
-            postName={postName}
             originalPoster={originalPoster}
             navigate={navigate}
             onVote={onVote}
@@ -124,6 +133,9 @@ export default function VirtualizedComments({
             setPost={setPost}
             showDropdown={showDropdown}
             setShowDropdown={setShowDropdown}
+            showModDropdown={showModDropdown}
+            setShowModDropdown={setShowModDropdown}
+            isMod={isMod}
           />
         </div>
       );
@@ -131,8 +143,7 @@ export default function VirtualizedComments({
     [
       comments,
       user,
-      postId,
-      postName,
+      post,
       originalPoster,
       token,
       setComments,
@@ -141,6 +152,8 @@ export default function VirtualizedComments({
       onVote,
       navigate,
       showDropdown,
+      showModDropdown,
+      isMod,
     ],
   );
 

@@ -14,15 +14,15 @@ import { DBPostWithCommunity } from '@/interface/dbSchema';
 import { NavigateFunction } from 'react-router-dom';
 import { VoteType } from '@/interface/backendTypes';
 import { TokenUser } from '@/context/auth/AuthProvider';
+import { IsModPost } from '@/Main/Post/Post';
 import './css/comment.css';
 
 interface CommentProps {
   comment: DBCommentWithReplies;
   depth: number;
+  post: { id: string; title: string; lock_comments: boolean };
   user: TokenUser | null;
   token: string | null;
-  postId: string;
-  postName?: string;
   originalPoster: string | null;
   navigate: NavigateFunction;
   onVote: (
@@ -35,18 +35,19 @@ interface CommentProps {
   setPost: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>;
   showDropdown: string | null;
   setShowDropdown: React.Dispatch<React.SetStateAction<string | null>>;
+  showModDropdown: string | null;
+  setShowModDropdown: React.Dispatch<React.SetStateAction<string | null>>;
+  isMod: IsModPost;
 }
 
 // TODO: Add user flair :)
-// TODO: Add editing comments if you are the creator
 // TODO: Add save functionality for comment
 export default function Comment({
   comment,
   depth,
+  post,
   user,
   token,
-  postId,
-  postName,
   originalPoster,
   navigate,
   onVote,
@@ -55,7 +56,12 @@ export default function Comment({
   setPost,
   showDropdown,
   setShowDropdown,
+  showModDropdown,
+  setShowModDropdown,
+  isMod,
 }: CommentProps) {
+  const { id: postId, lock_comments } = post;
+
   const [showReply, setShowReply] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [hideReplies, setHideReplies] = useState(false);
@@ -160,6 +166,8 @@ export default function Comment({
                 voteType: comment?.comment_votes?.[0]?.vote_type,
               }}
               commentId={comment.id}
+              moderation={comment.moderation}
+              setComments={setComments}
               isDeleted={comment.is_deleted}
               onVoteComment={onVote}
               onDeleteComment={onDelete}
@@ -167,29 +175,36 @@ export default function Comment({
               isUserSelf={comment.user_id === user?.id}
               showDropdown={showDropdown}
               setShowDropdown={setShowDropdown}
+              showModDropdown={showModDropdown}
+              setShowModDropdown={setShowModDropdown}
               isEditActive={isEditActive}
               setIsEditActive={setIsEditActive}
+              isLocked={lock_comments}
+              isMod={isMod}
+              token={token}
             />
           </div>
         </div>
 
-        <ReplyEditor
-          show={showReply}
-          repliesHidden={hideReplies}
-          depth={depth}
-          toggleShow={toggleShow}
-          setCommentText={setCommentText}
-          commentText={commentText}
-          postId={postId}
-          commentId={comment.id}
-          parentCommentId={comment.id}
-          setComments={setComments}
-          setPost={setPost}
-          user={user}
-          token={token}
-          isReply={true}
-          hasReply={hasReply}
-        />
+        {!post.lock_comments && (
+          <ReplyEditor
+            show={showReply}
+            repliesHidden={hideReplies}
+            depth={depth}
+            toggleShow={toggleShow}
+            setCommentText={setCommentText}
+            commentText={commentText}
+            postId={postId}
+            commentId={comment.id}
+            parentCommentId={comment.id}
+            setComments={setComments}
+            setPost={setPost}
+            user={user}
+            token={token}
+            isReply={true}
+            hasReply={hasReply}
+          />
+        )}
 
         <MoreRepliesButton
           hasReplyAtAll={hasReplyAtAll}
@@ -207,10 +222,9 @@ export default function Comment({
               <Comment
                 comment={commentReply}
                 depth={depth + 1}
+                post={{ ...post }}
                 user={user}
                 token={token}
-                postId={postId}
-                postName={postName}
                 originalPoster={originalPoster}
                 navigate={navigate}
                 key={commentReply.id}
@@ -220,6 +234,9 @@ export default function Comment({
                 setPost={setPost}
                 showDropdown={showDropdown}
                 setShowDropdown={setShowDropdown}
+                showModDropdown={showModDropdown}
+                setShowModDropdown={setShowModDropdown}
+                isMod={isMod}
               />
             </li>
           ))}

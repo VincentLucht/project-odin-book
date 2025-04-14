@@ -14,28 +14,31 @@ import { DBCommentWithReplies } from '@/interface/dbSchema';
 import { DBPostWithCommunity } from '@/interface/dbSchema';
 import { TokenUser } from '@/context/auth/AuthProvider';
 import { TimeFrame } from '@/Main/Community/Community';
+import { IsModPost } from '@/Main/Post/Post';
 
 export type CommentSortBy = 'top' | 'new';
 
 export type OnCompleteCommentSection = GenericOnComplete<DBCommentWithReplies>;
 
 interface CommentSectionProps {
-  postId: string;
-  postName?: string;
+  post: { id: string; title: string; lock_comments: boolean };
   originalPoster: string | null;
   user: TokenUser | null;
   token: string | null;
   setPost: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>;
+  isMod: IsModPost;
 }
 
 export default function CommentSection({
-  postId,
-  postName,
+  post,
   originalPoster,
   user,
   token,
   setPost,
+  isMod,
 }: CommentSectionProps) {
+  const { id: postId, lock_comments } = post;
+
   const [loading, setLoading] = useState(true);
   const [sortByType, setSortByType] = useState<CommentSortBy>('top');
   const [hasMore, setHasMore] = useState(true);
@@ -82,13 +85,15 @@ export default function CommentSection({
 
   return (
     <div className="pt-2">
-      <AddComment
-        postId={postId}
-        user={user}
-        token={token}
-        setComments={setComments}
-        setPost={setPost}
-      />
+      {!lock_comments && (
+        <AddComment
+          postId={postId}
+          user={user}
+          token={token}
+          setComments={setComments}
+          setPost={setPost}
+        />
+      )}
 
       <div className="relative -mb-5 mt-3">
         <SetSortByType
@@ -113,10 +118,9 @@ export default function CommentSection({
 
       <VirtualizedComments
         comments={comments}
+        post={{ ...post }}
         user={user}
         token={token}
-        postId={postId}
-        postName={postName ?? ''}
         originalPoster={originalPoster}
         setComments={setComments}
         setPost={setPost}
@@ -127,6 +131,7 @@ export default function CommentSection({
         loading={loading}
         setLoading={setLoading}
         onComplete={onComplete}
+        isMod={isMod}
       />
     </div>
   );
