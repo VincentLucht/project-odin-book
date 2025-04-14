@@ -16,6 +16,7 @@ import joinRequestRouter from '@/joinRequest/joinRequestRouter';
 import searchResultsRouter from '@/searchResults/searchResultsRouter';
 import communityModeratorRouter from '@/communityModerator/communityModeratorRouter';
 import postModerationRouter from '@/postModeration/postModerationRouter';
+import commentModerationRouter from '@/commentModeration/commentModerationRouter';
 
 const router = express.Router();
 
@@ -32,6 +33,7 @@ router.use('/community/post/vote', postVoteRouter);
 router.use('/community/post/flair', postAssignedFlairRouter);
 router.use('/comment', commentRouter);
 router.use('/comment/vote', commentVoteRouter);
+router.use('/community/mod/comment', commentModerationRouter);
 router.use('/community/user/flair', userAssignedFlairRouter);
 router.use('/community/mod', communityModeratorRouter);
 router.use('/community/mod/post', postModerationRouter);
