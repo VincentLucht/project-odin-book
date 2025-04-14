@@ -20,9 +20,12 @@ async function reset() {
   await prisma.chat.deleteMany();
 
   // Delete post and comment related records
+  await prisma.notification.deleteMany()
   await prisma.userAssignedFlair.deleteMany();
   await prisma.postAssignedFlair.deleteMany();
   await prisma.communityFlair.deleteMany();
+  await prisma.postModeration.deleteMany();
+  await prisma.commentModeration.deleteMany();
 
   await prisma.commentVote.deleteMany();
   await prisma.comment.deleteMany();
@@ -41,6 +44,7 @@ async function reset() {
   await prisma.community.deleteMany();
 
   // Finally delete users
+  await prisma.userSettings.deleteMany();
   await prisma.user.deleteMany();
 
   console.log('Reset completed');
