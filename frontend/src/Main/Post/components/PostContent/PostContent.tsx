@@ -2,7 +2,8 @@ import { useState } from 'react';
 
 import PostEditor from '@/Main/Post/components/PostEditor/PostEditor';
 import HideContent from '@/Main/Post/components/tags/common/HideContent';
-import { LockIcon, TrashIcon, BanIcon } from 'lucide-react';
+import RemovalMessage from '@/components/Message/RemovalMessage';
+import { LockIcon, TrashIcon } from 'lucide-react';
 import { Transition } from '@headlessui/react';
 
 import transitionPropsHeight from '@/util/transitionProps';
@@ -42,7 +43,7 @@ export default function PostContent({
       <Transition show={!isEditActive} {...transitionPropsHeight}>
         <div>
           {post.deleted_at ? (
-            <div className="post-message my-4">
+            <div className="my-4 post-message">
               <TrashIcon className="flex-shrink-0 text-red-500" />
 
               <span className="break-words">
@@ -70,18 +71,10 @@ export default function PostContent({
             )
           )}
 
-          {isRemovedByMod && (
-            <div className="post-message my-4">
-              <BanIcon className="flex-shrink-0 text-red-500" />
-
-              <span className="break-works">
-                Sorry, this post has been removed by the moderators.
-              </span>
-            </div>
-          )}
+          <RemovalMessage show={isRemovedByMod} type="post" />
 
           {post.lock_comments && (
-            <div className="post-message my-4">
+            <div className="my-4 post-message">
               <LockIcon className="flex-shrink-0" />
 
               <span className="break-works">
