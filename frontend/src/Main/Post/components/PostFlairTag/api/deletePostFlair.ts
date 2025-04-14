@@ -7,7 +7,7 @@ interface DeletePostFlairResponse {
 
 export default async function deletePostFlair(
   post_id: string,
-  post_assigned_flair_id: string,
+  community_flair_id: string,
   token: string,
 ) {
   const response = await fetch(`${API_URL}/community/post/flair`, {
@@ -16,7 +16,7 @@ export default async function deletePostFlair(
       'content-type': 'application/json',
       authorization: token,
     },
-    body: JSON.stringify({ post_id, post_assigned_flair_id }),
+    body: JSON.stringify({ post_id, community_flair_id }),
   });
 
   if (!response.ok) {
