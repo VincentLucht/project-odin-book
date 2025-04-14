@@ -25,7 +25,7 @@ import mockDb from '@/util/test/mockDb';
 import db from '@/db/db';
 
 // prettier-ignore
-describe('/community/post/comment', () => {
+describe('/comment', () => {
   const token = generateToken(mockUser.id, mockUser.username);
 
   beforeEach(() => {
@@ -33,15 +33,16 @@ describe('/community/post/comment', () => {
     jest.resetAllMocks();
   });
 
-  describe('GET /community/post/:post_id', () => {
+  describe('GET /comment?pId=post_id&sbt=sort_by_type', () => {
     beforeEach(() => {
       mockDb.post.getById.mockResolvedValue(true);
       mockDb.community.getById.mockResolvedValue({ id: '1', type: 'PUBLIC' });
+      mockDb.comment.getCommentThreads.mockResolvedValue(true);
     });
 
     const sendRequest = () => {
       return request(app)
-        .get('/comment/1')
+        .get('/comment?pId=1&sbt=new')
         .set('Authorization', `Bearer ${token}`);
     };
 
@@ -81,10 +82,10 @@ describe('/community/post/comment', () => {
         mockDb.community.getById.mockResolvedValue({ type: 'PRIVATE' });
         mockDb.userCommunity.isMember.mockResolvedValue(false);
         const response = await request(app)
-          .get('/comment/1')
+          .get('/comment?pId=1&sbt=new')
           .set('Authorization', `Bearer ${generateToken('otherUserId', 'otherUsername')}`);
 
-          console.log(response.body);
+        console.log(response.body);
 
         assert.exp(response, 403, 'You are not part of this community');
         expect(db.comment.getCommentThreads).not.toHaveBeenCalled();
@@ -108,7 +109,7 @@ describe('/community/post/comment', () => {
     });
   });
 
-  describe('POST /community/post/comment', () => {
+  describe('POST /comment', () => {
     beforeEach(() => {
       mockDb.user.getById.mockResolvedValue(true);
       mockDb.post.getById.mockResolvedValue(true);
@@ -179,6 +180,13 @@ describe('/community/post/comment', () => {
         const response = await sendRequest(mockRequest);
 
         assert.exp(response, 404, 'Community not found');
+      });
+
+      it('should handle post comment being locked', async () => {
+        mockDb.post.getById.mockResolvedValue({ lock_comments: true });
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 403, 'Comments are locked');
       });
 
       it('should handle user being banned from community', async () => {
@@ -265,7 +273,7 @@ describe('/community/post/comment', () => {
     });
   });
 
-  describe('DELETE /community/post/comment', () => {
+  describe('DELETE /comment', () => {
     const sendRequest = (body: any) => {
       return request(app)
         .delete('/comment')
