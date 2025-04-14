@@ -57,6 +57,7 @@ export default function ModMenuComment({
         apiData={{ id: commentId }}
         type="comment"
         onUpdateRemovalReason={onUpdateRemovalReason}
+        className="mr-1"
       />
 
       <ModMenuButton
