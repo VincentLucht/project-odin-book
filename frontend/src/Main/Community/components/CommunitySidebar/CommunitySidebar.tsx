@@ -19,10 +19,7 @@ export default function CommunitySidebar({
   navigate,
 }: CommunitySidebarProps) {
   return (
-    <div
-      className="max-h-[calc(100dvh-84px)] !gap-0 overflow-y-auto rounded-md bg-black px-4 py-2 pb-3
-        sidebar"
-    >
+    <div className="!gap-0 overflow-y-auto rounded-md bg-neutral-950 px-4 py-2 pb-3 sidebar">
       <div className="font-medium">{community.name}</div>
 
       <div className="font-light">{community.description}</div>
@@ -57,7 +54,9 @@ export default function CommunitySidebar({
           Message Mods
         </button>
 
-        {community.community_moderators.map(({ user }, index) => {
+        {community.community_moderators.map(({ is_active, user }, index) => {
+          if (!is_active) return;
+
           const userFlair = user?.user_assigned_flair?.[0]?.community_flair;
           return (
             <UserCard

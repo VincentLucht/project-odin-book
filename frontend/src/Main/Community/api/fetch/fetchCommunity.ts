@@ -23,7 +23,7 @@ export interface FetchedCommunityWithPosts {
 
   posts: DBPostWithCommunityName[];
   user_communities: { user_id: string; role: UserRoles }[] | undefined;
-  community_moderators: { user: CommunityModerator }[];
+  community_moderators: { is_active: boolean; user: CommunityModerator }[];
   community_rules: DBCommunityRule[];
 }
 
@@ -32,6 +32,7 @@ export interface CommunityModerator {
   profile_picture_url: string;
   username: string;
   user_assigned_flair: UserAssignedFlair;
+  is_active: boolean;
 }
 
 interface FetchCommunityResponse {

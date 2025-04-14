@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import useAuth from '@/context/auth/hook/useAuth';
+import useIsModerator from '@/hooks/useIsModerator';
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
@@ -26,12 +27,13 @@ export type FetchedPost = Omit<DBPostWithCommunityName, 'community'>;
 export default function Community() {
   const location = useLocation();
   const [showEditDropdown, setShowEditDropdown] = useState<string | null>(null);
+  const [showModDropdown, setShowModDropdown] = useState<string | null>(null);
 
   const [community, setCommunity] = useState<FetchedCommunity | null>(null);
   const [posts, setPosts] = useState<FetchedPost[]>([]);
 
   const communityName = getCommunityName(location.pathname);
-  const [sortByType, setSortByType] = useState<SortByType>('hot');
+  const [sortByType, setSortByType] = useState<SortByType>('new'); // ! TODO: Change back
   const [timeframe, setTimeframe] = useState<TimeFrame>('day');
 
   const [cursorId, setCursorId] = useState('');
@@ -41,6 +43,8 @@ export default function Community() {
 
   const { user, token } = useAuth();
   const navigate = useNavigate();
+
+  const isMod = useIsModerator(user, community?.community_moderators);
 
   const communityPostHandler = useMemo(
     () =>
@@ -99,6 +103,7 @@ export default function Community() {
           community={community}
           setCommunity={setCommunity}
           isMember={community?.user_communities?.[0]?.user_id === user?.id}
+          isMod={isMod}
           user={user}
           token={token}
           navigate={navigate}
@@ -137,6 +142,9 @@ export default function Community() {
               setShowEditDropdown={setShowEditDropdown}
               communityPostHandler={communityPostHandler}
               communityName={communityName}
+              isMod={isMod}
+              showModDropdown={showModDropdown}
+              setShowModDropdown={setShowModDropdown}
             />
 
             {!hasMore && <EndMessage className="mt-5" />}
