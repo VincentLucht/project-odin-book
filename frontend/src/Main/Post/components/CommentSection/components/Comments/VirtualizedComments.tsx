@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { Virtuoso } from 'react-virtuoso';
 import Comment from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/Comment';
@@ -63,6 +64,7 @@ export default function VirtualizedComments({
   const [showModDropdown, setShowModDropdown] = useState<string | null>(null);
 
   const virtuosoRef = useRef(null);
+  const { parentCommentId } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -176,7 +178,7 @@ export default function VirtualizedComments({
                 Footer: () => (loading ? <LogoLoading className="mt-4" /> : null),
               }}
               endReached={() => {
-                if (hasMore && !loading) {
+                if (hasMore && !loading && !parentCommentId) {
                   loadMore();
                 }
               }}

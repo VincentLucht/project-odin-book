@@ -2,16 +2,22 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 
 import CommentEditor from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/components/CommentContent/components/CommentEditor';
+import RemovalMessage from '@/components/Message/RemovalMessage';
 import { Transition } from '@headlessui/react';
 
 import transitionPropsHeight from '@/util/transitionProps';
 
-import { DBCommentWithReplies } from '@/interface/dbSchema';
+import { DBCommentModeration, DBCommentWithReplies } from '@/interface/dbSchema';
+import { IsModPost } from '@/Main/Post/Post';
 
 interface CommentContentProps {
-  commentId: string;
-  commentText: string;
-  isDeleted: boolean;
+  comment: {
+    id: string;
+    content: string;
+    moderation: DBCommentModeration;
+    is_deleted: boolean;
+  };
+  isMod: IsModPost;
   depth: number;
   isEditActive: boolean;
   setIsEditActive: React.Dispatch<React.SetStateAction<boolean>>;
@@ -20,15 +26,17 @@ interface CommentContentProps {
 }
 
 export default function CommentContent({
-  commentId,
-  commentText,
-  isDeleted,
+  comment,
+  isMod,
   depth,
   isEditActive,
   setIsEditActive,
   setComments,
   token,
 }: CommentContentProps) {
+  const { id: commentId, content: commentText, is_deleted: isDeleted } = comment;
+  const isRemoved = comment?.moderation?.action === 'REMOVED';
+
   const [editText, setEditText] = useState(commentText);
   const ranOnce = useRef(false);
   const location = useLocation();
@@ -50,7 +58,9 @@ export default function CommentContent({
     <div className="relative w-full">
       <Transition show={!isEditActive} {...transitionPropsHeight}>
         <div className={`break-all text-sm ${depth === 0 ? 'ml-[5px]' : 'ml-[5px]'}`}>
-          {isDeleted ? (
+          {isRemoved && !isMod ? (
+            <RemovalMessage show={true} type="comment" className="!my-0" />
+          ) : isDeleted ? (
             <span className="text-gray-400">Comment deleted by user</span>
           ) : (
             commentText

@@ -149,14 +149,13 @@ export default function Comment({
 
           <div className="w-full">
             <CommentContent
-              commentId={comment.id}
-              commentText={comment.content}
+              comment={{ ...comment }}
+              isMod={isMod}
               depth={depth}
               isEditActive={isEditActive}
               setIsEditActive={setIsEditActive}
               setComments={setComments}
               token={token}
-              isDeleted={comment.is_deleted}
             />
 
             <CommentInteractionBar
