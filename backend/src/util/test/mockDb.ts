@@ -33,6 +33,10 @@ const mockDb = {
     updateModeration: jest.fn(),
     updatePostAsModerator: jest.fn(),
   },
+  commentModeration: {
+    moderate: jest.fn(),
+    updateModeration: jest.fn(),
+  },
   communityFlair: {
     doesExistByName: jest.fn(),
     getById: jest.fn(),
@@ -57,6 +61,7 @@ const mockDb = {
   },
   comment: {
     getById: jest.fn(),
+    getByIdAndModeration: jest.fn(),
     create: jest.fn(),
     softDelete: jest.fn(),
     delete: jest.fn(),
