@@ -10,6 +10,7 @@ import PostModerationManager from '@/db/managers/postModerationManager';
 import CommunityFlairManager from '@/db/managers/communityFlairManager';
 import PostManager from '@/db/managers/postManager/postManager';
 import PostVoteManager from '@/db/managers/postVoteManager';
+import CommentModerationManager from '@/db/managers/commentModerationManager';
 import CommentManager from '@/db/managers/commentManager/commentManager';
 import CommentVoteManager from '@/db/managers/commentVoteManager';
 import UserAssignedFlairManager from '@/db/managers/userAssignedFlairManager';
@@ -26,6 +27,7 @@ export class DB {
   public userCommunity: UserCommunityManager;
   public communityModerator: CommunityModeratorManager;
   public postModeration: PostModerationManager;
+  public commentModeration: CommentModerationManager;
   public bannedUsers: BannedUsersManager;
   public topic: TopicManager;
   public communityFlair: CommunityFlairManager;
@@ -47,6 +49,7 @@ export class DB {
     this.userCommunity = new UserCommunityManager(this.prisma);
     this.communityModerator = new CommunityModeratorManager(this.prisma);
     this.postModeration = new PostModerationManager(this.prisma);
+    this.commentModeration = new CommentModerationManager(this.prisma);
     this.bannedUsers = new BannedUsersManager(this.prisma);
     this.topic = new TopicManager(this.prisma);
     this.communityFlair = new CommunityFlairManager(this.prisma);
