@@ -1,4 +1,4 @@
-import { useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 
 import { Virtuoso } from 'react-virtuoso';
 import PostOverview from '@/Main/Post/components/PostOverview/PostOverview';
@@ -10,6 +10,13 @@ import CommunityPostHandler from '@/Main/Community/handlers/CommunityPostHandler
 import { NavigateFunction } from 'react-router-dom';
 import { CommunityInfo } from '@/Main/Post/components/PostOverview/PostOverview';
 import { FetchedPost, SortByType, TimeFrame } from '@/Main/Community/Community';
+import { CommunityModerator } from '@/Main/Community/api/fetch/fetchCommunity';
+
+export type IsMod =
+  | false
+  | {
+      user: CommunityModerator;
+    };
 
 interface VirtualizedPostOverviewProps {
   community: CommunityInfo;
@@ -29,6 +36,9 @@ interface VirtualizedPostOverviewProps {
   setShowEditDropdown: React.Dispatch<React.SetStateAction<string | null>>;
   communityPostHandler: CommunityPostHandler<FetchedPost>;
   communityName: string;
+  isMod: IsMod;
+  showModDropdown?: string | null;
+  setShowModDropdown?: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 export default function VirtualizedPostOverview({
@@ -49,6 +59,9 @@ export default function VirtualizedPostOverview({
   setShowEditDropdown,
   communityPostHandler,
   communityName,
+  isMod,
+  showModDropdown,
+  setShowModDropdown,
 }: VirtualizedPostOverviewProps) {
   // Reference to virtuoso component for scrolling
   const virtuosoRef = useRef(null);
@@ -64,6 +77,13 @@ export default function VirtualizedPostOverview({
       onComplete,
     );
   };
+
+  // Handle only one of the 2 dropdowns being open at once
+  useEffect(() => {
+    if (showModDropdown && showEditDropdown) {
+      setShowModDropdown?.(null);
+    }
+  }, [showModDropdown, showEditDropdown, setShowModDropdown]);
 
   // Item content renderer for Virtuoso
   const ItemRenderer = useCallback(
@@ -85,6 +105,10 @@ export default function VirtualizedPostOverview({
             showMembership={false}
             showEditDropdown={showEditDropdown}
             setShowEditDropdown={setShowEditDropdown}
+            showModOptions={isMod !== false}
+            isMod={isMod}
+            showModDropdown={showModDropdown}
+            setShowModDropdown={setShowModDropdown}
             deleteFunc={() => {
               const deleteHandler = communityPostHandler.handleDeletePost(post.id);
               return deleteHandler();
@@ -119,6 +143,9 @@ export default function VirtualizedPostOverview({
       setShowEditDropdown,
       communityPostHandler,
       communityName,
+      isMod,
+      showModDropdown,
+      setShowModDropdown,
     ],
   );
 
