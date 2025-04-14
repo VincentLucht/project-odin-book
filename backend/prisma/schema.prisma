@@ -291,7 +291,7 @@ model CommentModeration {
   moderator_id String
   moderator    CommunityModerator @relation(fields: [moderator_id], references: [id])
   action       ModerationType
-  reason       String             @db.VarChar(1000)
+  reason       String?             @db.VarChar(20)
   created_at   DateTime           @default(now())
 
   @@index([comment_id])
