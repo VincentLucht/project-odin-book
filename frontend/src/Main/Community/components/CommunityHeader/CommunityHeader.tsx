@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-
 import handleCommunityMembershipHeader from '@/Main/Community/components/CommunityHeader/api/handleCommunityMembershipHeader';
 import handleCreatePostClick from '@/Header/components/CreateButton/util/handleCreatePostClick';
 
@@ -7,11 +5,13 @@ import { PlusIcon } from 'lucide-react';
 import { FetchedCommunity } from '@/Main/Community/api/fetch/fetchCommunity';
 import { TokenUser } from '@/context/auth/AuthProvider';
 import { NavigateFunction } from 'react-router-dom';
+import { IsMod } from '@/Main/Community/components/Virtualization/VirtualizedPostOverview';
 
 interface CommunityHeaderProps {
   community: FetchedCommunity;
   setCommunity: React.Dispatch<React.SetStateAction<FetchedCommunity | null>>;
   isMember: boolean;
+  isMod: IsMod;
   user: TokenUser | null;
   token: string | null;
   navigate: NavigateFunction;
@@ -22,6 +22,7 @@ export default function CommunityHeader({
   community,
   setCommunity,
   isMember,
+  isMod,
   user,
   token,
   navigate,
@@ -41,14 +42,6 @@ export default function CommunityHeader({
       isMember,
     );
   };
-
-  const isMod = useMemo(() => {
-    if (!user?.id || !community?.community_moderators) return false;
-
-    return (
-      community.community_moderators.find((mod) => mod.user.id === user.id) ?? false
-    );
-  }, [community.community_moderators, user]);
 
   return (
     <div className="mb-8">
