@@ -1,12 +1,12 @@
 import { useState } from 'react';
 
-import { Transition } from '@headlessui/react';
 import PostEditor from '@/Main/Post/components/PostEditor/PostEditor';
 import HideContent from '@/Main/Post/components/tags/common/HideContent';
+import { LockIcon, TrashIcon, BanIcon } from 'lucide-react';
+import { Transition } from '@headlessui/react';
 
 import transitionPropsHeight from '@/util/transitionProps';
 import { DBPostWithCommunity } from '@/interface/dbSchema';
-import { TrashIcon } from 'lucide-react';
 
 interface PostContentProps {
   post: DBPostWithCommunity;
@@ -28,6 +28,7 @@ export default function PostContent({
 
   const isMature = post.is_mature;
   const isSpoiler = post.is_spoiler;
+  const isRemovedByMod = post.moderation?.action === 'REMOVED';
 
   const showBody = showMature || showSpoiler || !(isMature || isSpoiler);
   const hideContent = !showMature && !showSpoiler && (isMature || isSpoiler);
@@ -41,28 +42,51 @@ export default function PostContent({
       <Transition show={!isEditActive} {...transitionPropsHeight}>
         <div>
           {post.deleted_at ? (
-            <div className="flex items-center gap-2 rounded-md border border-gray-600 p-4 text-sm text-gray-400">
+            <div className="post-message my-4">
               <TrashIcon className="flex-shrink-0 text-red-500" />
+
               <span className="break-words">
-                Sorry, this post was deleted by the person who originally posted it
+                Sorry, this post was deleted by the person who originally posted it.
               </span>
             </div>
           ) : (
-            <div>
-              <Transition show={showBody} {...transitionPropsHeight}>
-                <div className="break-all">{post.body}</div>
-              </Transition>
+            !isRemovedByMod && (
+              <div>
+                <Transition show={showBody} {...transitionPropsHeight}>
+                  <div className="break-all">{post.body}</div>
+                </Transition>
 
-              <Transition show={hideContent} {...transitionPropsHeight}>
-                <div>
-                  <HideContent
-                    isMature={isMature}
-                    isSpoiler={isSpoiler}
-                    setShowMature={setShowMature}
-                    setShowSpoiler={setShowSpoiler}
-                  />
-                </div>
-              </Transition>
+                <Transition show={hideContent} {...transitionPropsHeight}>
+                  <div>
+                    <HideContent
+                      isMature={isMature}
+                      isSpoiler={isSpoiler}
+                      setShowMature={setShowMature}
+                      setShowSpoiler={setShowSpoiler}
+                    />
+                  </div>
+                </Transition>
+              </div>
+            )
+          )}
+
+          {isRemovedByMod && (
+            <div className="post-message my-4">
+              <BanIcon className="flex-shrink-0 text-red-500" />
+
+              <span className="break-works">
+                Sorry, this post has been removed by the moderators.
+              </span>
+            </div>
+          )}
+
+          {post.lock_comments && (
+            <div className="post-message my-4">
+              <LockIcon className="flex-shrink-0" />
+
+              <span className="break-works">
+                Locked post. New comments cannot be posted.
+              </span>
             </div>
           )}
         </div>
