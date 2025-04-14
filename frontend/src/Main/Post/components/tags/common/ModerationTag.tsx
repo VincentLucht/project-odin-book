@@ -84,7 +84,7 @@ export default function ModerationTag({
 
         {!approved && !moderation.reason ? (
           <button
-            className="h-8 rounded-full text-xs !font-medium prm-button normal-bg-transition"
+            className="min-h-8 rounded-full text-xs !font-medium prm-button normal-bg-transition"
             onClick={() => setShow(true)}
           >
             Add removal reason
