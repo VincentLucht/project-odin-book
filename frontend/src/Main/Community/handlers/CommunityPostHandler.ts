@@ -12,7 +12,7 @@ export default class CommunityPostHandler<
     is_spoiler: boolean;
     is_mature: boolean;
     edited_at?: Date;
-    post_assigned_flair: { id: string }[];
+    post_assigned_flair: { id: string; community_flair: { id: string } }[];
   },
 > {
   private postManager: CommunityPostManager;
@@ -102,7 +102,7 @@ export default class CommunityPostHandler<
 
       this.postManager.deletePostFlair(
         post.id,
-        post.post_assigned_flair[0].id,
+        post.post_assigned_flair[0].community_flair.id,
         (postId) => {
           this.setPosts((prev) => {
             if (!prev) return prev;
