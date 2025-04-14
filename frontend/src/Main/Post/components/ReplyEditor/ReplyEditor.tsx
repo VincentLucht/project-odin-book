@@ -119,17 +119,11 @@ export default function ReplyEditor({
             <div></div>
 
             <div className="flex gap-2">
-              <button
-                className="!px-3 py-2 text-xs prm-button-red"
-                onClick={() => toggleShow()}
-              >
+              <button className="cancel-button" onClick={() => toggleShow()}>
                 Cancel
               </button>
 
-              <button
-                className="!px-3 py-2 text-xs prm-button-blue"
-                onClick={() => handleSubmit()}
-              >
+              <button className="confirm-button" onClick={() => handleSubmit()}>
                 Comment
               </button>
             </div>
