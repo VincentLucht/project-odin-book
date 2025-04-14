@@ -140,10 +140,18 @@ export default class UserManager {
     };
   }
 
-  async getSettings(user_id: string) {
+  async getSettings(user_id: string, check_existence = false) {
     const userWithPassword = await this.prisma.user.findUnique({
       where: { id: user_id },
+      include: { user_settings: true },
     });
+
+    if (!userWithPassword) {
+      if (check_existence) {
+        throw new Error('User not found');
+      }
+      return null;
+    }
 
     const userWithoutPassword = {
       ...userWithPassword,
@@ -171,7 +179,7 @@ export default class UserManager {
     profile_picture_url?: string,
     cake_day?: string,
   ) {
-    await this.prisma.user.create({
+    const user = await this.prisma.user.create({
       data: {
         username,
         email,
@@ -180,6 +188,10 @@ export default class UserManager {
         profile_picture_url,
         cake_day,
       },
+    });
+
+    await this.prisma.userSettings.create({
+      data: { user_id: user.id },
     });
   }
 
