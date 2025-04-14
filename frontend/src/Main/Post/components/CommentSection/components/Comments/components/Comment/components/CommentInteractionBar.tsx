@@ -67,7 +67,7 @@ export default function CommentInteractionBar({
 
   return !isEditActive ? (
     <div className={`-ml-[2px] pt-1 ${isEditActive ? 'opacity-0' : 'opacity-100'}`}>
-      <div className="flex items-center justify-between h-8">
+      <div className="flex h-8 items-center justify-between">
         <div className="flex items-center gap-1">
           <div className="flex h-8 items-center gap-1 rounded-full">
             <Upvote
