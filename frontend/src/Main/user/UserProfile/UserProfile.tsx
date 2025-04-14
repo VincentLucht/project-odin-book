@@ -52,7 +52,7 @@ export default function UserProfile() {
   }, [username, page, sortBy, token]);
 
   return (
-    <div className="h-[100dvh + 56px] overflow-y-auto p-4">
+    <div className="h-[100dvh + 56px] p-4">
       <div className="center-main">
         <div className="center-main-content">
           {fetchedUser ? (
@@ -79,6 +79,7 @@ export default function UserProfile() {
                   isPost(value) ? (
                     <PostOverview
                       key={index}
+                      community={value.community}
                       post={value}
                       userId={user?.id}
                       token={token}
