@@ -41,7 +41,6 @@ export default class UserProfilePostHandler {
         post.body,
         post.is_spoiler,
         post.is_mature,
-        '', // TODO: Add community flair!
         (postId: string) => {
           this.setFetchedUser((prev) => {
             if (!prev) return prev;
@@ -72,7 +71,6 @@ export default class UserProfilePostHandler {
         post.body,
         post.is_spoiler,
         post.is_mature,
-        '', // TODO: Add community flair!
         (postId: string) => {
           this.setFetchedUser((prev) => {
             if (!prev) return prev;
