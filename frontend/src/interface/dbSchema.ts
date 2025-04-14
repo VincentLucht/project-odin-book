@@ -1,4 +1,5 @@
 import { VoteType } from '@/interface/backendTypes';
+import { CommunityModerator } from '@/Main/Community/api/fetch/fetchCommunity';
 import { PostType } from '@/Main/CreatePost/CreatePost';
 
 export interface DBUser {
@@ -36,6 +37,7 @@ export interface DBPost {
   total_vote_score: number;
   total_comment_score: number;
   post_type: PostType;
+  lock_comments: boolean;
 }
 
 export interface DBCommunity {
@@ -124,6 +126,28 @@ export interface DBCommunityModerator {
   profile_picture_url: string;
 }
 
+export type ModerationType = 'APPROVED' | 'REMOVED';
+
+export interface DBPostModeration {
+  id: string;
+  post_id: string;
+  moderator_id: string;
+  action: ModerationType;
+  reason?: string;
+  created_at: string;
+  moderator: { user: { username: string; profile_picture_url: string | null } };
+}
+
+export interface DBCommentModeration {
+  id: string;
+  comment_id: string;
+  moderator_id: string;
+  action: ModerationType;
+  reason?: string;
+  created_at: string;
+  moderator: { user: { username: string; profile_picture_url: string | null } };
+}
+
 // EXTENSIONS
 export type CommunityTypes = 'PUBLIC' | 'RESTRICTED' | 'PRIVATE';
 export type UserRoles = 'BASIC' | 'CONTRIBUTOR';
@@ -136,7 +160,11 @@ export interface CommunityMembership {
   user_id: string;
 }
 
-export interface DBPostWithCommunityName extends DBPost {
+export interface DBPostWithModeration extends DBPost {
+  moderation?: DBPostModeration;
+}
+
+export interface DBPostWithCommunityName extends DBPostWithModeration {
   community: {
     id: string;
     name: string;
@@ -163,7 +191,7 @@ export interface DBCommentWithCommunityName extends DBComment {
   user: { username: string };
 }
 
-export interface DBPostWithCommunity extends DBPost {
+export interface DBPostWithCommunity extends DBPostWithModeration {
   poster: { username: string; deleted_at: string | null } | null;
   post_votes: VotingRecord[];
   community: {
@@ -174,6 +202,10 @@ export interface DBPostWithCommunity extends DBPost {
     created_at: string;
     is_mature: boolean;
     user_communities: CommunityMembership[];
+    community_moderators: {
+      is_active: boolean;
+      user: Omit<CommunityModerator, 'user_assigned_flair'>;
+    }[];
   };
   post_assigned_flair: PostAssignedFlair;
 }
@@ -187,4 +219,5 @@ export interface DBCommentWithReplies extends DBComment {
   comment_votes: VotingRecord[];
   replies: DBCommentWithReplies[];
   _count: { replies: number };
+  moderation: DBCommentModeration;
 }
