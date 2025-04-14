@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import deletePost from '@/Main/Post/api/delete/deletePost';
 import { toast } from 'react-toastify';
 import catchError from '@/util/catchError';
