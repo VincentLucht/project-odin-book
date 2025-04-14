@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import useAuth from '@/context/auth/hook/useAuth';
+import useIsModerator from '@/hooks/useIsModerator';
 
 import PostSidebar from '@/Main/Post/components/PostSidebar/PostSidebar';
 import PFP from '@/components/PFP';
@@ -13,6 +14,7 @@ import PostFlairTag from '@/Main/Post/components/PostFlairTag/PostFlairTag';
 import SpoilerTag from '@/Main/Post/components/tags/common/SpoilerTag';
 import MatureTag from '@/Main/Post/components/tags/common/MatureTag';
 import PostLazy from '@/Main/Post/components/Loading/PostLazy';
+import LockedCommentsTag from '@/Main/Post/components/tags/common/LockedCommentsTag';
 
 import handleFetchPost from '@/Main/Post/api/fetch/handleFetchPost';
 import handlePostVote from '@/Main/Post/api/vote/handlePostVote';
@@ -21,12 +23,22 @@ import getRelativeTime from '@/util/getRelativeTime';
 import { DBPostWithCommunity } from '@/interface/dbSchema';
 import { VoteType } from '@/interface/backendTypes';
 import { HandlePostVoteType } from '@/Main/Post/api/vote/handlePostVote';
+import { IsMod } from '@/Main/Community/components/Virtualization/VirtualizedPostOverview';
+import { CommunityModerator } from '@/Main/Community/api/fetch/fetchCommunity';
+
+export type IsModPost =
+  | false
+  | {
+      is_active: boolean;
+      user: Omit<CommunityModerator, 'user_assigned_flair'>;
+    };
 
 // TODO: Add loading + not found
 // TODO: Add go back button => but like completely back
 export default function Post() {
   const [post, setPost] = useState<DBPostWithCommunity | null>(null);
   const [showEditDropdown, setShowEditDropdown] = useState<string | null>(null);
+  const [showModDropdown, setShowModDropdown] = useState<string | null>(null);
   const [isEditActive, setIsEditActive] = useState(false);
   const [showPostFlairSelection, setShowPostFlairSelection] = useState(false);
 
@@ -36,15 +48,17 @@ export default function Post() {
   const { postId, communityName } = useParams();
   const [searchParams] = useSearchParams();
   const { user, token } = useAuth();
+
   const isUserPoster = user?.id === post?.poster_id;
 
   useEffect(() => {
     setPostLoading(true);
-
     const onComplete = () => setPostLoading(false);
 
     handleFetchPost(postId ?? '', token, setPost, onComplete);
   }, [postId, token]);
+
+  const isMod = useIsModerator(user, post?.community?.community_moderators);
 
   useEffect(() => {
     if (!post) return;
@@ -124,20 +138,24 @@ export default function Post() {
               </button>
             </div>
 
-            {/* TODO: Add saved */}
-            <PostEditDropdownMenu
-              isUserPoster={isUserPoster}
-              postId={post.id}
-              token={token}
-              showDropdown={showEditDropdown}
-              setShowDropdown={setShowEditDropdown}
-              setIsEditActive={setIsEditActive}
-              setPost={setPost}
-              newBody={post.body}
-              isMature={post.is_mature}
-              isSpoiler={post.is_spoiler}
-              setShowPostFlairSelection={setShowPostFlairSelection}
-            />
+            <div className="gap-2 df">
+              {post.lock_comments && <LockedCommentsTag className="-mr-[5px]" />}
+
+              {/* TODO: Add saved */}
+              <PostEditDropdownMenu
+                isUserPoster={isUserPoster}
+                postId={post.id}
+                token={token}
+                showDropdown={showEditDropdown}
+                setShowDropdown={setShowEditDropdown}
+                setIsEditActive={setIsEditActive}
+                setPost={setPost}
+                newBody={post.body}
+                isMature={post.is_mature}
+                isSpoiler={post.is_spoiler}
+                setShowPostFlairSelection={setShowPostFlairSelection}
+              />
+            </div>
           </div>
 
           {/* TAGS */}
@@ -165,21 +183,30 @@ export default function Post() {
           />
 
           <PostInteractionBar
-            totalVoteCount={post.total_vote_score}
-            totalCommentCount={post.total_comment_score}
+            post={{ ...post }}
+            setPost={setPost}
+            token={token}
             userVote={{
               hasVoted: post.post_votes?.[0]?.user_id === user?.id,
               voteType: post.post_votes?.[0]?.vote_type,
             }}
+            mode="post"
             onVote={onVote}
+            showModOptions={isMod !== false}
+            isMod={isMod as IsMod}
+            showModDropdown={showModDropdown}
+            setShowModDropdown={setShowModDropdown}
+            showEditDropdown={showEditDropdown}
+            setShowEditDropdown={setShowEditDropdown}
           />
 
           <CommentSection
-            postId={post.id}
+            post={{ ...post }}
             originalPoster={post.poster ? post.poster.username : null}
             user={user}
             token={token}
             setPost={setPost}
+            isMod={isMod}
           />
 
           <PostFlairSelection
