@@ -8,6 +8,7 @@ import SpoilerTag from '@/Main/Post/components/tags/common/SpoilerTag';
 import MatureTag from '@/Main/Post/components/tags/common/MatureTag';
 import PostEditDropdownMenuPost from '@/Main/Post/components/PostOverview/components/PostEditDropdownMenuPost';
 import PostFlairTag from '@/Main/Post/components/PostFlairTag/PostFlairTag';
+import LockedCommentsTag from '@/Main/Post/components/tags/common/LockedCommentsTag';
 import { Transition } from '@headlessui/react';
 import transitionPropsHeight from '@/util/transitionProps';
 
@@ -22,6 +23,7 @@ import { UserAndHistory } from '@/Main/user/UserProfile/api/fetchUserProfile';
 import { VoteType } from '@/interface/backendTypes';
 import { NavigateFunction } from 'react-router-dom';
 import { HandlePostVoteType } from '@/Main/Post/api/vote/handlePostVote';
+import { IsMod } from '@/Main/Community/components/Virtualization/VirtualizedPostOverview';
 
 export interface CommunityInfo {
   id: string;
@@ -43,6 +45,11 @@ interface PostOverviewProps {
   showEditDropdown: string | null;
   setShowEditDropdown: React.Dispatch<React.SetStateAction<string | null>>;
   showFlair?: boolean;
+  showModOptions?: boolean;
+  isMod?: IsMod;
+  showModDropdown?: string | null;
+  setShowModDropdown?: React.Dispatch<React.SetStateAction<string | null>>;
+  onToggle?: (id: string) => void;
 
   deleteFunc: () => void;
   spoilerFunc: () => void;
@@ -60,8 +67,12 @@ export default function PostOverview({
   navigate,
   showPoster = false,
   showMembership = true,
+  showModOptions = false,
+  isMod = false,
   showEditDropdown,
   setShowEditDropdown,
+  showModDropdown,
+  setShowModDropdown,
   showFlair = true,
   // Edit functions
   deleteFunc,
@@ -138,7 +149,10 @@ export default function PostOverview({
             />
 
             {showPoster ? (
-              <button className="font-medium hover:underline" onClick={userRedirect}>
+              <button
+                className="font-medium hover:underline"
+                onClick={() => !post.poster?.deleted_at && userRedirect()}
+              >
                 {post.poster?.deleted_at ? '[deleted]' : `u/${post.poster?.username}`}
               </button>
             ) : (
@@ -166,6 +180,8 @@ export default function PostOverview({
                 navigate={navigate}
               />
             )}
+
+            {post.lock_comments && <LockedCommentsTag className="-mr-[5px]" />}
 
             {/* TODO: Add saved stuff */}
             <PostEditDropdownMenuPost
@@ -216,19 +232,24 @@ export default function PostOverview({
               />
             </div>
           </Transition>
-
-          {/* TODO: Post Flair */}
         </div>
 
         <PostInteractionBar
-          totalVoteCount={post.total_vote_score}
-          totalCommentCount={post.total_comment_score}
+          post={{ ...post, community: { ...community } }}
+          setPosts={setPosts}
+          token={token}
           userVote={{
             hasVoted: post?.post_votes?.[0]?.user_id === userId,
             voteType: post?.post_votes?.[0]?.vote_type,
           }}
           onVote={onVote}
           postRedirect={commentToPostRedirect}
+          showModOptions={showModOptions}
+          isMod={isMod}
+          showModDropdown={showModDropdown}
+          setShowModDropdown={setShowModDropdown}
+          showEditDropdown={showEditDropdown}
+          setShowEditDropdown={setShowEditDropdown}
         />
       </div>
     </div>
