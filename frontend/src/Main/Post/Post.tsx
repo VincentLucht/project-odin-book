@@ -24,7 +24,7 @@ import { DBPostWithCommunity } from '@/interface/dbSchema';
 import { VoteType } from '@/interface/backendTypes';
 import { HandlePostVoteType } from '@/Main/Post/api/vote/handlePostVote';
 import { IsMod } from '@/Main/Community/components/Virtualization/VirtualizedPostOverview';
-import { CommunityModerator } from '@/Main/Community/api/fetch/fetchCommunity';
+import { CommunityModerator } from '@/Main/Community/api/fetch/fetchCommunityWithPosts';
 
 export type IsModPost =
   | false
@@ -220,7 +220,7 @@ export default function Post() {
           />
         </div>
 
-        <PostSidebar community={post.community} />
+        <PostSidebar community={post.community} navigate={navigate} />
       </div>
     </div>
   );
