@@ -15,7 +15,7 @@ import CommunityPostHandler from '@/Main/Community/handlers/CommunityPostHandler
 import handleFetchCommunity from '@/Main/Community/api/fetch/handleFetchCommunity';
 import getCommunityName from '@/Main/Community/util/getCommunityName';
 
-import { FetchedCommunity } from '@/Main/Community/api/fetch/fetchCommunity';
+import { FetchedCommunity } from '@/Main/Community/api/fetch/fetchCommunityWithPosts';
 import { DBPostWithCommunityName } from '@/interface/dbSchema';
 
 export type SortByType = 'hot' | 'new' | 'top';
