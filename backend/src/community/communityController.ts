@@ -14,6 +14,61 @@ import { Pagination } from '@/db/managers/util/types';
 
 class CommunityController {
   // ! GET
+  fetch = asyncHandler(async (req: Request, res: Response) => {
+    if (checkValidationError(req, res)) return;
+
+    const { community_name: name } = req.query as {
+      community_name: string;
+    };
+
+    try {
+      const foundCommunity = await db.community.getByName(name);
+      if (!foundCommunity) {
+        return res.status(404).json({ message: 'Community not found' });
+      }
+
+      let requestUserId = undefined;
+      if (req.authData) {
+        const { id } = req.authData as AuthPayload;
+        requestUserId = id;
+      }
+
+      if (foundCommunity.type === 'PRIVATE') {
+        const { user_id } = getAuthUser(req.authData);
+        if (!(await db.user.getById(user_id))) {
+          return res.status(404).json({ message: 'User not found' });
+        }
+
+        const isMember = await db.userCommunity.isMember(
+          user_id,
+          foundCommunity.id,
+        );
+        if (!isMember) {
+          return res
+            .status(403)
+            .json({ message: 'You are not part of this community' });
+        }
+      }
+
+      const community = await db.community.fetch(
+        name,
+        foundCommunity.id,
+        requestUserId,
+      );
+
+      return res.status(200).json({
+        message: 'Successfully fetched community',
+        community,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        message: 'Failed to create Community',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  });
+
   fetchWithPosts = asyncHandler(async (req: Request, res: Response) => {
     if (checkValidationError(req, res)) return;
 

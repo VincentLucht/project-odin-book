@@ -5,6 +5,14 @@ import communityController from '@/community/communityController';
 
 const communityRouter = express.Router();
 
+// ?community_name=
+communityRouter.get(
+  '/community',
+  token.authenticateOptional,
+  communityValidator.fetchRules(),
+  communityController.fetch,
+);
+
 communityRouter.get(
   '/community/is-name-available',
   token.authenticate,
@@ -28,7 +36,7 @@ communityRouter.get(
 communityRouter.get(
   '/r/:community_name/:sort_by_type?/:timeframe?',
   token.authenticateOptional,
-  communityValidator.fetchRules(),
+  communityValidator.fetchRulesSortBy(),
   communityController.fetchWithPosts,
 );
 

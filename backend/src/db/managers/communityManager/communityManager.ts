@@ -1,6 +1,7 @@
 import getStartDate from '@/db/managers/util/getStartDate';
 import calculateHotScore from '@/util/calculateHotScore';
 import baseQuery from '@/db/managers/communityManager/util/baseQuery';
+import { getCommunityInfo } from '@/db/managers/communityManager/util/baseQuery';
 
 import { TimeFrame } from '@/db/managers/util/types';
 import { CommunityType, PrismaClient } from '@prisma/client/default';
@@ -85,6 +86,18 @@ export default class CommunityManager {
         community_rules: true,
       },
     });
+
+    return community;
+  }
+
+  async fetch(
+    communityName: string,
+    communityId: string,
+    requestUserId: string | undefined,
+  ) {
+    const community = await this.prisma.community.findUnique(
+      getCommunityInfo(communityName, communityId, requestUserId, true),
+    );
 
     return community;
   }

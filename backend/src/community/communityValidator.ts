@@ -9,9 +9,17 @@ import isValidName from '@/db/managers/util/isValidName';
 class CommunityValidator {
   fetchRules() {
     return [
+      query('community_name').trim()
+        .notEmpty()
+        .withMessage(vm.req('Community name')),
+    ];
+  }
+
+  fetchRulesSortBy() {
+    return [
       param('community_name').trim()
         .notEmpty()
-        .withMessage(vm.req('community name')),
+        .withMessage(vm.req('Community name')),
 
       param('sort_by_type').trim()
         .custom((type: string) => {
@@ -24,7 +32,7 @@ class CommunityValidator {
     return [
       param('community_name').trim()
         .notEmpty()
-        .withMessage(vm.req('name')),
+        .withMessage(vm.req('Community name')),
   ];
   }
 
@@ -32,7 +40,7 @@ class CommunityValidator {
     return [
       param('community_name').trim()
         .notEmpty()
-        .withMessage(vm.req('name')),
+        .withMessage(vm.req('Name')),
       query('get_membership')
         .optional()
         .isBoolean(),
