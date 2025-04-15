@@ -42,7 +42,7 @@ interface FetchCommunityResponse {
   pagination: Pagination;
 }
 
-export default async function fetchCommunity(
+export default async function fetchCommunityWithPosts(
   communityName: string,
   sortByType: SortByType,
   timeframe: string | null,
@@ -67,3 +67,4 @@ export default async function fetchCommunity(
   const result = (await response.json()) as FetchCommunityResponse;
   return result;
 }
+
