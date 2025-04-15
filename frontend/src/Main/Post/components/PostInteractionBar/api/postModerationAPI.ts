@@ -2,6 +2,7 @@ import apiRequest from '@/util/apiRequest';
 import catchError from '@/util/catchError';
 import { toast } from 'react-toastify';
 import toastUpdate from '@/util/toastUpdate';
+import { APILoadingPhases } from '@/interface/misc';
 
 const endpoint = '/community/mod/post';
 
@@ -12,11 +13,7 @@ export async function moderatePost(
     reason?: string;
     moderation_action: 'APPROVED' | 'REMOVED';
   },
-  messages?: {
-    loading?: string;
-    success?: string;
-    error?: string;
-  },
+  messages?: APILoadingPhases,
 ) {
   const toastId = toast.loading(messages?.loading);
 
@@ -39,11 +36,7 @@ export async function updatePostAsModerator(
     is_spoiler?: boolean;
     lock_comments?: boolean;
   },
-  messages?: {
-    loading?: string;
-    success?: string;
-    error?: string;
-  },
+  messages?: APILoadingPhases,
 ) {
   const toastId = toast.loading(messages?.loading);
 
