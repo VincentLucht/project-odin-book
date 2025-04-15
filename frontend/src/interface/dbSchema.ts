@@ -1,6 +1,6 @@
 import { VoteType } from '@/interface/backendTypes';
-import { CommunityModerator } from '@/Main/Community/api/fetch/fetchCommunity';
 import { PostType } from '@/Main/CreatePost/CreatePost';
+import { FetchedCommunity } from '@/Main/Community/api/fetch/fetchCommunityWithPosts';
 
 export interface DBUser {
   id: string;
@@ -194,19 +194,7 @@ export interface DBCommentWithCommunityName extends DBComment {
 export interface DBPostWithCommunity extends DBPostWithModeration {
   poster: { username: string; deleted_at: string | null } | null;
   post_votes: VotingRecord[];
-  community: {
-    id: string;
-    name: string;
-    description: string | null;
-    profile_picture_url: string | null;
-    created_at: string;
-    is_mature: boolean;
-    user_communities: CommunityMembership[];
-    community_moderators: {
-      is_active: boolean;
-      user: Omit<CommunityModerator, 'user_assigned_flair'>;
-    }[];
-  };
+  community: FetchedCommunity;
   post_assigned_flair: PostAssignedFlair;
 }
 
