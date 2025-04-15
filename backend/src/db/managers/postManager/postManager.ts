@@ -4,6 +4,7 @@ import { postSelectFields } from '@/db/managers/postManager/util/postUtils';
 import { TimeFrame } from '@/db/managers/util/types';
 import isTimeFrameValid from '@/util/isTimeFrameValid';
 import getStartDate from '@/db/managers/util/getStartDate';
+import { getCommunityInfo } from '@/db/managers/communityManager/util/baseQuery';
 
 export default class PostManager {
   constructor(private prisma: PrismaClient) {}
@@ -27,7 +28,11 @@ export default class PostManager {
     return post;
   }
 
-  async getByIdAndCommunity(post_id: string, user_id: string | undefined) {
+  async getByIdAndCommunity(
+    post_id: string,
+    community_id: string,
+    user_id: string | undefined,
+  ) {
     const postAndCommunity = await this.prisma.post.findUnique({
       where: { id: post_id },
       select: {
@@ -57,36 +62,7 @@ export default class PostManager {
             },
           },
         },
-        community: {
-          select: {
-            id: true,
-            name: true,
-            description: true,
-            profile_picture_url: true,
-            created_at: true,
-            type: true,
-            is_mature: true,
-            user_communities: {
-              where: { user_id },
-              select: { user_id: true },
-            },
-            ...(user_id && {
-              community_moderators: {
-                where: { user_id },
-                select: {
-                  is_active: true,
-                  user: {
-                    select: {
-                      id: true,
-                      username: true,
-                      profile_picture_url: true,
-                    },
-                  },
-                },
-              },
-            }),
-          },
-        },
+        community: getCommunityInfo('', community_id, user_id, false),
       },
     });
 

@@ -35,6 +35,62 @@ export function getPostInfo(requestUserId: string | undefined) {
   };
 }
 
+export function getCommunityInfo(
+  communityName: string,
+  communityId: string,
+  requestUserId: string | undefined,
+  includeWhere = true,
+) {
+  // Create the base obj
+  const queryInfo: any = {
+    include: {
+      ...(requestUserId && {
+        community_moderators: {
+          where: { user_id: requestUserId },
+          select: {
+            user: {
+              select: { id: true, username: true, profile_picture_url: true },
+            },
+          },
+        },
+        user_communities: {
+          where: { user_id: requestUserId },
+          select: { user_id: true, role: true },
+        },
+      }),
+      community_moderators: {
+        select: {
+          is_active: true,
+          user: {
+            select: {
+              id: true,
+              username: true,
+              profile_picture_url: true,
+              user_assigned_flair: {
+                where: {
+                  community_flair: {
+                    community_id: communityId,
+                  },
+                },
+                select: { id: true, community_flair: true },
+              },
+            },
+          },
+        },
+        take: 10,
+      },
+      community_rules: true,
+    },
+  };
+
+  // Always add the where clause for findUnique
+  if (includeWhere) {
+    queryInfo.where = { name: communityName };
+  }
+
+  return queryInfo;
+}
+
 export default function baseQuery(
   name: string,
   requestUserId: string | undefined,
