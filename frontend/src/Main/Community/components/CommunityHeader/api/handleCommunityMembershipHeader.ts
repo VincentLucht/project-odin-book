@@ -9,7 +9,7 @@ export default async function handleCommunityMembershipHeader(
   community: FetchedCommunity,
   user_id: string,
   token: string,
-  setCommunity: React.Dispatch<React.SetStateAction<FetchedCommunity | null>>,
+  onCommunityUpdate: (updatedCommunity: FetchedCommunity | null) => void,
   wasMember: boolean,
 ) {
   const previousState: FetchedCommunity | null = { ...community };
@@ -28,11 +28,8 @@ export default async function handleCommunityMembershipHeader(
     };
   };
 
-  setCommunity((prev) => {
-    if (!prev) return prev;
-
-    return handleMembership(prev, wasMember);
-  });
+  const updatedCommunity = handleMembership(community, wasMember);
+  onCommunityUpdate(updatedCommunity);
 
   try {
     if (wasMember) {
@@ -44,19 +41,13 @@ export default async function handleCommunityMembershipHeader(
     if (previousState) {
       const errorObj = error as { message: string };
       if (errorObj.message === 'You already are a member of this community') {
-        setCommunity((prev) => {
-          if (!prev) return prev;
-
-          return handleMembership(prev, false);
-        });
+        const fixedCommunity = handleMembership(community, false);
+        onCommunityUpdate(fixedCommunity);
       } else if (errorObj.message === 'You are not part of this community') {
-        setCommunity((prev) => {
-          if (!prev) return prev;
-
-          return handleMembership(prev, true);
-        });
+        const fixedCommunity = handleMembership(community, false);
+        onCommunityUpdate(fixedCommunity);
       } else {
-        setCommunity(previousState);
+        onCommunityUpdate(previousState);
         catchError(error);
       }
     }
