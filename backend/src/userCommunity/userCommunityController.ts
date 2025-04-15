@@ -111,7 +111,7 @@ class UserCommunityController {
       const isMod = await db.communityModerator.isMod(user_id, community_id);
       if (isMod) {
         await Promise.all([
-          db.communityModerator.deactivateMod(user_id, community_id),
+          db.communityModerator.deactivateMod(community_id, user_id),
           db.userCommunity.leave(user_id, community_id),
         ]);
       } else {
