@@ -1,3 +1,4 @@
+import MemberShipButton from '@/Main/Global/MemberShipButton';
 import DisplayCommunityType from '@/components/sidebar/DisplayCommunityType';
 import DisplayCreationDate from '@/components/sidebar/DisplayCreationDate';
 import DisplayMemberCount from '@/components/sidebar/DisplayMemberCount.tsx/DisplayMemberCount';
@@ -12,15 +13,34 @@ import { NavigateFunction } from 'react-router-dom';
 interface CommunitySidebarProps {
   community: FetchedCommunity;
   navigate: NavigateFunction;
+  showMembership?: {
+    show: boolean;
+    isMember: boolean;
+    toggleMembership: () => void;
+  };
 }
 
 export default function CommunitySidebar({
   community,
   navigate,
+  showMembership,
 }: CommunitySidebarProps) {
   return (
     <div className="!gap-0 overflow-y-auto rounded-md bg-neutral-950 px-4 py-2 pb-3 sidebar">
-      <div className="font-medium">{community.name}</div>
+      {showMembership ? (
+        <div className="mb-2 flex items-center justify-between">
+          <h2 className="text-lg font-semibold">r/{community.name}</h2>
+
+          <MemberShipButton
+            isMember={showMembership.isMember}
+            onClick={showMembership.toggleMembership}
+            classNameMember="!h-7"
+            classNameNotMember="!h-7"
+          />
+        </div>
+      ) : (
+        <div className="font-medium">{community.name}</div>
+      )}
 
       <div className="font-light">{community.description}</div>
 
