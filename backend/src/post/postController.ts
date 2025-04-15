@@ -36,6 +36,7 @@ class PostController {
 
       const postAndCommunity = await db.post.getByIdAndCommunity(
         post.id,
+        post.community_id,
         response.user_id,
       );
 
@@ -124,14 +125,12 @@ class PostController {
           .json({ message: response?.message });
       }
 
-      const postAndCommunity = await db.post.getByIdAndCommunity(
-        post.id,
-        response.user_id,
-      );
+      // const postAndCommunity = await db.post.getByIdAndCommunity(
+      //   post.id,
+      //   response.user_id,
+      // );
 
-      return res
-        .status(200)
-        .json({ message: 'Successfully fetched post', postAndCommunity });
+      return res.status(200).json({ message: 'Successfully fetched post' });
     } catch (error) {
       console.error(error);
       return res.status(500).json({
