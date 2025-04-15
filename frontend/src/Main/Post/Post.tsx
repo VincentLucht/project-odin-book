@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import useAuth from '@/context/auth/hook/useAuth';
 import useIsModerator from '@/hooks/useIsModerator';
+import useIsMember from '@/hooks/useIsMember';
 
 import PostSidebar from '@/Main/Post/components/PostSidebar/PostSidebar';
 import PFP from '@/components/PFP';
@@ -59,6 +60,7 @@ export default function Post() {
   }, [postId, token]);
 
   const isMod = useIsModerator(user, post?.community?.community_moderators);
+  const isMember = useIsMember(user, post?.community);
 
   useEffect(() => {
     if (!post) return;
@@ -220,7 +222,14 @@ export default function Post() {
           />
         </div>
 
-        <PostSidebar community={post.community} navigate={navigate} />
+        <PostSidebar
+          community={post.community}
+          setPost={setPost}
+          user={user}
+          token={token}
+          navigate={navigate}
+          showMembership={{ show: true, isMember }}
+        />
       </div>
     </div>
   );

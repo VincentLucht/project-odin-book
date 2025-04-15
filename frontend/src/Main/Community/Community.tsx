@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import useAuth from '@/context/auth/hook/useAuth';
 import useIsModerator from '@/hooks/useIsModerator';
+import useIsMember from '@/hooks/useIsMember';
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
@@ -45,6 +46,7 @@ export default function Community() {
   const navigate = useNavigate();
 
   const isMod = useIsModerator(user, community?.community_moderators);
+  const isMember = useIsMember(user, community);
 
   const communityPostHandler = useMemo(
     () =>
@@ -102,7 +104,7 @@ export default function Community() {
         <CommunityHeader
           community={community}
           setCommunity={setCommunity}
-          isMember={community?.user_communities?.[0]?.user_id === user?.id}
+          isMember={isMember}
           isMod={isMod}
           user={user}
           token={token}
