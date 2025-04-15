@@ -1,7 +1,9 @@
+import MemberShipButton from '@/Main/Global/MemberShipButton';
+import { PlusIcon } from 'lucide-react';
+
 import handleCommunityMembershipHeader from '@/Main/Community/components/CommunityHeader/api/handleCommunityMembershipHeader';
 import handleCreatePostClick from '@/Header/components/CreateButton/util/handleCreatePostClick';
 
-import { PlusIcon } from 'lucide-react';
 import { FetchedCommunity } from '@/Main/Community/api/fetch/fetchCommunityWithPosts';
 import { TokenUser } from '@/context/auth/AuthProvider';
 import { NavigateFunction } from 'react-router-dom';
@@ -92,23 +94,7 @@ export default function CommunityHeader({
             </button>
           )}
 
-          <div className="transition-all">
-            {isMember ? (
-              <button
-                className="h-[38px] max-w-[65px] !px-10 !font-medium transparent-btn"
-                onClick={toggleMembership}
-              >
-                Joined
-              </button>
-            ) : (
-              <button
-                className="h-[38px] max-w-[50px] !px-7 !font-medium df prm-button-blue"
-                onClick={toggleMembership}
-              >
-                Join
-              </button>
-            )}
-          </div>
+          <MemberShipButton isMember={isMember} onClick={toggleMembership} />
         </div>
       </div>
     </div>
