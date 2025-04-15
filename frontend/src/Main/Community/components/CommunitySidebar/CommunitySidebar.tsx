@@ -6,7 +6,7 @@ import RuleTab from '@/Main/CreatePost/components/CreatePostSidebar/components/R
 import UserCard from '@/components/user/UserCard';
 import { MailIcon } from 'lucide-react';
 
-import { FetchedCommunity } from '@/Main/Community/api/fetch/fetchCommunity';
+import { FetchedCommunity } from '@/Main/Community/api/fetch/fetchCommunityWithPosts';
 import { NavigateFunction } from 'react-router-dom';
 
 interface CommunitySidebarProps {

@@ -2,7 +2,7 @@ import joinCommunity from '@/Main/Community/api/joinCommunity';
 import catchError from '@/util/catchError';
 import leaveCommunity from '@/Main/Community/api/leaveCommunity';
 
-import { FetchedCommunity } from '@/Main/Community/api/fetch/fetchCommunity';
+import { FetchedCommunity } from '@/Main/Community/api/fetch/fetchCommunityWithPosts';
 import { UserRoles } from '@/interface/dbSchema';
 
 export default async function handleCommunityMembershipHeader(

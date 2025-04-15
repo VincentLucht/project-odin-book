@@ -2,7 +2,7 @@ import handleCommunityMembershipHeader from '@/Main/Community/components/Communi
 import handleCreatePostClick from '@/Header/components/CreateButton/util/handleCreatePostClick';
 
 import { PlusIcon } from 'lucide-react';
-import { FetchedCommunity } from '@/Main/Community/api/fetch/fetchCommunity';
+import { FetchedCommunity } from '@/Main/Community/api/fetch/fetchCommunityWithPosts';
 import { TokenUser } from '@/context/auth/AuthProvider';
 import { NavigateFunction } from 'react-router-dom';
 import { IsMod } from '@/Main/Community/components/Virtualization/VirtualizedPostOverview';

@@ -1,8 +1,8 @@
-import fetchCommunity from '@/Main/Community/api/fetch/fetchCommunity';
+import fetchCommunityWithPosts from '@/Main/Community/api/fetch/fetchCommunityWithPosts';
 import catchError from '@/util/catchError';
 
 import { SortByType } from '@/Main/Community/Community';
-import { FetchedCommunity } from '@/Main/Community/api/fetch/fetchCommunity';
+import { FetchedCommunity } from '@/Main/Community/api/fetch/fetchCommunityWithPosts';
 import { FetchedPost } from '@/Main/Community/Community';
 
 export default function handleFetchCommunity(
@@ -18,7 +18,7 @@ export default function handleFetchCommunity(
     isRefetch?: boolean,
   ) => void,
 ) {
-  fetchCommunity(communityName, sortByType, timeframe, token)
+  fetchCommunityWithPosts(communityName, sortByType, timeframe, token)
     .then((response) => {
       const { posts, ...communityWithoutPosts } = response.community;
       setCommunity(communityWithoutPosts);

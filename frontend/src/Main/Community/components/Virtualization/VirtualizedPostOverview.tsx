@@ -10,7 +10,7 @@ import CommunityPostHandler from '@/Main/Community/handlers/CommunityPostHandler
 import { NavigateFunction } from 'react-router-dom';
 import { CommunityInfo } from '@/Main/Post/components/PostOverview/PostOverview';
 import { FetchedPost, SortByType, TimeFrame } from '@/Main/Community/Community';
-import { CommunityModerator } from '@/Main/Community/api/fetch/fetchCommunity';
+import { CommunityModerator } from '@/Main/Community/api/fetch/fetchCommunityWithPosts';
 
 export type IsMod =
   | false
