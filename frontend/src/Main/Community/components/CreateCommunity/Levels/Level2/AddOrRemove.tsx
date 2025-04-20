@@ -7,6 +7,7 @@ interface AddOrRemoveProps {
   name: string;
   onAdd: () => void;
   subText?: React.ReactNode;
+  type?: 'submit' | 'reset' | 'button' | undefined;
 }
 
 export default function AddOrRemove({
@@ -15,6 +16,7 @@ export default function AddOrRemove({
   name,
   onAdd,
   subText,
+  type,
 }: AddOrRemoveProps) {
   return (
     <div>
@@ -28,6 +30,7 @@ export default function AddOrRemove({
         <button
           className="flex h-8 items-center gap-2 !px-3 text-sm prm-button-blue"
           onClick={onAdd}
+          type={type}
         >
           <ImageIcon />
           {value ? 'Change' : 'Add'}
@@ -36,13 +39,15 @@ export default function AddOrRemove({
 
       {value && (
         <div
-          className="mt-2 flex items-center justify-between gap-2 break-all rounded-md border border-gray-600
-            p-2 px-4 text-xs text-gray-400"
+          className="mt-2 flex items-center justify-between gap-2 rounded-md border border-gray-600 p-2 px-4
+            text-xs text-gray-400"
         >
-          {value}
+          <div className="overflow-hidden text-ellipsis whitespace-nowrap">{value}</div>
+
           <button
             className="transition-transform hover:scale-105 active:scale-95"
             onClick={() => setterFunc(null)}
+            type={type}
           >
             <TrashIcon className="h-5 w-5 text-red-500" />
           </button>
