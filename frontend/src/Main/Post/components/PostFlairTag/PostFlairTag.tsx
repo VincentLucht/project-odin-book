@@ -1,3 +1,5 @@
+import CommunityFlairTag from '@/Main/Global/CommunityFlairTag';
+
 import { PostAssignedFlair } from '@/interface/dbSchema';
 
 interface PostFlairTagProps {
@@ -17,14 +19,5 @@ export default function PostFlairTag({
 
   const flair = postAssignedFlair[0].community_flair;
 
-  return (
-    <div
-      className={`w-fit cursor-default select-none gap-1 rounded-full px-2 text-xs df ${className}`}
-      style={{ backgroundColor: flair.color, color: flair.textColor }}
-    >
-      <span>{flair.name}</span>
-
-      <span>{flair.emoji && flair.emoji}</span>
-    </div>
-  );
+  return <CommunityFlairTag flair={{ ...flair }} className={className} />;
 }
