@@ -13,11 +13,18 @@ communityFlairRouter.get(
   communityFlairController.getAllCommunityFlairs,
 );
 
+// communityFlairRouter.get(
+//   '/post',
+//   token.authenticate,
+//   communityFlairValidator.getAllPostFlairsRules(),
+//   communityFlairController.getAllPostFlairs,
+// );
+
 communityFlairRouter.get(
-  '/post',
+  '', // ?cn=community_name&cId=cursor_id&t=type&initF=is_initial_fetch
   token.authenticate,
-  communityFlairValidator.getAllPostFlairsRules(),
-  communityFlairController.getAllPostFlairs,
+  communityFlairValidator.fetchRules(),
+  communityFlairController.fetchFlairs,
 );
 
 communityFlairRouter.post(
@@ -25,6 +32,20 @@ communityFlairRouter.post(
   token.authenticate,
   communityFlairValidator.creationRules(),
   communityFlairController.create,
+);
+
+communityFlairRouter.put(
+  '',
+  token.authenticate,
+  communityFlairValidator.updateRules(),
+  communityFlairController.update,
+);
+
+communityFlairRouter.delete(
+  '',
+  token.authenticate,
+  communityFlairValidator.deletionRules(),
+  communityFlairController.delete,
 );
 
 export default communityFlairRouter;
