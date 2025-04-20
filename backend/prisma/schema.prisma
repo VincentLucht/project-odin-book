@@ -60,7 +60,7 @@ model User {
 
   banned_users           BannedUser[]
   user_communities       UserCommunity[]
-  community              Community[]
+  owned_communities      Community[]
   community_moderator    CommunityModerator[]
   comment                Comment[]
   post_vote              PostVote[]
@@ -291,7 +291,7 @@ model CommentModeration {
   moderator_id String
   moderator    CommunityModerator @relation(fields: [moderator_id], references: [id])
   action       ModerationType
-  reason       String?             @db.VarChar(20)
+  reason       String?            @db.VarChar(20)
   created_at   DateTime           @default(now())
 
   @@index([comment_id])
@@ -393,6 +393,7 @@ model CommunityFlair {
   is_assignable_to_posts Boolean   @default(false)
   is_assignable_to_users Boolean   @default(false)
   emoji                  String?   @db.VarChar(8)
+  created_at             DateTime  @default(now())
 
   user_assigned_flair UserAssignedFlair[]
   post_assigned_flair PostAssignedFlair[]
