@@ -56,8 +56,6 @@ export default function Level4({
 
       <div className="mb-4 mt-2 text-sm text-gray-secondary">
         Decide who can view and contribute in your community.
-        <span className="font-bold"> Important:</span> Once set, you are not able to
-        change the type of your community.
       </div>
 
       <div className="flex flex-col gap-2">
@@ -112,7 +110,7 @@ export default function Level4({
           <ButtonWithImgAndCircle
             icon={<PenOffIcon />}
             header="Allow basic users to post"
-            subText="Only allow users with the role of contributor to post"
+            subText="If unticked, only allow users with the role of contributor to post"
             isSelected={allowBasicUserPosts}
             onClick={() => setAllowBasicUserPosts((req) => !req)}
           />
