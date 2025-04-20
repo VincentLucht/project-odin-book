@@ -23,12 +23,15 @@ export default {
           minHeight: '100dvh',
           maxHeight: '100dvh'
         },
+        '.h-full-header': {
+          '@apply h-[calc(100dvh-56px)]': {}
+        },
         '.text-hidden-ellipsis': {
           '@apply overflow-ellipsis whitespace-nowrap overflow-hidden':
             {},
         },  
         '.prm-button': {
-          '@apply transform rounded-full px-4 font-bold text-white':
+          '@apply transform rounded-full px-4 font-bold text-white transition-all duration-200 ease-in-out':
             {},
         },
         '.prm-button-blue': {
@@ -66,6 +69,12 @@ export default {
         '.bg-active-gray': {
           backgroundColor: '#545759'
         },
+        '.bg-active-dark-gray': {
+          backgroundColor: '#696C6E'
+        },
+        '.bg-gray-inactive': {
+          '@apply bg-gray-700': {}
+        },
         '.border-bg-gray': {
           borderColor: 'rgba(37,37,37,255)'
         },
@@ -87,7 +96,7 @@ export default {
         },
         // TODO: Add active color
         '.normal-bg-transition' :{
-          '@apply transition-colors bg-accent-gray hover:bg-active-gray' : {}
+          '@apply transition-colors bg-accent-gray hover:bg-active-gray active:bg-active-dark-gray' : {}
         },
         '.bg-transition-hover' :{
           '@apply transition-colors hover:bg-accent-gray active:bg-active-gray' : {}
@@ -167,7 +176,18 @@ export default {
         '.post-message': {
           '@apply flex items-center gap-3 rounded-md border border-gray-600 p-4 text-sm text-gray-400': {}
         },
-        
+        '.modal-header-wrapper': {
+          '@apply flex items-center justify-between': {}
+        },
+        '.modal-header': {
+          '@apply text-xl font-semibold': {}
+        },
+        '.modal-description': {
+          '@apply text-sm -mt-1 text-gray-secondary': {}
+        },
+        '.sub-header': {
+          '@apply text-[22px] font-semibold': {}
+        }
       };
 
       addUtilities(newUtilities, ['responsive', 'hover']);
