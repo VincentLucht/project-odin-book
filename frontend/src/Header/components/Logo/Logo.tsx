@@ -6,7 +6,7 @@ export default function Logo() {
   return (
     <div
       className="cursor-pointer select-none gap-[6px] df"
-      onClick={() => navigate('')}
+      onClick={() => navigate('/', { replace: true })}
     >
       <img src="/logo.png" alt="reddnir logo" className="max-h-[40px] min-w-[40px]" />
 
