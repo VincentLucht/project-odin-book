@@ -16,7 +16,10 @@ import UserProfile from '@/Main/user/UserProfile/UserProfile';
 
 import Community from '@/Main/Community/Community';
 import CreateCommunity from '@/Main/Community/components/CreateCommunity/CreateCommunity';
-import ModDashboard from '@/Main/Community/components/ModDashboard/ModDashboard';
+
+import ModTools from '@/Main/Community/components/ModTools/ModTools';
+import CommunitySettings from '@/Main/Community/components/ModTools/components/CommunitySettings/CommunitySettings';
+import CommunityFlairSettings from '@/Main/Community/components/ModTools/components/CommunitySettings/components/CommunityFlairSettings';
 
 import Post from '@/Main/Post/Post';
 import CreatePost from '@/Main/CreatePost/CreatePost';
@@ -38,7 +41,20 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               <Route path="/login" element={<Login />} />
               <Route path="/sign-up" element={<SignUp />} />
 
-              <Route path="r/:communityName/mod/" element={<ModDashboard />} />
+              {/* MOD */}
+              <Route path="r/:communityName/mod/" element={<ModTools />}>
+                <Route path="settings" element={<CommunitySettings />} />
+
+                <Route
+                  path="settings/post-flair"
+                  element={<CommunityFlairSettings flairType="post" />}
+                />
+
+                <Route
+                  path="settings/user-flair"
+                  element={<CommunityFlairSettings flairType="user" />}
+                />
+              </Route>
 
               <Route path="/" element={<Layout />}>
                 <Route index element={<Main />} />
