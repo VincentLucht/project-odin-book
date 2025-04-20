@@ -8,6 +8,7 @@ interface ButtonWithImgAndCircleProps {
   isSelected: boolean;
   className?: string;
   onClick?: () => void;
+  type?: 'submit' | 'reset' | 'button' | undefined;
 }
 
 export default function ButtonWithImgAndCircle({
@@ -17,12 +18,14 @@ export default function ButtonWithImgAndCircle({
   isSelected,
   className,
   onClick,
+  type,
 }: ButtonWithImgAndCircleProps) {
   return (
     <button
       className={`${className} ${isSelected && 'bg-accent-gray'} flex items-center gap-3 rounded-lg p-3
         bg-transition-hover`}
       onClick={() => onClick && onClick()}
+      type={type}
     >
       {icon}
 
