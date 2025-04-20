@@ -5,9 +5,8 @@ import communityController from '@/community/communityController';
 
 const communityRouter = express.Router();
 
-// ?community_name=
 communityRouter.get(
-  '/community',
+  '/community', // ?community_name=
   token.authenticateOptional,
   communityValidator.fetchRules(),
   communityController.fetch,
@@ -45,6 +44,24 @@ communityRouter.post(
   token.authenticate,
   communityValidator.creationRules(),
   communityController.create,
+);
+
+// !  MODERATION
+communityRouter.get(
+  '/community/mod', // ?community_name=
+  token.authenticate,
+  communityValidator.fetchRules(),
+  communityController.getModInfo,
+);
+
+communityRouter.get('/community/mod/mods', token.authenticate);
+
+communityRouter.put(
+  '/community/mod/settings',
+  token.authenticate,
+  token.authenticate,
+  communityValidator.editCommunitySettingsRules(),
+  communityController.editCommunitySettings,
 );
 
 export default communityRouter;

@@ -90,6 +90,36 @@ export default class CommunityManager {
     return community;
   }
 
+  async getModInfo(name: string, requestUserId: string) {
+    const community = await this.prisma.community.findUnique({
+      where: { name },
+      include: {
+        owner: {
+          select: {
+            deleted_at: true,
+            display_name: true,
+            id: true,
+            is_mature: true,
+            profile_picture_url: true,
+            username: true,
+            description: true,
+          },
+        },
+        community_moderators: {
+          where: { user_id: requestUserId },
+          select: {
+            is_active: true,
+            user: {
+              select: { id: true, username: true, profile_picture_url: true },
+            },
+          },
+        },
+      },
+    });
+
+    return community;
+  }
+
   async fetch(
     communityName: string,
     communityId: string,
@@ -251,6 +281,33 @@ export default class CommunityManager {
             role: 'CONTRIBUTOR',
           },
         },
+      },
+    });
+  }
+
+  // ! UPDATE
+  async editCommunitySettings(
+    community_name: string,
+    apiData: Partial<{
+      description: string;
+      type: CommunityType;
+      is_mature: boolean;
+      allow_basic_user_posts: boolean;
+      is_post_flair_required: boolean;
+      profile_picture_url?: string;
+      banner_url_desktop?: string;
+      banner_url_mobile?: string;
+    }>,
+    previousAllowBasicUserPosts: boolean,
+  ) {
+    await this.prisma.community.update({
+      where: { name: community_name },
+      data: {
+        ...apiData,
+        ...(apiData?.type && {
+          allow_basic_user_posts:
+            apiData?.type === 'PUBLIC' ? true : previousAllowBasicUserPosts,
+        }),
       },
     });
   }

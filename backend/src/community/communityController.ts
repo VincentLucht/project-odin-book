@@ -11,6 +11,7 @@ import { TimeFrame } from '@/db/managers/util/types';
 import { JwtPayload } from 'jsonwebtoken';
 import { AuthPayload } from '@/comment/commentController';
 import { Pagination } from '@/db/managers/util/types';
+import isCommunityTypeValid from '@/community/util/isCommunityTypeValid';
 
 class CommunityController {
   // ! GET
@@ -285,6 +286,117 @@ class CommunityController {
       console.error(error);
       return res.status(500).json({
         message: 'Failed to create Community',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  });
+
+  // ! MODERATION
+  getModInfo = asyncHandler(async (req: Request, res: Response) => {
+    if (checkValidationError(req, res)) return;
+
+    const { community_name } = req.query as { community_name: string };
+
+    try {
+      const { user_id } = getAuthUser(req.authData);
+      if (!(await db.user.getById(user_id))) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      const foundCommunity = await db.community.getByName(community_name);
+      if (!foundCommunity) {
+        return res.status(404).json({ message: 'Community not found' });
+      }
+
+      if (!(await db.communityModerator.isMod(user_id, foundCommunity.id))) {
+        return res
+          .status(403)
+          .json({ message: 'You are not a moderator in this community' });
+      }
+
+      const community = await db.community.getModInfo(community_name, user_id);
+
+      return res
+        .status(200)
+        .json({ message: 'Successfully fetch mod information', community });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        message: 'Failed to get community mod information',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  });
+
+  editCommunitySettings = asyncHandler(async (req: Request, res: Response) => {
+    if (checkValidationError(req, res)) return;
+
+    // TODO: Add more validation here? one for str and bools
+    const {
+      community_name,
+      description,
+      community_type,
+      is_mature,
+      allow_basic_user_posts,
+      is_post_flair_required,
+      profile_picture_url,
+      banner_url_desktop,
+      banner_url_mobile,
+    } = req.body;
+
+    try {
+      if (community_type) {
+        const isValid = isCommunityTypeValid(community_type);
+        if (!isValid) throw new Error('Invalid community type detected');
+      }
+
+      const { user_id } = getAuthUser(req.authData);
+      if (!(await db.user.getById(user_id))) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      const foundCommunity = await db.community.getByName(community_name);
+      if (!foundCommunity) {
+        return res.status(404).json({ message: 'Community not found' });
+      }
+
+      console.log(await db.communityFlair.getPostFlairCount(foundCommunity.id));
+      if (
+        is_post_flair_required &&
+        (await db.communityFlair.getPostFlairCount(foundCommunity.id)) === 0
+      ) {
+        return res.status(409).json({
+          message:
+            'You have to have at least 1 post flair to enable this setting',
+        });
+      }
+
+      if (!(await db.communityModerator.isMod(user_id, foundCommunity.id))) {
+        return res
+          .status(403)
+          .json({ message: 'You are not a moderator in this community' });
+      }
+
+      await db.community.editCommunitySettings(
+        community_name,
+        {
+          description,
+          type: community_type,
+          is_mature,
+          allow_basic_user_posts,
+          is_post_flair_required,
+          profile_picture_url,
+          banner_url_desktop,
+          banner_url_mobile,
+        },
+        foundCommunity.allow_basic_user_posts,
+      );
+
+      return res.status(200).json({ message: 'Successfully edited community' });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        message: 'Failed to edit community info',
         error: error instanceof Error ? error.message : String(error),
       });
     }
