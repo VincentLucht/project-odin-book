@@ -1,6 +1,10 @@
 import { PrismaClient } from '@prisma/client/default';
 
 export default async function createFlairs(prisma: PrismaClient) {
+  const latestCreatedAt = new Date();
+  latestCreatedAt.setHours(latestCreatedAt.getHours() - 20);
+
+  // Create basic flairs with incrementing timestamps
   await prisma.communityFlair.create({
     data: {
       id: '1',
@@ -10,8 +14,11 @@ export default async function createFlairs(prisma: PrismaClient) {
       color: '#58eb34',
       emoji: '🧪',
       is_assignable_to_posts: true,
+      created_at: new Date(latestCreatedAt),
     },
   });
+
+  latestCreatedAt.setMinutes(latestCreatedAt.getMinutes() + 1);
 
   await prisma.communityFlair.create({
     data: {
@@ -21,11 +28,13 @@ export default async function createFlairs(prisma: PrismaClient) {
       textColor: '#ffffff',
       color: '#123456',
       is_assignable_to_posts: true,
+      created_at: new Date(latestCreatedAt),
     },
   });
 
-  // Create user flairs
-  for (let i = 3; i < 100; i++) {
+  // Create user flairs with timestamps
+  for (let i = 3; i < 300; i++) {
+    latestCreatedAt.setMinutes(latestCreatedAt.getMinutes() + 1);
     await prisma.communityFlair.create({
       data: {
         id: i.toString(),
@@ -34,12 +43,14 @@ export default async function createFlairs(prisma: PrismaClient) {
         name: `Test User Flair ${i}`,
         color: '#654321',
         is_assignable_to_users: true,
+        created_at: new Date(latestCreatedAt),
       },
     });
   }
 
-  // Create post flairs
-  for (let i = 100; i <= 200; i++) {
+  // Create post flairs with timestamps
+  for (let i = 301; i <= 701; i++) {
+    latestCreatedAt.setMinutes(latestCreatedAt.getMinutes() + 1);
     await prisma.communityFlair.create({
       data: {
         id: i.toString(),
@@ -47,7 +58,8 @@ export default async function createFlairs(prisma: PrismaClient) {
         textColor: '#ffffff',
         name: `Test Post Flair ${i}`,
         color: '#654321',
-        is_assignable_to_users: true,
+        is_assignable_to_posts: true,
+        created_at: new Date(latestCreatedAt),
       },
     });
   }
@@ -55,7 +67,7 @@ export default async function createFlairs(prisma: PrismaClient) {
   // Create user flair in other community
   await prisma.communityFlair.create({
     data: {
-      id: '201',
+      id: '300',
       community_id: '2',
       textColor: '#ffffff',
       name: 'Flair in other com',
@@ -63,14 +75,15 @@ export default async function createFlairs(prisma: PrismaClient) {
       is_assignable_to_users: true,
     },
   });
+
+  // Assign user flairs
   await prisma.userAssignedFlair.create({
     data: {
       user_id: '1',
-      community_flair_id: '201',
+      community_flair_id: '300',
     },
   });
 
-  // Assign user flair to t1
   await prisma.userAssignedFlair.create({
     data: {
       user_id: '1',
@@ -87,5 +100,5 @@ export default async function createFlairs(prisma: PrismaClient) {
     },
   });
 
-  console.log('Successfully created Post and User Flairs');
+  console.log('Successfully created Post and User Flairs with timestamps');
 }
