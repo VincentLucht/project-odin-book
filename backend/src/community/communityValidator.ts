@@ -4,6 +4,7 @@ import vm from '@/util/validationMessage';
 import isTopicValid from '@/community/util/isTopicValid';
 import isSortByValid from '@/util/isSortByValid';
 import isValidName from '@/db/managers/util/isValidName';
+import isCommunityTypeValid from '@/community/util/isCommunityTypeValid';
 
 // prettier-ignore
 class CommunityValidator {
@@ -104,23 +105,22 @@ class CommunityValidator {
 
       body('type').trim()
         .custom((input) => {
-          let found = false;
-          for (const key in CommunityType) {
-            if (CommunityType[key as keyof typeof CommunityType] === input) {
-              found = true;
-              break;
-            }
-          }
-
-          if (found) {
-            return true;
-          }
+          isCommunityTypeValid(input);
         }),
 
       body('topics').trim()
         .custom((topics) => {
           return isTopicValid(topics);
         }),
+    ];
+  }
+
+  // MODERATION
+  editCommunitySettingsRules() {
+    return [
+      body('community_name').trim()
+        .notEmpty()
+        .withMessage(vm.req('Community name')),
     ];
   }
 }
