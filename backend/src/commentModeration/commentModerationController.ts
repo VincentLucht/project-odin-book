@@ -40,9 +40,11 @@ class CommentModerationController {
       const sendNotification = async () => {
         if (comment.user_id && moderation_action === 'REMOVED') {
           await db.notifications.sendNotification(
+            'user',
             user_id,
             comment.user_id,
             'MODMESSAGE',
+            `Removal of comment ${comment_id}`,
             reason,
           );
         }

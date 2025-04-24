@@ -27,9 +27,11 @@ export default class NotificationManager {
   }
 
   async sendNotification(
-    sender_id: string,
+    sender_type: 'community' | 'user',
+    sender_id: string, // ? either user_id or community id
     receiver_id: string,
     type: NotificationType,
+    subject: string,
     message?: string,
   ) {
     const user = await this.user.getSettings(receiver_id, true);
@@ -39,9 +41,15 @@ export default class NotificationManager {
     if (shouldSend) {
       await this.prisma.notification.create({
         data: {
-          sender_id,
+          ...(sender_type === 'community' && {
+            sender_community_id: sender_id,
+          }),
+          ...(sender_type === 'user' && {
+            sender_user_id: sender_id,
+          }),
           receiver_id,
           type,
+          subject,
           message,
         },
       });
