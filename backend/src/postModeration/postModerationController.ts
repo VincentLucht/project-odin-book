@@ -40,9 +40,11 @@ class PostModerationController {
       const sendNotification = async () => {
         if (post.poster_id && moderation_action === 'REMOVED') {
           await db.notifications.sendNotification(
+            'user',
             user_id,
             post.poster_id,
             'MODMESSAGE',
+            `Removal of post ${post_id}`,
             reason,
           );
         }
