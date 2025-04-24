@@ -7,7 +7,7 @@ import Login from '@/auth/Login/Login';
 import SignUp from '@/auth/SignUp/SignUp';
 import Layout from '@/Main/Layout/Layout';
 
-import Main from '@/Main/Main';
+import Homepage from '@/Main/Pages/Homepage/Homepage';
 
 import SearchResults from '@/Main/SearchResults/SearchResults';
 
@@ -18,6 +18,7 @@ import Community from '@/Main/Community/Community';
 import CreateCommunity from '@/Main/Community/components/CreateCommunity/CreateCommunity';
 
 import ModTools from '@/Main/Community/components/ModTools/ModTools';
+import ModMail from '@/Main/Community/components/ModTools/components/ModMail/ModMail';
 import CommunitySettings from '@/Main/Community/components/ModTools/components/CommunitySettings/CommunitySettings';
 import CommunityFlairSettings from '@/Main/Community/components/ModTools/components/CommunitySettings/components/CommunityFlairSettings';
 
@@ -43,6 +44,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 
               {/* MOD */}
               <Route path="r/:communityName/mod/" element={<ModTools />}>
+                <Route path="modmail" element={<ModMail />} />
+
                 <Route path="settings" element={<CommunitySettings />} />
 
                 <Route
@@ -57,7 +60,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               </Route>
 
               <Route path="/" element={<Layout />}>
-                <Route index element={<Main />} />
+                <Route index element={<Homepage />} />
 
                 {/* SEARCHING */}
                 <Route path="/search/*" element={<SearchResults />} />

@@ -4,6 +4,7 @@ import db from '@/db/db';
 import { checkValidationError } from '@/util/checkValidationError';
 import { asyncHandler } from '@/util/asyncHandler';
 import getAuthUser from '@/util/getAuthUser';
+import { TimeFrame } from '@/db/managers/util/types';
 
 class UserCommunityController {
   join = asyncHandler(async (req: Request, res: Response) => {
@@ -123,6 +124,46 @@ class UserCommunityController {
       console.error(error);
       return res.status(500).json({
         message: 'Failed to leave Community',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  });
+
+  fetchHomePage = asyncHandler(async (req: Request, res: Response) => {
+    if (checkValidationError(req, res)) return;
+
+    const {
+      sbt: sortByType,
+      t: timeframe,
+      cId: cursorId,
+    } = req.query as {
+      sbt: 'new' | 'top';
+      t: TimeFrame;
+      cId: string;
+    };
+
+    try {
+      const { user_id } = getAuthUser(req.authData);
+      if (!(await db.user.getById(user_id))) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      const { homepage, pagination } = await db.userCommunity.fetchHomePageBy(
+        user_id,
+        sortByType,
+        timeframe,
+        cursorId,
+      );
+
+      return res.status(200).json({
+        message: 'Successfully fetched home page',
+        posts: homepage,
+        pagination,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        message: 'Failed to fetch home page',
         error: error instanceof Error ? error.message : String(error),
       });
     }

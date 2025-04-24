@@ -1,9 +1,10 @@
 import { useState } from 'react';
 
 import Header from '@/Header/Header';
-import Main from '@/Main/Main';
+import Homepage from '@/Main/Pages/Homepage/Homepage';
 import Sidebar from '@/Sidebar/Sidebar';
 
+// TODO: Remove component?
 export default function App() {
   const [search, setSearch] = useState('');
 
@@ -14,7 +15,7 @@ export default function App() {
       <div className="grid flex-1 grid-cols-[270px_auto]">
         <Sidebar />
 
-        <Main />
+        <Homepage />
       </div>
     </div>
   );

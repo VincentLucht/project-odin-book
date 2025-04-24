@@ -7,6 +7,12 @@ import userCommunityController from '@/userCommunity/userCommunityController';
 const userCommunityRouter = express.Router();
 
 userCommunityRouter.get(
+  '/homepage',
+  token.authenticate,
+  userCommunityController.fetchHomePage,
+);
+
+userCommunityRouter.get(
   '/joined-communities',
   token.authenticate,
   userCommunityController.getJoinedCommunities,
