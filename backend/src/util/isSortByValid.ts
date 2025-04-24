@@ -2,7 +2,7 @@ export default function isSortByValid(type: string) {
   return type === 'new' || type === 'top' || type === 'hot';
 }
 
-export function isSortByValidUser(type: string) {
+export function isSortByValidNewAndTop(type: string) {
   return type === 'new' || type === 'top';
 }
 

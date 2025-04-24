@@ -1,6 +1,6 @@
 import { body, query } from 'express-validator/lib';
 import vm from '@/util/validationMessage';
-import { isSortByValidUser } from '@/util/isSortByValid';
+import { isSortByValidNewAndTop } from '@/util/isSortByValid';
 
 // prettier-ignore
 class UserValidator {
@@ -16,7 +16,7 @@ class UserValidator {
             throw new Error('Sort by is required');
           }
 
-          return isSortByValidUser(sort_by);
+          return isSortByValidNewAndTop(sort_by);
         }),
 
       query('page').trim()
