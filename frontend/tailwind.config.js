@@ -107,6 +107,12 @@ export default {
         '.bg-transition-hover-alternate' :{ // brighter to stand out more
           '@apply transition-colors hover:bg-gray-500/45 active:bg-gray-500/60' : {}
         },
+        '.hyperlink-hover': {
+          '@apply hover:underline hover:text-blue-400': {}
+        },
+        '.modal-input': {
+          '@apply w-full rounded-2xl p-4 focus-blue': {}
+        },
         '.center-main': {
           '@apply w-full flex justify-center': {}
         },
