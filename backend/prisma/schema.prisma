@@ -76,6 +76,8 @@ model User {
   user_settings          UserSettings?
   sent_notifications     Notification[]       @relation("Sender")
   received_notifications Notification[]       @relation("Receiver")
+  sent_mod_mails         ModMail[]
+  reports                Reported[]
 }
 
 enum RequestStatus {
@@ -187,8 +189,23 @@ model Community {
   join_request         JoinRequest[]
   recent_communities   RecentCommunities[]
   community_rules      CommunityRule[]
+  mod_mail             ModMail[]
+  sent_notifications   Notification[]
 
   @@index([name])
+}
+
+model ModMail {
+  id           String    @id @default(uuid())
+  subject      String    @db.VarChar(200)
+  message      String    @db.VarChar(1000)
+  created_at   DateTime  @default(now())
+  is_archived  Boolean   @default(false)
+  has_replied  Boolean   @default(false)
+  sender_id    String
+  sender       User      @relation(fields: [sender_id], references: [id])
+  community_id String
+  community    Community @relation(fields: [community_id], references: [id])
 }
 
 model CommunityModerator {
@@ -225,6 +242,36 @@ model PostModeration {
   @@index([moderator_id])
 }
 
+enum ReportedTypes {
+  POST
+  COMMENT
+}
+
+enum ReportedStatus {
+  PENDING
+  REVIEWED
+  DISMISSED
+}
+
+model Reported {
+  id          String         @id @default(uuid())
+  item_id     String
+  item_type   ReportedTypes
+  reporter_id String
+  reporter    User           @relation(fields: [reporter_id], references: [id])
+  reason      String
+  created_at  DateTime       @default(now())
+  status      ReportedStatus
+
+  post_id    String?
+  post       Post?    @relation(fields: [post_id], references: [id])
+  comment_id String?
+  comment    Comment? @relation(fields: [comment_id], references: [id])
+
+  @@unique([item_id, item_type, reporter_id]) // ? Prevent same user from reporting item multiple times
+  @@index([item_id, item_type])
+}
+
 enum PostType {
   BASIC
   IMAGES
@@ -259,6 +306,9 @@ model Post {
   post_assigned_flair PostAssignedFlair[]
 
   moderation PostModeration?
+
+  times_reported Int        @default(0)
+  reports        Reported[]
 
   @@index([title])
   @@index([created_at])
@@ -324,6 +374,9 @@ model Comment {
   // Child relation
   replies           Comment[] @relation("CommentReplies")
 
+  times_reported Int        @default(0)
+  reports        Reported[]
+
   @@index([post_id]) // for lookups of comments by post
   @@index([parent_comment_id]) // for comment replies
   @@index([user_id]) // for user comment history
@@ -352,22 +405,27 @@ enum NotificationType {
   POSTREPLY
   COMMENTREPLY
   MODMESSAGE
+  MODMAILREPLY
   CHATMESSAGE
   NEWFOLLOWER
 }
 
 model Notification {
   id         String           @id @default(uuid())
+  subject    String
   message    String?
   created_at DateTime         @default(now())
   type       NotificationType
 
-  sender_id   String
-  sender      User   @relation("Sender", fields: [sender_id], references: [id])
-  receiver_id String
-  receiver    User   @relation("Receiver", fields: [receiver_id], references: [id])
+  sender_user_id      String?
+  sender_user         User?      @relation("Sender", fields: [sender_user_id], references: [id])
+  sender_community_id String?
+  sender_community    Community? @relation(fields: [sender_community_id], references: [id])
+  receiver_id         String
+  receiver            User       @relation("Receiver", fields: [receiver_id], references: [id])
 
-  @@index([sender_id, receiver_id])
+  @@index([sender_user_id, receiver_id])
+  @@index([sender_community_id, receiver_id])
 }
 
 model BannedUser {
