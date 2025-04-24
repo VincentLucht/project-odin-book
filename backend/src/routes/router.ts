@@ -17,6 +17,7 @@ import searchResultsRouter from '@/searchResults/searchResultsRouter';
 import communityModeratorRouter from '@/communityModerator/communityModeratorRouter';
 import postModerationRouter from '@/postModeration/postModerationRouter';
 import commentModerationRouter from '@/commentModeration/commentModerationRouter';
+import modMailRouter from '@/modMail/modMailRouter';
 
 const router = express.Router();
 
@@ -38,6 +39,7 @@ router.use('/community/user/flair', userAssignedFlairRouter);
 router.use('/community/mod', communityModeratorRouter);
 router.use('/community/mod/post', postModerationRouter);
 router.use('/topic', topicRouter);
+router.use('/modmail', modMailRouter);
 
 router.get('/test', (req, res) => {
   return res.json([{ title: 'test' }, { title: 'test2' }]);

@@ -92,6 +92,9 @@ const mockDb = {
     request: jest.fn(),
     delete: jest.fn(),
   },
+  modMail: {
+    sendMessage: jest.fn(),
+  },
 };
 
 export default mockDb;
