@@ -1,7 +1,10 @@
 import { Prisma } from '@prisma/client';
 const { SortOrder } = Prisma;
 
-export function getPostInfo(requestUserId: string | undefined) {
+export function getPostInfo(
+  requestUserId: string | undefined,
+  includeModeration = true,
+) {
   return {
     ...(requestUserId && {
       post_votes: {
@@ -23,15 +26,17 @@ export function getPostInfo(requestUserId: string | undefined) {
         community_flair: true,
       },
     },
-    moderation: {
-      include: {
-        moderator: {
-          select: {
-            user: { select: { username: true, profile_picture_url: true } },
+    ...(includeModeration && {
+      moderation: {
+        include: {
+          moderator: {
+            select: {
+              user: { select: { username: true, profile_picture_url: true } },
+            },
           },
         },
       },
-    },
+    }),
   };
 }
 
