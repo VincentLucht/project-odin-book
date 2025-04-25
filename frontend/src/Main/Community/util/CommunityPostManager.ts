@@ -4,10 +4,10 @@ import catchError from '@/util/catchError';
 
 import confirmAction from '@/util/confirmAction';
 import editPost from '@/Main/Post/api/edit/editPost';
+import deletePostFlair from '@/Main/Post/components/PostFlairTag/api/deletePostFlair';
 
 import CommunityPostHandler from '@/Main/Community/handlers/CommunityPostHandler';
 import UserProfilePostHandler from '@/Main/user/UserProfile/handlers/UserProfilePostHandler';
-import deletePostFlair from '@/Main/Post/components/PostFlairTag/api/deletePostFlair';
 
 /**
  * Handles API calls related to posts, like deleting a post.
