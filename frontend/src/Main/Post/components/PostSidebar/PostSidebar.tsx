@@ -55,6 +55,7 @@ export default function PostSidebar({
 
   return (
     <CommunitySidebar
+      token={token}
       community={community}
       navigate={navigate}
       showMembership={{

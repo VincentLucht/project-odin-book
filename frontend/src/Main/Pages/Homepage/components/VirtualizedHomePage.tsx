@@ -47,6 +47,7 @@ export default function VirtualizedHomePage({
         <div data-post-id={post.id}>
           <PostOverview
             post={post}
+            setPosts={setPosts}
             community={post.community}
             userId={userId}
             token={token}
@@ -77,7 +78,7 @@ export default function VirtualizedHomePage({
         </div>
       );
     },
-    [posts, userId, token, navigate, showEditDropdown, communityPostHandler],
+    [posts, userId, token, navigate, showEditDropdown, communityPostHandler, setPosts],
   );
 
   return (

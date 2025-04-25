@@ -10,7 +10,7 @@ import { report } from '@/Main/Global/api/reportAPI';
 import { toast } from 'react-toastify';
 
 import { UserAndHistory } from '@/Main/user/UserProfile/api/fetchUserProfile';
-import { DBPostWithCommunityName } from '@/interface/dbSchema';
+import { DBPostWithCommunityName, DBPostWithCommunity } from '@/interface/dbSchema';
 
 interface ReportModalProps {
   show: boolean;
@@ -22,6 +22,7 @@ interface ReportModalProps {
   };
   setFetchedUser?: React.Dispatch<React.SetStateAction<UserAndHistory | null>>;
   setPosts?: React.Dispatch<React.SetStateAction<DBPostWithCommunityName[]>>;
+  setPost: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>;
 }
 
 export default function ReportModal({
@@ -31,6 +32,7 @@ export default function ReportModal({
   apiData,
   setFetchedUser,
   setPosts,
+  setPost,
 }: ReportModalProps) {
   const [subject, setSubject] = useState('');
   const [reason, setReason] = useState('');
@@ -55,6 +57,12 @@ export default function ReportModal({
       setSubmitting(false);
       if (report === false) return;
       onClose();
+
+      setPost?.((prev) => {
+        if (!prev) return prev;
+
+        return { ...prev, reports: [report] };
+      });
 
       setPosts?.((prev) => {
         if (!prev) return prev;
