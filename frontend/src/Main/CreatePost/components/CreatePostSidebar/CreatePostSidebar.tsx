@@ -41,7 +41,7 @@ export default function CreatePostSidebar({
   }
 
   return (
-    <div className="sidebar rounded-2xl bg-zinc-950 p-4 text-gray-400">
+    <div className="rounded-2xl bg-zinc-950 p-4 text-gray-400 sidebar">
       {isLoading ? (
         <animated.div style={loadingAnimation}>
           <div className="mb-2 h-6 w-40 animate-pulse rounded bg-zinc-800"></div>
