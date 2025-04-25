@@ -5,12 +5,14 @@ import DisplayMemberCount from '@/components/sidebar/DisplayMemberCount.tsx/Disp
 import Separator from '@/components/Separator';
 import RuleTab from '@/Main/CreatePost/components/CreatePostSidebar/components/RuleTab';
 import UserCard from '@/components/user/UserCard';
-import { MailIcon } from 'lucide-react';
+
+import MessageMods from '@/Main/Community/components/CommunitySidebar/components/MessageMods';
 
 import { FetchedCommunity } from '@/Main/Community/api/fetch/fetchCommunityWithPosts';
 import { NavigateFunction } from 'react-router-dom';
 
 interface CommunitySidebarProps {
+  token: string | null;
   community: FetchedCommunity;
   navigate: NavigateFunction;
   showMembership?: {
@@ -21,6 +23,7 @@ interface CommunitySidebarProps {
 }
 
 export default function CommunitySidebar({
+  token,
   community,
   navigate,
   showMembership,
@@ -68,11 +71,7 @@ export default function CommunitySidebar({
       <div className="flex flex-col gap-2">
         <h3 className="sidebar-subheading">MODERATORS</h3>
 
-        {/* TODO: Add this functionality */}
-        <button className="gap-2 df sidebar-btn-stone">
-          <MailIcon className="w-5" strokeWidth={1.7} />
-          Message Mods
-        </button>
+        <MessageMods community_id={community.id} token={token} />
 
         {community.community_moderators.map(({ is_active, user }, index) => {
           if (!is_active) return;
