@@ -77,7 +77,7 @@ model User {
   sent_notifications     Notification[]       @relation("Sender")
   received_notifications Notification[]       @relation("Receiver")
   sent_mod_mails         ModMail[]
-  reports                Reported[]
+  reports                Report[]
 }
 
 enum RequestStatus {
@@ -253,13 +253,13 @@ enum ReportedStatus {
   DISMISSED
 }
 
-model Reported {
+model Report {
   id          String         @id @default(uuid())
-  item_id     String
   item_type   ReportedTypes
   reporter_id String
   reporter    User           @relation(fields: [reporter_id], references: [id])
-  reason      String
+  subject     String         @db.VarChar(20)
+  reason      String         @db.VarChar(500)
   created_at  DateTime       @default(now())
   status      ReportedStatus
 
@@ -268,8 +268,11 @@ model Reported {
   comment_id String?
   comment    Comment? @relation(fields: [comment_id], references: [id])
 
-  @@unique([item_id, item_type, reporter_id]) // ? Prevent same user from reporting item multiple times
-  @@index([item_id, item_type])
+  // ? Prevent multiple reports + lookup
+  @@unique([reporter_id, post_id])
+  @@unique([reporter_id, comment_id])
+  @@index([post_id])
+  @@index([comment_id])
 }
 
 enum PostType {
@@ -307,8 +310,8 @@ model Post {
 
   moderation PostModeration?
 
-  times_reported Int        @default(0)
-  reports        Reported[]
+  times_reported Int      @default(0)
+  reports        Report[]
 
   @@index([title])
   @@index([created_at])
@@ -374,8 +377,8 @@ model Comment {
   // Child relation
   replies           Comment[] @relation("CommentReplies")
 
-  times_reported Int        @default(0)
-  reports        Reported[]
+  times_reported Int      @default(0)
+  reports        Report[]
 
   @@index([post_id]) // for lookups of comments by post
   @@index([parent_comment_id]) // for comment replies
