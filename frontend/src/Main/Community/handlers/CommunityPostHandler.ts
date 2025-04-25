@@ -1,4 +1,5 @@
 import CommunityPostManager from '@/Main/Community/util/CommunityPostManager';
+import { DBPostWithCommunityName } from '@/interface/dbSchema';
 
 /**
  * Creates callback functions for Post edit API functions, uses {@link DBPostWithCommunityName} as the setter function type.
