@@ -56,35 +56,23 @@ export default function GiveRemovalReason({
       error: 'Failed to add removal reason',
     };
 
-    if (type === 'post') {
-      void moderatePost(
-        token,
-        { post_id: apiData.id, ...removalPayload },
-        toastMessages,
-      ).then((success) => {
-        setSubmitting(false);
-        setShow(false);
-        onUpdateRemovalReason?.(apiData.id, removalReason, success);
-      });
-    } else if (type === 'comment') {
-      void moderateComment(
-        token,
-        { comment_id: apiData.id, ...removalPayload },
-        toastMessages,
-      ).then((success) => {
-        setSubmitting(false);
-        setShow(false);
-        onUpdateRemovalReason?.(apiData.id, removalReason, success);
-      });
-    }
+    void (
+      type === 'post'
+        ? moderatePost(token, { post_id: apiData.id, ...removalPayload }, toastMessages)
+        : moderateComment(
+            token,
+            { comment_id: apiData.id, ...removalPayload },
+            toastMessages,
+          )
+    ).then((success) => {
+      setSubmitting(false);
+      setShow(false);
+      onUpdateRemovalReason?.(apiData.id, removalReason, success);
+    });
   };
 
   return (
-    <Modal
-      show={show}
-      onClose={() => handleClose()}
-      className="w-full min-w-[300px] max-w-[500px]"
-    >
+    <Modal show={show} onClose={() => handleClose()}>
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">Give a removal reason</h2>
 
