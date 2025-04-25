@@ -159,6 +159,21 @@ export interface DBModMail {
   community_id: string;
 }
 
+type ReportedTypes = 'POST' | 'COMMENT';
+type ReportedStatus = 'PENDING' | 'REVIEWED' | 'DISMISSED';
+export interface DBReport {
+  id: string;
+  item_type: ReportedStatus;
+  reporter_id: string;
+  subject: string;
+  reason: string;
+  created_at: string;
+  status: ReportedTypes;
+
+  post_id: string | null;
+  comment_id: string | null;
+}
+
 // EXTENSIONS
 export type CommunityTypes = 'PUBLIC' | 'RESTRICTED' | 'PRIVATE';
 export type UserRoles = 'BASIC' | 'CONTRIBUTOR';
@@ -190,6 +205,7 @@ export interface DBPostWithCommunityName extends DBPostWithModeration {
     deleted_at: string | null;
   } | null;
   post_assigned_flair: PostAssignedFlair;
+  reports: DBReport[];
 }
 
 export interface DBCommentWithCommunityName extends DBComment {
@@ -207,6 +223,7 @@ export interface DBPostWithCommunity extends DBPostWithModeration {
   post_votes: VotingRecord[];
   community: FetchedCommunity;
   post_assigned_flair: PostAssignedFlair;
+  reports: DBReport[];
 }
 
 export interface DBCommentWithReplies extends DBComment {

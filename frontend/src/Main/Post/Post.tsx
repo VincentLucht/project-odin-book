@@ -61,6 +61,7 @@ export default function Post() {
 
   const isMod = useIsModerator(user, post?.community?.community_moderators);
   const isMember = useIsMember(user, post?.community);
+  const hasReported = (post?.reports?.length ?? 0) > 0;
 
   useEffect(() => {
     if (!post) return;
@@ -145,6 +146,7 @@ export default function Post() {
 
               {/* TODO: Add saved */}
               <PostEditDropdownMenu
+                hasReported={hasReported}
                 isUserPoster={isUserPoster}
                 postId={post.id}
                 token={token}

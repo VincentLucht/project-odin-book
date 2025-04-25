@@ -39,7 +39,6 @@ export default class UserManager {
   ) {
     const limit = 15;
     const offset = (page - 1) * limit;
-
     const userAndHistory = await this.prisma.user.findUnique({
       where: { username },
       select: {
@@ -52,6 +51,7 @@ export default class UserManager {
                 select: { user_id: true, vote_type: true },
               },
             }),
+            reports: true,
             community: {
               select: {
                 id: true,
@@ -94,6 +94,7 @@ export default class UserManager {
                 },
               },
             },
+            reports: true,
             post: {
               select: {
                 title: true,

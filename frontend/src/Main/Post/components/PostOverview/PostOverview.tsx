@@ -96,6 +96,7 @@ export default function PostOverview({
     showMembership && 'community' in post
       ? (post.community.user_communities ?? [])
       : null;
+  const hasReported = post.reports?.length > 0;
 
   const onVote = (voteType: VoteType) => {
     if (!token || !userId) {
@@ -187,6 +188,7 @@ export default function PostOverview({
 
             {/* TODO: Add saved stuff */}
             <PostEditDropdownMenuPost
+              token={token}
               isUserPoster={isUserPoster}
               communityName={community.name}
               postId={post.id}
@@ -194,6 +196,7 @@ export default function PostOverview({
               hasPostFlair={Boolean(post.post_assigned_flair?.length)}
               isMature={isMature}
               isSpoiler={isSpoiler}
+              hasReported={hasReported}
               showEditDropdown={showEditDropdown}
               setShowEditDropdown={setShowEditDropdown}
               navigate={navigate}
@@ -202,6 +205,8 @@ export default function PostOverview({
               spoilerFunc={spoilerFunc}
               matureFunc={matureFunc}
               removePostFlairFunc={removePostFlairFunc}
+              setFetchedUser={setFetchedUser}
+              setPosts={setPosts}
             />
           </div>
         </div>

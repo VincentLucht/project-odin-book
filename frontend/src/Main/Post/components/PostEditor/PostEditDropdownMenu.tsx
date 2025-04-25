@@ -1,5 +1,5 @@
 import Ellipsis from '@/components/Interaction/Ellipsis';
-import Save from '@/components/Interaction/Save';
+import NotUserEllipsis from '@/components/Interaction/NotUserEllipsis';
 
 import confirmDelete from '@/util/confirmDelete';
 import handleDeletePost from '@/Main/Post/api/delete/handleDeletePost';
@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 import { DBPostWithCommunity } from '@/interface/dbSchema';
 
 interface PostEditDropdownMenuProps {
+  hasReported: boolean;
   isUserPoster: boolean;
   postId: string;
   token: string | null;
@@ -22,9 +23,9 @@ interface PostEditDropdownMenuProps {
   setShowPostFlairSelection: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-// TODO: Add post flair here
 // TODO: Add saving posts (+comments)
 export default function PostEditDropdownMenu({
+  hasReported,
   isUserPoster,
   postId,
   token,
@@ -43,7 +44,7 @@ export default function PostEditDropdownMenu({
       return;
     }
 
-    // TODO: Replace with swal2
+    // TODO: Replace with custom modal
     if (confirmDelete('post')) {
       handleDeletePost(postId, token, setPost);
     }
@@ -104,7 +105,15 @@ export default function PostEditDropdownMenu({
           spoilerFunc={addSpoilerTag}
         />
       ) : (
-        <Save isSaved={false} />
+        <NotUserEllipsis
+          hasSaved={false} // TODO: Implement saved
+          hasReported={hasReported}
+          token={token}
+          id={postId}
+          showDropdown={showDropdown}
+          setShowDropdown={setShowDropdown}
+          setPost={setPost}
+        />
       )}
     </div>
   );

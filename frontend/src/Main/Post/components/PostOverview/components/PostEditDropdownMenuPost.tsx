@@ -1,9 +1,12 @@
 import Ellipsis from '@/components/Interaction/Ellipsis';
-import Save from '@/components/Interaction/Save';
+import NotUserEllipsis from '@/components/Interaction/NotUserEllipsis';
 
 import { NavigateFunction } from 'react-router-dom';
+import { UserAndHistory } from '@/Main/user/UserProfile/api/fetchUserProfile';
+import { DBPostWithCommunityName } from '@/interface/dbSchema';
 
 interface PostEditDropdownMenuPostProps {
+  token: string | null;
   isUserPoster: boolean;
   communityName: string;
   postId: string;
@@ -11,9 +14,12 @@ interface PostEditDropdownMenuPostProps {
   hasPostFlair: boolean;
   isMature: boolean;
   isSpoiler: boolean;
+  hasReported: boolean;
   showEditDropdown: string | null;
   setShowEditDropdown: React.Dispatch<React.SetStateAction<string | null>>;
   navigate: NavigateFunction;
+  setFetchedUser?: React.Dispatch<React.SetStateAction<UserAndHistory | null>>;
+  setPosts?: React.Dispatch<React.SetStateAction<DBPostWithCommunityName[]>>;
 
   // Edit functions
   deleteFunc: () => void;
@@ -23,6 +29,7 @@ interface PostEditDropdownMenuPostProps {
 }
 
 export default function PostEditDropdownMenuPost({
+  token,
   isUserPoster,
   communityName,
   postId,
@@ -30,9 +37,12 @@ export default function PostEditDropdownMenuPost({
   hasPostFlair,
   isMature,
   isSpoiler,
+  hasReported,
   showEditDropdown,
   setShowEditDropdown,
   navigate,
+  setFetchedUser,
+  setPosts,
   // edit functions
   deleteFunc,
   spoilerFunc,
@@ -62,7 +72,16 @@ export default function PostEditDropdownMenuPost({
           postFlairFunc={removePostFlairFunc}
         />
       ) : (
-        <Save isSaved={false} />
+        <NotUserEllipsis
+          hasSaved={false} // TODO: Implement saved
+          hasReported={hasReported}
+          token={token}
+          id={postId}
+          showDropdown={showEditDropdown}
+          setShowDropdown={setShowEditDropdown}
+          setFetchedUser={setFetchedUser}
+          setPosts={setPosts}
+        />
       )}
     </div>
   );

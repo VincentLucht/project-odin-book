@@ -20,6 +20,7 @@ import JoinRequestManager from '@/db/managers/joinRequestManager';
 import SearchResultsManager from '@/db/managers/misc/searchResultsManager';
 import NotificationManager from '@/db/managers/notificationManager';
 import ModMailManager from '@/db/managers/modMailManager';
+import ReportManager from '@/db/managers/reportManager';
 
 export class DB {
   private prisma: PrismaClient;
@@ -43,6 +44,7 @@ export class DB {
   public searchResults: SearchResultsManager;
   public notifications: NotificationManager;
   public modMail: ModMailManager;
+  public report: ReportManager;
 
   constructor() {
     this.prisma = new PrismaClient();
@@ -66,6 +68,7 @@ export class DB {
     this.searchResults = new SearchResultsManager(this.prisma);
     this.notifications = new NotificationManager(this.prisma, this.user);
     this.modMail = new ModMailManager(this.prisma);
+    this.report = new ReportManager(this.prisma);
   }
 }
 

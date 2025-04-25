@@ -18,6 +18,7 @@ import communityModeratorRouter from '@/communityModerator/communityModeratorRou
 import postModerationRouter from '@/postModeration/postModerationRouter';
 import commentModerationRouter from '@/commentModeration/commentModerationRouter';
 import modMailRouter from '@/modMail/modMailRouter';
+import reportRouter from '@/report/reportRouter';
 
 const router = express.Router();
 
@@ -40,6 +41,7 @@ router.use('/community/mod', communityModeratorRouter);
 router.use('/community/mod/post', postModerationRouter);
 router.use('/topic', topicRouter);
 router.use('/modmail', modMailRouter);
+router.use('/report', reportRouter);
 
 router.get('/test', (req, res) => {
   return res.json([{ title: 'test' }, { title: 'test2' }]);

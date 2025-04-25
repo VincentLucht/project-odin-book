@@ -35,7 +35,7 @@ async function reset() {
 
   // Delete community related records
   await prisma.modMail.deleteMany();
-  await prisma.reported.deleteMany();
+  await prisma.report.deleteMany();
   await prisma.recentCommunities.deleteMany();
   await prisma.joinRequest.deleteMany();
   await prisma.bannedUser.deleteMany();

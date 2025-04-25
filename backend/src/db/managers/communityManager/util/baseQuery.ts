@@ -26,6 +26,9 @@ export function getPostInfo(
         community_flair: true,
       },
     },
+    reports: {
+      where: { reporter_id: requestUserId },
+    },
     ...(includeModeration && {
       moderation: {
         include: {

@@ -1,7 +1,13 @@
 import API_URL from '@/auth/ApiUrl';
-import { CommunityTypes, DBCommunityRule, UserRoles } from '@/interface/dbSchema';
+import {
+  CommunityTypes,
+  DBCommunityRule,
+  UserRoles,
+  DBPostWithCommunityName,
+  UserAssignedFlair,
+  DBReport,
+} from '@/interface/dbSchema';
 import { SortByType } from '@/Main/Community/Community';
-import { DBPostWithCommunityName, UserAssignedFlair } from '@/interface/dbSchema';
 import { Pagination } from '@/interface/backendTypes';
 
 export type FetchedCommunity = Omit<FetchedCommunityWithPosts, 'posts'>;
@@ -25,6 +31,7 @@ export interface FetchedCommunityWithPosts {
   user_communities: { user_id: string; role: UserRoles }[] | undefined;
   community_moderators: { is_active: boolean; user: CommunityModerator }[];
   community_rules: DBCommunityRule[];
+  reports: DBReport[];
 }
 
 export interface CommunityModerator {

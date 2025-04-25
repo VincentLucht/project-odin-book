@@ -61,6 +61,9 @@ export default class PostManager {
             },
           },
         },
+        reports: {
+          where: { reporter_id: user_id, post_id },
+        },
         community: getCommunityInfo('', community_id, user_id, false),
       },
     });
