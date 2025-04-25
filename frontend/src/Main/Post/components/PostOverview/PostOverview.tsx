@@ -32,18 +32,20 @@ export interface CommunityInfo {
   user_communities: CommunityMembership[] | undefined;
 }
 
+export type HomepagePost = Omit<DBPostWithCommunityName, 'moderation'>;
+
 interface PostOverviewProps {
   post: DBPostWithCommunityName | FetchedPost;
   community: CommunityInfo;
   userId: string | undefined;
   token: string | null;
-  setFetchedUser?: React.Dispatch<React.SetStateAction<UserAndHistory | null>>;
-  setPosts?: React.Dispatch<React.SetStateAction<DBPostWithCommunityName[]>>;
   navigate: NavigateFunction;
-  showPoster?: boolean;
-  showMembership?: boolean;
   showEditDropdown: string | null;
   setShowEditDropdown: React.Dispatch<React.SetStateAction<string | null>>;
+  setFetchedUser?: React.Dispatch<React.SetStateAction<UserAndHistory | null>>;
+  setPosts?: React.Dispatch<React.SetStateAction<DBPostWithCommunityName[]>>;
+  showPoster?: boolean;
+  showMembership?: boolean;
   showFlair?: boolean;
   showModOptions?: boolean;
   isMod?: IsMod;
@@ -62,15 +64,15 @@ export default function PostOverview({
   community,
   userId,
   token,
+  navigate,
+  showEditDropdown,
+  setShowEditDropdown,
   setFetchedUser,
   setPosts,
-  navigate,
   showPoster = false,
   showMembership = true,
   showModOptions = false,
   isMod = false,
-  showEditDropdown,
-  setShowEditDropdown,
   showModDropdown,
   setShowModDropdown,
   showFlair = true,
