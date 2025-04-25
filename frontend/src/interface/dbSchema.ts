@@ -148,6 +148,17 @@ export interface DBCommentModeration {
   moderator: { user: { username: string; profile_picture_url: string | null } };
 }
 
+export interface DBModMail {
+  id: string;
+  subject: string;
+  message: string;
+  created_at: string;
+  is_archived: boolean;
+  has_replied: boolean;
+  sender_id: string;
+  community_id: string;
+}
+
 // EXTENSIONS
 export type CommunityTypes = 'PUBLIC' | 'RESTRICTED' | 'PRIVATE';
 export type UserRoles = 'BASIC' | 'CONTRIBUTOR';
