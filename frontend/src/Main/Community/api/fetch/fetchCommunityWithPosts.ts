@@ -67,4 +67,3 @@ export default async function fetchCommunityWithPosts(
   const result = (await response.json()) as FetchCommunityResponse;
   return result;
 }
-
