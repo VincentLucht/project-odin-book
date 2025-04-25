@@ -1,6 +1,9 @@
 import dayjs from 'dayjs';
 
-export default function getRelativeTime(date: Date, useShortFormat = false): string {
+export default function getRelativeTime(
+  date: Date | string,
+  useShortFormat = false,
+): string {
   const now = dayjs();
   const timestamp = dayjs(date);
   const secondsDiff = now.diff(timestamp, 'second');
