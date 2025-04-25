@@ -14,7 +14,7 @@ interface SetSortByTypeProps {
   sortByType: SortByType | 'relevance';
   setSortByType: (sortBy: SortByType) => void;
   timeframe: TimeFrame;
-  setTimeframe: React.Dispatch<React.SetStateAction<TimeFrame>>;
+  setTimeframe: (timeframe: TimeFrame) => void;
   excludeSortOptions?: boolean;
   mode?: 'community' | 'search' | 'comments';
   safeSearch?: boolean;
