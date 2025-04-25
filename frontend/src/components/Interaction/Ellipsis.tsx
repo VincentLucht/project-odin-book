@@ -1,10 +1,10 @@
+import { useRef } from 'react';
 import useClickOutside from '@/hooks/useClickOutside';
 
 import DropdownMenu from '@/components/DropdownMenu/DropdownMenu';
 import DropdownButton from '@/components/DropdownMenu/components/DropdownButton';
 import { EllipsisIcon, PencilIcon, BookmarkIcon, TrashIcon } from 'lucide-react';
 import { SquarePenIcon, TagIcon, CircleAlertIcon, BanIcon } from 'lucide-react';
-import { useRef } from 'react';
 
 interface EllipsisProps {
   isUserSelf: boolean;
