@@ -8,7 +8,7 @@ import { IsModPost } from '@/Main/Post/Post';
 /**
  * Traverses the nested comment structure of {@link DBComment} with DFS and uses a cb function to update the comment.
  */
-function onCommentModeration(
+export function onCommentModeration(
   comment_id: string,
   updateFn: (comment: DBCommentWithReplies) => DBCommentWithReplies,
   setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[]>>,
