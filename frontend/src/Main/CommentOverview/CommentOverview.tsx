@@ -138,6 +138,11 @@ export default function CommentOverview({
               isEditActive={false}
               urlItems={urlItems}
               onEdit={onEdit}
+              isLocked={false}
+              isMod={false}
+              token={''}
+              moderation={null}
+              showModDropdown={null}
             />
           </div>
         </div>
