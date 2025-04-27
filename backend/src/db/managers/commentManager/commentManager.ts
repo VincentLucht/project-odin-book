@@ -68,6 +68,9 @@ export default class CommentManager {
             deleted_at: true,
           },
         },
+        ...(user_id && {
+          reports: { where: { reporter_id: user_id } },
+        }),
         moderation: {
           include: {
             moderator: {

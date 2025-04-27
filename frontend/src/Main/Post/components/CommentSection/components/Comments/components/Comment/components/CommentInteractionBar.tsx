@@ -4,6 +4,7 @@ import Reply from '@/components/Interaction/Reply';
 import Share from '@/components/Interaction/Share';
 import Ellipsis from '@/components/Interaction/Ellipsis';
 import ModMenuComment from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/components/ModMenuComment/ModMenuComment';
+import NotUserEllipsis from '@/components/Interaction/NotUserEllipsis';
 
 import { VoteType } from '@/interface/backendTypes';
 import { UrlItems } from '@/components/Interaction/Share';
@@ -16,7 +17,7 @@ interface CommentInteractionBarProps {
   userVote: { hasVoted: boolean; voteType: VoteType | undefined };
   commentId: string;
   moderation: DBCommentModeration | null;
-  setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[]>>;
+  setComments?: React.Dispatch<React.SetStateAction<DBCommentWithReplies[]>>;
   isDeleted: boolean;
   onVoteComment: (
     commentId: string,
@@ -29,7 +30,7 @@ interface CommentInteractionBarProps {
   showDropdown: string | null;
   setShowDropdown: React.Dispatch<React.SetStateAction<string | null>>;
   showModDropdown: string | null;
-  setShowModDropdown: React.Dispatch<React.SetStateAction<string | null>>;
+  setShowModDropdown?: React.Dispatch<React.SetStateAction<string | null>>;
   isEditActive: boolean;
   setIsEditActive?: React.Dispatch<React.SetStateAction<boolean>>;
   urlItems?: UrlItems;
@@ -37,6 +38,7 @@ interface CommentInteractionBarProps {
   isLocked?: boolean;
   isMod: IsModPost;
   token: string | null;
+  hasReported: boolean;
 }
 
 export default function CommentInteractionBar({
@@ -61,6 +63,7 @@ export default function CommentInteractionBar({
   isLocked,
   isMod,
   token,
+  hasReported,
 }: CommentInteractionBarProps) {
   const isUpvote = userVote?.voteType === 'UPVOTE';
   const isDownVote = userVote?.voteType === 'DOWNVOTE';
@@ -102,27 +105,39 @@ export default function CommentInteractionBar({
 
           <Share mode="comment" commentId={commentId} urlItems={urlItems} />
 
-          {!isDeleted && (
-            <div onClick={(e) => e.stopPropagation()}>
-              <Ellipsis
-                isUserSelf={isUserSelf}
-                mode="comment"
+          {!isDeleted &&
+            (isUserSelf ? (
+              <div onClick={(e) => e.stopPropagation()}>
+                <Ellipsis
+                  isUserSelf={isUserSelf}
+                  mode="comment"
+                  id={commentId}
+                  showDropdown={showDropdown}
+                  setShowDropdown={setShowDropdown}
+                  setIsEditActive={setIsEditActive && setIsEditActive}
+                  deleteFunc={onDeleteComment}
+                  editFunc={onEdit}
+                />
+              </div>
+            ) : (
+              <NotUserEllipsis
+                hasSaved={false} // TODO: Complete saved
+                hasReported={hasReported}
+                token={token}
                 id={commentId}
+                mode="comment"
                 showDropdown={showDropdown}
                 setShowDropdown={setShowDropdown}
-                setIsEditActive={setIsEditActive && setIsEditActive}
-                deleteFunc={onDeleteComment}
-                editFunc={onEdit}
+                setComments={setComments}
               />
-            </div>
-          )}
+            ))}
         </div>
 
         {isMod && (
           <ModMenuComment
             commentId={commentId}
             moderation={moderation}
-            setComments={setComments}
+            setComments={setComments!}
             isMod={isMod}
             token={token}
             showEditDropdown={showDropdown}

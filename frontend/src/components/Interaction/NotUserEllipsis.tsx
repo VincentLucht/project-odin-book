@@ -7,7 +7,11 @@ import ReportModal from '@/Main/Global/ReportModal';
 import { EllipsisIcon, BookmarkIcon, FlagIcon } from 'lucide-react';
 
 import { UserAndHistory } from '@/Main/user/UserProfile/api/fetchUserProfile';
-import { DBPostWithCommunityName, DBPostWithCommunity } from '@/interface/dbSchema';
+import {
+  DBPostWithCommunityName,
+  DBPostWithCommunity,
+  DBCommentWithReplies,
+} from '@/interface/dbSchema';
 
 interface NotUserEllipsisProps {
   hasSaved: boolean;
@@ -19,7 +23,8 @@ interface NotUserEllipsisProps {
   setShowDropdown: React.Dispatch<React.SetStateAction<string | null>>;
   setFetchedUser?: React.Dispatch<React.SetStateAction<UserAndHistory | null>>;
   setPosts?: React.Dispatch<React.SetStateAction<DBPostWithCommunityName[]>>;
-  setPost: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>;
+  setPost?: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>;
+  setComments?: React.Dispatch<React.SetStateAction<DBCommentWithReplies[]>>;
 }
 
 export default function NotUserEllipsis({
@@ -33,6 +38,7 @@ export default function NotUserEllipsis({
   setFetchedUser,
   setPosts,
   setPost,
+  setComments,
 }: NotUserEllipsisProps) {
   const [showReportModal, setShowReportModal] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -60,17 +66,9 @@ export default function NotUserEllipsis({
         ref={dropdownRef}
       >
         <DropdownButton
-          text={
-            hasSaved
-              ? `Saved ${mode}`
-              : `${mode === 'post' ? 'Save post' : 'Save comment'}`
-          }
+          text={hasSaved ? `Saved ${mode}` : `Save ${mode}`}
           icon={<BookmarkIcon />}
-          alt={
-            hasSaved
-              ? `Saved ${mode}`
-              : `${mode === 'post' ? 'Save post' : 'Save comment'}`
-          }
+          alt={hasSaved ? `Saved ${mode}` : `Save ${mode}`}
           imgClassName="rounded-full border h-[32px] w-[32px]"
           setterFunc={setShowDropdown}
           show={show}
@@ -98,6 +96,7 @@ export default function NotUserEllipsis({
         setFetchedUser={setFetchedUser}
         setPosts={setPosts}
         setPost={setPost}
+        setComments={setComments}
       />
     </div>
   );

@@ -7,10 +7,15 @@ import TextareaAutosize from 'react-textarea-autosize';
 import MaxLengthIndicator from '@/components/MaxLengthIndicator';
 
 import { report } from '@/Main/Global/api/reportAPI';
+import { onCommentModeration } from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/components/ModMenuComment/hooks/useCommentModeration';
 import { toast } from 'react-toastify';
 
 import { UserAndHistory } from '@/Main/user/UserProfile/api/fetchUserProfile';
-import { DBPostWithCommunityName, DBPostWithCommunity } from '@/interface/dbSchema';
+import {
+  DBPostWithCommunityName,
+  DBPostWithCommunity,
+  DBCommentWithReplies,
+} from '@/interface/dbSchema';
 
 interface ReportModalProps {
   show: boolean;
@@ -22,7 +27,8 @@ interface ReportModalProps {
   };
   setFetchedUser?: React.Dispatch<React.SetStateAction<UserAndHistory | null>>;
   setPosts?: React.Dispatch<React.SetStateAction<DBPostWithCommunityName[]>>;
-  setPost: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>;
+  setPost?: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>;
+  setComments?: React.Dispatch<React.SetStateAction<DBCommentWithReplies[]>>;
 }
 
 export default function ReportModal({
@@ -33,10 +39,13 @@ export default function ReportModal({
   setFetchedUser,
   setPosts,
   setPost,
+  setComments,
 }: ReportModalProps) {
   const [subject, setSubject] = useState('');
   const [reason, setReason] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  const typeString = apiData.type.toLowerCase();
 
   const onClick = () => {
     if (!subject || !reason) {
@@ -49,9 +58,9 @@ export default function ReportModal({
       token,
       { ...apiData, subject, reason },
       {
-        loading: 'Reporting post...',
-        success: 'Successfully reported post',
-        error: 'Failed to report post',
+        loading: `Reporting ${typeString}...`,
+        success: `Successfully reported ${typeString}`,
+        error: `Failed to report ${typeString}`,
       },
     ).then((report) => {
       setSubmitting(false);
@@ -82,12 +91,19 @@ export default function ReportModal({
           ),
         };
       });
+
+      apiData.type === 'COMMENT' &&
+        onCommentModeration(
+          apiData.item_id,
+          (comment) => ({ ...comment, reports: [report] }),
+          setComments!,
+        );
     });
   };
 
   return (
     <Modal show={show} onClose={onClose}>
-      <ModalHeader headerName={`Report ${apiData.type}`} onClose={onClose} />
+      <ModalHeader headerName={`Report ${typeString}`} onClose={onClose} />
 
       <div>
         <label htmlFor="report-subject" className="-mb-2 font-medium">

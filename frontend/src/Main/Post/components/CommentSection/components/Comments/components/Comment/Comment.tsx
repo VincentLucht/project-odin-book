@@ -70,6 +70,7 @@ export default function Comment({
   const hasReplyAtAll = comment.replies === undefined && comment._count.replies >= 1;
   const hasReply = comment.replies?.length > 0;
   const userDeleted = comment.user?.deleted_at;
+  const hasReported = (comment?.reports?.length ?? 0) > 0;
 
   const redirectToUser = (username: string) => {
     if (!userDeleted) {
@@ -181,6 +182,7 @@ export default function Comment({
               isLocked={lock_comments}
               isMod={isMod}
               token={token}
+              hasReported={hasReported}
             />
           </div>
         </div>

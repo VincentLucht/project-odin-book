@@ -21,6 +21,9 @@ export const createCommentInclude = (
         deleted_at: true,
       },
     },
+    ...(userId && {
+      reports: { where: { reporter_id: userId } },
+    }),
     comment_votes:
       includeUserVotes && userId
         ? {

@@ -232,6 +232,7 @@ export interface DBCommentWithReplies extends DBComment {
     profile_picture_url: string | null;
     deleted_at: string | null;
   } | null;
+  reports?: DBReport[];
   comment_votes: VotingRecord[];
   replies: DBCommentWithReplies[];
   _count: { replies: number };
