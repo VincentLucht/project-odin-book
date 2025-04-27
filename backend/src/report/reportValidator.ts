@@ -18,7 +18,7 @@ class ReportValidator {
     return [
       body('type')
         .custom((type) => {
-          if (type !== 'POST' && type !== 'Comment') {
+          if (type !== 'POST' && type !== 'COMMENT') {
             throw new Error('Incorrect type detected');
           }
 
