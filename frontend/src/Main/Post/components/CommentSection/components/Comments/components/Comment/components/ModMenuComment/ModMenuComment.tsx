@@ -22,7 +22,7 @@ interface ModMenuCommentProps {
   showEditDropdown: string | null | undefined;
   setShowEditDropdown: React.Dispatch<React.SetStateAction<string | null>> | undefined;
   showModDropdown: string | null;
-  setShowModDropdown: React.Dispatch<React.SetStateAction<string | null>>;
+  setShowModDropdown?: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 export default function ModMenuComment({
@@ -39,7 +39,7 @@ export default function ModMenuComment({
   const [showRemovalReasonModal, setShowRemovalReasonModal] = useState(false);
 
   useClickOutside(() => {
-    setShowModDropdown(null);
+    setShowModDropdown?.(null);
   });
 
   const { onApproveComplete, onRemoveComplete, onUpdateRemovalReason } =
