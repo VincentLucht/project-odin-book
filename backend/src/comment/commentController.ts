@@ -6,7 +6,7 @@ import { asyncHandler } from '@/util/asyncHandler';
 import getAuthUser from '@/util/getAuthUser';
 import checkCommunityPermissions from '@/util/checkCommunityPermissions';
 import checkPrivateCommunityMembership from '@/util/checkPrivateCommunityMembership';
-import { Pagination, TimeFrame } from '@/db/managers/util/types';
+import { TimeFrame } from '@/db/managers/util/types';
 
 export interface AuthPayload {
   id: string | undefined;
@@ -48,28 +48,17 @@ class CommentController {
           .json({ message: response.message });
       }
 
-      let comments;
-      let pagination = { nextCursor: undefined, hasMore: false } as Pagination;
+      const userId = req.authData
+        ? (req.authData as AuthPayload).id
+        : undefined;
 
-      if (req.authData) {
-        const { id: userId } = req.authData as AuthPayload;
-
-        ({ comments, pagination } = await db.comment.getCommentThreads(
-          post.id,
-          sortByType,
-          userId,
-          cursorId,
-          timeframe,
-        ));
-      } else {
-        ({ comments, pagination } = await db.comment.getCommentThreads(
-          post.id,
-          sortByType,
-          undefined,
-          cursorId,
-          timeframe,
-        ));
-      }
+      const { comments, pagination } = await db.comment.getCommentThreads(
+        post.id,
+        sortByType,
+        userId,
+        cursorId,
+        timeframe,
+      );
 
       return res.status(200).json({
         message: 'Successfully fetched comments',
