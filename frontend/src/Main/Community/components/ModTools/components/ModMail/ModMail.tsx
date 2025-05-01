@@ -21,7 +21,7 @@ export default function ModMail() {
   const [apiFilters, setApiFilters] = useState({
     onlyArchived: false,
     getArchived: false,
-    getReplied: true,
+    getReplied: false,
   });
 
   const { token } = useAuthGuard();
