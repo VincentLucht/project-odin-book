@@ -2,11 +2,13 @@ import { useState, useCallback, useRef, useMemo } from 'react';
 
 import { Virtuoso } from 'react-virtuoso';
 import PostOverview from '@/Main/Post/components/PostOverview/PostOverview';
-import LogoLoading from '@/components/Lazy/Logo/LogoLoading';
-import { NavigateFunction } from 'react-router-dom';
-import { HomepagePost } from '@/Main/Pages/Homepage/Homepage';
-import CommunityPostHandler from '@/Main/Community/handlers/CommunityPostHandler';
+import EndMessageHandler from '@/Main/Global/EndMessageHandler';
+
 import CommunityPostManager from '@/Main/Community/util/CommunityPostManager';
+import CommunityPostHandler from '@/Main/Community/handlers/CommunityPostHandler';
+
+import { HomepagePost } from '@/Main/Pages/Homepage/Homepage';
+import { NavigateFunction } from 'react-router-dom';
 import { Pagination } from '@/interface/backendTypes';
 
 interface VirtualizedPostOverviewProps {
@@ -15,9 +17,10 @@ interface VirtualizedPostOverviewProps {
   userId: string;
   token: string | null;
   navigate: NavigateFunction;
-  loadingState: { initial: boolean; fetchMore: boolean };
-  loadMore: (isInitialFetch: boolean, cursorId: string) => void;
+  loading: boolean;
+  loadMore: (cursorId: string, isInitialFetch?: boolean) => void;
   pagination: Pagination;
+  noResultsMessage?: string;
 }
 export default function VirtualizedHomePage({
   posts,
@@ -25,9 +28,10 @@ export default function VirtualizedHomePage({
   userId,
   token,
   navigate,
-  loadingState,
+  loading,
   loadMore,
   pagination,
+  noResultsMessage,
 }: VirtualizedPostOverviewProps) {
   const [showEditDropdown, setShowEditDropdown] = useState<string | null>(null);
   const virtuosoRef = useRef(null);
@@ -83,39 +87,31 @@ export default function VirtualizedHomePage({
 
   return (
     <div>
-      {loadingState.initial ? (
-        <div>
-          <LogoLoading className="mt-8" />
-        </div>
-      ) : posts.length > 0 ? (
-        <>
-          <Virtuoso
-            ref={virtuosoRef}
-            data={posts}
-            totalCount={posts.length}
-            itemContent={(index) => ItemRenderer(index)}
-            overscan={200}
-            useWindowScroll
-            scrollerRef={() => window}
-            computeItemKey={(index) => posts[index]?.id || index.toString()}
-            endReached={() => {
-              if (!loadingState.fetchMore && pagination.hasMore) {
-                loadMore(false, pagination.nextCursor);
-              }
-            }}
-          />
-          {loadingState.fetchMore && <LogoLoading className="mt-8" />}
-        </>
-      ) : !pagination.hasMore ? (
-        <div>
-          No posts to display yet. Join some communities to populate your feed, or be
-          the first to create a post!
-        </div>
-      ) : (
-        <div>
-          <LogoLoading className="mt-8" />
-        </div>
-      )}
+      <Virtuoso
+        ref={virtuosoRef}
+        data={posts}
+        totalCount={posts.length}
+        itemContent={(index) => ItemRenderer(index)}
+        overscan={200}
+        useWindowScroll
+        scrollerRef={() => window}
+        computeItemKey={(index) => posts[index]?.id || index.toString()}
+        endReached={() => {
+          if (!loading && pagination.hasMore) {
+            loadMore(pagination.nextCursor);
+          }
+        }}
+      />
+
+      <EndMessageHandler
+        loading={loading}
+        hasMorePages={pagination.hasMore}
+        dataLength={posts.length}
+        noResultsMessage={
+          noResultsMessage ??
+          'No posts to display yet. Join some communities to populate your feed, or be the first to create a post!'
+        }
+      />
     </div>
   );
 }
