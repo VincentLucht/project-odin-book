@@ -24,7 +24,6 @@ export interface CommunityModeration extends DBCommunity {
 export async function getModInfo(
   token: string | null,
   apiData: { community_name: string },
-  setCommunity: React.Dispatch<React.SetStateAction<CommunityModeration | null>>,
 ) {
   try {
     const response = await apiRequest<{
@@ -32,9 +31,10 @@ export async function getModInfo(
       community: CommunityModeration;
     }>(`${`${endpoint}?community_name=${apiData.community_name}`}`, 'GET', token);
 
-    setCommunity(response.community);
+    return response.community;
   } catch (error) {
     catchError(error);
+    return false;
   }
 }
 
