@@ -7,6 +7,7 @@ import createPosts from '@/scripts/funcs/createPosts';
 import createCommunities from '@/scripts/funcs/createCommunities';
 import createFlairs from '@/scripts/funcs/createFlairs';
 import createModmails from '@/scripts/funcs/createModMail';
+import createReports from '@/scripts/funcs/createReports';
 
 const prisma = new PrismaClient();
 
@@ -21,6 +22,7 @@ async function reset() {
   await prisma.chat.deleteMany();
 
   // Delete post and comment related records
+  await prisma.report.deleteMany();
   await prisma.notification.deleteMany();
   await prisma.userAssignedFlair.deleteMany();
   await prisma.postAssignedFlair.deleteMany();
@@ -35,7 +37,6 @@ async function reset() {
 
   // Delete community related records
   await prisma.modMail.deleteMany();
-  await prisma.report.deleteMany();
   await prisma.recentCommunities.deleteMany();
   await prisma.joinRequest.deleteMany();
   await prisma.bannedUser.deleteMany();
@@ -63,6 +64,7 @@ async function main() {
   await createComments(prisma);
   await createFlairs(prisma);
   await createModmails(prisma);
+  await createReports(prisma);
 }
 
 main()
