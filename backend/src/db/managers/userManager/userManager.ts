@@ -220,6 +220,10 @@ export default class UserManager {
 
   // ! DELETE
   async delete(user_id: string) {
+    await this.prisma.communityModerator.deleteMany({ where: { user_id } });
+
+    await this.prisma.recentCommunities.deleteMany({ where: { user_id } });
+
     await this.prisma.user.update({
       where: { id: user_id },
       data: {
@@ -233,9 +237,5 @@ export default class UserManager {
         cake_day: null,
       },
     });
-
-    await this.prisma.recentCommunities.deleteMany({ where: { user_id } });
-
-    await this.prisma.communityModerator.deleteMany({ where: { user_id } });
   }
 }
