@@ -88,7 +88,7 @@ export default function CommunityHeader({
           {isMod && (
             <button
               className="h-[38px] !font-medium prm-button-blue"
-              onClick={() => navigate(`/r/${community.name}/mod/`)}
+              onClick={() => navigate(`/r/${community.name}/mod/queue`)}
             >
               Mod tools
             </button>
