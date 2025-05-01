@@ -8,9 +8,39 @@ class ReportValidator {
       query('cn').trim()
         .notEmpty()
         .withMessage(vm.req('Community Name')),
+      query('sbt')
+        .custom((type) => {
+          if (type !== 'new' && type !== 'top') {
+            throw new Error('Invalid type detected');
+          }
+
+          return true;
+        }),
+      query('t')
+        .custom((type) => {
+          if (type !== 'all' && type !== 'posts' && type !== 'comments') {
+            throw new Error('Invalid type detected');
+          }
+
+          return true;
+        }),
+      query('s')
+        .custom((filter) => {
+          if (filter !== 'pending' && filter !== 'moderated' && filter !== 'approved' && filter !== 'dismissed') {
+            throw new Error('Invalid filter detected');
+          }
+
+          return true;
+        }),
+      query('ls').optional()
+        .isString()
+        .withMessage('Last score must be a string'),
+      query('ld').optional()
+        .isString()
+        .withMessage('Last date must be a string'),
       query('cId').optional()
         .isString()
-        .withMessage('Community ID must be a string'),
+        .withMessage('Cursor ID must be a string'),
     ];
   }
 

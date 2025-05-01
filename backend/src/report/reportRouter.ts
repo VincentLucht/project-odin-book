@@ -7,8 +7,10 @@ import reportValidator from '@/report/reportValidator';
 const reportRouter = express.Router();
 
 reportRouter.get(
-  '', // ?
+  '', // ?cn=community_name&t=type&sbt=sort_by_type&sl=status&ls=last_score&ld=_last_date&cId=cursorId
   token.authenticate,
+  reportValidator.fetchRules(),
+  reportController.fetch,
 );
 
 reportRouter.post(

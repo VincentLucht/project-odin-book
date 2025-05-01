@@ -10,13 +10,23 @@ class ReportController {
   fetch = asyncHandler(async (req: Request, res: Response) => {
     if (checkValidationError(req, res)) return;
 
-    const { cn: community_name, cId: cursorId } = req.query as {
+    const {
+      cn: community_name,
+      t: type,
+      s: status,
+      sbt: sortByType,
+      ls: lastScore,
+      ld: lastDate,
+      cId: cursorId,
+    } = req.query as {
       cn: string;
+      t: 'all' | 'posts' | 'comments';
+      s: 'pending' | 'moderated' | 'approved' | 'dismissed';
+      sbt: 'new' | 'top';
+      ls: string;
+      ld: string;
       cId: string;
     };
-    const getArchived = req.query.gA === 'true';
-    const getReplied = req.query.gR === 'true';
-    const onlyArchived = req.query.oA === 'true';
 
     try {
       const { user_id } = getAuthUser(req.authData);
@@ -35,23 +45,23 @@ class ReportController {
           .json({ message: 'You are not moderator in this community' });
       }
 
-      const { modmail, pagination } = await db.modMail.fetch(
+      const { reports, pagination } = await db.report.getBy(
         community.id,
-        cursorId,
-        onlyArchived,
-        getArchived,
-        getReplied,
+        type,
+        sortByType,
+        status,
+        { lastScore: Number(lastScore), lastDate, lastId: cursorId },
       );
 
       return res.status(200).json({
-        message: 'Successfully fetched mod mail',
-        modmail,
+        message: 'Successfully fetched reports',
+        reports,
         pagination,
       });
     } catch (error) {
       console.error(error);
       return res.status(500).json({
-        message: 'Failed to fetch flairs',
+        message: 'Failed to fetch reports',
         error: error instanceof Error ? error.message : String(error),
       });
     }
@@ -72,6 +82,19 @@ class ReportController {
         return res.status(404).json({ message: 'User not found' });
       }
 
+      let item;
+      if (type === 'POST') {
+        item = await db.post.getById(item_id);
+      } else if (type === 'COMMENT') {
+        item = await db.comment.getByIdAndCommunityId(item_id);
+      }
+
+      if (!item) {
+        return res.status(404).json({
+          message: `${typeString} not found`,
+        });
+      }
+
       if (await db.report.alreadyReported(type, user_id, item_id)) {
         return res
           .status(403)
@@ -82,6 +105,7 @@ class ReportController {
         type,
         user_id,
         item_id,
+        item.community_id,
         subject,
         reason,
       );
