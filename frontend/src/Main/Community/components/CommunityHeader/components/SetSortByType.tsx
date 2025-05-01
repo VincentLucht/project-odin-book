@@ -19,6 +19,7 @@ interface SetSortByTypeProps {
   mode?: 'community' | 'search' | 'comments';
   safeSearch?: boolean;
   setSafeSearch?: React.Dispatch<React.SetStateAction<boolean>>;
+  excludeHot?: boolean;
 }
 
 export default function SetSortByType({
@@ -30,6 +31,7 @@ export default function SetSortByType({
   mode = 'community',
   safeSearch,
   setSafeSearch,
+  excludeHot = false,
 }: SetSortByTypeProps) {
   const [showDropdown, setShowDropdown] = useState<
     'sortBy' | 'timeframe' | 'safeSearch' | null
@@ -77,12 +79,16 @@ export default function SetSortByType({
             <span className="mb-1 cursor-default select-none">Sort by</span>
 
             {mode === 'community' ? (
-              <DropdownButton
-                text="Hot"
-                show={showSortBy}
-                isSelected={sortByType === 'hot'}
-                customFunc={() => onSortByClick('hot')}
-              />
+              !excludeHot ? (
+                <DropdownButton
+                  text="Hot"
+                  show={showSortBy}
+                  isSelected={sortByType === 'hot'}
+                  customFunc={() => onSortByClick('hot')}
+                />
+              ) : (
+                <></>
+              )
             ) : mode === 'search' ? (
               <DropdownButton
                 text="Relevance"
