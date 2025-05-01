@@ -9,6 +9,7 @@ import isPostTypeValid from '@/post/util/isPostTypeValid';
 import checkCommunityPermissions from '@/util/checkCommunityPermissions';
 import checkPrivateCommunityMembership from '@/util/checkPrivateCommunityMembership';
 import { TimeFrame } from '@/db/managers/util/types';
+import { AuthPayload } from '@/comment/commentController';
 
 class PostController {
   get = asyncHandler(async (req: Request, res: Response) => {
@@ -105,36 +106,37 @@ class PostController {
   getPopular = asyncHandler(async (req: Request, res: Response) => {
     if (checkValidationError(req, res)) return;
 
-    const { post_id } = req.params;
+    const {
+      sbt: sortByType,
+      cId: cursorId,
+      t: timeframe,
+    } = req.query as {
+      sbt: 'new' | 'top';
+      cId: string | undefined;
+      t: TimeFrame;
+    };
 
     try {
-      const post = await db.post.getById(post_id);
-      if (!post) {
-        return res.status(404).json({ message: 'Post not found' });
+      let requestUserId = undefined;
+      if (req.authData) {
+        const { id } = req.authData as AuthPayload;
+        requestUserId = id;
       }
 
-      const response = await checkPrivateCommunityMembership(
-        db,
-        post,
-        req.authData,
-        true,
+      const { posts, pagination } = await db.post.getPopular(
+        sortByType,
+        requestUserId,
+        timeframe,
+        cursorId,
       );
-      if (!response.ok) {
-        return res
-          .status(response?.status ?? 500)
-          .json({ message: response?.message });
-      }
 
-      // const postAndCommunity = await db.post.getByIdAndCommunity(
-      //   post.id,
-      //   response.user_id,
-      // );
-
-      return res.status(200).json({ message: 'Successfully fetched post' });
+      return res
+        .status(200)
+        .json({ message: 'Successfully fetched posts', posts, pagination });
     } catch (error) {
       console.error(error);
       return res.status(500).json({
-        message: 'Failed to fetch post',
+        message: 'Failed to fetch posts',
         error: error instanceof Error ? error.message : String(error),
       });
     }

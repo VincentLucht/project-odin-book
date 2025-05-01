@@ -26,6 +26,23 @@ class PostValidator {
     ];
   }
 
+  getPopularRules() {
+    return [
+      query('sbt')
+        .custom((sortByType) => {
+          if (sortByType !== 'new' && sortByType !== 'top') {
+            throw new Error('Invalid sort by type detected');
+          }
+
+          return true;
+        }),
+
+      query('cId').optional()
+        .isString()
+        .withMessage('Cursor id must be a string'),
+    ];
+  }
+
   creationRules() {
     return [
       body('community_id').trim()

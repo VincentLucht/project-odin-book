@@ -117,13 +117,59 @@ export default class PostManager {
     };
   }
 
-  // TODO: Put into getBy bc of similarity?
-  async getPopular(cursorId?: string, take = 50) {
-    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  async getPopular(
+    sortBy: 'new' | 'top',
+    requestUserId: string | undefined,
+    timeframe: TimeFrame,
+    cursorId?: string,
+    take = 30,
+  ) {
+    const { orderBy, convertedTimeframe } = createSortParams(sortBy, timeframe);
 
-    return this.prisma.post.findMany({
-      where: { created_at: { gte: twentyFourHoursAgo }, deleted_at: null },
+    const posts = await this.prisma.post.findMany({
+      where: {
+        deleted_at: null,
+        community: { type: { not: 'PRIVATE' } },
+        ...(convertedTimeframe && sortBy === 'top'
+          ? {
+              created_at: { gte: convertedTimeframe },
+            }
+          : {}),
+      },
+      include: {
+        community: {
+          select: {
+            id: true,
+            name: true,
+            profile_picture_url: true,
+            user_communities: {
+              where: { user_id: requestUserId },
+              select: { user_id: true, role: true },
+            },
+          },
+        },
+        ...getPostInfo(requestUserId, false),
+      },
+      ...(cursorId && {
+        cursor: {
+          id: cursorId,
+        },
+        skip: 1,
+      }),
+      orderBy,
+      take,
     });
+
+    const lastPost = posts[posts.length - 1];
+    const nextCursor = lastPost?.id;
+
+    return {
+      posts,
+      pagination: {
+        nextCursor,
+        hasMore: posts.length === take,
+      },
+    };
   }
 
   // ! POST

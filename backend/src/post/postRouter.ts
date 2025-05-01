@@ -14,6 +14,13 @@ postRouter.get(
 );
 
 postRouter.get(
+  '/popular',
+  token.authenticateOptional,
+  postValidator.getPopularRules(),
+  postController.getPopular,
+);
+
+postRouter.get(
   '/:post_id',
   token.authenticateOptional,
   postValidator.fetchRules(),
