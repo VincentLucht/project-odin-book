@@ -53,7 +53,7 @@ export interface FetchedReport extends DBReport {
 export default function ModQueue() {
   const [loading, setLoading] = useState(true);
   const [apiFilters, setApiFilters] = useState<ModQueueApiFilterProps>({
-    type: 'comments',
+    type: 'posts',
     sortByType: 'top',
     status: 'pending',
   });
