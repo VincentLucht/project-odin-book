@@ -13,6 +13,8 @@ interface DropdownButtonProps {
   subText?: string;
   imgClassName?: string;
   isSelected?: boolean;
+  className?: string;
+  classNameText?: string;
 }
 
 export default function DropdownButton({
@@ -28,13 +30,15 @@ export default function DropdownButton({
   subText,
   imgClassName,
   isSelected = false,
+  className = '',
+  classNameText = 'whitespace-nowrap',
 }: DropdownButtonProps) {
   const navigate = useNavigate();
 
   return (
     <button
       className={`text-mds flex w-full items-center gap-2 rounded-md px-4 py-2 font-light
-        dropdown-btn-transition ${size === 'normal' ? 'h-[48px]' : 'h-[64px]'}
+        dropdown-btn-transition ${size === 'normal' ? 'h-[48px]' : 'h-[64px]'} ${className}
         ${show ? 'cursor-pointer' : 'cursor-default'} ${isSelected && 'bg-hover-gray'}`}
       onClick={() => {
         if (show && route && setterFunc) {
@@ -67,7 +71,7 @@ export default function DropdownButton({
           </div>
         </div>
       ) : (
-        <div className="whitespace-nowrap">{text}</div>
+        <div className={`${classNameText}`}>{text}</div>
       )}
     </button>
   );
