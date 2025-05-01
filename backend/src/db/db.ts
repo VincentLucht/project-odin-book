@@ -20,7 +20,7 @@ import JoinRequestManager from '@/db/managers/joinRequestManager';
 import SearchResultsManager from '@/db/managers/misc/searchResultsManager';
 import NotificationManager from '@/db/managers/notificationManager';
 import ModMailManager from '@/db/managers/modMailManager';
-import ReportManager from '@/db/managers/reportManager';
+import ReportManager from '@/db/managers/reportManager/reportManager';
 
 export class DB {
   private prisma: PrismaClient;
