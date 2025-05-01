@@ -27,6 +27,8 @@ interface CommentSectionProps {
   token: string | null;
   setPost: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>;
   isMod: IsModPost;
+  givenParentCommentId?: string;
+  onModerationCb?: (action: 'APPROVED' | 'REMOVED') => void;
 }
 
 export default function CommentSection({
@@ -36,6 +38,8 @@ export default function CommentSection({
   token,
   setPost,
   isMod,
+  givenParentCommentId = '',
+  onModerationCb,
 }: CommentSectionProps) {
   const { id: postId, lock_comments } = post;
 
@@ -47,9 +51,10 @@ export default function CommentSection({
 
   const [comments, setComments] = useState<DBCommentWithReplies[]>([]);
 
-  const { parentCommentId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const { parentCommentId: urlParentCommentId } = useParams();
+  const parentCommentId = givenParentCommentId || urlParentCommentId;
 
   const handleCompletion = useCompletionHandler();
   const onComplete: OnCompleteCommentSection = useCallback(
@@ -78,10 +83,21 @@ export default function CommentSection({
 
     if (parentCommentId) {
       handleFetchReplies(token, postId, parentCommentId, setComments, onComplete);
+      if (givenParentCommentId) {
+        setComments((prev) => prev.filter((comment) => comment.id !== parentCommentId));
+      }
     } else {
       handleFetchComments(postId, token, sortByType, '', timeframe, true, onComplete);
     }
-  }, [token, postId, parentCommentId, onComplete, sortByType, timeframe]);
+  }, [
+    token,
+    postId,
+    parentCommentId,
+    onComplete,
+    sortByType,
+    timeframe,
+    givenParentCommentId,
+  ]);
 
   return (
     <div className="pt-2">
@@ -105,7 +121,7 @@ export default function CommentSection({
         />
       </div>
 
-      {parentCommentId && (
+      {parentCommentId && !givenParentCommentId && (
         <div className="-mb-4 mt-4 df">
           <button
             className="text-sm text-blue-400 transition-all duration-1000 hover:underline"
@@ -127,11 +143,12 @@ export default function CommentSection({
         sortByType={sortByType}
         timeframe={timeframe}
         cursorId={cursorId}
-        hasMore={hasMore}
+        hasMore={givenParentCommentId ? false : hasMore}
         loading={loading}
         setLoading={setLoading}
         onComplete={onComplete}
         isMod={isMod}
+        onModerationCb={onModerationCb}
       />
     </div>
   );

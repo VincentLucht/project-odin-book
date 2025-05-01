@@ -23,6 +23,7 @@ interface ModMenuCommentProps {
   setShowEditDropdown: React.Dispatch<React.SetStateAction<string | null>> | undefined;
   showModDropdown: string | null;
   setShowModDropdown?: React.Dispatch<React.SetStateAction<string | null>>;
+  onModerationCb?: (action: 'APPROVED' | 'REMOVED') => void;
 }
 
 export default function ModMenuComment({
@@ -35,6 +36,7 @@ export default function ModMenuComment({
   setShowEditDropdown,
   showModDropdown,
   setShowModDropdown,
+  onModerationCb,
 }: ModMenuCommentProps) {
   const [showRemovalReasonModal, setShowRemovalReasonModal] = useState(false);
 
@@ -100,6 +102,7 @@ export default function ModMenuComment({
                   ).then((success) => {
                     setShowModDropdown?.(null);
                     onApproveComplete(commentId, success, isMod);
+                    onModerationCb?.('APPROVED');
                   });
                 }}
               />
@@ -143,6 +146,7 @@ export default function ModMenuComment({
                 ).then((success) => {
                   setShowModDropdown?.(null);
                   onRemoveComplete(commentId, success, isMod);
+                  onModerationCb?.('REMOVED');
                 });
               }}
             />

@@ -39,6 +39,7 @@ interface VirtualizedComments {
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   onComplete: OnCompleteCommentSection;
   isMod: IsModPost;
+  onModerationCb?: (action: 'APPROVED' | 'REMOVED') => void;
 }
 
 export default function VirtualizedComments({
@@ -57,6 +58,7 @@ export default function VirtualizedComments({
   setLoading,
   onComplete,
   isMod,
+  onModerationCb,
 }: VirtualizedComments) {
   const { id: postId } = post;
 
@@ -138,6 +140,7 @@ export default function VirtualizedComments({
             showModDropdown={showModDropdown}
             setShowModDropdown={setShowModDropdown}
             isMod={isMod}
+            onModerationCb={onModerationCb}
           />
         </div>
       );
@@ -156,6 +159,7 @@ export default function VirtualizedComments({
       showDropdown,
       showModDropdown,
       isMod,
+      onModerationCb,
     ],
   );
 

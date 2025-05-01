@@ -38,6 +38,7 @@ interface CommentProps {
   showModDropdown: string | null;
   setShowModDropdown: React.Dispatch<React.SetStateAction<string | null>>;
   isMod: IsModPost;
+  onModerationCb?: (action: 'APPROVED' | 'REMOVED') => void;
 }
 
 // TODO: Add user flair :)
@@ -59,6 +60,7 @@ export default function Comment({
   showModDropdown,
   setShowModDropdown,
   isMod,
+  onModerationCb,
 }: CommentProps) {
   const { id: postId, lock_comments } = post;
 
@@ -183,6 +185,7 @@ export default function Comment({
               isMod={isMod}
               token={token}
               hasReported={hasReported}
+              onModerationCb={onModerationCb}
             />
           </div>
         </div>

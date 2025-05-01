@@ -39,6 +39,7 @@ interface CommentInteractionBarProps {
   isMod: IsModPost;
   token: string | null;
   hasReported: boolean;
+  onModerationCb?: (action: 'APPROVED' | 'REMOVED') => void;
 }
 
 export default function CommentInteractionBar({
@@ -64,6 +65,7 @@ export default function CommentInteractionBar({
   isMod,
   token,
   hasReported,
+  onModerationCb,
 }: CommentInteractionBarProps) {
   const isUpvote = userVote?.voteType === 'UPVOTE';
   const isDownVote = userVote?.voteType === 'DOWNVOTE';
@@ -144,6 +146,7 @@ export default function CommentInteractionBar({
             setShowEditDropdown={setShowDropdown}
             showModDropdown={showModDropdown}
             setShowModDropdown={setShowModDropdown}
+            onModerationCb={onModerationCb}
           />
         )}
       </div>
