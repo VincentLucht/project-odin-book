@@ -10,11 +10,13 @@ class CommentModerationController {
   moderateComment = asyncHandler(async (req: Request, res: Response) => {
     if (checkValidationError(req, res)) return;
 
-    const { comment_id, reason, moderation_action } = req.body as {
-      comment_id: string;
-      reason?: string;
-      moderation_action: ModerationType;
-    };
+    const { comment_id, reason, moderation_action, dismiss_reason } =
+      req.body as {
+        comment_id: string;
+        reason?: string;
+        moderation_action: ModerationType;
+        dismiss_reason?: string;
+      };
 
     try {
       const { user_id } = getAuthUser(req.authData);
@@ -86,6 +88,14 @@ class CommentModerationController {
       );
 
       await sendNotification();
+
+      await db.report.updateAllPendingReports(
+        comment.id,
+        moderator.id,
+        'COMMENT',
+        moderation_action === 'APPROVED' ? 'REVIEWED' : 'DISMISSED',
+        dismiss_reason,
+      );
 
       return res
         .status(201)

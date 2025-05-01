@@ -31,6 +31,10 @@ class PostModerationValidator {
 
           return true;
         }),
+
+      body('dismiss_reason').optional()
+        .isString()
+        .withMessage('Dismiss reason must be a string'),
     ];
   }
 

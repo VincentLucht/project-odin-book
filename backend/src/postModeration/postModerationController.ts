@@ -10,10 +10,11 @@ class PostModerationController {
   moderatePost = asyncHandler(async (req: Request, res: Response) => {
     if (checkValidationError(req, res)) return;
 
-    const { post_id, reason, moderation_action } = req.body as {
+    const { post_id, reason, moderation_action, dismiss_reason } = req.body as {
       post_id: string;
       reason?: string;
       moderation_action: ModerationType;
+      dismiss_reason?: string;
     };
 
     try {
@@ -86,6 +87,16 @@ class PostModerationController {
       );
 
       await sendNotification();
+
+      await db.report.updateAllPendingReports(
+        post_id,
+        moderator.id,
+        'POST',
+        moderation_action === 'APPROVED' ? 'REVIEWED' : 'DISMISSED',
+        dismiss_reason,
+      );
+
+      // TODO: Send notif that moderation is done
 
       return res.status(201).json({ message: 'Successfully moderated post' });
     } catch (error) {
