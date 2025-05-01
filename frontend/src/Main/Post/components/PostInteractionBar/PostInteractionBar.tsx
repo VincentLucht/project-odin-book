@@ -42,6 +42,7 @@ interface PostInteractionBarProps {
   setShowEditDropdown?: React.Dispatch<React.SetStateAction<string | null>>;
   showModDropdown?: string | null;
   setShowModDropdown?: React.Dispatch<React.SetStateAction<string | null>>;
+  onModerationCb?: (action: 'APPROVED' | 'REMOVED') => void;
 }
 
 export default function PostInteractionBar({
@@ -59,6 +60,7 @@ export default function PostInteractionBar({
   setShowEditDropdown,
   showModDropdown,
   setShowModDropdown,
+  onModerationCb,
 }: PostInteractionBarProps) {
   const { total_vote_score, total_comment_score } = post;
 
@@ -128,6 +130,7 @@ export default function PostInteractionBar({
           onUpdateNSFWComplete={onUpdateNSFWComplete}
           onUpdateSpoilerComplete={onUpdateSpoilerComplete}
           onUpdateRemovalReason={onUpdateRemovalReason}
+          onModerationCb={onModerationCb}
         />
       )}
     </div>

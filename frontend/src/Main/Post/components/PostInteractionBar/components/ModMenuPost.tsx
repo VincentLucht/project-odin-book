@@ -54,6 +54,7 @@ interface ModMenuPostProps {
     success: boolean,
   ) => void;
   onUpdateRemovalReason?: (postId: string, newReason: string, success: boolean) => void;
+  onModerationCb?: (action: 'APPROVED' | 'REMOVED') => void;
 }
 
 export default function ModMenuPost({
@@ -72,6 +73,7 @@ export default function ModMenuPost({
   onUpdateNSFWComplete,
   onUpdateSpoilerComplete,
   onUpdateRemovalReason,
+  onModerationCb,
 }: ModMenuPostProps) {
   const [showRemovalReasonModal, setShowRemovalReasonModal] = useState(false);
   const [showPostFlairSelection, setShowPostFlairSelection] = useState(false);
@@ -154,6 +156,7 @@ export default function ModMenuPost({
                   ).then((success) => {
                     setShowModDropdown?.(null);
                     onApproveComplete?.(postId, success, isMod);
+                    onModerationCb?.('APPROVED');
                   });
                 }}
               />
@@ -197,6 +200,7 @@ export default function ModMenuPost({
                 ).then((success) => {
                   setShowModDropdown?.(null);
                   onRemoveComplete?.(postId, success, isMod);
+                  onModerationCb?.('REMOVED');
                 });
               }}
             />

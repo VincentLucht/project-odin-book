@@ -34,9 +34,21 @@ export type IsModPost =
       user: Omit<CommunityModerator, 'user_assigned_flair'>;
     };
 
+interface PostProps {
+  mode?: 'fetched' | 'normal';
+  options?: { showComments: boolean; commentId: string };
+  onModerationCb?: (action: 'APPROVED' | 'REMOVED') => void;
+  givenPostId?: string | null;
+}
+
 // TODO: Add loading + not found
 // TODO: Add go back button => but like completely back
-export default function Post() {
+export default function Post({
+  mode = 'normal',
+  options = { showComments: true, commentId: '' },
+  onModerationCb,
+  givenPostId = null,
+}: PostProps) {
   const [post, setPost] = useState<DBPostWithCommunity | null>(null);
   const [showEditDropdown, setShowEditDropdown] = useState<string | null>(null);
   const [showModDropdown, setShowModDropdown] = useState<string | null>(null);
@@ -46,7 +58,8 @@ export default function Post() {
   const [postLoading, setPostLoading] = useState(true);
   const navigate = useNavigate();
 
-  const { postId, communityName } = useParams();
+  const { postId: urlPostId, communityName } = useParams();
+  const effectivePostId = mode === 'fetched' && givenPostId ? givenPostId : urlPostId;
   const [searchParams] = useSearchParams();
   const { user, token } = useAuth();
 
@@ -56,15 +69,15 @@ export default function Post() {
     setPostLoading(true);
     const onComplete = () => setPostLoading(false);
 
-    handleFetchPost(postId ?? '', token, setPost, onComplete);
-  }, [postId, token]);
+    handleFetchPost(effectivePostId ?? '', token, setPost, onComplete);
+  }, [effectivePostId, token, mode]);
 
   const isMod = useIsModerator(user, post?.community?.community_moderators);
   const isMember = useIsMember(user, post?.community);
   const hasReported = (post?.reports?.length ?? 0) > 0;
 
   useEffect(() => {
-    if (!post) return;
+    if (!post && mode !== 'normal') return;
 
     const isUserPoster = user?.id === post?.poster_id;
 
@@ -76,10 +89,12 @@ export default function Post() {
     if (searchParams.get('edit-post-flair')) {
       setShowPostFlairSelection(true);
     }
-  }, [post, user, searchParams]);
+  }, [post, user, searchParams, mode]);
 
   if (!post || postLoading) {
-    return <PostLazy communityNameLengthProp={communityName?.length ?? 0} />;
+    return (
+      <PostLazy mode={mode} communityNameLengthProp={communityName?.length ?? 0} />
+    );
   }
 
   const onVote = (voteType: VoteType) => {
@@ -103,7 +118,7 @@ export default function Post() {
 
   return (
     <div className="p-4 center-main">
-      <div className="center-main-content">
+      <div className={`center-main-content ${mode === 'fetched' && '!block'} `}>
         <div className="flex flex-col">
           <div className="flex gap-1 text-sm">
             <PFP src={post.community.profile_picture_url} size="large" />
@@ -202,16 +217,21 @@ export default function Post() {
             setShowModDropdown={setShowModDropdown}
             showEditDropdown={showEditDropdown}
             setShowEditDropdown={setShowEditDropdown}
+            onModerationCb={onModerationCb}
           />
 
-          <CommentSection
-            post={{ ...post }}
-            originalPoster={post.poster ? post.poster.username : null}
-            user={user}
-            token={token}
-            setPost={setPost}
-            isMod={isMod}
-          />
+          {options.showComments && (
+            <CommentSection
+              post={{ ...post }}
+              originalPoster={post.poster ? post.poster.username : null}
+              user={user}
+              token={token}
+              setPost={setPost}
+              isMod={isMod}
+              givenParentCommentId={options.commentId}
+              onModerationCb={onModerationCb}
+            />
+          )}
 
           <PostFlairSelection
             show={showPostFlairSelection}
@@ -224,14 +244,16 @@ export default function Post() {
           />
         </div>
 
-        <PostSidebar
-          community={post.community}
-          setPost={setPost}
-          user={user}
-          token={token}
-          navigate={navigate}
-          showMembership={{ show: true, isMember }}
-        />
+        {mode === 'normal' && (
+          <PostSidebar
+            community={post.community}
+            setPost={setPost}
+            user={user}
+            token={token}
+            navigate={navigate}
+            showMembership={{ show: true, isMember }}
+          />
+        )}
       </div>
     </div>
   );

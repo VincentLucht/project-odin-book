@@ -8,10 +8,14 @@ import LazyPostFlair from '@/components/Lazy/LazyPostFlair';
 import getBiasedRandomNumber from '@/util/getBiasedRandomNumber';
 
 interface PostLazyProps {
+  mode?: 'fetched' | 'normal';
   communityNameLengthProp: number;
 }
 
-export default function PostLazy({ communityNameLengthProp }: PostLazyProps) {
+export default function PostLazy({
+  mode = 'normal',
+  communityNameLengthProp,
+}: PostLazyProps) {
   const randomValues = useMemo(
     () => ({
       communityNameLength: (communityNameLengthProp + 2) * 6,
@@ -38,7 +42,7 @@ export default function PostLazy({ communityNameLengthProp }: PostLazyProps) {
 
   return (
     <div className="p-4 center-main">
-      <div className="center-main-content">
+      <div className={`center-main-content ${mode === 'fetched' && '!block'} `}>
         <div className="flex flex-col">
           <div className="flex gap-1 text-sm">
             <PFPLazy className="!h-9 !w-9" />
