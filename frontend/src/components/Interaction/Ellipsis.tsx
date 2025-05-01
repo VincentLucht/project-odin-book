@@ -55,7 +55,7 @@ export default function Ellipsis({
         onClick={() => setShowDropdown((prev) => (prev === id ? null : id))}
         onMouseDown={(e) => e.stopPropagation()}
       >
-        {mode === 'post' ? (
+        {mode === 'post' || mode === 'comment' ? (
           <SquarePenIcon className="h-5 w-5" />
         ) : (
           <EllipsisIcon className="h-[18px] w-[18px]" />
@@ -77,9 +77,9 @@ export default function Ellipsis({
             }}
           >
             <DropdownButton
-              text={`${mode === 'post' ? 'Edit post' : 'Edit comment'}`}
+              text={`Edit ${mode}`}
               icon={<PencilIcon className="h-[22px] w-[22px]" />}
-              alt={`${mode === 'post' ? 'Edit post' : 'Edit comment'}`}
+              alt={`Edit ${mode}`}
               imgClassName="rounded-full border h-[32px] w-[32px]"
               setterFunc={setShowDropdown}
               show={show}
@@ -88,16 +88,16 @@ export default function Ellipsis({
         ) : (
           <></>
         )}
-        {
-          <DropdownButton
-            text={`${mode === 'post' ? 'Save post' : 'Save comment'}`}
-            icon={<BookmarkIcon />}
-            alt={`${mode === 'post' ? 'Save post' : 'Save comment'}`}
-            imgClassName="rounded-full border h-[32px] w-[32px]"
-            setterFunc={setShowDropdown}
-            show={show}
-          />
-        }
+
+        <DropdownButton
+          text={`${mode === 'post' ? 'Save post' : 'Save comment'}`}
+          icon={<BookmarkIcon />}
+          alt={`${mode === 'post' ? 'Save post' : 'Save comment'}`}
+          imgClassName="rounded-full border h-[32px] w-[32px]"
+          setterFunc={setShowDropdown}
+          show={show}
+        />
+
         {isUserSelf ? (
           <div
             className="w-full"
@@ -107,9 +107,9 @@ export default function Ellipsis({
             }}
           >
             <DropdownButton
-              text={`${mode === 'post' ? 'Delete post' : 'Delete comment'}`}
+              text={`Delete ${mode}`}
               icon={<TrashIcon />}
-              alt={`${mode === 'post' ? 'Delete post' : 'Delete comment'}`}
+              alt={`Delete ${mode}`}
               imgClassName="rounded-full border h-[32px] w-[32px]"
               setterFunc={setShowDropdown}
               show={show}
