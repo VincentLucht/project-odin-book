@@ -1,5 +1,4 @@
 import { ReactElement, forwardRef } from 'react';
-import useAuth from '@/context/auth/hook/useAuth';
 import './css/dropdown.css';
 
 interface DropdownMenuProps {
@@ -9,9 +8,6 @@ interface DropdownMenuProps {
 
 const DropdownMenu = forwardRef<HTMLDivElement, DropdownMenuProps>(
   ({ children, className }, ref) => {
-    const { user } = useAuth();
-    if (!user) return null;
-
     return (
       <div
         ref={ref}
