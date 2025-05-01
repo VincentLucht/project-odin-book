@@ -18,6 +18,7 @@ import Community from '@/Main/Community/Community';
 import CreateCommunity from '@/Main/Community/components/CreateCommunity/CreateCommunity';
 
 import ModTools from '@/Main/Community/components/ModTools/ModTools';
+import ModQueue from '@/Main/Community/components/ModTools/components/ModQueue/ModQueue';
 import ModMail from '@/Main/Community/components/ModTools/components/ModMail/ModMail';
 import CommunitySettings from '@/Main/Community/components/ModTools/components/CommunitySettings/CommunitySettings';
 import CommunityFlairSettings from '@/Main/Community/components/ModTools/components/CommunitySettings/components/CommunityFlairSettings';
@@ -44,6 +45,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 
               {/* MOD */}
               <Route path="r/:communityName/mod/" element={<ModTools />}>
+                <Route path="queue" element={<ModQueue />} />
+
                 <Route path="modmail" element={<ModMail />} />
 
                 <Route path="settings" element={<CommunitySettings />} />
