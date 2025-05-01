@@ -12,6 +12,7 @@ export async function moderatePost(
     post_id: string;
     reason?: string;
     moderation_action: 'APPROVED' | 'REMOVED';
+    dismiss_reason?: string;
   },
   messages?: APILoadingPhases,
 ) {
