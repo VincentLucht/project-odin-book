@@ -43,7 +43,7 @@ export default function CommunitySettings() {
   return (
     <div className="p-4 center-main">
       <div className="w-full max-w-[900px]">
-        <div className="mb-4 text-3xl font-bold">Community Settings</div>
+        <h2 className="mb-4 text-3xl font-bold">Community Settings</h2>
 
         <div className="flex flex-col">
           {/* GENERAL */}
@@ -85,7 +85,7 @@ export default function CommunitySettings() {
           </div>
 
           {/* APPEARANCE */}
-          <h3 className="sub-header mt-3">Appearance</h3>
+          <h3 className="mt-3 sub-header">Appearance</h3>
           <div className="flex flex-col gap-1">
             <UserSettingsOption
               name="Change community styling"
