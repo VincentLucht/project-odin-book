@@ -8,6 +8,8 @@ export default function ModSidebar() {
   return (
     <nav className="h-[calc(100dvh)] w-[320px] overflow-y-scroll border-r py-6 text-sm bg-gray">
       <div className="flex-col py-4 df">
+        <SidebarButton navigate={() => navigate('queue')} buttonName="Queue" />
+
         <SidebarButton navigate={() => navigate('modmail')} buttonName="Mod Mail" />
 
         <SidebarButton navigate={() => navigate('settings')} buttonName="Settings" />
