@@ -191,6 +191,7 @@ model Community {
   community_rules      CommunityRule[]
   mod_mail             ModMail[]
   sent_notifications   Notification[]
+  reports              Report[]
 
   @@index([name])
 }
@@ -219,6 +220,7 @@ model CommunityModerator {
 
   post_moderations    PostModeration[]
   comment_moderations CommentModeration[]
+  handled_reports     Report[]
 
   @@unique([community_id, user_id])
 }
@@ -233,7 +235,7 @@ model PostModeration {
   post_id      String             @unique
   post         Post               @relation(fields: [post_id], references: [id])
   moderator_id String
-  moderator    CommunityModerator @relation(fields: [moderator_id], references: [id])
+  moderator    CommunityModerator @relation(fields: [moderator_id], references: [id], onDelete: Cascade)
   action       ModerationType
   reason       String?            @db.VarChar(20)
   created_at   DateTime           @default(now())
@@ -263,14 +265,23 @@ model Report {
   created_at  DateTime       @default(now())
   status      ReportedStatus
 
-  post_id    String?
-  post       Post?    @relation(fields: [post_id], references: [id])
-  comment_id String?
-  comment    Comment? @relation(fields: [comment_id], references: [id])
+  moderator_id String?
+  moderator    CommunityModerator? @relation(fields: [moderator_id], references: [id])
+  moderated_at DateTime?
+  removal_reason String? @db.VarChar(100)
+
+  community_id String
+  community    Community @relation(fields: [community_id], references: [id])
+  post_id      String?
+  post         Post?     @relation(fields: [post_id], references: [id])
+  comment_id   String?
+  comment      Comment?  @relation(fields: [comment_id], references: [id])
 
   // ? Prevent multiple reports + lookup
   @@unique([reporter_id, post_id])
   @@unique([reporter_id, comment_id])
+  @@index([community_id, created_at])
+  @@index([community_id])
   @@index([post_id])
   @@index([comment_id])
 }
@@ -342,7 +353,7 @@ model CommentModeration {
   comment_id   String             @unique
   post         Comment            @relation(fields: [comment_id], references: [id])
   moderator_id String
-  moderator    CommunityModerator @relation(fields: [moderator_id], references: [id])
+  moderator    CommunityModerator @relation(fields: [moderator_id], references: [id], onDelete: Cascade)
   action       ModerationType
   reason       String?            @db.VarChar(20)
   created_at   DateTime           @default(now())
