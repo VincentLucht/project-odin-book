@@ -163,12 +163,16 @@ type ReportedTypes = 'POST' | 'COMMENT';
 type ReportedStatus = 'PENDING' | 'REVIEWED' | 'DISMISSED';
 export interface DBReport {
   id: string;
-  item_type: ReportedStatus;
+  item_type: ReportedTypes;
   reporter_id: string;
   subject: string;
   reason: string;
   created_at: string;
-  status: ReportedTypes;
+  status: ReportedStatus;
+
+  moderator_id?: string;
+  moderated_at?: string;
+  removal_reason?: string;
 
   post_id: string | null;
   comment_id: string | null;
