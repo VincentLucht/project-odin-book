@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
+import useAuthGuard from '@/context/auth/hook/useAuthGuard';
 import useClickOutside from '@/hooks/useClickOutside';
 import useGetScreenSize from '@/context/screen/hook/useGetScreenSize';
 import useIsModerator from '@/hooks/useIsModerator';
@@ -10,9 +11,9 @@ import { Outlet } from 'react-router-dom';
 
 import getCommunityName from '@/Main/Community/util/getCommunityName';
 import { getModInfo } from '@/Main/Community/components/ModTools/api/communityModerationAPI';
+import '/src/Main/Community/components/ModTools/css/ModTools.css';
 
 import { CommunityModeration } from '@/Main/Community/components/ModTools/api/communityModerationAPI';
-import useAuthGuard from '@/context/auth/hook/useAuthGuard';
 
 export interface ModToolsContext {
   community: CommunityModeration;
@@ -26,6 +27,7 @@ export default function ModTools() {
 
   const [communityName, setCommunityName] = useState('');
   const [community, setCommunity] = useState<CommunityModeration | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const headerRef = useRef<HTMLDivElement | null>(null);
   const sidebarRef = useClickOutside(() => {
@@ -45,16 +47,38 @@ export default function ModTools() {
 
   useEffect(() => {
     const getCommunity = () => {
+      setLoading(true);
+
       if (!communityName) return;
-      void getModInfo(token, { community_name: communityName }, setCommunity);
+      void getModInfo(token, { community_name: communityName }).then((response) => {
+        setLoading(false);
+        if (response === false) return;
+
+        setCommunity(response);
+      });
     };
 
     getCommunity();
   }, [token, communityName]);
 
-  // TODO: Add proper message
+  if (loading) {
+    return (
+      <div className="mx-auto h-screen df">
+        <h2 className="text-lg font-semibold">Checking moderator status</h2>
+
+        <div className="loader ml-4 mt-2"></div>
+      </div>
+    );
+  }
+
   if (!isMod) {
-    return <div>You are not a moderator!</div>;
+    return (
+      <div className="mx-auto h-screen df">
+        <h2 className="text-lg font-semibold">
+          You are not a moderator in this community!
+        </h2>
+      </div>
+    );
   }
 
   return (
