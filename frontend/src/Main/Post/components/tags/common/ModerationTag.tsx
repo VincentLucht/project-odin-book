@@ -51,7 +51,7 @@ export default function ModerationTag({
         className="relative flex-shrink-0 rounded-full p-1 bg-transition-hover-alternate"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        onClick={() => navigate(`/user/${moderation.moderator.user.username}`)}
+        onClick={() => navigate(`/user/${user.username}`)}
       >
         <button className="relative df">
           <PFP className="!h-8 !w-8" src={user.profile_picture_url} />
@@ -61,8 +61,8 @@ export default function ModerationTag({
               className="absolute left-4 top-10 w-fit -translate-x-1/2 whitespace-nowrap break-words rounded-md
                 bg-neutral-950 p-2 text-xs text-gray-secondary"
             >
-              <span className="text-white">u/{moderation.moderator.user.username}</span>{' '}
-              at {formatDate(moderation.created_at)}
+              <span className="text-white">u/{user.username}</span> at{' '}
+              {formatDate(moderation.created_at)}
             </div>
           )}
         </button>
