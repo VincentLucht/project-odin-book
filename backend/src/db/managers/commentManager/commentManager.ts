@@ -32,6 +32,19 @@ export default class CommentManager {
     return comment;
   }
 
+  async getByIdAndCommunityId(id: string) {
+    const comment = await this.prisma.comment.findUnique({
+      where: { id },
+      include: { post: { select: { community_id: true } } },
+    });
+
+    if (!comment || !comment.post) {
+      return null;
+    }
+
+    return { ...comment, community_id: comment.post.community_id };
+  }
+
   /** Fetches comment thread with up to 30 main comments, each with 8 replies. */
   async getCommentThreads(
     post_id: string,
@@ -131,7 +144,25 @@ export default class CommentManager {
     return this.prisma.comment.findMany({
       where: { id: parent_comment_id, post_id },
       include: {
-        user: { select: { username: true, profile_picture_url: true } },
+        user: {
+          select: {
+            username: true,
+            profile_picture_url: true,
+            deleted_at: true,
+          },
+        },
+        ...(user_id && {
+          reports: { where: { reporter_id: user_id } },
+        }),
+        moderation: {
+          include: {
+            moderator: {
+              select: {
+                user: { select: { username: true, profile_picture_url: true } },
+              },
+            },
+          },
+        },
         comment_votes: user_id
           ? {
               where: { user_id },
