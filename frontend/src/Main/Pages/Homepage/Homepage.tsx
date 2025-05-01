@@ -18,12 +18,9 @@ export interface HomePageApiParams {
 export type HomepagePost = Omit<DBPostWithCommunityName, 'moderation'>;
 
 export default function Homepage() {
-  const [loadingState, setLoadingState] = useState({
-    initial: true,
-    fetchMore: false,
-  });
+  const [loading, setLoading] = useState(true);
   const [apiParams, setApiParams] = useState<HomePageApiParams>({
-    sortBy: 'top',
+    sortBy: 'new',
     timeframe: 'week',
   });
   const [pagination, setPagination] = useState<Pagination>({
@@ -37,10 +34,8 @@ export default function Homepage() {
   const navigate = useNavigate();
 
   const loadMore = useCallback(
-    (isInitialFetch: boolean, cursorId: string) => {
-      if (!isInitialFetch) {
-        setLoadingState({ initial: false, fetchMore: true });
-      }
+    (cursorId: string, isInitialFetch = false) => {
+      setLoading(true);
 
       void fetchHomePage(
         token,
@@ -50,22 +45,18 @@ export default function Homepage() {
           cursorId,
         },
         (posts, pagination) => {
-          setPosts((prev) => (loadingState.initial ? [...posts] : [...posts, ...prev]));
+          setPosts((prev) => (isInitialFetch ? [...posts] : [...prev, ...posts]));
           setPagination(pagination);
-          setLoadingState({ initial: false, fetchMore: false });
+          setLoading(false);
         },
       );
     },
-    [token, apiParams, loadingState.initial],
+    [token, apiParams],
   );
 
-  // Reset on API params changing
   useEffect(() => {
-    if (!token) return;
-
-    setPosts([]);
-    loadMore(true, '');
-  }, [token, loadMore, apiParams.sortBy, apiParams.timeframe]);
+    loadMore('', true);
+  }, [loadMore, apiParams]);
 
   if (!token) {
     return (
@@ -89,6 +80,7 @@ export default function Homepage() {
             setTimeframe={(timeframe) =>
               setApiParams((prev) => ({ ...prev, timeframe }))
             }
+            excludeHot={true}
           />
         </div>
 
@@ -99,7 +91,7 @@ export default function Homepage() {
             userId={user.id}
             token={token}
             navigate={navigate}
-            loadingState={loadingState}
+            loading={loading}
             loadMore={loadMore}
             pagination={pagination}
           />
