@@ -17,6 +17,7 @@ export default async function createPosts(prisma: PrismaClient) {
 
     await prisma.post.create({
       data: {
+        id: `${i + 5}`,
         community_id: '1',
         poster_id: '1',
         title: `test ${i + 1}`,
@@ -27,6 +28,7 @@ export default async function createPosts(prisma: PrismaClient) {
         total_vote_score: i * randomNumber,
         upvote_count: i * randomNumber,
         created_at: new Date(latestCreatedAt),
+        times_reported: i,
       },
     });
   }

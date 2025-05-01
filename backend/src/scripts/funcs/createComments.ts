@@ -11,11 +11,13 @@ export default async function createComments(prisma: PrismaClient) {
 
     await prisma.comment.create({
       data: {
+        id: `${i + 32}`,
         content: `test ${i + 1}`,
         created_at: createdAt,
         post_id: '1',
         user_id: '1',
         total_vote_score: i,
+        times_reported: i,
       },
     });
   }
@@ -216,7 +218,7 @@ export default async function createComments(prisma: PrismaClient) {
 
   await prisma.comment.create({
     data: {
-      id: '100',
+      id: '30',
       content: "I'm just inside of a private community",
       post_id: '3',
       user_id: '1',

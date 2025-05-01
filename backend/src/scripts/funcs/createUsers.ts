@@ -12,6 +12,7 @@ export default async function createUsers(prisma: PrismaClient) {
 
     const user = await prisma.user.create({
       data: {
+        id: `${i + 6}`,
         username: `test ${i + 1}`,
         email: `email${i}@gmail.com`,
         password: `${i + 1}`,
