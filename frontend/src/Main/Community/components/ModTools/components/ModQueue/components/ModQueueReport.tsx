@@ -104,11 +104,12 @@ export default function ModQueueReport({
             dismiss_reason: dismissReason,
           },
           {
-            loading: 'Removing post...',
-            success: 'Successfully removed post',
-            error: 'Failed to remove post',
+            loading: 'Moderating post...',
+            success: 'Successfully moderate post',
+            error: 'Failed to moderate post',
           },
         ).then((success) => {
+          setSubmitting(false);
           if (!success) return;
 
           onSuccess(action, report.id);
@@ -125,11 +126,12 @@ export default function ModQueueReport({
             moderation_action: action,
           },
           {
-            loading: 'Removing comment...',
-            success: 'Successfully removed comment',
-            error: 'Failed to remove comment',
+            loading: 'Moderating comment...',
+            success: 'Successfully moderated comment',
+            error: 'Failed to moderate comment',
           },
         ).then((success) => {
+          setSubmitting(false);
           if (!success) return;
 
           onSuccess(action, report.id);
@@ -246,7 +248,9 @@ export default function ModQueueReport({
                 className="confirm-button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onModeration('APPROVED', true);
+                  if (report.status !== 'REVIEWED') {
+                    onModeration('APPROVED', true);
+                  }
                 }}
               >
                 Approve
