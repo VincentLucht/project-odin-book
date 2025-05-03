@@ -65,6 +65,10 @@ export default class UserCommunityManager {
 
     const homepage = await this.prisma.post.findMany({
       where: {
+        OR: [
+          { moderation: null },
+          { moderation: { action: { not: 'REMOVED' } } },
+        ],
         community: {
           user_communities: {
             some: {
