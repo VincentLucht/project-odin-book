@@ -51,6 +51,16 @@ class PostModerationController {
         }
       };
 
+      const updateAllPendingReports = async () => {
+        await db.report.updateAllPendingReports(
+          post_id,
+          moderator.id,
+          'POST',
+          moderation_action === 'APPROVED' ? 'REVIEWED' : 'DISMISSED',
+          dismiss_reason,
+        );
+      };
+
       if (post?.moderation) {
         if (post.moderation.moderator_id !== moderator.id) {
           return res.status(409).json({
@@ -63,7 +73,7 @@ class PostModerationController {
           post.moderation.reason === reason
         ) {
           return res
-            .status(304)
+            .status(200)
             .json({ message: 'Identical moderation action' });
         }
 
@@ -74,6 +84,7 @@ class PostModerationController {
         );
 
         await sendNotification();
+        await updateAllPendingReports();
 
         return res
           .status(200)
@@ -87,14 +98,7 @@ class PostModerationController {
       );
 
       await sendNotification();
-
-      await db.report.updateAllPendingReports(
-        post_id,
-        moderator.id,
-        'POST',
-        moderation_action === 'APPROVED' ? 'REVIEWED' : 'DISMISSED',
-        dismiss_reason,
-      );
+      await updateAllPendingReports();
 
       // TODO: Send notif that moderation is done
 
