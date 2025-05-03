@@ -129,6 +129,12 @@ export default class PostManager {
     const posts = await this.prisma.post.findMany({
       where: {
         deleted_at: null,
+        is_mature: false,
+        is_spoiler: false,
+        OR: [
+          { moderation: null },
+          { moderation: { action: { not: 'REMOVED' } } },
+        ],
         community: { type: { not: 'PRIVATE' } },
         ...(convertedTimeframe && sortBy === 'top'
           ? {
