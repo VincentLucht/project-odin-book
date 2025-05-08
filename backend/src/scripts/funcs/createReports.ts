@@ -72,7 +72,5 @@ export default async function createReports(prisma: PrismaClient) {
     });
   }
 
-  console.log(
-    'Successfully created 300 reports: 150 for posts and 150 for comments',
-  );
+  console.log('Successfully created 300 reports');
 }
