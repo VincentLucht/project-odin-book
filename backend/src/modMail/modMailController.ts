@@ -113,13 +113,14 @@ class ModMailController {
       }
 
       await db.modMail.update(modmail_id, { replied: true });
-      await db.notifications.sendNotification(
+      await db.notification.send(
         'community',
         modmail.community_id,
         modmail.sender_id,
         'MODMAILREPLY',
         subject,
         message,
+        modmail.id,
       );
 
       return res
