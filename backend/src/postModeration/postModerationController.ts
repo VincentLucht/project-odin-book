@@ -27,6 +27,7 @@ class PostModerationController {
       if (!post) {
         return res.status(404).json({ message: 'Post not found' });
       }
+      const community = await db.community.getById(post.community_id);
 
       const moderator = await db.communityModerator.getById(
         user_id,
@@ -40,13 +41,16 @@ class PostModerationController {
 
       const sendNotification = async () => {
         if (post.poster_id && moderation_action === 'REMOVED') {
-          await db.notifications.sendNotification(
+          await db.notification.send(
             'user',
             user_id,
             post.poster_id,
             'MODMESSAGE',
-            `Removal of post ${post_id}`,
-            reason,
+            `Removal of post ${post.title} in r/${community!.name}`,
+            reason
+              ? `Your post "${post.title}" in r/${community!.name} has been removed. Reason: ${reason}`
+              : `Your post "${post.title}" was removed by the moderators of r/${community!.name}. If you think this was a mistake, you can message the moderators and try to appeal this decision.`,
+            post.id, // TODO: Add mod message detail view
           );
         }
       };
