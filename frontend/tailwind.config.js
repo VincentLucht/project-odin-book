@@ -193,6 +193,9 @@ export default {
         },
         '.sub-header': {
           '@apply text-[22px] font-semibold': {}
+        },
+        '.absolute-circle': {
+          '@apply absolute left-6 top-[26px] h-[12px] w-[12px] rounded-full df': {}
         }
       };
 
