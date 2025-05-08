@@ -53,7 +53,7 @@ export const ModalContainer = ({
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center">
       <animated.div
         style={styles}
-        className={`flex max-h-[500px] w-full min-w-[300px] max-w-[500px] flex-col gap-4 rounded-lg p-3
+        className={`flex max-h-[600px] w-full min-w-[300px] max-w-[500px] flex-col gap-4 rounded-lg p-3
           bg-gray ${className}`}
         ref={containerRef}
       >
