@@ -42,7 +42,7 @@ export class DB {
   public recentCommunities: RecentCommunitiesManager;
   public joinRequest: JoinRequestManager;
   public searchResults: SearchResultsManager;
-  public notifications: NotificationManager;
+  public notification: NotificationManager;
   public modMail: ModMailManager;
   public report: ReportManager;
 
@@ -66,7 +66,7 @@ export class DB {
     this.recentCommunities = new RecentCommunitiesManager(this.prisma);
     this.joinRequest = new JoinRequestManager(this.prisma);
     this.searchResults = new SearchResultsManager(this.prisma);
-    this.notifications = new NotificationManager(this.prisma, this.user);
+    this.notification = new NotificationManager(this.prisma, this.user);
     this.modMail = new ModMailManager(this.prisma);
     this.report = new ReportManager(this.prisma);
   }
