@@ -19,13 +19,31 @@ export default class CommentManager {
     return comment;
   }
 
-  async getByIdAndModeration(id: string, hasReply: boolean = false) {
+  async getByIdAndModeration(
+    id: string,
+    options: { hasReply?: boolean; includeCommunity?: boolean } = {
+      hasReply: false,
+      includeCommunity: false,
+    },
+  ) {
     const comment = await this.prisma.comment.findUnique({
       where: { id },
       include: {
-        post: true,
+        ...(options.includeCommunity
+          ? {
+              post: {
+                include: {
+                  community: {
+                    select: {
+                      name: true,
+                    },
+                  },
+                },
+              },
+            }
+          : { post: true }),
         moderation: true,
-        ...(hasReply ? { replies: { take: 1 } } : {}),
+        ...(options.hasReply ? { replies: { take: 1 } } : {}),
       },
     });
 
