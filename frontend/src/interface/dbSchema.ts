@@ -178,6 +178,36 @@ export interface DBReport {
   comment_id: string | null;
 }
 
+export type NotificationType =
+  | 'COMMUNITYMESSAGE'
+  | 'POSTREPLY'
+  | 'COMMENTREPLY'
+  | 'MODMESSAGE'
+  | 'MODMAILREPLY'
+  | 'CHATMESSAGE'
+  | 'NEWFOLLOWER';
+export interface DBNotification {
+  id: string;
+  subject: string;
+  message: string | null;
+  created_at: Date;
+  is_hidden: boolean;
+  read_at?: Date | null;
+  type: NotificationType;
+  sender_user_id?: string | null;
+  sender_user?: {
+    username: string;
+    profile_picture_url: string | undefined;
+  };
+  sender_community_id?: string | null;
+  sender_community?: {
+    name: string;
+    profile_picture_url: string | undefined;
+  };
+  receiver_id: string;
+  link: string | undefined;
+}
+
 // EXTENSIONS
 export type CommunityTypes = 'PUBLIC' | 'RESTRICTED' | 'PRIVATE';
 export type UserRoles = 'BASIC' | 'CONTRIBUTOR';
