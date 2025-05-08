@@ -8,11 +8,13 @@ import SignUp from '@/auth/SignUp/SignUp';
 import Layout from '@/Main/Layout/Layout';
 
 import Homepage from '@/Main/Pages/Homepage/Homepage';
+import Popular from '@/Main/Pages/Popular/Popular';
 
 import SearchResults from '@/Main/SearchResults/SearchResults';
 
 import UserSettings from '@/Main/user/UserSettings/UserSettings';
 import UserProfile from '@/Main/user/UserProfile/UserProfile';
+import Notifications from '@/Main/Notifications/Notifications';
 
 import Community from '@/Main/Community/Community';
 import CreateCommunity from '@/Main/Community/components/CreateCommunity/CreateCommunity';
@@ -65,12 +67,17 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               <Route path="/" element={<Layout />}>
                 <Route index element={<Homepage />} />
 
+                <Route path="Popular" element={<Popular />} />
+
                 {/* SEARCHING */}
                 <Route path="/search/*" element={<SearchResults />} />
 
                 {/* USER */}
                 <Route path="user/settings" element={<UserSettings />} />
                 <Route path="user/:username" element={<UserProfile />} />
+
+                {/* NOTIFICATIONS */}
+                <Route path="/notifications" element={<Notifications />} />
 
                 {/* COMMUNITY */}
                 <Route path="r/:communityName" element={<Community />} />

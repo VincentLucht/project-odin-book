@@ -84,7 +84,7 @@ export default function Header({
 
             <CreateButton />
 
-            <NotificationButton />
+            <NotificationButton onClick={() => navigate('/notifications')} />
           </>
         )}
 
