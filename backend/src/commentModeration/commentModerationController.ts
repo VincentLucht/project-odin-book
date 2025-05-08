@@ -24,7 +24,10 @@ class CommentModerationController {
         return res.status(404).json({ message: 'User not found' });
       }
 
-      const comment = await db.comment.getByIdAndModeration(comment_id, true);
+      const comment = await db.comment.getByIdAndModeration(comment_id, {
+        hasReply: true,
+        includeCommunity: true,
+      });
       if (!comment) {
         return res.status(404).json({ message: 'Comment not found' });
       }
@@ -41,13 +44,14 @@ class CommentModerationController {
 
       const sendNotification = async () => {
         if (comment.user_id && moderation_action === 'REMOVED') {
-          await db.notifications.sendNotification(
+          const communityName = (comment.post as any).community?.name;
+          await db.notification.send(
             'user',
             user_id,
             comment.user_id,
             'MODMESSAGE',
-            `Removal of comment ${comment_id}`,
-            reason,
+            `Removal of comment "${comment.content.length > 20 ? comment.content.slice(0, 20) + '...' : comment.content}" in r/${communityName}`,
+            reason ?? '',
           );
         }
       };
