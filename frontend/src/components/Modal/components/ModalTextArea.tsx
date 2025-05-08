@@ -7,6 +7,7 @@ interface ModalTextAreaProps {
   setterFunc: (value: string) => void;
   maxLength: number;
   required?: boolean;
+  className?: string;
 }
 
 export default function ModalTextArea({
@@ -15,16 +16,17 @@ export default function ModalTextArea({
   setterFunc,
   maxLength,
   required = false,
+  className = '',
 }: ModalTextAreaProps) {
   return (
-    <div>
+    <div className="overscroll-contain">
       <label className="-mb-2 font-medium" htmlFor="modal-message">
         {labelName}
       </label>
 
       <TextareaAutosize
         id="modal-message"
-        className="!py-2 modal-input"
+        className={`max-h-[40dvh] min-h-[80px] overscroll-contain !py-2 modal-input ${className}`}
         value={value}
         onChange={(e) => setterFunc(e.target.value)}
         minRows={3}
