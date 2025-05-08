@@ -205,6 +205,22 @@ export default class ReportManager {
     status: 'REVIEWED' | 'DISMISSED',
     dismissReason?: string,
   ) {
+    const pendingReports = await this.prisma.report.findMany({
+      where: {
+        status: 'PENDING',
+        ...(type === 'POST' && { post_id: item_id }),
+        ...(type === 'COMMENT' && { comment_id: item_id }),
+      },
+      select: {
+        reporter_id: true,
+        comment: { select: { content: true } },
+        post: { select: { title: true } },
+        community: {
+          select: { name: true },
+        },
+      },
+    });
+
     await this.prisma.report.updateMany({
       where: {
         status: 'PENDING',
@@ -218,5 +234,26 @@ export default class ReportManager {
         removal_reason: dismissReason,
       },
     });
+
+    if (pendingReports.length > 0) {
+      await this.prisma.notification.createMany({
+        data: pendingReports.map((report) => ({
+          sender_user_id: report.reporter_id,
+          subject: `Report of ${type === 'COMMENT' ? 'Comment' : 'Post'} "${
+            report.comment?.content
+              ? report.comment.content.slice(0, 20) +
+                (report.comment.content.length > 20 ? '...' : '')
+              : report.post?.title.slice(0, 20) +
+                ((report.post?.title?.length || 0) > 20 ? '...' : '')
+          }" in r/${report.community.name}`,
+          message:
+            status === 'REVIEWED'
+              ? `Your report for this ${type.toLowerCase()} was reviewed and the content was removed.`
+              : `Your report for this ${type.toLowerCase()} was reviewed but no action was taken.`,
+          type: 'MODMESSAGE',
+          receiver_id: report.reporter_id,
+        })),
+      });
+    }
   }
 }
