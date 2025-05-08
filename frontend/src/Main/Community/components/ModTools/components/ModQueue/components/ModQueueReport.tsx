@@ -240,7 +240,7 @@ export default function ModQueueReport({
                 </div>
               </div>
 
-              <div className="mt-2 text-sm">{report.removal_reason}</div>
+              <div className="mt-2 break-words text-sm">{report.removal_reason}</div>
             </div>
           ) : (
             <div className="flex items-center gap-2">
