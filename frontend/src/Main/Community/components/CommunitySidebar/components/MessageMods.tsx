@@ -4,8 +4,8 @@ import { MailIcon } from 'lucide-react';
 import { Modal } from '@/components/Modal/Modal';
 import ModalFooter from '@/components/Modal/components/ModalFooter';
 import ModalHeader from '@/components/Modal/components/ModalHeader';
-import TextareaAutosize from 'react-textarea-autosize';
-import MaxLengthIndicator from '@/components/MaxLengthIndicator';
+import ModalInput from '@/components/Modal/components/ModalInput';
+import ModalTextArea from '@/components/Modal/components/ModalTextArea';
 
 import { sendMessage as sendMessageToModMail } from '@/Main/Community/components/ModTools/components/ModMail/api/modMailAPI';
 
@@ -37,38 +37,19 @@ export default function MessageMods({ community_id, token }: MessageModsProps) {
       <Modal show={showModal} onClose={onClose}>
         <ModalHeader headerName="Send a message to the moderators" onClose={onClose} />
 
-        <div>
-          <label className="-mb-2 font-medium" htmlFor="modal-subject">
-            Subject
-          </label>
-          <input
-            id="modal-subject"
-            type="text"
-            className="!py-2 modal-input"
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
-            maxLength={200}
-            required
-            autoComplete="off"
-          />
-          <MaxLengthIndicator length={subject.length} maxLength={200} />
-        </div>
+        <ModalInput
+          labelName="Subject"
+          value={subject}
+          setterFunc={setSubject}
+          maxLength={200}
+        />
 
-        <div>
-          <label className="-mb-2 font-medium" htmlFor="modal-message">
-            Message
-          </label>
-          <TextareaAutosize
-            id="modal-message"
-            className="!py-2 modal-input"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            maxLength={1000}
-            minRows={3}
-            required
-          />
-          <MaxLengthIndicator length={message.length} maxLength={1000} />
-        </div>
+        <ModalTextArea
+          labelName="Message"
+          value={message}
+          setterFunc={setMessage}
+          maxLength={1000}
+        />
 
         <ModalFooter
           confirmButtonName="Send"
