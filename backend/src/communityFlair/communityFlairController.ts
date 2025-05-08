@@ -249,7 +249,7 @@ class CommunityFlairController {
       );
 
       return res
-        .status(201)
+        .status(200)
         .json({ message: 'Successfully updated flair', flair });
     } catch (error) {
       console.error(error);
