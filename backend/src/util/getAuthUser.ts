@@ -11,5 +11,5 @@ export default function getAuthUser(
     throw new Error('Missing user_id in token');
   }
 
-  return { user_id: authData.id };
+  return { user_id: authData.id, username: authData.username };
 }
