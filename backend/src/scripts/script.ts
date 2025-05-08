@@ -8,6 +8,7 @@ import createCommunities from '@/scripts/funcs/createCommunities';
 import createFlairs from '@/scripts/funcs/createFlairs';
 import createModmails from '@/scripts/funcs/createModMail';
 import createReports from '@/scripts/funcs/createReports';
+import createNotifications from '@/scripts/funcs/createNotifications';
 
 const prisma = new PrismaClient();
 
@@ -65,6 +66,7 @@ async function main() {
   await createFlairs(prisma);
   await createModmails(prisma);
   await createReports(prisma);
+  // await createNotifications(prisma);
 }
 
 main()
