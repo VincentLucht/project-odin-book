@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 
 import db from '@/db/db';
+import slugify from 'slugify';
 import { checkValidationError } from '@/util/checkValidationError';
 import { asyncHandler } from '@/util/asyncHandler';
 import getAuthUser from '@/util/getAuthUser';
@@ -126,7 +127,7 @@ class CommentController {
     const { content, post_id, parent_comment_id } = req.body;
 
     try {
-      const { user_id } = getAuthUser(req.authData);
+      const { user_id, username } = getAuthUser(req.authData);
       if (!(await db.user.getById(user_id))) {
         return res.status(404).json({ message: 'User not found' });
       }
@@ -162,8 +163,9 @@ class CommentController {
           .json({ message: permissionCheck.message });
       }
 
+      let parentComment = null;
       if (parent_comment_id) {
-        const parentComment = await db.comment.getById(parent_comment_id);
+        parentComment = await db.comment.getById(parent_comment_id);
         if (!parentComment) {
           return res.status(404).json({ message: 'Parent comment not found' });
         }
@@ -185,6 +187,25 @@ class CommentController {
         user_id,
         parent_comment_id,
       );
+
+      const notificationType = parent_comment_id ? 'COMMENTREPLY' : 'POSTREPLY';
+      const notificationTypeString = parent_comment_id ? 'comment' : 'post';
+      const baseUrl = `/r/${community.name}/${post.id}/${slugify(post.title, { lower: true })}/${comment.id}`;
+      const recipientId = parent_comment_id
+        ? (parentComment?.user_id ?? '')
+        : post.poster_id;
+      await db.notification.send(
+        'user',
+        user_id,
+        recipientId,
+        notificationType,
+        `u/${username} replied to your ${notificationTypeString} in r/${community.name}`,
+        content,
+        notificationType === 'COMMENTREPLY'
+          ? `${baseUrl}?reply=${comment.id}`
+          : baseUrl,
+      );
+      await db.recentCommunities.assign(user_id, community.id);
 
       return res.status(201).json({
         message: parent_comment_id
