@@ -44,7 +44,6 @@ export default function ModerationTag({
   const user = moderation.moderator.user;
   const approved = moderation.action === 'APPROVED';
 
-  const classname = 'absolute left-6 top-[26px] h-[12px] w-[12px] rounded-full df';
   return (
     <div className={`gap-1 df ${className}`}>
       <div
@@ -68,11 +67,11 @@ export default function ModerationTag({
         </button>
 
         {approved ? (
-          <div className={`${classname} bg-green-400`}>
+          <div className="absolute-circle bg-green-400">
             <CheckIcon className="h-3 w-3 text-bg-gray" />
           </div>
         ) : (
-          <div className={`${classname} bg-red-500`}>
+          <div className="absolute-circle bg-red-500">
             <img src="/x-close-bg-gray.svg" alt="x close icon" />
           </div>
         )}
