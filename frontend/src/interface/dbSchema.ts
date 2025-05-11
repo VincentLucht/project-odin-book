@@ -2,6 +2,17 @@ import { VoteType } from '@/interface/backendTypes';
 import { PostType } from '@/Main/CreatePost/CreatePost';
 import { FetchedCommunity } from '@/Main/Community/api/fetch/fetchCommunityWithPosts';
 
+export interface DBUserSettings {
+  id: string;
+  community_enabled: boolean;
+  posts_enabled: boolean;
+  comments_enabled: boolean;
+  mods_enabled: boolean;
+  chats_enabled: boolean;
+  follow_enabled: boolean;
+  user_id: string;
+}
+
 export interface DBUser {
   id: string;
   username: string;
