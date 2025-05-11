@@ -13,13 +13,6 @@ communityFlairRouter.get(
   communityFlairController.getAllCommunityFlairs,
 );
 
-// communityFlairRouter.get(
-//   '/post',
-//   token.authenticate,
-//   communityFlairValidator.getAllPostFlairsRules(),
-//   communityFlairController.getAllPostFlairs,
-// );
-
 communityFlairRouter.get(
   '', // ?cn=community_name&cId=cursor_id&t=type&initF=is_initial_fetch
   token.authenticate,
