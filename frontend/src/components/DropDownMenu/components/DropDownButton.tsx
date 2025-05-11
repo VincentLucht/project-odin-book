@@ -40,9 +40,7 @@ export default function DropdownButton({
       className={`text-mds flex w-full items-center gap-2 rounded-md px-4 py-2 font-light
         dropdown-btn-transition ${size === 'normal' ? 'h-[48px]' : 'h-[64px]'} ${className}
         ${show ? 'cursor-pointer' : 'cursor-default'} ${isSelected && 'bg-hover-gray'}`}
-      onClick={(e) => {
-        e.stopPropagation();
-
+      onClick={() => {
         if (show && route && setterFunc) {
           setterFunc(null);
           navigate(route);
