@@ -77,7 +77,7 @@ export default function CreatePost() {
   }, [activeCommunity]);
 
   return (
-    <div className="overflow-y-scroll p-4 center-main">
+    <div className="h-full overflow-y-scroll p-4 center-main">
       <div className="center-main-content">
         <div className="flex flex-col">
           <h2 className="text-2xl font-bold">Create post</h2>
