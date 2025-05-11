@@ -85,6 +85,7 @@ export default function VirtualizedModQueue({
         hasMorePages={pagination.hasMore}
         dataLength={reports.length}
         noResultsMessage="No reports found."
+        endMessageClassName="mt-14"
       />
     </div>
   );

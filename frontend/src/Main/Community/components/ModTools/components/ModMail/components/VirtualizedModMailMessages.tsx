@@ -67,6 +67,7 @@ export default function VirtualizedModMailMessages({
         hasMorePages={pagination.hasMore}
         dataLength={modMail.length}
         noResultsMessage="No Modmail found."
+        endMessageClassName="mt-[100px]"
       />
     </div>
   );
