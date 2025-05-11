@@ -55,7 +55,7 @@ export default class CommunityFlairManager {
     community_id: string,
     cursorId: string,
     type: 'post' | 'user',
-    take = 30,
+    take = 50,
   ) {
     const flairs = await this.prisma.communityFlair.findMany({
       where: {
