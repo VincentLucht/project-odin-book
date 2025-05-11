@@ -146,6 +146,9 @@ export default class UserManager {
       where: { id: user_id },
       include: { user_settings: true },
     });
+    const userSettings = await this.prisma.userSettings.findUnique({
+      where: { user_id },
+    });
 
     if (!userWithPassword) {
       if (check_existence) {
@@ -158,7 +161,10 @@ export default class UserManager {
       ...userWithPassword,
       password: null,
     };
-    return userWithoutPassword;
+    return {
+      user: userWithoutPassword,
+      userSettings,
+    };
   }
 
   async getByEmail(email: string) {
@@ -207,6 +213,14 @@ export default class UserManager {
       profile_picture_url: string | null;
       cake_day: string | null;
     }>,
+    settingsData?: Partial<{
+      community_enabled: boolean;
+      posts_enabled: boolean;
+      comments_enabled: boolean;
+      mods_enabled: boolean;
+      chats_enabled: boolean;
+      follows_enabled: boolean;
+    }>,
   ) {
     if (updateData.password) {
       updateData.password = await bcrypt.hash(updateData.password, 10);
@@ -216,6 +230,13 @@ export default class UserManager {
       where: { id: user_id },
       data: updateData,
     });
+
+    if (settingsData) {
+      await this.prisma.userSettings.update({
+        where: { user_id },
+        data: settingsData,
+      });
+    }
   }
 
   // ! DELETE

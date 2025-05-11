@@ -59,11 +59,11 @@ class UserController {
         return res.status(404).json({ message: 'User not found' });
       }
 
-      const settings = await db.user.getSettings(user_id);
+      const userSettings = await db.user.getSettings(user_id);
 
       return res.status(200).json({
         message: 'Found user settings',
-        settings,
+        data: userSettings,
       });
     } catch (error) {
       console.error(error);
@@ -84,6 +84,13 @@ class UserController {
       description,
       cake_day,
       profile_picture_url,
+      // Notification settings
+      community_enabled,
+      posts_enabled,
+      comments_enabled,
+      mods_enabled,
+      chats_enabled,
+      follows_enabled,
     } = req.body;
 
     try {
@@ -93,18 +100,36 @@ class UserController {
         return res.status(404).json({ message: 'User not found' });
       }
 
-      if (!(await bcrypt.compare(password, user.password))) {
-        return res.status(400).json({ message: 'Incorrect password' });
+      const isOnlyNotificationsUpdate =
+        email === undefined &&
+        display_name === undefined &&
+        description === undefined &&
+        cake_day === undefined &&
+        profile_picture_url === undefined;
+      if (!isOnlyNotificationsUpdate) {
+        if (!(await bcrypt.compare(password ?? '', user.password))) {
+          return res.status(400).json({ message: 'Incorrect password' });
+        }
       }
 
-      await db.user.edit(user_id, {
+      const userData = {
         email,
         display_name,
         password,
         description,
         cake_day,
         profile_picture_url,
-      });
+      };
+      const settingsData = {
+        community_enabled,
+        posts_enabled,
+        comments_enabled,
+        mods_enabled,
+        chats_enabled,
+        follows_enabled,
+      };
+
+      await db.user.edit(user_id, userData, settingsData);
 
       return res.status(200).json({
         message: 'Successfully edited settings',

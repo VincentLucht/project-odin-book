@@ -8,17 +8,20 @@ export interface UserSettings {
   description: string | null;
   profile_picture_url: string | null;
   cake_day: string | null;
+  // Notifications
+  community_enabled: boolean;
+  posts_enabled: boolean;
+  comments_enabled: boolean;
+  mods_enabled: boolean;
+  chats_enabled: boolean;
+  follows_enabled: boolean;
 }
 
 export default function handleEditSettings(
   token: string,
   updateData: Partial<UserSettings>,
 ) {
-  editUserSettings(token, updateData)
-    .then((response) => {
-      console.log(response);
-    })
-    .catch((error) => {
-      catchError(error);
-    });
+  editUserSettings(token, updateData).catch((error) => {
+    catchError(error);
+  });
 }
