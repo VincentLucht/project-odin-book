@@ -1,21 +1,21 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import { Modal } from '@/components/Modal/Modal';
-import SelectFlair from '@/Main/Post/components/PostFlairTag/PostFlairSelection/components/SelectFlair';
+import VirtualizedPostFlairSelection from '@/Main/Post/components/PostFlairTag/PostFlairSelection/components/VirtualizedPostFlairSelection';
 import InputWithImg from '@/components/InputWithImg';
 
-import fetchPostFlair from '@/Main/Post/components/PostFlairTag/api/fetchPostFlair';
-import catchError from '@/util/catchError';
+import { fetchCommunityFlairs } from '@/Main/Community/components/ModTools/components/CommunitySettings/api/communityFlairAPI';
 import handleAssignPostFlair from '@/Main/Post/components/PostFlairTag/PostFlairSelection/api/handleAssignPostFlair';
+import handleDeletePostFlair from '@/Main/Post/components/PostFlairTag/PostFlairSelection/api/handleDeletePostFlair';
 
 import { DBCommunityFlair } from '@/interface/dbSchema';
 import { DBPostWithCommunity } from '@/interface/dbSchema';
-import handleDeletePostFlair from '@/Main/Post/components/PostFlairTag/PostFlairSelection/api/handleDeletePostFlair';
+import { Pagination } from '@/interface/backendTypes';
 
 interface PostFlairSelectionProps {
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
-  communityId?: string;
+  communityName?: string;
   postId?: string;
   activePostFlairId: string;
   setPost?: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>;
@@ -26,7 +26,7 @@ interface PostFlairSelectionProps {
 export default function PostFlairSelection({
   show,
   setShow,
-  communityId,
+  communityName,
   postId,
   activePostFlairId,
   setPost,
@@ -34,40 +34,40 @@ export default function PostFlairSelection({
   cb,
 }: PostFlairSelectionProps) {
   const [availableFlairs, setAvailableFlairs] = useState<DBCommunityFlair[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
+  const [loading, setLoading] = useState(true);
+  const [pagination, setPagination] = useState<Pagination>({
+    hasMore: true,
+    nextCursor: '',
+  });
   const [query, setQuery] = useState('');
-  const filteredItems = useMemo(() => {
-    if (!query.trim()) {
-      return availableFlairs;
-    }
 
-    return availableFlairs.filter((flair) => {
-      if (flair.name.toLowerCase().includes(query.toLowerCase())) {
-        return true;
-      }
+  const loadMore = useCallback(
+    (cursorId: string, isInitialFetch = false) => {
+      if (!communityName) return;
+      setLoading(true);
 
-      if (flair?.emoji?.includes(query)) {
-        return true;
-      }
-
-      return false;
-    });
-  }, [query, availableFlairs]);
+      void fetchCommunityFlairs(
+        token,
+        {
+          community_name: communityName,
+          type: 'post',
+          cursor_id: cursorId,
+        },
+        (postFlairs, pagination) => {
+          isInitialFetch
+            ? setAvailableFlairs(postFlairs)
+            : setAvailableFlairs((prev) => [...prev, ...postFlairs]);
+          setPagination(pagination);
+          setLoading(false);
+        },
+      );
+    },
+    [token, communityName],
+  );
 
   useEffect(() => {
-    if (show && token && communityId) {
-      fetchPostFlair(communityId, token)
-        .then((response) => {
-          setAvailableFlairs(response.allPostFlairs);
-          setIsLoading(false);
-        })
-        .catch((error) => {
-          catchError(error);
-          setIsLoading(false);
-        });
-    }
-  }, [show, token, communityId]);
+    loadMore('', true);
+  }, [loadMore]);
 
   const onSelect = (flair: DBCommunityFlair) => {
     if (postId && setPost) {
@@ -85,17 +85,6 @@ export default function PostFlairSelection({
     }
   };
 
-  const removeFlair = {
-    id: 'inactive',
-    community_id: '',
-    textColor: '',
-    name: 'No post flair',
-    color: '',
-    emoji: '',
-    is_assignable_to_posts: true,
-    is_assignable_to_users: true,
-  };
-
   return (
     <Modal show={show} onClose={() => setShow(false)}>
       <h2 className="text-xl font-semibold">Select a Post Flair from the community</h2>
@@ -109,34 +98,16 @@ export default function PostFlairSelection({
         imgClassName=""
       />
 
-      {isLoading ? (
-        <div className="df">
-          <div className="spinner-dots"></div>
-        </div>
-      ) : (
-        <div className="flex-1 flex-col gap-1 overflow-y-auto df">
-          {!filteredItems.length ? (
-            <div>There are no Post Flairs in this community...</div>
-          ) : (
-            <>
-              <SelectFlair
-                flair={removeFlair}
-                onClick={() => onDelete()}
-                isCurrentlyActive={!activePostFlairId}
-              />
-
-              {filteredItems.map((flair) => (
-                <SelectFlair
-                  flair={flair}
-                  key={flair.id}
-                  onClick={() => onSelect(flair)}
-                  isCurrentlyActive={flair.id === activePostFlairId}
-                />
-              ))}
-            </>
-          )}
-        </div>
-      )}
+      <VirtualizedPostFlairSelection
+        flairs={availableFlairs}
+        loading={loading}
+        loadMore={loadMore}
+        pagination={pagination}
+        activePostFlairId={activePostFlairId}
+        onSelect={onSelect}
+        onDelete={onDelete}
+        searchTerm={query}
+      />
 
       <button className="h-7 prm-button-red" onClick={() => setShow(false)}>
         Close

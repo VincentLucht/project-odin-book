@@ -195,7 +195,7 @@ export default function CreatePost() {
           <PostFlairSelection
             show={showPostFlairSelection}
             setShow={setShowPostFlairSelection}
-            communityId={activeCommunity?.id}
+            communityName={activeCommunity?.name}
             activePostFlairId={activePostFlair?.id ? activePostFlair.id : ''}
             token={token}
             cb={(flair) => {
