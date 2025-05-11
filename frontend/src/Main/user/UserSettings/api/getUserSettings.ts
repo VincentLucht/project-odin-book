@@ -1,10 +1,13 @@
 import API_URL from '@/auth/ApiUrl';
-import { DBUser } from '@/interface/dbSchema';
+import { DBUser, DBUserSettings } from '@/interface/dbSchema';
 
 interface GetUserSettingsResponse {
   message: string;
   error?: string;
-  settings: DBUser;
+  data: {
+    user: DBUser;
+    userSettings: DBUserSettings;
+  };
 }
 
 export default async function getUserSettings(token: string) {

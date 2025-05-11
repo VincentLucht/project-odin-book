@@ -1,9 +1,10 @@
 import getUserSettings from '@/Main/user/UserSettings/api/getUserSettings';
 import catchError from '@/util/catchError';
-import { DBUser } from '@/interface/dbSchema';
+import { DBUser, DBUserSettings } from '@/interface/dbSchema';
 
 export default function handleGetUserSettings(
-  setSettings: React.Dispatch<React.SetStateAction<DBUser | null>>,
+  setUser: React.Dispatch<React.SetStateAction<DBUser | null>>,
+  setSettings: React.Dispatch<React.SetStateAction<DBUserSettings | null>>,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
   token: string,
 ) {
@@ -11,7 +12,8 @@ export default function handleGetUserSettings(
 
   getUserSettings(token)
     .then((response) => {
-      setSettings(response.settings);
+      setUser(response.data.user);
+      setSettings(response.data.userSettings);
       setLoading(false);
     })
     .catch((error) => {
