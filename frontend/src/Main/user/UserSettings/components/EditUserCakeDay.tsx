@@ -1,7 +1,7 @@
 import UserSettingsOption from '@/Main/user/UserSettings/components/UserSettingsOption';
 import Swal from 'sweetalert2';
 import swalDefaultProps from '@/util/swalDefaultProps';
-import editSettings from '@/Main/user/UserSettings/api/editUserSettings';
+import editUserSettings from '@/Main/user/UserSettings/api/editUserSettings';
 import { toast } from 'react-toastify';
 import { DBUser } from '@/interface/dbSchema';
 
@@ -51,7 +51,7 @@ export default function EditUserCakeDay({
 
             const toastId = toast.loading('Changing Cake Day...');
             try {
-              await editSettings(token, { password, cake_day: newCakeDay });
+              await editUserSettings(token, { password, cake_day: newCakeDay });
               toast.update(toastId, {
                 type: 'success',
                 render: 'Successfully updated Cake Day',
