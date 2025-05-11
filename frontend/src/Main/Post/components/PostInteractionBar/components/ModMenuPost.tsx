@@ -309,7 +309,7 @@ export default function ModMenuPost({
       <PostFlairSelection
         show={showPostFlairSelection}
         setShow={setShowPostFlairSelection}
-        communityId={post?.community?.id}
+        communityName={post?.community?.name}
         postId={post.id}
         setPost={setPost}
         token={token}

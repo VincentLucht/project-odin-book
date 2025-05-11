@@ -17,6 +17,7 @@ interface PostSidebarProps {
     show: boolean;
     isMember: boolean;
   };
+  isMod: boolean;
 }
 
 export default function PostSidebar({
@@ -26,6 +27,7 @@ export default function PostSidebar({
   token,
   navigate,
   showMembership,
+  isMod,
 }: PostSidebarProps) {
   if (!community) {
     return;
@@ -63,6 +65,7 @@ export default function PostSidebar({
         isMember: showMembership.isMember,
         toggleMembership,
       }}
+      isMod={isMod}
     />
   );
 }

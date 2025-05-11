@@ -236,7 +236,7 @@ export default function Post({
           <PostFlairSelection
             show={showPostFlairSelection}
             setShow={setShowPostFlairSelection}
-            communityId={post.community_id}
+            communityName={post.community.name}
             activePostFlairId={post.post_assigned_flair?.[0]?.community_flair.id}
             postId={post.id}
             setPost={setPost}
@@ -252,6 +252,7 @@ export default function Post({
             token={token}
             navigate={navigate}
             showMembership={{ show: true, isMember }}
+            isMod={isMod !== false}
           />
         )}
       </div>
