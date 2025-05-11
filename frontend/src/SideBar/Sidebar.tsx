@@ -22,7 +22,10 @@ export default function Sidebar() {
   }
 
   return (
-    <nav className="h-[calc(100dvh)] w-[270px] overflow-y-scroll border-r text-sm bg-gray">
+    <nav
+      className="h-[calc(100dvh-56px)] w-[270px] overflow-y-scroll overscroll-contain border-r text-sm
+        bg-gray"
+    >
       <div className="flex-col py-4 df">
         <SidebarButton
           navigate={() => navigate('')}
