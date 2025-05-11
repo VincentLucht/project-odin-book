@@ -14,6 +14,7 @@ import { NavigateFunction } from 'react-router-dom';
 interface CommunitySidebarProps {
   token: string | null;
   community: FetchedCommunity;
+  isMod?: boolean;
   navigate: NavigateFunction;
   showMembership?: {
     show: boolean;
@@ -25,6 +26,7 @@ interface CommunitySidebarProps {
 export default function CommunitySidebar({
   token,
   community,
+  isMod,
   navigate,
   showMembership,
 }: CommunitySidebarProps) {
@@ -34,12 +36,21 @@ export default function CommunitySidebar({
         <div className="mb-2 flex items-center justify-between">
           <h2 className="text-lg font-semibold">r/{community.name}</h2>
 
-          <MemberShipButton
-            isMember={showMembership.isMember}
-            onClick={showMembership.toggleMembership}
-            classNameMember="!h-7"
-            classNameNotMember="!h-7"
-          />
+          {isMod ? (
+            <div
+              className="h-[30px] cursor-pointer text-sm !font-medium df prm-button-blue"
+              onClick={() => navigate(`/r/${community.name}/mod/queue`)}
+            >
+              Mod tools
+            </div>
+          ) : (
+            <MemberShipButton
+              isMember={showMembership.isMember}
+              onClick={showMembership.toggleMembership}
+              classNameMember="!h-7"
+              classNameNotMember="!h-7"
+            />
+          )}
         </div>
       ) : (
         <div className="font-medium">{community.name}</div>
@@ -54,16 +65,18 @@ export default function CommunitySidebar({
 
       <DisplayMemberCount memberCount={community.total_members} />
 
-      <Separator className="my-4" />
+      {community.community_rules.length !== 0 && (
+        <>
+          <Separator className="my-4" />
 
-      {community.community_rules.length && (
-        <div>
-          <h3 className="sidebar-subheading">RULES</h3>
+          <div>
+            <h3 className="sidebar-subheading">RULES</h3>
 
-          {community.community_rules.map((rule, index) => (
-            <RuleTab rule={rule} key={index} />
-          ))}
-        </div>
+            {community.community_rules.map((rule, index) => (
+              <RuleTab rule={rule} key={index} />
+            ))}
+          </div>
+        </>
       )}
 
       <Separator className="my-4" />

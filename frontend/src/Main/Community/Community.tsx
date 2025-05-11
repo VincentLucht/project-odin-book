@@ -152,7 +152,12 @@ export default function Community() {
             {!hasMore && <EndMessage className="mt-5" />}
           </div>
 
-          <CommunitySidebar token={token} community={community} navigate={navigate} />
+          <CommunitySidebar
+            token={token}
+            community={community}
+            isMod={false}
+            navigate={navigate}
+          />
         </div>
       </div>
     </div>
