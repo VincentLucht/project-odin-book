@@ -159,7 +159,7 @@ export default class NotificationManager {
 
     const shouldSend = this.shouldSendNotification(
       type,
-      receiverUser?.user_settings,
+      receiverUser?.userSettings,
       receiver_id,
       sender_id,
     );
