@@ -71,7 +71,7 @@ export default function VirtualizedNotifications({
         hasMorePages={pagination.hasMore}
         dataLength={notifications.length}
         noResultsMessage="No notifications found."
-        className="mt-14"
+        endMessageClassName="mt-14"
       />
     </div>
   );
