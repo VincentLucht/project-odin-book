@@ -7,7 +7,9 @@ interface EndMessageHandlerProps {
   dataLength: number;
   endMessage?: string;
   noResultsMessage?: string;
-  className?: string;
+  endMessageClassName?: string;
+  noResultsClassName?: string;
+  logoClassName?: string;
 }
 
 /**
@@ -19,16 +21,20 @@ export default function EndMessageHandler({
   dataLength,
   endMessage = "You've reached the end",
   noResultsMessage = 'No results found.',
-  className = 'mt-14',
+  endMessageClassName = '',
+  noResultsClassName = '',
+  logoClassName = '',
 }: EndMessageHandlerProps) {
   return (
     <>
-      {loading && <LogoLoading className="mt-8" />}
+      {loading && <LogoLoading className={logoClassName} />}
+
       {!loading && !hasMorePages && dataLength > 0 && (
-        <EndMessage message={endMessage} className={className} />
+        <EndMessage message={endMessage} className={endMessageClassName} />
       )}
+
       {!loading && !hasMorePages && dataLength === 0 && (
-        <EndMessage message={noResultsMessage} />
+        <EndMessage message={noResultsMessage} className={noResultsClassName} />
       )}
     </>
   );
