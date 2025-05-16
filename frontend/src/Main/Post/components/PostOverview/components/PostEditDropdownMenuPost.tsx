@@ -2,7 +2,7 @@ import Ellipsis from '@/components/Interaction/Ellipsis';
 import NotUserEllipsis from '@/components/Interaction/NotUserEllipsis';
 
 import { NavigateFunction } from 'react-router-dom';
-import { UserAndHistory } from '@/Main/user/UserProfile/api/fetchUserProfile';
+import { UserHistoryItem } from '@/Main/user/UserProfile/api/fetchUserProfile';
 import { DBPostWithCommunityName } from '@/interface/dbSchema';
 
 interface PostEditDropdownMenuPostProps {
@@ -18,7 +18,7 @@ interface PostEditDropdownMenuPostProps {
   showEditDropdown: string | null;
   setShowEditDropdown: React.Dispatch<React.SetStateAction<string | null>>;
   navigate: NavigateFunction;
-  setFetchedUser?: React.Dispatch<React.SetStateAction<UserAndHistory | null>>;
+  setFetchedUser?: React.Dispatch<React.SetStateAction<UserHistoryItem[] | null>>;
   setPosts?: React.Dispatch<React.SetStateAction<DBPostWithCommunityName[]>>;
 
   // Edit functions
@@ -79,7 +79,7 @@ export default function PostEditDropdownMenuPost({
           id={postId}
           showDropdown={showEditDropdown}
           setShowDropdown={setShowEditDropdown}
-          setFetchedUser={setFetchedUser}
+          setUserHistory={setFetchedUser}
           setPosts={setPosts}
         />
       )}

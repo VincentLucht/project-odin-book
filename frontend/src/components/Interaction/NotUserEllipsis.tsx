@@ -6,7 +6,7 @@ import DropdownButton from '@/components/DropdownMenu/components/DropdownButton'
 import ReportModal from '@/Main/Global/ReportModal';
 import { EllipsisIcon, BookmarkIcon, FlagIcon } from 'lucide-react';
 
-import { UserAndHistory } from '@/Main/user/UserProfile/api/fetchUserProfile';
+import { UserHistoryItem } from '@/Main/user/UserProfile/api/fetchUserProfile';
 import {
   DBPostWithCommunityName,
   DBPostWithCommunity,
@@ -21,21 +21,21 @@ interface NotUserEllipsisProps {
   mode?: 'post' | 'comment';
   showDropdown: string | null;
   setShowDropdown: React.Dispatch<React.SetStateAction<string | null>>;
-  setFetchedUser?: React.Dispatch<React.SetStateAction<UserAndHistory | null>>;
+  setUserHistory?: React.Dispatch<React.SetStateAction<UserHistoryItem[] | null>>;
   setPosts?: React.Dispatch<React.SetStateAction<DBPostWithCommunityName[]>>;
   setPost?: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>;
   setComments?: React.Dispatch<React.SetStateAction<DBCommentWithReplies[]>>;
 }
 
 export default function NotUserEllipsis({
-  hasSaved = false, // TODO: Remove this
+  hasSaved = false, // TODO: Remove this and implement
   hasReported,
   token,
   id,
   mode = 'post',
   showDropdown,
   setShowDropdown,
-  setFetchedUser,
+  setUserHistory,
   setPosts,
   setPost,
   setComments,
@@ -54,7 +54,10 @@ export default function NotUserEllipsis({
         className={`cursor-pointer px-3 transition-all interaction-button-wrapper-secondary
           hover:bg-hover-gray active:bg-active-gray ${ mode === 'comment' &&
           'text-gray-400 hover:text-white' }`}
-        onClick={() => setShowDropdown((prev) => (prev === id ? null : id))}
+        onClick={(e) => {
+          e.stopPropagation();
+          setShowDropdown((prev) => (prev === id ? null : id));
+        }}
         onMouseDown={(e) => e.stopPropagation()}
       >
         <EllipsisIcon className="h-[18px] w-[18px]" />
@@ -93,7 +96,7 @@ export default function NotUserEllipsis({
         onClose={() => setShowReportModal(false)}
         token={token}
         apiData={{ type: mode.toUpperCase() as 'POST' | 'COMMENT', item_id: id }}
-        setFetchedUser={setFetchedUser}
+        setFetchedUser={setUserHistory}
         setPosts={setPosts}
         setPost={setPost}
         setComments={setComments}

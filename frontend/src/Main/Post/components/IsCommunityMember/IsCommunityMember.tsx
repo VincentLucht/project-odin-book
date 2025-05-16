@@ -1,6 +1,6 @@
 import handleCommunityMembership from '@/Main/Community/api/handleCommunityMembership';
 
-import { UserAndHistory } from '@/Main/user/UserProfile/api/fetchUserProfile';
+import { UserHistoryItem } from '@/Main/user/UserProfile/api/fetchUserProfile';
 import { NavigateFunction } from 'react-router-dom';
 
 interface IsCommunityMemberProps {
@@ -10,7 +10,7 @@ interface IsCommunityMemberProps {
   userId: string | undefined;
   token: string | null;
   communityId: string;
-  setFetchedUser: React.Dispatch<React.SetStateAction<UserAndHistory | null>>;
+  setFetchedUser: React.Dispatch<React.SetStateAction<UserHistoryItem[] | null>>;
   navigate: NavigateFunction;
 }
 
@@ -23,7 +23,7 @@ export default function IsCommunityMember({
   navigate,
 }: IsCommunityMemberProps) {
   let isMember = false;
-  if (userMember.length && userMember[0].user_id === userId) {
+  if (userId && userMember.length && userMember[0].user_id === userId) {
     isMember = true;
   }
 

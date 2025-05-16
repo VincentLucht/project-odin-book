@@ -1,28 +1,20 @@
 import joinCommunity from '@/Main/Community/api/joinCommunity';
 import catchError from '@/util/catchError';
-import isPost from '@/Main/user/UserProfile/util/isPost';
 import leaveCommunity from '@/Main/Community/api/leaveCommunity';
 
-import { UserAndHistory } from '@/Main/user/UserProfile/api/fetchUserProfile';
-import {
-  DBPostWithCommunityName,
-  DBCommentWithCommunityName,
-} from '@/interface/dbSchema';
+import { UserHistoryItem } from '@/Main/user/UserProfile/api/fetchUserProfile';
 
 export default async function handleCommunityMembership(
   community_id: string,
   user_id: string,
   token: string,
-  setFetchedUser: React.Dispatch<React.SetStateAction<UserAndHistory | null>>,
+  setUserHistory: React.Dispatch<React.SetStateAction<UserHistoryItem[] | null>>,
   wasMember: boolean,
 ) {
-  let previousState: UserAndHistory | null = null;
+  let previousState = null;
 
-  const handleMembership = (
-    value: DBPostWithCommunityName | DBCommentWithCommunityName,
-    wasMember: boolean,
-  ) => {
-    if (isPost(value) && value.community.id === community_id) {
+  const handleMembership = (value: UserHistoryItem, wasMember: boolean) => {
+    if (value.item_type === 'post' && value.community.id === community_id) {
       return {
         ...value,
         community: {
@@ -35,14 +27,11 @@ export default async function handleCommunityMembership(
     return value;
   };
 
-  setFetchedUser((prev) => {
+  setUserHistory((prev) => {
     if (!prev) return prev;
     previousState = prev;
 
-    return {
-      ...prev,
-      history: prev.history.map((value) => handleMembership(value, wasMember)),
-    };
+    return prev.map((value) => handleMembership(value, wasMember));
   });
 
   try {
@@ -55,25 +44,19 @@ export default async function handleCommunityMembership(
     if (previousState) {
       const errorObj = error as { message: string };
       if (errorObj.message === 'You already are a member of this community') {
-        setFetchedUser((prev) => {
+        setUserHistory((prev) => {
           if (!prev) return prev;
 
-          return {
-            ...prev,
-            history: prev.history.map((value) => handleMembership(value, false)),
-          };
+          return prev.map((value) => handleMembership(value, wasMember));
         });
       } else if (errorObj.message === 'You are not part of this community') {
-        setFetchedUser((prev) => {
+        setUserHistory((prev) => {
           if (!prev) return prev;
 
-          return {
-            ...prev,
-            history: prev.history.map((value) => handleMembership(value, true)),
-          };
+          return prev.map((value) => handleMembership(value, wasMember));
         });
       } else {
-        setFetchedUser(previousState);
+        setUserHistory(previousState);
         catchError(error);
       }
     }

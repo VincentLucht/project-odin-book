@@ -19,7 +19,7 @@ import handlePostVote from '@/Main/Post/api/vote/handlePostVote';
 
 import { CommunityMembership, DBPostWithCommunityName } from '@/interface/dbSchema';
 import { FetchedPost } from '@/Main/Community/Community';
-import { UserAndHistory } from '@/Main/user/UserProfile/api/fetchUserProfile';
+import { UserHistoryItem } from '@/Main/user/UserProfile/api/fetchUserProfile';
 import { VoteType } from '@/interface/backendTypes';
 import { NavigateFunction } from 'react-router-dom';
 import { HandlePostVoteType } from '@/Main/Post/api/vote/handlePostVote';
@@ -42,7 +42,7 @@ interface PostOverviewProps {
   navigate: NavigateFunction;
   showEditDropdown: string | null;
   setShowEditDropdown: React.Dispatch<React.SetStateAction<string | null>>;
-  setFetchedUser?: React.Dispatch<React.SetStateAction<UserAndHistory | null>>;
+  setUserHistory?: React.Dispatch<React.SetStateAction<UserHistoryItem[] | null>>;
   setPosts?: React.Dispatch<React.SetStateAction<DBPostWithCommunityName[]>>;
   showPoster?: boolean;
   showMembership?: boolean;
@@ -67,7 +67,7 @@ export default function PostOverview({
   navigate,
   showEditDropdown,
   setShowEditDropdown,
-  setFetchedUser,
+  setUserHistory,
   setPosts,
   showPoster = false,
   showMembership = true,
@@ -96,7 +96,7 @@ export default function PostOverview({
     showMembership && 'community' in post
       ? (post.community.user_communities ?? [])
       : null;
-  const hasReported = post.reports?.length > 0;
+  const hasReported = post?.reports?.[0]?.reporter_id === userId;
 
   const onVote = (voteType: VoteType) => {
     if (!token || !userId) {
@@ -110,7 +110,7 @@ export default function PostOverview({
       voteType,
       setPosts
         ? (setPosts as HandlePostVoteType)
-        : (setFetchedUser as HandlePostVoteType),
+        : (setUserHistory as HandlePostVoteType),
       post?.post_votes?.[0]?.vote_type,
     );
   };
@@ -173,13 +173,13 @@ export default function PostOverview({
           </div>
 
           <div className="flex items-center gap-2">
-            {showMembership && userMember && setFetchedUser && (
+            {showMembership && userMember && setUserHistory && (
               <IsCommunityMember
                 userMember={userMember}
                 userId={userId}
                 token={token}
                 communityId={post.community_id}
-                setFetchedUser={setFetchedUser}
+                setFetchedUser={setUserHistory}
                 navigate={navigate}
               />
             )}
@@ -205,7 +205,7 @@ export default function PostOverview({
               spoilerFunc={spoilerFunc}
               matureFunc={matureFunc}
               removePostFlairFunc={removePostFlairFunc}
-              setFetchedUser={setFetchedUser}
+              setFetchedUser={setUserHistory}
               setPosts={setPosts}
             />
           </div>

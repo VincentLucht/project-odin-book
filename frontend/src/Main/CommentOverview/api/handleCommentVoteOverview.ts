@@ -6,7 +6,7 @@ import getNewScore from '@/util/getNewScore';
 import { toast } from 'react-toastify';
 
 import { VoteType } from '@/interface/backendTypes';
-import { UserAndHistory } from '@/Main/user/UserProfile/api/fetchUserProfile';
+import { UserHistoryItem } from '@/Main/user/UserProfile/api/fetchUserProfile';
 
 export default async function handleCommentVoteOverview(
   commentId: string,
@@ -14,43 +14,38 @@ export default async function handleCommentVoteOverview(
   voteType: VoteType,
   previousVoteType: VoteType | undefined,
   token: string | undefined,
-  setFetchedUser: React.Dispatch<React.SetStateAction<UserAndHistory | null>>,
+  setUserHistory: React.Dispatch<React.SetStateAction<UserHistoryItem[] | null>>,
 ) {
   if (!userId || !token) {
     toast.error('You need to log in to vote');
     return;
   }
 
-  let previousState: UserAndHistory | null = null;
+  let previousState = null;
 
   const updateState = () => {
-    setFetchedUser((prev) => {
+    setUserHistory((prev) => {
       if (!prev) return prev;
-      previousState = { ...prev };
+      previousState = [...prev];
 
-      const updatedHistory =
-        Array.isArray(prev.history) && prev.history.length > 0
-          ? prev.history.map((value) => {
-              if (!isPost(value) && value.id === commentId) {
-                return {
-                  ...value,
-                  comment_votes:
-                    previousVoteType === voteType
-                      ? []
-                      : [{ user_id: userId, vote_type: voteType }],
-                  total_vote_score: getNewScore(
-                    value.total_vote_score,
-                    voteType,
-                    previousVoteType,
-                  ),
-                };
-              }
+      return prev.map((value) => {
+        if (!isPost(value) && value.id === commentId) {
+          return {
+            ...value,
+            comment_votes:
+              previousVoteType === voteType
+                ? []
+                : [{ user_id: userId, vote_type: voteType }],
+            total_vote_score: getNewScore(
+              value.total_vote_score,
+              voteType,
+              previousVoteType,
+            ),
+          };
+        }
 
-              return value;
-            })
-          : prev.history;
-
-      return { ...previousState, history: updatedHistory };
+        return value;
+      });
     });
   };
 
@@ -64,7 +59,7 @@ export default async function handleCommentVoteOverview(
     }
   } catch (error) {
     if (previousState) {
-      setFetchedUser(previousState);
+      setUserHistory(previousState);
     }
 
     const errorObj = error as { message?: string };

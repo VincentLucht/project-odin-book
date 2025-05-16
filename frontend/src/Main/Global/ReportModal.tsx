@@ -3,14 +3,14 @@ import { useState } from 'react';
 import { Modal } from '@/components/Modal/Modal';
 import ModalHeader from '@/components/Modal/components/ModalHeader';
 import ModalFooter from '@/components/Modal/components/ModalFooter';
-import TextareaAutosize from 'react-textarea-autosize';
-import MaxLengthIndicator from '@/components/MaxLengthIndicator';
+import ModalInput from '@/components/Modal/components/ModalInput';
+import ModalTextArea from '@/components/Modal/components/ModalTextArea';
 
 import { report } from '@/Main/Global/api/reportAPI';
 import { onCommentModeration } from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/components/ModMenuComment/hooks/useCommentModeration';
 import { toast } from 'react-toastify';
 
-import { UserAndHistory } from '@/Main/user/UserProfile/api/fetchUserProfile';
+import { UserHistoryItem } from '@/Main/user/UserProfile/api/fetchUserProfile';
 import {
   DBPostWithCommunityName,
   DBPostWithCommunity,
@@ -25,7 +25,7 @@ interface ReportModalProps {
     type: 'POST' | 'COMMENT';
     item_id: string;
   };
-  setFetchedUser?: React.Dispatch<React.SetStateAction<UserAndHistory | null>>;
+  setFetchedUser?: React.Dispatch<React.SetStateAction<UserHistoryItem[] | null>>;
   setPosts?: React.Dispatch<React.SetStateAction<DBPostWithCommunityName[]>>;
   setPost?: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>;
   setComments?: React.Dispatch<React.SetStateAction<DBCommentWithReplies[]>>;
@@ -84,12 +84,9 @@ export default function ReportModal({
       setFetchedUser?.((prev) => {
         if (!prev) return prev;
 
-        return {
-          ...prev,
-          history: prev.history.map((item) =>
-            item.id === apiData.item_id ? { ...item, reports: [report] } : item,
-          ),
-        };
+        return prev.map((item) =>
+          item.id === apiData.item_id ? { ...item, reports: [report] } : item,
+        );
       });
 
       apiData.type === 'COMMENT' &&
@@ -106,34 +103,20 @@ export default function ReportModal({
       <ModalHeader headerName={`Report ${typeString}`} onClose={onClose} />
 
       <div>
-        <label htmlFor="report-subject" className="-mb-2 font-medium">
-          Subject
-        </label>
-        <input
-          id="report-subject"
-          type="text"
-          className="!py-2 modal-input"
+        <ModalInput
+          labelName="Subject"
           value={subject}
-          onChange={(e) => setSubject(e.target.value)}
+          setterFunc={setSubject}
           maxLength={20}
-          required
-          autoComplete="off"
         />
-        <MaxLengthIndicator length={subject.length} maxLength={20} />
 
-        <label className="-mb-2 font-medium" htmlFor="report-message">
-          Reason
-        </label>
-        <TextareaAutosize
-          id="report-message"
-          className="!py-2 modal-input"
+        <ModalTextArea
+          labelName="Reason"
           value={reason}
-          onChange={(e) => setReason(e.target.value)}
-          minRows={3}
+          setterFunc={setReason}
           maxLength={500}
-          required
+          required={true}
         />
-        <MaxLengthIndicator length={reason.length} maxLength={500} />
       </div>
 
       <ModalFooter

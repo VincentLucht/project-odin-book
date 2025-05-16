@@ -7,7 +7,7 @@ import handleDeleteCommentOverview from '@/Main/CommentOverview/api/handleDelete
 import getCommentThreadUrl from '@/util/getCommentThreadUrl';
 import confirmDelete from '@/util/confirmDelete';
 
-import { UserAndHistory } from '@/Main/user/UserProfile/api/fetchUserProfile';
+import { UserHistoryItem } from '@/Main/user/UserProfile/api/fetchUserProfile';
 import { DBCommentWithCommunityName } from '@/interface/dbSchema';
 import { VoteType } from '@/interface/backendTypes';
 import { UrlItems } from '@/components/Interaction/Share';
@@ -20,7 +20,7 @@ interface CommentOverviewProps {
   token: string | null;
   showCommentDropdown: string | null;
   setShowCommentDropdown: React.Dispatch<React.SetStateAction<string | null>>;
-  setFetchedUser: React.Dispatch<React.SetStateAction<UserAndHistory | null>>;
+  setUserHistory: React.Dispatch<React.SetStateAction<UserHistoryItem[] | null>>;
   navigate: NavigateFunction;
 }
 
@@ -32,7 +32,7 @@ export default function CommentOverview({
   token,
   showCommentDropdown,
   setShowCommentDropdown,
-  setFetchedUser,
+  setUserHistory,
   navigate,
 }: CommentOverviewProps) {
   const redirectToComment = (isReply: boolean, e?: React.MouseEvent) => {
@@ -62,7 +62,7 @@ export default function CommentOverview({
       voteType,
       previousVoteType,
       token,
-      setFetchedUser,
+      setUserHistory,
     );
   };
 
@@ -80,7 +80,7 @@ export default function CommentOverview({
     }
 
     if (confirmDelete('comment')) {
-      handleDeleteCommentOverview(token, commentId, setFetchedUser);
+      handleDeleteCommentOverview(token, commentId, setUserHistory);
     }
   };
 
@@ -140,7 +140,7 @@ export default function CommentOverview({
               onEdit={onEdit}
               isLocked={false}
               isMod={false}
-              token={''}
+              token={token}
               moderation={null}
               showModDropdown={null}
             />

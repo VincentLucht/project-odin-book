@@ -1,13 +1,13 @@
 import deleteComment from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/api/delete/deleteComment';
 import catchError from '@/util/catchError';
-import { UserAndHistory } from '@/Main/user/UserProfile/api/fetchUserProfile';
+import { UserHistoryItem } from '@/Main/user/UserProfile/api/fetchUserProfile';
 import { toast } from 'react-toastify';
 import isPost from '@/Main/user/UserProfile/util/isPost';
 
 export default function handleDeleteCommentOverview(
   token: string | undefined,
   commentId: string,
-  setFetchedUser: React.Dispatch<React.SetStateAction<UserAndHistory | null>>,
+  setUserHistory: React.Dispatch<React.SetStateAction<UserHistoryItem[] | null>>,
 ) {
   if (!token) {
     toast.error('This is not your comment');
@@ -16,29 +16,24 @@ export default function handleDeleteCommentOverview(
 
   deleteComment(token, commentId)
     .then(() => {
-      let previousState: UserAndHistory | null = null;
+      let previousState = null;
 
       try {
-        setFetchedUser((prev) => {
+        setUserHistory((prev) => {
           if (!prev) return prev;
-          previousState = { ...prev };
+          previousState = [...prev];
 
-          const updatedHistory =
-            Array.isArray(prev.history) && prev.history.length > 0
-              ? prev.history.filter((value) => {
-                  if (!isPost(value) && value.id === commentId) {
-                    return false;
-                  }
+          return prev.filter((value) => {
+            if (!isPost(value) && value.id === commentId) {
+              return false;
+            }
 
-                  return true;
-                })
-              : prev.history;
-
-          return { ...prev, history: updatedHistory };
+            return true;
+          });
         });
       } catch (error) {
         if (previousState) {
-          setFetchedUser(previousState);
+          setUserHistory(previousState);
         }
 
         catchError(error);
