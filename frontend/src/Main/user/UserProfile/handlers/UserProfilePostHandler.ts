@@ -1,35 +1,31 @@
 import CommunityPostManager from '@/Main/Community/util/CommunityPostManager';
-import { UserAndHistory } from '@/Main/user/UserProfile/api/fetchUserProfile';
+import { UserHistoryItem } from '@/Main/user/UserProfile/api/fetchUserProfile';
 import { DBPostWithCommunityName } from '@/interface/dbSchema';
 
 /**
- * Creates callback functions for Post edit API functions, uses {@link UserAndHistory} as the setter function type.
+ * Creates callback functions for Post edit API functions, uses {@link UserHistoryItem} as the setter function type.
  *
  * Uses {@link CommunityPostManager} methods
  */
 export default class UserProfilePostHandler {
   private postManager: CommunityPostManager;
-  private setFetchedUser: React.Dispatch<React.SetStateAction<UserAndHistory | null>>;
+  private setUserHistory: React.Dispatch<
+    React.SetStateAction<UserHistoryItem[] | null>
+  >;
   constructor(
     postManager: CommunityPostManager,
-    setFetchedUser: React.Dispatch<React.SetStateAction<UserAndHistory | null>>,
+    setUserHistory: React.Dispatch<React.SetStateAction<UserHistoryItem[] | null>>,
   ) {
     this.postManager = postManager;
-    this.setFetchedUser = setFetchedUser;
+    this.setUserHistory = setUserHistory;
   }
 
   handleDeletePost = (postId: string) => {
     return () => {
       void this.postManager.deletePost(postId, (deletedPostId: string) => {
-        this.setFetchedUser((prev) => {
-          if (!prev) return prev;
-
-          const updatedHistory = prev.history.filter(
-            (post) => post.id !== deletedPostId,
-          );
-
-          return { ...prev, history: updatedHistory };
-        });
+        this.setUserHistory(
+          (prev) => prev?.filter((item) => item.id !== deletedPostId) ?? null,
+        );
       });
     };
   };
@@ -42,22 +38,18 @@ export default class UserProfilePostHandler {
         post.is_spoiler,
         post.is_mature,
         (postId: string) => {
-          this.setFetchedUser((prev) => {
+          this.setUserHistory((prev) => {
             if (!prev) return prev;
-
-            const updatedHistory = prev.history.map((post) => {
-              if (post.id === postId) {
+            return prev.map((item) => {
+              if (item.id === postId && item.item_type === 'post') {
                 return {
-                  ...post,
-                  is_spoiler: !(post as DBPostWithCommunityName).is_spoiler,
+                  ...item,
+                  is_spoiler: !item.is_spoiler,
                   edited_at: new Date(),
                 };
               }
-
-              return post;
+              return item;
             });
-
-            return { ...prev, history: updatedHistory };
           });
         },
       );
@@ -72,22 +64,18 @@ export default class UserProfilePostHandler {
         post.is_spoiler,
         post.is_mature,
         (postId: string) => {
-          this.setFetchedUser((prev) => {
+          this.setUserHistory((prev) => {
             if (!prev) return prev;
-
-            const updatedHistory = prev.history.map((post) => {
-              if (post.id === postId) {
+            return prev.map((item) => {
+              if (item.id === postId && item.item_type === 'post') {
                 return {
-                  ...post,
-                  is_mature: !(post as DBPostWithCommunityName).is_mature,
+                  ...item,
+                  is_mature: !item.is_mature,
                   edited_at: new Date(),
                 };
               }
-
-              return post;
+              return item;
             });
-
-            return { ...prev, history: updatedHistory };
           });
         },
       );
@@ -103,27 +91,21 @@ export default class UserProfilePostHandler {
         navigateToEdit();
         return;
       }
-
       this.postManager.deletePostFlair(
         post.id,
         post.post_assigned_flair[0].id,
         (postId) => {
-          this.setFetchedUser((prev) => {
+          this.setUserHistory((prev) => {
             if (!prev) return prev;
-
-            return {
-              ...prev,
-              history: prev.history.map((post) => {
-                if (post.id === postId) {
-                  return {
-                    ...post,
-                    post_assigned_flair: [],
-                  };
-                }
-
-                return post;
-              }),
-            };
+            return prev.map((item) => {
+              if (item.id === postId) {
+                return {
+                  ...item,
+                  post_assigned_flair: [],
+                };
+              }
+              return item;
+            });
           });
         },
       );

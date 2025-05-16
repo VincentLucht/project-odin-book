@@ -6,16 +6,28 @@ import { asyncHandler } from '@/util/asyncHandler';
 import getAuthUser from '@/util/getAuthUser';
 import bcrypt from 'bcrypt';
 
-import { SortByUser } from '@/db/managers/util/types';
 import { AuthPayload } from '@/comment/commentController';
 
 class UserController {
   get = asyncHandler(async (req: Request, res: Response) => {
     if (checkValidationError(req, res)) return;
 
-    const username = req.query.username as string;
-    const sort_by = req.query.sort_by as SortByUser;
-    const page = parseInt(req.query.page as string, 10);
+    const {
+      u: username,
+      sbt: sortByType,
+      tf: typeFilter,
+      cId: cursorId,
+      cLs: cursorLastScore,
+      cLd: cursorLastDate,
+    } = req.query as {
+      u: string;
+      sbt: 'new' | 'top';
+      tf: 'both' | 'posts' | 'comments';
+      cId: string | undefined;
+      cLs: string | undefined | null;
+      cLd: string | undefined | null;
+    };
+    const initialFetch = req.query.initF === 'true';
 
     try {
       const user = await db.user.getByUsername(username);
@@ -29,16 +41,28 @@ class UserController {
         requestUserId = id;
       }
 
-      const userAndHistory = await db.user.getByUsernameAndHistory(
+      const {
+        user: fetchedUser,
+        history,
+        pagination,
+      } = await db.user.getByUsernameAndHistory(
         requestUserId,
-        user.username,
-        sort_by,
-        page,
+        user.id,
+        sortByType,
+        {
+          lastId: cursorId,
+          lastScore: Number(cursorLastScore),
+          lastDate: cursorLastDate ?? '',
+        },
+        typeFilter,
+        initialFetch,
       );
 
       return res.status(200).json({
         message: 'Found user',
-        user: userAndHistory || { ...user, posts: [], comments: [] },
+        user: fetchedUser,
+        history,
+        pagination,
       });
     } catch (error) {
       console.error(error);

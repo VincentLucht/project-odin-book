@@ -1,55 +1,91 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import useAuth from '@/context/auth/hook/useAuth';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
-import PostOverview from '@/Main/Post/components/PostOverview/PostOverview';
 import UserSideBar from '@/Main/user/UserProfile/components/UserSidebar/UserSidebar';
-import CommentOverview from '@/Main/CommentOverview/CommentOverview';
 import UserNotFound from '@/components/partials/UserNotFound';
+import VirtualizedUserHistory from '@/Main/user/UserProfile/components/VirtualizedUserHistory';
+import UserProfileApiFilters from '@/Main/user/UserProfile/components/UserProfileApiFilters';
 
 import fetchUserProfile, {
-  UserAndHistory,
+  UserHistoryItem,
 } from '@/Main/user/UserProfile/api/fetchUserProfile';
-import isPost from '@/Main/user/UserProfile/util/isPost';
 import { toast } from 'react-toastify';
-import CommunityPostManager from '@/Main/Community/util/CommunityPostManager';
-import UserProfilePostHandler from '@/Main/user/UserProfile/handlers/UserProfilePostHandler';
 
 import { SortByUser } from '@/interface/backendTypes';
+import { DBUser } from '@/interface/dbSchema';
+
+export interface UserProfilePagination {
+  hasMore: boolean;
+  nextCursor: {
+    lastId: string;
+    lastScore: number | null;
+    lastDate: string | null;
+  };
+}
+export type UserProfileFilters = 'both' | 'posts' | 'comments';
 
 export default function UserProfile() {
-  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<SortByUser>('new');
-  const [fetchedUser, setFetchedUser] = useState<UserAndHistory | null>(null);
-  const [showPostDropdown, setShowPostDropdown] = useState<string | null>(null);
-  const [showCommentDropdown, setShowCommentDropdown] = useState<string | null>(null);
+  const [typeFilter, setTypeFilter] = useState<'both' | 'posts' | 'comments'>('both');
+  const [pagination, setPagination] = useState<UserProfilePagination>({
+    hasMore: true,
+    nextCursor: {
+      lastId: '',
+      lastScore: null,
+      lastDate: null,
+    },
+  });
+
+  const [fetchedUser, setFetchedUser] = useState<DBUser | null>(null);
+  const [userHistory, setUserHistory] = useState<UserHistoryItem[] | null>(null);
 
   const { user, token } = useAuth();
 
-  const navigate = useNavigate();
   const path = useParams();
   const { username } = path;
 
-  const userProfilePostHandler = useMemo(
-    () => new UserProfilePostHandler(new CommunityPostManager(token), setFetchedUser),
-    [token],
+  const loadMore = useCallback(
+    (pagination: UserProfilePagination, initialFetch: boolean) => {
+      if (!username) return;
+      setLoading(true);
+
+      fetchUserProfile(
+        token,
+        { username, sort_by_type: sortBy },
+        { typeFilter, initialFetch },
+        pagination,
+      )
+        .then((response) => {
+          if (initialFetch) {
+            setFetchedUser(response.user);
+            setUserHistory(response.history);
+          } else {
+            setUserHistory((prev) => [...(prev ?? []), ...(response.history ?? [])]);
+          }
+
+          setPagination(response.pagination);
+          setLoading(false);
+        })
+        .catch((error: { message: string }) => {
+          if (error.message === 'User not found') {
+            setFetchedUser(null);
+          } else {
+            toast.error('Failed to fetch user profile. Please try again later.');
+          }
+          setLoading(false);
+        });
+    },
+    [username, typeFilter, sortBy, token],
   );
 
   useEffect(() => {
-    if (!username) return;
-
-    fetchUserProfile(username, page, sortBy, token)
-      .then((response) => {
-        setFetchedUser(response.user);
-      })
-      .catch((error: { message: string }) => {
-        if (error.message === 'User not found') {
-          setFetchedUser(null);
-        } else {
-          toast.error('Failed to fetch user profile. Please try again later.');
-        }
-      });
-  }, [username, page, sortBy, token]);
+    loadMore(
+      { hasMore: true, nextCursor: { lastId: '', lastScore: null, lastDate: null } },
+      true,
+    );
+  }, [loadMore]);
 
   return (
     <div className="h-[100dvh + 56px] p-4">
@@ -74,52 +110,23 @@ export default function UserProfile() {
                   </span>
                 </div>
               </div>
-              {Array.isArray(fetchedUser?.history) && fetchedUser.history.length > 0 ? (
-                fetchedUser.history.map((value, index) =>
-                  isPost(value) ? (
-                    <PostOverview
-                      key={index}
-                      community={value.community}
-                      post={value}
-                      userId={user?.id}
-                      token={token}
-                      setFetchedUser={setFetchedUser}
-                      navigate={navigate}
-                      showEditDropdown={showPostDropdown}
-                      setShowEditDropdown={setShowPostDropdown}
-                      // Post edit functions
-                      deleteFunc={userProfilePostHandler.handleDeletePost(value.id)}
-                      spoilerFunc={userProfilePostHandler.handleSpoilerFunc(value)}
-                      matureFunc={userProfilePostHandler.handleMatureFunc(value)}
-                      removePostFlairFunc={userProfilePostHandler.handleDeletePostFlair(
-                        value,
-                        () =>
-                          navigate(
-                            `/r/${value.community.name}/${value.id}?edit-post-flair=true`,
-                          ),
-                      )}
-                    />
-                  ) : (
-                    <CommentOverview
-                      key={index}
-                      urlItems={{
-                        communityName: value.post.community.name,
-                        postId: value.post_id,
-                        postName: value.post.title,
-                      }}
-                      comment={value}
-                      userId={user?.id}
-                      token={token}
-                      showCommentDropdown={showCommentDropdown}
-                      setShowCommentDropdown={setShowCommentDropdown}
-                      setFetchedUser={setFetchedUser}
-                      navigate={navigate}
-                    />
-                  ),
-                )
-              ) : (
-                <p>No history found</p>
-              )}
+
+              <UserProfileApiFilters
+                sortBy={sortBy}
+                setSortBy={setSortBy}
+                typeFilter={typeFilter}
+                setTypeFilter={setTypeFilter}
+              />
+
+              <VirtualizedUserHistory
+                token={token}
+                user={user}
+                userHistory={userHistory ?? []}
+                setUserHistory={setUserHistory}
+                pagination={pagination}
+                loadMore={loadMore}
+                loading={loading}
+              />
             </div>
           ) : (
             <UserNotFound />

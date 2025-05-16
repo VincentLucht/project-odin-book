@@ -1,37 +1,56 @@
 import API_URL from '@/auth/ApiUrl';
-import { SortBy } from '@/interface/backendTypes';
 import {
   DBCommentWithCommunityName,
   DBPostWithCommunityName,
   DBUser,
 } from '@/interface/dbSchema';
+import { UserProfilePagination } from '@/Main/user/UserProfile/UserProfile';
 
-export interface UserAndHistory extends DBUser {
-  history: (DBPostWithCommunityName | DBCommentWithCommunityName)[];
-}
+export type UserHistoryItem =
+  | (DBPostWithCommunityName & { item_type: 'post' })
+  | (DBCommentWithCommunityName & { item_type: 'comment' });
 
 interface FetchUserProfileResponse {
   message: string;
   error?: string;
-  user: UserAndHistory;
+  user: DBUser;
+  history: UserHistoryItem[];
+  pagination: UserProfilePagination;
 }
 
 export default async function fetchUserProfile(
-  username: string,
-  page: number,
-  sortBy: SortBy,
   token: string | null,
+  apiData: {
+    username: string;
+    sort_by_type: 'new' | 'top';
+  },
+  apiFilters: {
+    typeFilter: 'both' | 'posts' | 'comments';
+    initialFetch: boolean;
+  },
+  pagination: UserProfilePagination,
 ) {
-  const response = await fetch(
-    `${API_URL}/user/?username=${encodeURIComponent(username)}&sort_by=${encodeURIComponent(sortBy)}&page=${encodeURIComponent(page)}`,
-    {
-      method: 'GET',
-      headers: {
-        'content-type': 'application/json',
-        authorization: token ?? '',
-      },
+  const { username, sort_by_type } = apiData;
+  const { typeFilter, initialFetch } = apiFilters;
+  const { lastId, lastDate, lastScore } = pagination.nextCursor;
+
+  const params = new URLSearchParams({
+    u: username,
+    sbt: sort_by_type,
+    cId: lastId,
+    cLs: lastScore !== null ? lastScore.toString() : '',
+    cLd: lastDate ?? '',
+    tf: typeFilter,
+    initF: initialFetch.toString(),
+  });
+
+  const response = await fetch(`${API_URL}/user?${params.toString()}`, {
+    method: 'GET',
+    headers: {
+      'content-type': 'application/json',
+      authorization: token ?? '',
     },
-  );
+  });
 
   if (!response.ok) {
     const errorObject = (await response.json()) as string;

@@ -6,22 +6,31 @@ import { isSortByValidNewAndTop } from '@/util/isSortByValid';
 class UserValidator {
   fetchRules() {
     return [
-      query('username').trim()
+      query('u').trim()
         .notEmpty()
         .withMessage(vm.usernameReq()),
 
-      query('sort_by').trim()
+      query('sbt').trim()
         .custom((sort_by) => {
           if (!sort_by) {
-            throw new Error('Sort by is required');
+            throw new Error('Sort by type is required');
           }
 
           return isSortByValidNewAndTop(sort_by);
         }),
 
-      query('page').trim()
-        .notEmpty()
-        .withMessage(vm.req('Page')),
+      query('tf').trim()
+        .custom((typeFilter) => {
+          if (!typeFilter) {
+            throw new Error('Type filter is required');
+          }
+
+          if (typeFilter !== 'both' && typeFilter !== 'posts' && typeFilter !== 'comments') {
+            throw new Error('Incorrect type filter detected');
+          }
+
+          return true;
+        }),
     ];
   }
 
