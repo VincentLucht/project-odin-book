@@ -58,6 +58,10 @@ export default function getRelativeTime(
   // Less than a year
   if (monthsDiff < 12) {
     if (useShortFormat) {
+      // If month diff is 0, fallback to weeks
+      if (monthsDiff === 0) {
+        return `${weeksDiff}w ago`;
+      }
       return `${monthsDiff}mo ago`;
     }
     return monthsDiff === 1 ? '1 month ago' : `${monthsDiff} months ago`;
