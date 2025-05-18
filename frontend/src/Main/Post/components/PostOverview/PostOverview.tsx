@@ -11,25 +11,32 @@ import PostFlairTag from '@/Main/Post/components/PostFlairTag/PostFlairTag';
 import LockedCommentsTag from '@/Main/Post/components/tags/common/LockedCommentsTag';
 import { Transition } from '@headlessui/react';
 import transitionPropsHeight from '@/util/transitionProps';
+import RemovalMessage from '@/components/Message/RemovalMessage';
 
 import getRelativeTime from '@/util/getRelativeTime';
 import IsCommunityMember from '@/Main/Post/components/IsCommunityMember/IsCommunityMember';
 import slugify from 'slugify';
 import handlePostVote from '@/Main/Post/api/vote/handlePostVote';
 
-import { CommunityMembership, DBPostWithCommunityName } from '@/interface/dbSchema';
+import {
+  CommunityMembership,
+  CommunityTypes,
+  DBPostWithCommunityName,
+} from '@/interface/dbSchema';
 import { FetchedPost } from '@/Main/Community/Community';
 import { UserHistoryItem } from '@/Main/user/UserProfile/api/fetchUserProfile';
 import { VoteType } from '@/interface/backendTypes';
 import { NavigateFunction } from 'react-router-dom';
 import { HandlePostVoteType } from '@/Main/Post/api/vote/handlePostVote';
 import { IsMod } from '@/Main/Community/components/Virtualization/VirtualizedPostOverview';
+import { LockIcon } from 'lucide-react';
 
 export interface CommunityInfo {
   id: string;
   name: string;
   profile_picture_url: string | null;
   user_communities: CommunityMembership[] | undefined;
+  type?: CommunityTypes;
 }
 
 export type HomepagePost = Omit<DBPostWithCommunityName, 'moderation'>;
@@ -48,6 +55,8 @@ interface PostOverviewProps {
   showMembership?: boolean;
   showFlair?: boolean;
   showModOptions?: boolean;
+  showPrivate?: boolean; // display a lock icon next to a post from a private community
+  showRemovedByModeration?: boolean;
   isMod?: IsMod;
   showModDropdown?: string | null;
   setShowModDropdown?: React.Dispatch<React.SetStateAction<string | null>>;
@@ -72,6 +81,8 @@ export default function PostOverview({
   showPoster = false,
   showMembership = true,
   showModOptions = false,
+  showPrivate = false,
+  showRemovedByModeration = false,
   isMod = false,
   showModDropdown,
   setShowModDropdown,
@@ -162,6 +173,10 @@ export default function PostOverview({
               <div className="font-semibold">r/{community.name}</div>
             )}
 
+            {showPrivate && community?.type === 'PRIVATE' && (
+              <LockIcon className="h-4 w-4" />
+            )}
+
             <div className="gap-1 text-xs df text-gray-secondary">
               • {getRelativeTime(post.created_at)}
               {post.edited_at && !post.deleted_at && (
@@ -217,7 +232,11 @@ export default function PostOverview({
             {isMature && <MatureTag />}
           </div>
 
-          <div className="py-[6px] text-xl font-semibold">{post.title}</div>
+          {showRemovedByModeration ? (
+            <RemovalMessage show={true} type="post" />
+          ) : (
+            <div className="py-[6px] text-xl font-semibold">{post.title}</div>
+          )}
 
           <PostFlairTag
             showFlair={showFlair}
@@ -225,9 +244,11 @@ export default function PostOverview({
             className="mb-2"
           />
 
-          <Transition show={showBody} {...transitionPropsHeight}>
-            <div>{post.body}</div>
-          </Transition>
+          {!showRemovedByModeration && (
+            <Transition show={showBody} {...transitionPropsHeight}>
+              <div>{post.body}</div>
+            </Transition>
+          )}
 
           <Transition show={hideContent} {...transitionPropsHeight}>
             <div>

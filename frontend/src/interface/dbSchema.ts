@@ -241,6 +241,7 @@ export interface DBPostWithCommunityName extends DBPostWithModeration {
     name: string;
     profile_picture_url: string | null;
     user_communities: CommunityMembership[] | undefined;
+    type?: CommunityTypes;
   };
   post_votes: VotingRecord[] | undefined;
   poster: {
@@ -256,10 +257,14 @@ export interface DBPostWithCommunityName extends DBPostWithModeration {
 export interface DBCommentWithCommunityName extends DBComment {
   post: {
     title: string;
-    community: { name: string; profile_picture_url: string | null };
+    community: {
+      name: string;
+      profile_picture_url: string | null;
+      type?: CommunityTypes;
+    };
   };
   user_communities: CommunityMembership[];
-  comment_votes: VotingRecord[];
+  comment_votes: VotingRecord[] | undefined;
   user: { username: string };
 }
 

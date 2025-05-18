@@ -7,8 +7,11 @@ import {
 import { UserProfilePagination } from '@/Main/user/UserProfile/UserProfile';
 
 export type UserHistoryItem =
-  | (DBPostWithCommunityName & { item_type: 'post' })
-  | (DBCommentWithCommunityName & { item_type: 'comment' });
+  | (DBPostWithCommunityName & { item_type: 'post'; removed_by_moderation: boolean })
+  | (DBCommentWithCommunityName & {
+      item_type: 'comment';
+      removed_by_moderation: boolean;
+    });
 
 interface FetchUserProfileResponse {
   message: string;

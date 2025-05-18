@@ -1,5 +1,6 @@
 import Separator from '@/components/Separator';
 import CommentInteractionBar from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/components/CommentInteractionBar';
+import RemovalMessage from '@/components/Message/RemovalMessage';
 
 import getRelativeTime from '@/util/getRelativeTime';
 import handleCommentVoteOverview from '@/Main/CommentOverview/api/handleCommentVoteOverview';
@@ -12,12 +13,15 @@ import { DBCommentWithCommunityName } from '@/interface/dbSchema';
 import { VoteType } from '@/interface/backendTypes';
 import { UrlItems } from '@/components/Interaction/Share';
 import { NavigateFunction } from 'react-router-dom';
+import { LockIcon } from 'lucide-react';
 
 interface CommentOverviewProps {
   comment: DBCommentWithCommunityName;
   urlItems?: UrlItems;
   userId: string | undefined;
   token: string | null;
+  showPrivate?: boolean; // display a lock icon next to a comment from a private community
+  showRemovedByModeration?: boolean;
   showCommentDropdown: string | null;
   setShowCommentDropdown: React.Dispatch<React.SetStateAction<string | null>>;
   setUserHistory: React.Dispatch<React.SetStateAction<UserHistoryItem[] | null>>;
@@ -30,6 +34,8 @@ export default function CommentOverview({
   urlItems,
   userId,
   token,
+  showPrivate,
+  showRemovedByModeration,
   showCommentDropdown,
   setShowCommentDropdown,
   setUserHistory,
@@ -104,8 +110,12 @@ export default function CommentOverview({
         />
 
         <div>
-          <div className="flex gap-[6px] text-sm">
+          <div className="flex gap-[4px] text-sm">
             <span className="font-semibold">r/{comment.post.community.name}</span>
+
+            {showPrivate && comment.post.community?.type === 'PRIVATE' && (
+              <LockIcon className="h-4 w-4" />
+            )}
 
             <span className="break-all">• {comment.post.title}</span>
           </div>
@@ -118,7 +128,11 @@ export default function CommentOverview({
             </div>
           </div>
 
-          <div className="pt-[6px]">{comment.content}</div>
+          {showRemovedByModeration ? (
+            <RemovalMessage show={true} type="comment" className="!my-1" />
+          ) : (
+            <div className="py-[6px]">{comment.content}</div>
+          )}
 
           <div className="-ml-[5px]">
             <CommentInteractionBar

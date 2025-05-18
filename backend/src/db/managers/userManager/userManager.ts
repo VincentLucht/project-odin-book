@@ -14,6 +14,8 @@ type HistoryItemBase = {
   upvote_count: number;
   downvote_count: number;
   times_reported: number;
+  community_type: string;
+  moderation_type: 'APPROVED' | 'REMOVED';
 
   // Report
   report_id: string | null;
@@ -191,8 +193,6 @@ export default class UserManager {
       whereClause = Prisma.sql`WHERE ${cursorQuery}`;
     }
 
-    // TODO: Exclude removed by moderation?
-
     const history = await this.prisma.$queryRaw<UserHistory[]>`
       WITH combined_history AS (
         SELECT
@@ -219,12 +219,14 @@ export default class UserManager {
           p.lock_comments AS lock_comments,
           p.post_type AS post_type,
           p.times_reported AS times_reported,
+          pm.action AS moderation_type,
 
           -- Poster
           NULL AS poster_username,
           -- Community
           pc.name AS community_name,
           pc.profile_picture_url AS community_pfp,
+          pc.type AS community_type,
           -- Voting
           pv.user_id AS vote_user_id,
           pv.vote_type AS vote_type,
@@ -253,6 +255,7 @@ export default class UserManager {
         LEFT JOIN "Community" AS pc ON pc.id = p.community_id
         LEFT JOIN "PostVote" AS pv on pv.post_id = p.id AND pv.user_id = ${requestUserId}
         LEFT JOIN "Report" AS r ON r.post_id = p.id AND reporter_id = ${requestUserId}
+        LEFT JOIN "PostModeration" AS pm ON pm.post_id = p.id
 
         WHERE p.poster_id = ${user_id} 
         AND (
@@ -291,12 +294,14 @@ export default class UserManager {
           NULL AS lock_comments,
           NULL AS post_type,
           c.times_reported AS times_reported,
+          cm.action AS moderation_type,
           
           -- Poster
           u.username AS poster_username,
           -- Community
           cc.name AS community_name,
           cc.profile_picture_url AS community_pfp,
+          cc.type AS community_type,
           -- Voting
           cv.user_id AS vote_user_id,
           cv.vote_type AS vote_type,
@@ -323,6 +328,7 @@ export default class UserManager {
         LEFT JOIN "CommentVote" AS cv ON cv.comment_id = c.id AND cv.user_id = ${requestUserId}
         LEFT JOIN "User" AS u ON u.id = p.poster_id
         LEFT JOIN "Report" AS r ON r.comment_id = c.id
+        LEFT JOIN "CommentModeration" AS cm ON cm.comment_id = c.id
 
         WHERE c.user_id = ${user_id}
         AND cc.type != 'PRIVATE'
