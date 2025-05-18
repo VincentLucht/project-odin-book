@@ -36,7 +36,6 @@ export default function UserProfile() {
       lastDate: null,
     },
   });
-
   const [fetchedUser, setFetchedUser] = useState<DBUser | null>(null);
   const [userHistory, setUserHistory] = useState<UserHistoryItem[] | null>(null);
 
@@ -91,33 +90,38 @@ export default function UserProfile() {
       <div className="center-main">
         <div className="center-main-content">
           <div className="w-full min-w-0">
-            <div className="flex gap-2">
-              <img
-                src={`${fetchedUser?.profile_picture_url ? fetchedUser?.profile_picture_url : '/user.svg'}`}
-                alt="User Profile Pictures"
-                className="h-24 w-24 rounded-full border-2 object-cover"
-              />
-              <div className="flex-col df">
-                <h2 className="text-xl font-bold">
-                  {fetchedUser?.display_name
-                    ? fetchedUser?.display_name
-                    : fetchedUser?.username}
-                </h2>
-                <span className="w-full text-gray-secondary">
-                  {fetchedUser?.username}
-                </span>
-              </div>
-            </div>
+            {fetchedUser && (
+              <>
+                <div className="flex gap-2">
+                  <img
+                    src={`${fetchedUser?.profile_picture_url ? fetchedUser?.profile_picture_url : '/user.svg'}`}
+                    alt="User Profile Pictures"
+                    className="h-24 w-24 rounded-full border-2 object-cover"
+                  />
+                  <div className="flex-col df">
+                    <h2 className="text-xl font-bold">
+                      {fetchedUser?.display_name
+                        ? fetchedUser?.display_name
+                        : fetchedUser?.username}
+                    </h2>
+                    <span className="w-full text-gray-secondary">
+                      {fetchedUser?.username}
+                    </span>
+                  </div>
+                </div>
 
-            <UserProfileApiFilters
-              sortBy={sortBy}
-              setSortBy={setSortBy}
-              typeFilter={typeFilter}
-              setTypeFilter={setTypeFilter}
-            />
+                <UserProfileApiFilters
+                  sortBy={sortBy}
+                  setSortBy={setSortBy}
+                  typeFilter={typeFilter}
+                  setTypeFilter={setTypeFilter}
+                />
+              </>
+            )}
 
             <VirtualizedUserHistory
               token={token}
+              fetchedUser={fetchedUser}
               user={user}
               userHistory={userHistory ?? []}
               setUserHistory={setUserHistory}

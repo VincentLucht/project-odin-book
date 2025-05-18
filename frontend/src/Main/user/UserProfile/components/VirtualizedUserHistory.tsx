@@ -12,9 +12,11 @@ import UserNotFound from '@/components/partials/UserNotFound';
 import { UserHistoryItem } from '@/Main/user/UserProfile/api/fetchUserProfile';
 import { UserProfilePagination } from '@/Main/user/UserProfile/UserProfile';
 import { TokenUser } from '@/context/auth/AuthProvider';
+import { DBUser } from '@/interface/dbSchema';
 
 interface VirtualizedModQueueProps {
   token: string | null;
+  fetchedUser: DBUser | null;
   user: TokenUser | null;
   userHistory: UserHistoryItem[];
   setUserHistory: React.Dispatch<React.SetStateAction<UserHistoryItem[] | null>>;
@@ -25,6 +27,7 @@ interface VirtualizedModQueueProps {
 
 export default function VirtualizedUserHistory({
   token,
+  fetchedUser,
   user,
   userHistory,
   setUserHistory,
@@ -131,11 +134,11 @@ export default function VirtualizedUserHistory({
       />
 
       <EndMessageHandler
-        loading={loading}
-        hasMorePages={pagination.hasMore}
-        dataLength={userHistory.length}
+        loading={fetchedUser ? loading : false}
+        hasMorePages={fetchedUser ? pagination.hasMore : false}
+        dataLength={fetchedUser ? userHistory.length : 0}
         endMessageClassName="mt-14"
-        noResultsComponent={<UserNotFound />}
+        noResultsComponent={<UserNotFound className="mt-10" />}
       />
     </div>
   );
