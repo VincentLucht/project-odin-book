@@ -23,6 +23,22 @@ export default class RecentCommunitiesManager {
   }
 
   async assign(user_id: string, community_id: string) {
+    // Update if in recent
+    const existingRecent = await this.prisma.recentCommunities.findFirst({
+      where: {
+        user_id,
+        community_id,
+      },
+    });
+    if (existingRecent) {
+      await this.prisma.recentCommunities.update({
+        where: { id: existingRecent.id },
+        data: { interacted_at: new Date() },
+      });
+
+      return;
+    }
+
     const recentCommunities = await this.prisma.recentCommunities.findMany({
       where: { user_id },
       orderBy: { interacted_at: 'desc' },
@@ -33,29 +49,22 @@ export default class RecentCommunitiesManager {
       },
     });
 
+    // If limit hit, remove oldest
     if (recentCommunities.length >= 5) {
-      const firstRecent = recentCommunities[0];
-      const lastRecent = recentCommunities[4];
+      const oldestRecent = recentCommunities[recentCommunities.length - 1];
 
-      if (firstRecent.community.id === community_id) {
-        return;
-      }
-
-      await this.delete(user_id, lastRecent.community.id);
-    }
-
-    let alreadyRecent = false;
-    recentCommunities.forEach(({ community }) => {
-      if (community.id === community_id) {
-        alreadyRecent = true;
-      }
-    });
-
-    if (!alreadyRecent) {
-      await this.prisma.recentCommunities.create({
-        data: { user_id, community_id },
+      await this.prisma.recentCommunities.delete({
+        where: { id: oldestRecent.id },
       });
     }
+
+    await this.prisma.recentCommunities.create({
+      data: {
+        user_id,
+        community_id,
+        interacted_at: new Date(),
+      },
+    });
   }
 
   async delete(user_id: string, community_id: string) {

@@ -15,6 +15,7 @@ import isCommunityTypeValid from '@/community/util/isCommunityTypeValid';
 
 class CommunityController {
   // ! GET
+  // TODO: Deprecated??
   fetch = asyncHandler(async (req: Request, res: Response) => {
     if (checkValidationError(req, res)) return;
 
@@ -144,6 +145,10 @@ class CommunityController {
           requestUserId,
         ));
         pagination.hasMore = false;
+      }
+
+      if (requestUserId && community) {
+        await db.recentCommunities.assign(requestUserId, community.id);
       }
 
       return res.status(200).json({

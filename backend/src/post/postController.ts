@@ -40,6 +40,9 @@ class PostController {
         post.community_id,
         response.user_id,
       );
+      if (response.user_id) {
+        await db.recentCommunities.assign(response.user_id, post.community_id);
+      }
 
       return res
         .status(200)
@@ -195,6 +198,7 @@ class PostController {
         type,
         flair_id,
       );
+      await db.recentCommunities.assign(user_id, community.id);
 
       return res.status(201).json({
         message: 'Successfully created post',
@@ -249,6 +253,7 @@ class PostController {
       }
 
       await db.post.edit(post_id, body, is_spoiler, is_mature);
+      await db.recentCommunities.assign(user_id, community.id);
 
       return res.status(200).json({ message: 'Successfully edited post' });
     } catch (error) {
@@ -309,6 +314,7 @@ class PostController {
       }
 
       await db.post.deletePost(post_id);
+      await db.recentCommunities.assign(user_id, community.id);
 
       return res.status(200).json({ message: 'Successfully deleted post' });
     } catch (error) {
