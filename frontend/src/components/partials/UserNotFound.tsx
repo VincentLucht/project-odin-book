@@ -1,10 +1,14 @@
 import { useNavigate } from 'react-router-dom';
 
-export default function UserNotFound() {
+interface UserNotFoundProps {
+  className?: string;
+}
+
+export default function UserNotFound({ className }: UserNotFoundProps) {
   const navigate = useNavigate();
 
   return (
-    <div className="flex-col gap-4 df">
+    <div className={`flex-col gap-4 df ${className}`}>
       <div className="flex-col df">
         <img src="/logo.png" alt="Reddnir logo" className="w-20 rotate-[135deg]" />
         <div className="-mt-[5.5px] w-[60px] border-b-2"></div>
