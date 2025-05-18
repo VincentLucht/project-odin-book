@@ -1,5 +1,6 @@
 import LogoLoading from '@/components/Lazy/Logo/LogoLoading';
 import EndMessage from '@/components/partials/EndMessage';
+import { ReactNode } from 'react';
 
 interface EndMessageHandlerProps {
   loading: boolean;
@@ -10,6 +11,7 @@ interface EndMessageHandlerProps {
   endMessageClassName?: string;
   noResultsClassName?: string;
   logoClassName?: string;
+  noResultsComponent?: ReactNode;
 }
 
 /**
@@ -24,6 +26,7 @@ export default function EndMessageHandler({
   endMessageClassName = '',
   noResultsClassName = '',
   logoClassName = '',
+  noResultsComponent,
 }: EndMessageHandlerProps) {
   return (
     <>
@@ -33,9 +36,14 @@ export default function EndMessageHandler({
         <EndMessage message={endMessage} className={endMessageClassName} />
       )}
 
-      {!loading && !hasMorePages && dataLength === 0 && (
-        <EndMessage message={noResultsMessage} className={noResultsClassName} />
-      )}
+      {!loading &&
+        !hasMorePages &&
+        dataLength === 0 &&
+        (noResultsComponent ? (
+          <>{noResultsComponent}</>
+        ) : (
+          <EndMessage message={noResultsMessage} className={noResultsClassName} />
+        ))}
     </>
   );
 }
