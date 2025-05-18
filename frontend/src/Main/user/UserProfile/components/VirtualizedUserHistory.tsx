@@ -7,6 +7,7 @@ import CommentOverview from '@/Main/CommentOverview/CommentOverview';
 import EndMessageHandler from '@/Main/Global/EndMessageHandler';
 import CommunityPostManager from '@/Main/Community/util/CommunityPostManager';
 import UserProfilePostHandler from '@/Main/user/UserProfile/handlers/UserProfilePostHandler';
+import UserNotFound from '@/components/partials/UserNotFound';
 
 import { UserHistoryItem } from '@/Main/user/UserProfile/api/fetchUserProfile';
 import { UserProfilePagination } from '@/Main/user/UserProfile/UserProfile';
@@ -50,7 +51,10 @@ export default function VirtualizedUserHistory({
           {item.item_type === 'post' ? (
             <PostOverview
               key={item.id + item.created_at.toString()}
-              community={item.community}
+              community={{
+                ...item.community,
+                type: item.community.type,
+              }}
               post={item}
               userId={user?.id}
               token={token}
@@ -58,6 +62,8 @@ export default function VirtualizedUserHistory({
               navigate={navigate}
               showEditDropdown={showPostDropdown}
               setShowEditDropdown={setShowPostDropdown}
+              showPrivate={true}
+              showRemovedByModeration={item?.removed_by_moderation === true}
               // Post edit functions
               deleteFunc={() => userProfilePostHandler.handleDeletePost(item.id)}
               spoilerFunc={() => userProfilePostHandler.handleSpoilerFunc(item)}
@@ -125,8 +131,8 @@ export default function VirtualizedUserHistory({
         loading={loading}
         hasMorePages={pagination.hasMore}
         dataLength={userHistory.length}
-        noResultsMessage="No reports found."
         endMessageClassName="mt-14"
+        noResultsComponent={<UserNotFound />}
       />
     </div>
   );

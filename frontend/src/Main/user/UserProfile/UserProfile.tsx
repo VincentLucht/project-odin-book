@@ -3,7 +3,6 @@ import useAuth from '@/context/auth/hook/useAuth';
 import { useParams } from 'react-router-dom';
 
 import UserSideBar from '@/Main/user/UserProfile/components/UserSidebar/UserSidebar';
-import UserNotFound from '@/components/partials/UserNotFound';
 import VirtualizedUserHistory from '@/Main/user/UserProfile/components/VirtualizedUserHistory';
 import UserProfileApiFilters from '@/Main/user/UserProfile/components/UserProfileApiFilters';
 
@@ -91,46 +90,43 @@ export default function UserProfile() {
     <div className="h-[100dvh + 56px] p-4">
       <div className="center-main">
         <div className="center-main-content">
-          {fetchedUser ? (
-            <div className="w-full min-w-0">
-              <div className="flex gap-2">
-                <img
-                  src={`${fetchedUser?.profile_picture_url ? fetchedUser?.profile_picture_url : '/user.svg'}`}
-                  alt="User Profile Pictures"
-                  className="h-24 w-24 rounded-full border-2 object-cover"
-                />
-                <div className="flex-col df">
-                  <h2 className="text-xl font-bold">
-                    {fetchedUser?.display_name
-                      ? fetchedUser?.display_name
-                      : fetchedUser?.username}
-                  </h2>
-                  <span className="w-full text-gray-secondary">
-                    {fetchedUser?.username}
-                  </span>
-                </div>
+          <div className="w-full min-w-0">
+            <div className="flex gap-2">
+              <img
+                src={`${fetchedUser?.profile_picture_url ? fetchedUser?.profile_picture_url : '/user.svg'}`}
+                alt="User Profile Pictures"
+                className="h-24 w-24 rounded-full border-2 object-cover"
+              />
+              <div className="flex-col df">
+                <h2 className="text-xl font-bold">
+                  {fetchedUser?.display_name
+                    ? fetchedUser?.display_name
+                    : fetchedUser?.username}
+                </h2>
+                <span className="w-full text-gray-secondary">
+                  {fetchedUser?.username}
+                </span>
               </div>
-
-              <UserProfileApiFilters
-                sortBy={sortBy}
-                setSortBy={setSortBy}
-                typeFilter={typeFilter}
-                setTypeFilter={setTypeFilter}
-              />
-
-              <VirtualizedUserHistory
-                token={token}
-                user={user}
-                userHistory={userHistory ?? []}
-                setUserHistory={setUserHistory}
-                pagination={pagination}
-                loadMore={loadMore}
-                loading={loading}
-              />
             </div>
-          ) : (
-            <UserNotFound />
-          )}
+
+            <UserProfileApiFilters
+              sortBy={sortBy}
+              setSortBy={setSortBy}
+              typeFilter={typeFilter}
+              setTypeFilter={setTypeFilter}
+            />
+
+            <VirtualizedUserHistory
+              token={token}
+              user={user}
+              userHistory={userHistory ?? []}
+              setUserHistory={setUserHistory}
+              pagination={pagination}
+              loadMore={loadMore}
+              loading={loading}
+            />
+          </div>
+
           <UserSideBar user={fetchedUser} />
         </div>
       </div>
