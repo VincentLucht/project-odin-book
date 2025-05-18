@@ -87,7 +87,7 @@ export default function UserProfileApiFilters({
             customFunc={() =>
               setShowDropdown(showDropdown === 'sortBy' ? null : 'sortBy')
             }
-            text={sortBy === 'new' ? 'Newest' : 'Top'}
+            text={sortBy === 'new' ? 'New' : 'Top'}
             className={`${className} !text-[16px]`}
           />
 
@@ -96,7 +96,7 @@ export default function UserProfileApiFilters({
               ${showDropdown === 'sortBy' ? 'z-10 opacity-100' : '-z-10 opacity-0'}`}
           >
             <DropdownButton
-              text="Newest"
+              text="New"
               show={showDropdown === 'sortBy'}
               isSelected={sortBy === 'new'}
               customFunc={() => {
