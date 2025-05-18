@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker';
 
 export default async function createPosts(prisma: PrismaClient) {
   const latestCreatedAt = new Date();
-  latestCreatedAt.setHours(latestCreatedAt.getHours() - 5);
+  latestCreatedAt.setHours(latestCreatedAt.getHours() - 10);
 
   // Posts for populating search results
   for (let i = 0; i < 300; i++) {
