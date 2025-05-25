@@ -138,7 +138,16 @@ export default function VirtualizedUserHistory({
         hasMorePages={fetchedUser ? pagination.hasMore : false}
         dataLength={fetchedUser ? userHistory.length : 0}
         endMessageClassName="mt-14"
-        noResultsComponent={<UserNotFound className="mt-10" />}
+        noResultsComponent={
+          fetchedUser ? (
+            <div className="mt-14 text-center">
+              <div className="text-xl font-semibold">No activity yet</div>
+              <div className="mt-2 text-sm">Check back later for updates</div>
+            </div>
+          ) : (
+            <UserNotFound className="mt-10" />
+          )
+        }
       />
     </div>
   );
