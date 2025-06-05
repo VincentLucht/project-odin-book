@@ -12,6 +12,12 @@ userRouter.get(
   userValidator.fetchRules(),
   userController.get,
 );
+userRouter.get(
+  '/list',
+  token.authenticate,
+  userValidator.fetchManyRules(),
+  userController.fetchMany,
+);
 
 userRouter.get('/settings', token.authenticate, userController.getSettings);
 

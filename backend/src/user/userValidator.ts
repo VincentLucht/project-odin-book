@@ -34,6 +34,15 @@ class UserValidator {
     ];
   }
 
+  fetchManyRules() {
+    return [
+      query('u')
+        .notEmpty()
+        .withMessage('Username is required')
+        .isString(),
+    ];
+  }
+
   deletionRules() {
     return [
       body('community_id').trim()

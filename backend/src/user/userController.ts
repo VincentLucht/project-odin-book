@@ -73,6 +73,33 @@ class UserController {
     }
   });
 
+  fetchMany = asyncHandler(async (req: Request, res: Response) => {
+    if (checkValidationError(req, res)) return;
+
+    const { u: username } = req.query as { u: string };
+
+    try {
+      const { user_id } = getAuthUser(req.authData);
+      const user = await db.user.getById(user_id);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      const users = await db.user.getByUsernameMany(username, user_id);
+
+      return res.status(200).json({
+        message: 'Results',
+        users: users ?? [],
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        message: 'Failed to fetch user',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  });
+
   getSettings = asyncHandler(async (req: Request, res: Response) => {
     if (checkValidationError(req, res)) return;
 
