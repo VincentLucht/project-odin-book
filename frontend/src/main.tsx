@@ -28,6 +28,8 @@ import CommunityFlairSettings from '@/Main/Community/components/ModTools/compone
 import Post from '@/Main/Post/Post';
 import CreatePost from '@/Main/CreatePost/CreatePost';
 
+import Chats from '@/Main/Chats/Chats';
+
 import ScreenSizeProvider from '@/context/screen/ScreenSizeProvider';
 import AuthProvider from '@/context/auth/AuthProvider';
 import RecentCommunitiesProvider from '@/Sidebar/components/RecentCommunities/context/RecentCommunitiesProvider';
@@ -44,6 +46,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/sign-up" element={<SignUp />} />
+
+              {/* CHATS */}
+              <Route path="/chats" element={<Chats />} />
 
               {/* MOD */}
               <Route path="r/:communityName/mod/" element={<ModTools />}>
@@ -64,6 +69,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                 />
               </Route>
 
+              {/* MAIN */}
               <Route path="/" element={<Layout />}>
                 <Route index element={<Homepage />} />
 
