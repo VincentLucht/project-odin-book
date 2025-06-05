@@ -2,7 +2,7 @@ import apiRequest from '@/util/apiRequest';
 import catchError from '@/util/catchError';
 import { toast } from 'react-toastify';
 import toastUpdate from '@/util/toastUpdate';
-import { APILoadingPhases } from '@/interface/misc';
+import { APILoadingPhasesOptional } from '@/interface/misc';
 import { Pagination } from '@/interface/backendTypes';
 import { FetchedModMail } from '@/Main/Community/components/ModTools/components/ModMail/components/ModMailMessage';
 
@@ -46,7 +46,7 @@ export async function fetchModMail(
 export async function sendMessage(
   token: string | null,
   apiData: { community_id: string; subject: string; message: string },
-  messages?: APILoadingPhases,
+  messages?: APILoadingPhasesOptional,
 ) {
   const toastId = toast.loading(messages?.loading);
 
@@ -68,7 +68,7 @@ export async function replyToMessage(
     message: string;
     modmail_id: string;
   },
-  messages?: APILoadingPhases,
+  messages?: APILoadingPhasesOptional,
 ) {
   const toastId = toast.loading(messages?.loading);
 

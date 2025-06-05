@@ -2,7 +2,7 @@ import apiRequest from '@/util/apiRequest';
 import catchError from '@/util/catchError';
 import { toast } from 'react-toastify';
 import toastUpdate from '@/util/toastUpdate';
-import { APILoadingPhases } from '@/interface/misc';
+import { APILoadingPhasesOptional } from '@/interface/misc';
 import { CommunityTypes, DBCommunity } from '@/interface/dbSchema';
 import { CommunityModerator } from '@/Main/Community/api/fetch/fetchCommunityWithPosts';
 
@@ -51,7 +51,7 @@ export async function updateCommunitySettings(
     banner_url_desktop?: string;
     banner_url_mobile?: string;
   },
-  messages?: APILoadingPhases,
+  messages?: APILoadingPhasesOptional,
 ) {
   const toastId = toast.loading(messages?.loading);
 

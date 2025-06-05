@@ -2,7 +2,7 @@ import apiRequest from '@/util/apiRequest';
 import catchError from '@/util/catchError';
 import { toast } from 'react-toastify';
 import toastUpdate from '@/util/toastUpdate';
-import { APILoadingPhases } from '@/interface/misc';
+import { APILoadingPhasesOptional } from '@/interface/misc';
 import { DBCommunityFlair } from '@/interface/dbSchema';
 import { Pagination } from '@/interface/backendTypes';
 
@@ -53,7 +53,7 @@ export async function createCommunityFlair(
     is_assignable_to_users: boolean;
     emoji: string | null;
   },
-  messages?: APILoadingPhases,
+  messages?: APILoadingPhasesOptional,
 ) {
   const endpoint = '/community/flair';
   const toastId = toast.loading(messages?.loading);
@@ -87,7 +87,7 @@ export async function updateCommunityFlair(
     is_assignable_to_users: boolean;
     emoji: string | null;
   },
-  messages?: APILoadingPhases,
+  messages?: APILoadingPhasesOptional,
 ) {
   const endpoint = '/community/flair';
   const toastId = toast.loading(messages?.loading);
@@ -112,7 +112,7 @@ export async function updateCommunityFlair(
 export async function deleteCommunityFlair(
   token: string | null,
   apiData: { community_id: string; community_flair_id: string },
-  messages?: APILoadingPhases,
+  messages?: APILoadingPhasesOptional,
 ) {
   const endpoint = '/community/flair';
   const toastId = toast.loading(messages?.loading);

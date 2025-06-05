@@ -2,7 +2,7 @@ import apiRequest from '@/util/apiRequest';
 import catchError from '@/util/catchError';
 import { toast } from 'react-toastify';
 import toastUpdate from '@/util/toastUpdate';
-import { APILoadingPhases } from '@/interface/misc';
+import { APILoadingPhasesOptional } from '@/interface/misc';
 import { DBReport } from '@/interface/dbSchema';
 import { FetchedReport } from '@/Main/Community/components/ModTools/components/ModQueue/ModQueue';
 
@@ -77,7 +77,7 @@ export async function report(
     subject: string;
     reason: string;
   },
-  messages?: APILoadingPhases,
+  messages?: APILoadingPhasesOptional,
 ) {
   const toastId = toast.loading(messages?.loading);
 

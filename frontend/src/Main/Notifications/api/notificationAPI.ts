@@ -2,7 +2,7 @@ import apiRequest from '@/util/apiRequest';
 import catchError from '@/util/catchError';
 import { toast } from 'react-toastify';
 import toastUpdate from '@/util/toastUpdate';
-import { APILoadingPhases } from '@/interface/misc';
+import { APILoadingPhasesOptional } from '@/interface/misc';
 import { Pagination } from '@/interface/backendTypes';
 import { DBNotification } from '@/interface/dbSchema';
 
@@ -59,7 +59,7 @@ export async function fetchByNotification(
 
 export async function readAllNotifications(
   token: string | null,
-  messages?: APILoadingPhases,
+  messages?: APILoadingPhasesOptional,
 ) {
   const toastId = toast.loading(messages?.loading);
 
