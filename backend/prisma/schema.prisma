@@ -78,6 +78,10 @@ model User {
   received_notifications Notification[]       @relation("Receiver")
   sent_mod_mails         ModMail[]
   reports                Report[]
+  chat_trackers_as_user1 ChatTracker[]        @relation("User1")
+  chat_trackers_as_user2 ChatTracker[]        @relation("User2")
+  notifications_chat     NotificationChat[]
+  owned_chat             ChatTracker[]        @relation("ChatOwner")
 }
 
 enum RequestStatus {
@@ -147,7 +151,6 @@ model RecentCommunities {
   user          User      @relation(fields: [user_id], references: [id])
 
   @@unique([community_id, user_id])
-  @@unique([interacted_at])
 }
 
 model CommunityRule {
@@ -502,29 +505,50 @@ model PostAssignedFlair {
 }
 
 model Chat {
-  id                  String      @id @default(uuid())
-  name                String      @db.VarChar(100)
-  time_created        DateTime    @default(now())
-  profile_picture_url String?
-  is_group_chat       Boolean     @default(false)
-  chat_description    String?     @db.VarChar(200)
-  updated_at          DateTime    @updatedAt
-  last_message_id     String?     @unique
-  owner_id            String
-  owner               User        @relation(fields: [owner_id], references: [id], onDelete: Cascade)
-  last_message        Message?    @relation("LastMessage", fields: [last_message_id], references: [id], onDelete: SetNull)
-  messages            Message[]   @relation("ChatMessages")
-  userChats           UserChats[]
-  chatAdmins          ChatAdmin[]
+  id                        String        @id @default(uuid())
+  name                      String        @db.VarChar(100)
+  time_created              DateTime      @default(now())
+  profile_picture_url       String?
+  is_group_chat             Boolean       @default(false)
+  chat_description          String?       @db.VarChar(200)
+  updated_at                DateTime      @updatedAt
+  last_message_id           String?       @unique
+  owner_id                  String
+  owner                     User          @relation(fields: [owner_id], references: [id], onDelete: Cascade)
+  last_message              Message?      @relation("LastMessage", fields: [last_message_id], references: [id], onDelete: SetNull)
+  messages                  Message[]     @relation("ChatMessages")
+  userChats                 UserChats[]
+  chatAdmins                ChatAdmin[]
+  existing_one_on_one_chats ChatTracker[]
 
   @@index([updated_at])
 }
 
+model ChatTracker {
+  id       String @id @default(uuid())
+  chat_id  String @unique
+  chat     Chat   @relation(fields: [chat_id], references: [id], onDelete: Cascade)
+  owner_id String
+  owner    User   @relation("ChatOwner", fields: [owner_id], references: [id])
+  user1_id String
+  user1    User   @relation("User1", fields: [user1_id], references: [id])
+  user2_id String
+  user2    User   @relation("User2", fields: [user2_id], references: [id])
+ 
+  @@unique([user1_id, user2_id])
+}
+
+model NotificationChat {
+  id      String @id @default(uuid())
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id])
+}
+
 model Message {
   id                String   @id @default(uuid())
-  content           String   @db.VarChar(10000)
+  content           String
   time_created      DateTime @default(now())
-  user              User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user              User     @relation(fields: [user_id], references: [id])
   user_id           String
   is_system_message Boolean  @default(false)
   chat              Chat     @relation("ChatMessages", fields: [chat_id], references: [id], onDelete: Cascade)
@@ -538,10 +562,11 @@ model Message {
 
 model UserChats {
   id        String   @id @default(uuid())
-  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id   String
-  chat      Chat     @relation(fields: [chat_id], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
   chat_id   String
+  chat      Chat     @relation(fields: [chat_id], references: [id], onDelete: Cascade)
+  is_muted  Boolean  @default(false)
   joined_at DateTime @default(now())
 
   @@unique([user_id, chat_id])
