@@ -15,7 +15,7 @@ export default function ChatNotificationToggle({
   token,
 }: ChatNotificationToggleProps) {
   const handleToggle = async () => {
-    const toastId = toast.loading('Updating notification settings...');
+    const toastId = toast.loading('Updating chats with other users settings...');
 
     try {
       await editUserSettings(token, { chats_enabled: !chatsEnabled });
@@ -27,14 +27,14 @@ export default function ChatNotificationToggle({
 
       toast.update(toastId, {
         type: 'success',
-        render: `Chat notifications ${!chatsEnabled ? 'enabled' : 'disabled'}`,
+        render: `Allow other users to create a chat with you: ${!chatsEnabled ? 'enabled' : 'disabled'}`,
         isLoading: false,
         autoClose: 3000,
       });
     } catch (error) {
       toast.update(toastId, {
         type: 'error',
-        render: 'Failed to update notification settings',
+        render: 'Failed to update chats with other users settings',
         isLoading: false,
         autoClose: 3000,
       });
@@ -45,8 +45,8 @@ export default function ChatNotificationToggle({
     <div className="flex items-center justify-between py-2">
       <Switch
         id="chats-toggle"
-        label="Chat Messages"
-        description="Receive notifications for new chat messages"
+        label="Chats with other users"
+        description="Allow other users to create a chat with you"
         checked={chatsEnabled}
         onChange={handleToggle}
       />
