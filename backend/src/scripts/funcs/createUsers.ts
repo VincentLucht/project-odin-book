@@ -27,6 +27,22 @@ export default async function createUsers(prisma: PrismaClient) {
     });
   }
 
+  // Create system user
+  await prisma.user.create({
+    data: {
+      id: 'system_id',
+      username: 'System',
+      email: 'system@gmail.com',
+      password: await bcrypt.hash(
+        Math.random().toString(36) + Date.now().toString(36),
+        10,
+      ),
+      display_name: 'System_rednir',
+      description: 'How did you find me?',
+      created_at: new Date(),
+    },
+  });
+
   // Create user 1
   const user1 = await prisma.user.create({
     data: {
