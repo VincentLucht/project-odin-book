@@ -22,6 +22,11 @@ import NotificationManager from '@/db/managers/notificationManager';
 import ModMailManager from '@/db/managers/modMailManager';
 import ReportManager from '@/db/managers/reportManager/reportManager';
 
+import ChatManager from '@/db/managers/chat/chatManager';
+import MessageManager from '@/db/managers/chat/messageManager';
+import UserChatManager from '@/db/managers/chat/userChatsManager';
+import ChatAdminManager from '@/db/managers/chat/chatAdminManager';
+
 export class DB {
   private prisma: PrismaClient;
   public user: UserManager;
@@ -46,6 +51,11 @@ export class DB {
   public modMail: ModMailManager;
   public report: ReportManager;
 
+  public chat: ChatManager;
+  public message: MessageManager;
+  public userChat: UserChatManager;
+  public chatAdmin: ChatAdminManager;
+
   constructor() {
     this.prisma = new PrismaClient();
     this.user = new UserManager(this.prisma);
@@ -69,6 +79,11 @@ export class DB {
     this.notification = new NotificationManager(this.prisma, this.user);
     this.modMail = new ModMailManager(this.prisma);
     this.report = new ReportManager(this.prisma);
+
+    this.chat = new ChatManager(this.prisma);
+    this.message = new MessageManager(this.prisma);
+    this.userChat = new UserChatManager(this.prisma);
+    this.chatAdmin = new ChatAdminManager(this.prisma);
   }
 }
 

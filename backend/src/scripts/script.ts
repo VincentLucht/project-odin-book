@@ -9,6 +9,7 @@ import createFlairs from '@/scripts/funcs/createFlairs';
 import createModmails from '@/scripts/funcs/createModMail';
 import createReports from '@/scripts/funcs/createReports';
 import createNotifications from '@/scripts/funcs/createNotifications';
+import createChatsAndMessages from '@/scripts/funcs/createChatsAndMessages';
 
 const prisma = new PrismaClient();
 
@@ -21,6 +22,7 @@ async function reset() {
   await prisma.message.deleteMany();
   await prisma.userChats.deleteMany();
   await prisma.chat.deleteMany();
+  await prisma.chatTracker.deleteMany();
 
   // Delete post and comment related records
   await prisma.report.deleteMany();
@@ -57,7 +59,6 @@ async function reset() {
 
 async function main() {
   await reset();
-
   await createTopics(prisma);
   await createUsers(prisma);
   await createCommunities(prisma);
@@ -67,6 +68,7 @@ async function main() {
   await createModmails(prisma);
   await createReports(prisma);
   // await createNotifications(prisma);
+  await createChatsAndMessages(prisma);
 }
 
 main()

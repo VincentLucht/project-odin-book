@@ -21,6 +21,9 @@ import modMailRouter from '@/modMail/modMailRouter';
 import reportRouter from '@/report/reportRouter';
 import notificationRouter from '@/notification/notificationRouter';
 
+import chatRouter from '@/chats/chat/chatRouter';
+import messageRouter from '@/chats/message/messageRouter';
+
 const router = express.Router();
 
 router.use('/auth', authRouter);
@@ -44,6 +47,9 @@ router.use('/topic', topicRouter);
 router.use('/modmail', modMailRouter);
 router.use('/report', reportRouter);
 router.use('/notification', notificationRouter);
+
+router.use('/chat', chatRouter);
+router.use('/chat/message', messageRouter);
 
 router.get('/test', (req, res) => {
   return res.json([{ title: 'test' }, { title: 'test2' }]);
