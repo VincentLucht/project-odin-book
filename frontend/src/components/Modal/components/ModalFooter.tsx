@@ -6,6 +6,7 @@ interface ModalFooterProps {
   onClick?: () => void;
   confirmButtonName?: string;
   confirmButtonClassName?: string;
+  cancelButtonClassName?: string;
 }
 
 export default function ModalFooter({
@@ -13,16 +14,17 @@ export default function ModalFooter({
   submitting,
   onClick,
   confirmButtonName,
-  confirmButtonClassName,
+  confirmButtonClassName = 'confirm-button',
+  cancelButtonClassName = 'cancel-button',
 }: ModalFooterProps) {
   return (
     <div className="mt-4 flex items-center justify-end gap-2">
-      <button className="cancel-button" onClick={() => onClose()}>
+      <button className={` ${cancelButtonClassName}`} onClick={() => onClose()}>
         Cancel
       </button>
 
       <button
-        className={`confirm-button ${confirmButtonClassName}`}
+        className={` ${confirmButtonClassName}`}
         type="submit"
         onClick={() => onClick?.()}
       >
