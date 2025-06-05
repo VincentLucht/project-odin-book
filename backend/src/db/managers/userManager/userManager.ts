@@ -1,5 +1,6 @@
 import { Prisma, PrismaClient, User } from '@prisma/client/default';
 import bcrypt from 'bcrypt';
+import { randomUUID } from 'crypto';
 import formatUserHistory from '@/db/managers/userManager/util/formatUserHistory';
 
 type HistoryItemBase = {
@@ -104,6 +105,36 @@ export default class UserManager {
     });
 
     return user;
+  }
+
+  async getByUsernameMany(username: string, requestUserId: string) {
+    const users = await this.prisma.$queryRaw`
+      SELECT 
+        u.username,
+        u.profile_picture_url,
+        us.chats_enabled AS can_create_chat,
+        CASE 
+          WHEN u.id = ${requestUserId} THEN true
+          WHEN EXISTS (
+            SELECT 1 FROM "ChatTracker" ct 
+            WHERE (ct.user1_id = ${requestUserId} AND ct.user2_id = u.id)
+              OR (ct.user1_id = u.id AND ct.user2_id = ${requestUserId})
+          ) THEN true
+          ELSE false
+        END AS already_has_chat
+      FROM "User" AS u
+      LEFT JOIN "UserSettings" AS us ON us.user_id = u.id
+      WHERE u.username LIKE ${`%${username}%`}
+      ORDER BY 
+        CASE WHEN u.username = ${username} THEN 1
+            WHEN u.username LIKE ${`${username}%`} THEN 2
+            WHEN u.username LIKE ${`%${username}%`} THEN 3
+            ELSE 4
+          END
+      LIMIT 30
+    `;
+
+    return users;
   }
 
   async getByUsernameAndHistory(
@@ -455,22 +486,44 @@ export default class UserManager {
 
   // ! DELETE
   async delete(user_id: string) {
-    await this.prisma.communityModerator.deleteMany({ where: { user_id } });
+    const userChats = await this.prisma.userChats.findMany({
+      where: { user_id },
+      select: { chat_id: true },
+    });
+    const chatIds = userChats.map((uc) => uc.chat_id);
 
-    await this.prisma.recentCommunities.deleteMany({ where: { user_id } });
+    // Find all chats where only user is member
+    const chatsToDelete = await this.prisma.userChats.groupBy({
+      by: ['chat_id'],
+      where: { chat_id: { in: chatIds } },
+      _count: { user_id: true },
+      having: { user_id: { _count: { equals: 1 } } },
+    });
+    const chatIdsToDelete = chatsToDelete.map((chat) => chat.chat_id);
 
-    await this.prisma.user.update({
-      where: { id: user_id },
-      data: {
-        deleted_at: new Date(),
-        username: `deleted_${user_id.substring(0, 8)}`,
-        email: `deleted_${user_id}@deleted.com`,
-        password: '',
-        display_name: null,
-        profile_picture_url: null,
-        description: null,
-        cake_day: null,
-      },
+    await this.prisma.$transaction(async (tx) => {
+      await tx.communityModerator.deleteMany({ where: { user_id } });
+      await tx.recentCommunities.deleteMany({ where: { user_id } });
+      await tx.userChats.deleteMany({ where: { user_id } });
+
+      // Delete empty chats
+      if (chatIdsToDelete.length > 0) {
+        await tx.chat.deleteMany({ where: { id: { in: chatIdsToDelete } } });
+      }
+
+      await tx.user.update({
+        where: { id: user_id },
+        data: {
+          deleted_at: new Date(),
+          username: `deleted_${user_id.substring(0, 8)}`,
+          email: `deleted_${user_id}@deleted.com`,
+          password: `deleted_${randomUUID()}`,
+          display_name: null,
+          profile_picture_url: null,
+          description: null,
+          cake_day: null,
+        },
+      });
     });
   }
 }
