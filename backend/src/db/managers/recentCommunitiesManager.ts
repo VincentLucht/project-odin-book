@@ -24,20 +24,22 @@ export default class RecentCommunitiesManager {
 
   async assign(user_id: string, community_id: string) {
     // Update if in recent
-    const existingRecent = await this.prisma.recentCommunities.findFirst({
+    await this.prisma.recentCommunities.upsert({
       where: {
+        community_id_user_id: {
+          community_id,
+          user_id,
+        },
+      },
+      update: {
+        interacted_at: new Date(),
+      },
+      create: {
         user_id,
         community_id,
+        interacted_at: new Date(),
       },
     });
-    if (existingRecent) {
-      await this.prisma.recentCommunities.update({
-        where: { id: existingRecent.id },
-        data: { interacted_at: new Date() },
-      });
-
-      return;
-    }
 
     const recentCommunities = await this.prisma.recentCommunities.findMany({
       where: { user_id },
@@ -50,21 +52,13 @@ export default class RecentCommunitiesManager {
     });
 
     // If limit hit, remove oldest
-    if (recentCommunities.length >= 5) {
+    if (recentCommunities.length > 5) {
       const oldestRecent = recentCommunities[recentCommunities.length - 1];
 
       await this.prisma.recentCommunities.delete({
         where: { id: oldestRecent.id },
       });
     }
-
-    await this.prisma.recentCommunities.create({
-      data: {
-        user_id,
-        community_id,
-        interacted_at: new Date(),
-      },
-    });
   }
 
   async delete(user_id: string, community_id: string) {
