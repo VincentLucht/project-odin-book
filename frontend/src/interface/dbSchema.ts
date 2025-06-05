@@ -219,6 +219,42 @@ export interface DBNotification {
   link: string | undefined;
 }
 
+export interface DBChat {
+  id: string;
+  name: string;
+  time_created: string;
+  profile_picture_url: string | null;
+  is_group_chat: boolean;
+  chat_description: string | null;
+  updated_at: string;
+  last_message_id: string | null;
+  owner_id: string;
+}
+
+export interface DBMessage {
+  id: string;
+  content: string;
+  time_created: string;
+  user_id: string;
+  user: {
+    id: string;
+    username: string;
+    profile_picture_url: string | null;
+    deleted_at: string;
+  };
+  is_system_message: boolean;
+  chat_id: string;
+  iv: string;
+}
+
+export interface DBUserChats {
+  id: string;
+  user_id: string;
+  chat_id: string;
+  is_muted: boolean;
+  joined_at: string;
+}
+
 // EXTENSIONS
 export type CommunityTypes = 'PUBLIC' | 'RESTRICTED' | 'PRIVATE';
 export type UserRoles = 'BASIC' | 'CONTRIBUTOR';
