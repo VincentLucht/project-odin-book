@@ -79,7 +79,12 @@ export default function Notification({
 
           <div
             className={`text-gray-secondary ${
-              notification.type === 'MODMESSAGE' ? 'break-all' : 'text-hidden-ellipsis' } `}
+              notification.type === 'MODMESSAGE'
+                ? 'break-all'
+                : notification.type === 'MODMAILREPLY'
+                  ? 'whitespace-pre-wrap'
+                  : 'text-hidden-ellipsis'
+              } `}
           >
             {notification.message}
           </div>
@@ -96,14 +101,16 @@ export default function Notification({
           )}
         </div>
 
-        <NotificationDropdown
-          notificationId={notification.id}
-          isHidden={notification.is_hidden}
-          token={token}
-          show={showDropdown}
-          setShow={setShowDropdown}
-          setNotifications={setNotifications}
-        />
+        <div className="self-start">
+          <NotificationDropdown
+            notificationId={notification.id}
+            isHidden={notification.is_hidden}
+            token={token}
+            show={showDropdown}
+            setShow={setShowDropdown}
+            setNotifications={setNotifications}
+          />
+        </div>
       </div>
     </div>
   );
