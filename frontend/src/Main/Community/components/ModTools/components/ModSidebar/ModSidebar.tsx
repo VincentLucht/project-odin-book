@@ -36,7 +36,8 @@ export default function ModSidebar() {
         <SidebarButton
           navigate={() => navigate('settings')}
           buttonName="Settings"
-          className={`${route === 'settings' && 'bg-accent-gray'}`}
+          className={`${ (route === 'settings' || route === 'post-flair' || route === 'user-flair') &&
+            'bg-accent-gray' }`}
         />
       </div>
     </nav>
