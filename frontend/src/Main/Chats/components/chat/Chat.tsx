@@ -93,6 +93,7 @@ export default function Chat({
           </div>
 
           <button
+            className="!h-8 !w-8 bg-hover-transition"
             onClick={() => {
               if (chat) {
                 setShowChatSettings((prev) => !prev);
