@@ -80,7 +80,6 @@ model User {
   reports                Report[]
   chat_trackers_as_user1 ChatTracker[]        @relation("User1")
   chat_trackers_as_user2 ChatTracker[]        @relation("User2")
-  notifications_chat     NotificationChat[]
   owned_chat             ChatTracker[]        @relation("ChatOwner")
 }
 
@@ -534,14 +533,8 @@ model ChatTracker {
   user1    User   @relation("User1", fields: [user1_id], references: [id])
   user2_id String
   user2    User   @relation("User2", fields: [user2_id], references: [id])
- 
-  @@unique([user1_id, user2_id])
-}
 
-model NotificationChat {
-  id      String @id @default(uuid())
-  user_id String
-  user    User   @relation(fields: [user_id], references: [id])
+  @@unique([user1_id, user2_id])
 }
 
 model Message {
@@ -561,13 +554,14 @@ model Message {
 }
 
 model UserChats {
-  id        String   @id @default(uuid())
-  user_id   String
-  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  chat_id   String
-  chat      Chat     @relation(fields: [chat_id], references: [id], onDelete: Cascade)
-  is_muted  Boolean  @default(false)
-  joined_at DateTime @default(now())
+  id           String   @id @default(uuid())
+  user_id      String
+  user         User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  chat_id      String
+  chat         Chat     @relation(fields: [chat_id], references: [id], onDelete: Cascade)
+  is_muted     Boolean  @default(false)
+  joined_at    DateTime @default(now())
+  last_read_at DateTime @default(now())
 
   @@unique([user_id, chat_id])
 }
