@@ -1,0 +1,4 @@
+/* hide annoying horizontal line on lucide svg */
+.lucide-send-horizontal path[d="M6 12h16"] {
+  display: none;
+}
