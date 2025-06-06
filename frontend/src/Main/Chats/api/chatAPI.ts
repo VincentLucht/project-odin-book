@@ -32,6 +32,7 @@ export interface FetchedChatOverview {
   is_muted: boolean;
   joined_at: string;
   user_id: string;
+  last_read_at: string;
 
   chat: {
     id: string;
@@ -48,7 +49,7 @@ export interface FetchedChatOverview {
     } | null;
     owner_id: string;
     updated_at: string;
-    userChats: [DBUserChats];
+    userChats: [DBUserChats]; // TODO: ???
     existing_one_on_one_chats?: [ExistingOneOnOneChat];
   };
 }
@@ -109,6 +110,38 @@ export async function fetchChat(
 
     const { messages, ...chatWithoutMessages } = response.chat;
     onComplete(chatWithoutMessages, messages, response.pagination);
+  } catch (error) {
+    catchError(error);
+  }
+}
+
+interface GetUnreadChatMessagesResponse {
+  message: string;
+  hasNewChatMessages: boolean;
+}
+export async function getUnreadChatMessages(
+  token: string,
+  onComplete: (hasNewMessages: boolean) => void,
+) {
+  try {
+    const response = await apiRequest<GetUnreadChatMessagesResponse>(
+      '/chat/unread',
+      'GET',
+      token,
+    );
+
+    onComplete(response.hasNewChatMessages);
+  } catch (error) {
+    catchError(error);
+  }
+}
+
+interface ReadChatResponse {
+  message: string;
+}
+export async function readChat(token: string, chat_id: string) {
+  try {
+    await apiRequest<ReadChatResponse>('/chat/read', 'POST', token, { chat_id });
   } catch (error) {
     catchError(error);
   }

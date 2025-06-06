@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import useAuthGuard from '@/context/auth/hook/useAuthGuard';
 
-import { fetchAllChatOverviews } from '@/Main/Chats/api/chatAPI';
+import { fetchAllChatOverviews, readChat } from '@/Main/Chats/api/chatAPI';
 
 import ChatSidebar from '@/Main/Chats/components/ChatSidebar/ChatSidebar';
 import ChatCreation from '@/Main/Chats/components/ChatCreation';
@@ -23,6 +23,7 @@ export default function Chats() {
   const [loading, setLoading] = useState(true);
   const [showCreateChat, setShowCreateChat] = useState(false);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
+  const prevChatIdRef = useRef<string | null>(null);
 
   const { user, token } = useAuthGuard();
 
@@ -48,9 +49,23 @@ export default function Chats() {
     chatProperties: { name: string; pfp: string | null; isGroupChat: boolean },
   ) => {
     setShowCreateChat(false);
+
+    if (prevChatIdRef.current && prevChatIdRef.current !== chatId) {
+      void readChat(token, prevChatIdRef.current);
+    }
+
     setCurrentChatId(chatId);
+    prevChatIdRef.current = chatId;
+
     const chatOverview = chatOverviews.find((overview) => overview.chat_id === chatId);
     setCurrentChatOverview(chatOverview ?? null);
+    setChatOverviews((prev) =>
+      prev.map((overview) =>
+        overview.chat_id === chatId
+          ? { ...overview, last_read_at: new Date().toISOString() }
+          : overview,
+      ),
+    );
 
     const { name, pfp, isGroupChat } = chatProperties;
     setTempChat({ name, pfp: pfp ?? '', isGroupChat });
@@ -59,6 +74,24 @@ export default function Chats() {
   useEffect(() => {
     loadAllChatOverviews('', true);
   }, [loadAllChatOverviews]);
+
+  // Mark as read when leaving/closing chat
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (prevChatIdRef.current) {
+        void readChat(token, prevChatIdRef.current);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      if (prevChatIdRef.current) {
+        void readChat(token, prevChatIdRef.current);
+      }
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [token]);
 
   return (
     <div className="grid h-dvh grid-cols-[300px_auto]">

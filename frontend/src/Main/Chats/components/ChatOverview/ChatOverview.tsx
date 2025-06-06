@@ -42,6 +42,12 @@ export default function ChatOverview({
           userSelfId,
         );
 
+        const lastMessage = overview.chat.last_message;
+        const hasUnreadMessages = lastMessage
+          ? lastMessage?.time_created > overview.last_read_at &&
+            lastMessage.user_id !== userSelfId
+          : false;
+
         return (
           <button
             key={overview.id}
@@ -69,11 +75,17 @@ export default function ChatOverview({
                   </div>
                 </div>
 
-                <div className="text-left text-hidden-ellipsis text-gray-secondary">
-                  {overview.chat.last_message.user_id === userSelfId
-                    ? 'You'
-                    : overview.chat.last_message.user.username}
-                  : {overview.chat.last_message.content}
+                <div className="flex w-full items-center justify-between gap-1">
+                  <div className="text-left text-hidden-ellipsis text-gray-secondary">
+                    {overview.chat.last_message.user_id === userSelfId
+                      ? 'You'
+                      : overview.chat.last_message.user.username}
+                    : {overview.chat.last_message.content}
+                  </div>
+
+                  {hasUnreadMessages && (
+                    <div className="h-3 w-3 rounded-full bg-red-500"></div>
+                  )}
                 </div>
               </div>
             ) : (

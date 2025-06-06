@@ -39,7 +39,7 @@ export default function NotificationButton({ onClick }: NotificationButtonProps)
       />
 
       {showUnread && (
-        <div className="absolute-circle !left-[22px] !top-[5px] !h-[12px] !w-[12px] rounded bg-red-600"></div>
+        <div className="!left-[22px] !top-[5px] !h-[12px] !w-[12px] rounded bg-red-600 absolute-circle"></div>
       )}
     </div>
   );
