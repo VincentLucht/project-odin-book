@@ -50,9 +50,7 @@ export default function Chats() {
   ) => {
     setShowCreateChat(false);
 
-    if (prevChatIdRef.current && prevChatIdRef.current !== chatId) {
-      void readChat(token, prevChatIdRef.current);
-    }
+    void readChat(token, chatId);
 
     setCurrentChatId(chatId);
     prevChatIdRef.current = chatId;
