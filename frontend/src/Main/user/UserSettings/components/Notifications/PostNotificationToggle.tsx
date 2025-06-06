@@ -7,12 +7,14 @@ interface PostNotificationToggleProps {
   postsEnabled: boolean;
   setSettings: React.Dispatch<React.SetStateAction<DBUserSettings | null>>;
   token: string;
+  loading: boolean;
 }
 
 export default function PostNotificationToggle({
   postsEnabled,
   setSettings,
   token,
+  loading,
 }: PostNotificationToggleProps) {
   const handleToggle = async () => {
     const toastId = toast.loading('Updating notification settings...');
@@ -49,6 +51,7 @@ export default function PostNotificationToggle({
         description="Receive notifications for comments to your posts"
         checked={postsEnabled}
         onChange={handleToggle}
+        loading={loading}
       />
     </div>
   );

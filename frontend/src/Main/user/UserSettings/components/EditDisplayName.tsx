@@ -9,17 +9,21 @@ interface EditDisplayNameProps {
   displayName: string | undefined;
   setSettings: React.Dispatch<React.SetStateAction<DBUser | null>>;
   token: string;
+  loading: boolean;
 }
 
 export default function EditDisplayName({
   displayName,
   setSettings,
   token,
+  loading,
 }: EditDisplayNameProps) {
   return (
     <UserSettingsOption
       name="Display Name"
       additionalName={displayName}
+      loading={loading}
+      skeletonRange={{ min: 30, max: 150 }}
       onClick={() =>
         Swal.fire({
           title: 'Display Name',

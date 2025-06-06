@@ -9,17 +9,21 @@ interface EditUserEmailProps {
   email: string;
   setSettings: React.Dispatch<React.SetStateAction<DBUser | null>>;
   token: string;
+  loading: boolean;
 }
 
 export default function EditUserEmail({
   email,
   setSettings,
   token,
+  loading,
 }: EditUserEmailProps) {
   return (
     <UserSettingsOption
       name="Email"
       additionalName={email}
+      loading={loading}
+      skeletonRange={{ min: 90, max: 200 }}
       onClick={() =>
         Swal.fire({
           title: 'Email',

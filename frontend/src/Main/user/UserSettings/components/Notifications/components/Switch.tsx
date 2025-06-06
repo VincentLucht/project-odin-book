@@ -1,3 +1,5 @@
+import SwitchLazy from '@/Main/user/UserSettings/components/Notifications/components/SwitchLazy';
+
 interface SwitchProps {
   id: string;
   name?: string;
@@ -9,6 +11,7 @@ interface SwitchProps {
   activeColor?: string;
   inactiveColor?: string;
   className?: string;
+  loading?: boolean;
 }
 
 export default function Switch({
@@ -22,6 +25,7 @@ export default function Switch({
   activeColor = 'bg-blue-600',
   inactiveColor = 'bg-gray-300',
   className = '',
+  loading = false,
 }: SwitchProps) {
   const handleToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (disabled) return;
@@ -32,6 +36,10 @@ export default function Switch({
       onChange(newValue);
     }
   };
+
+  if (loading) {
+    return <SwitchLazy label={label ?? ''} description={description ?? ''} />;
+  }
 
   return (
     <div className={`flex w-full items-center justify-between py-2 ${className}`}>
@@ -47,8 +55,9 @@ export default function Switch({
           type="checkbox"
           name={name}
           id={id}
-          className={`absolute block h-6 w-6 cursor-pointer appearance-none rounded-full border-4
-            ${checked ? 'bg-white' : 'bg-gray-500'} checked:right-0 checked:border-blue-600`}
+          className={`absolute z-10 block h-6 w-6 cursor-pointer appearance-none rounded-full border-4
+            ${checked ? 'translate-x-6 bg-white' : 'translate-x-0 bg-white'}
+            ${checked ? 'border-blue-600' : 'border-gray-400'}`}
           checked={checked}
           onChange={handleToggle}
           disabled={disabled}

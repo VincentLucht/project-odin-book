@@ -7,12 +7,14 @@ interface ChatNotificationToggleProps {
   chatsEnabled: boolean;
   setSettings: React.Dispatch<React.SetStateAction<DBUserSettings | null>>;
   token: string;
+  loading: boolean;
 }
 
 export default function ChatNotificationToggle({
   chatsEnabled,
   setSettings,
   token,
+  loading,
 }: ChatNotificationToggleProps) {
   const handleToggle = async () => {
     const toastId = toast.loading('Updating chats with other users settings...');
@@ -49,6 +51,7 @@ export default function ChatNotificationToggle({
         description="Allow other users to create a chat with you"
         checked={chatsEnabled}
         onChange={handleToggle}
+        loading={loading}
       />
     </div>
   );

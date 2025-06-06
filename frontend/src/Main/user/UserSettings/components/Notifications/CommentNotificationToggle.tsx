@@ -7,12 +7,14 @@ interface CommentNotificationToggleProps {
   commentsEnabled: boolean;
   setSettings: React.Dispatch<React.SetStateAction<DBUserSettings | null>>;
   token: string;
+  loading: boolean;
 }
 
 export default function CommentNotificationToggle({
   commentsEnabled,
   setSettings,
   token,
+  loading,
 }: CommentNotificationToggleProps) {
   const handleToggle = async () => {
     const toastId = toast.loading('Updating notification settings...');
@@ -49,6 +51,7 @@ export default function CommentNotificationToggle({
         description="Receive notifications for comment replies"
         checked={commentsEnabled}
         onChange={handleToggle}
+        loading={loading}
       />
     </div>
   );

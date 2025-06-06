@@ -7,12 +7,14 @@ interface ModNotificationToggleProps {
   modsEnabled: boolean;
   setSettings: React.Dispatch<React.SetStateAction<DBUserSettings | null>>;
   token: string;
+  loading: boolean;
 }
 
 export default function ModNotificationToggle({
   modsEnabled,
   setSettings,
   token,
+  loading,
 }: ModNotificationToggleProps) {
   const handleToggle = async () => {
     const toastId = toast.loading('Updating notification settings...');
@@ -49,6 +51,7 @@ export default function ModNotificationToggle({
         description="Receive notifications for messages from moderators"
         checked={modsEnabled}
         onChange={handleToggle}
+        loading={loading}
       />
     </div>
   );

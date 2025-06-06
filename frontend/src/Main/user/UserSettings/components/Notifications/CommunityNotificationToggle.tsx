@@ -7,12 +7,14 @@ interface CommunityNotificationToggleProps {
   communityEnabled: boolean;
   setSettings: React.Dispatch<React.SetStateAction<DBUserSettings | null>>;
   token: string;
+  loading: boolean;
 }
 
 export default function CommunityNotificationToggle({
   communityEnabled,
   setSettings,
   token,
+  loading,
 }: CommunityNotificationToggleProps) {
   const handleToggle = async () => {
     const toastId = toast.loading('Updating notification settings...');
@@ -49,6 +51,7 @@ export default function CommunityNotificationToggle({
         description="Receive notifications for community activity"
         checked={communityEnabled}
         onChange={handleToggle}
+        loading={loading}
       />
     </div>
   );

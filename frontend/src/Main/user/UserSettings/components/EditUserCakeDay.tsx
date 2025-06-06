@@ -9,17 +9,21 @@ interface EditUserDescriptionProps {
   cakeDay: string | undefined;
   setSettings: React.Dispatch<React.SetStateAction<DBUser | null>>;
   token: string;
+  loading: boolean;
 }
 
 export default function EditUserCakeDay({
   cakeDay,
   setSettings,
   token,
+  loading,
 }: EditUserDescriptionProps) {
   return (
     <UserSettingsOption
       name="Cake Day"
       additionalName={cakeDay}
+      loading={loading}
+      skeletonRange={{ min: 60, max: 100 }}
       onClick={() =>
         Swal.fire({
           title: 'Cake Day',

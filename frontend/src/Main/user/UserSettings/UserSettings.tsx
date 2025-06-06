@@ -15,7 +15,7 @@ import CommentNotificationToggle from '@/Main/user/UserSettings/components/Notif
 import ModNotificationToggle from '@/Main/user/UserSettings/components/Notifications/ModNotificationToggle';
 import ChatNotificationToggle from '@/Main/user/UserSettings/components/Notifications/ChatNotificationToggle';
 
-import UserSettingsSidebar from '@/Main/user/UserSettings/components/UserSettingsSidebar';
+import UserSettingsSidebar from '@/Main/user/UserSettings/components/UserSettingsSidebar/UserSettingsSidebar';
 
 import handleGetUserSettings from '@/Main/user/UserSettings/api/handleGetUserSettings';
 import formatDate from '@/util/formatDate';
@@ -45,6 +45,7 @@ export default function UserSettings() {
               email={user?.email ?? ''}
               setSettings={setUser}
               token={token}
+              loading={loading}
             />
 
             <EditUserPassword token={token} />
@@ -56,6 +57,7 @@ export default function UserSettings() {
               displayName={user?.display_name as string | undefined}
               setSettings={setUser}
               token={token}
+              loading={loading}
             />
 
             <EditUserPFP logout={logout} setSettings={setUser} token={token} />
@@ -66,6 +68,7 @@ export default function UserSettings() {
               cakeDay={user?.cake_day ? formatDate(user?.cake_day) : 'Not set'}
               setSettings={setUser}
               token={token}
+              loading={loading}
             />
           </div>
 
@@ -75,30 +78,35 @@ export default function UserSettings() {
               communityEnabled={settings?.community_enabled ?? true}
               setSettings={setSettings}
               token={token}
+              loading={loading}
             />
 
             <PostNotificationToggle
               postsEnabled={settings?.posts_enabled ?? true}
               setSettings={setSettings}
               token={token}
+              loading={loading}
             />
 
             <CommentNotificationToggle
               commentsEnabled={settings?.comments_enabled ?? true}
               setSettings={setSettings}
               token={token}
+              loading={loading}
             />
 
             <ModNotificationToggle
               modsEnabled={settings?.mods_enabled ?? true}
               setSettings={setSettings}
               token={token}
+              loading={loading}
             />
 
             <ChatNotificationToggle
               chatsEnabled={settings?.chats_enabled ?? true}
               setSettings={setSettings}
               token={token}
+              loading={loading}
             />
           </div>
 
@@ -108,7 +116,7 @@ export default function UserSettings() {
           </div>
         </div>
 
-        <UserSettingsSidebar user={user} />
+        <UserSettingsSidebar user={user} loading={loading} />
       </div>
     </div>
   );
