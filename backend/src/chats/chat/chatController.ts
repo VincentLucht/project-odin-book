@@ -69,6 +69,30 @@ class ChatController {
     }
   });
 
+  getUnread = asyncHandler(async (req: Request, res: Response) => {
+    if (checkValidationError(req, res)) return;
+
+    try {
+      const { user_id } = getAuthUser(req.authData);
+      if (!(await db.user.getById(user_id))) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      const hasNewChatMessages = await db.userChat.hasNewMessages(user_id);
+
+      return res.status(200).json({
+        message: 'Successfully fetched unread message status',
+        hasNewChatMessages,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        message: 'Failed to fetch unread message status',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  });
+
   create = asyncHandler(async (req: Request, res: Response) => {
     if (checkValidationError(req, res)) return;
 
@@ -109,6 +133,37 @@ class ChatController {
       console.error(error);
       return res.status(500).json({
         message: 'Failed to create chat',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  });
+
+  read = asyncHandler(async (req: Request, res: Response) => {
+    if (checkValidationError(req, res)) return;
+
+    const { chat_id } = req.body;
+
+    try {
+      const { user_id } = getAuthUser(req.authData);
+      if (!(await db.user.getById(user_id))) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      if (!(await db.userChat.isMemberById(chat_id, user_id))) {
+        return res
+          .status(403)
+          .json({ message: 'You are not a member of this chat' });
+      }
+
+      await db.userChat.read(user_id, chat_id);
+
+      return res.status(200).json({
+        message: 'Successfully read chat',
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        message: 'Failed to read chat',
         error: error instanceof Error ? error.message : String(error),
       });
     }

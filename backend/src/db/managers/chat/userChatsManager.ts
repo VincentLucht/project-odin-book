@@ -60,6 +60,21 @@ export default class UserChatManager {
     return chats;
   }
 
+  async hasNewMessages(user_id: string) {
+    const result: any[] = await this.prisma.$queryRaw`
+      SELECT 1
+      FROM "UserChats" AS uc
+      INNER JOIN "Chat" AS c ON c.id = uc.chat_id
+      INNER JOIN "Message" AS lm ON lm.id = c.last_message_id
+      WHERE uc.user_id = ${user_id}
+      AND uc.last_read_at < lm.time_created
+      AND uc.is_muted = false
+      LIMIT 1
+    `;
+
+    return result.length > 0;
+  }
+
   async isMemberById(chat_id: string, user_id: string) {
     const membership = await this.prisma.userChats.findUnique({
       where: {
@@ -83,6 +98,20 @@ export default class UserChatManager {
       },
       data: {
         is_muted,
+      },
+    });
+  }
+
+  async read(user_id: string, chat_id: string) {
+    await this.prisma.userChats.update({
+      where: {
+        user_id_chat_id: {
+          user_id,
+          chat_id,
+        },
+      },
+      data: {
+        last_read_at: new Date(),
       },
     });
   }

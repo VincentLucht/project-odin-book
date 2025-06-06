@@ -20,6 +20,15 @@ class ChatValidator {
     ];
   }
 
+  readRules() {
+    return [
+      body('chat_id')
+        .isString()
+        .notEmpty()
+        .withMessage('Chat ID is required'),
+    ];
+  }
+
   editRules() {
     return [
 

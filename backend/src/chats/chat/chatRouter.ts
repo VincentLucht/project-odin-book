@@ -15,11 +15,20 @@ chatRouter.get(
   chatController.fetch,
 );
 
+chatRouter.get('/unread', token.authenticate, chatController.getUnread);
+
 chatRouter.post(
   '',
-  token.authenticateOptional,
+  token.authenticate,
   chatValidator.creationRules(),
   chatController.create,
+);
+
+chatRouter.post(
+  '/read',
+  token.authenticate,
+  chatValidator.readRules(),
+  chatController.read,
 );
 
 chatRouter.put(
