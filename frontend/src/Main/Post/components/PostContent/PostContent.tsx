@@ -54,7 +54,7 @@ export default function PostContent({
             !isRemovedByMod && (
               <div>
                 <Transition show={showBody} {...transitionPropsHeight}>
-                  <div className="break-all">{post.body}</div>
+                  <div className="whitespace-pre-line break-all">{post.body}</div>
                 </Transition>
 
                 <Transition show={hideContent} {...transitionPropsHeight}>

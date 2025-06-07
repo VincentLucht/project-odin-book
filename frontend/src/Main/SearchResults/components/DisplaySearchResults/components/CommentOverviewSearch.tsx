@@ -105,7 +105,7 @@ export default function CommentOverviewSearch({
             </div>
           </div>
 
-          <div className="mt-3 line-clamp-[9] max-h-[300px] overflow-hidden break-all">
+          <div className="mt-3 line-clamp-[9] max-h-[300px] overflow-hidden whitespace-pre-line break-all">
             {comment.content}
           </div>
 

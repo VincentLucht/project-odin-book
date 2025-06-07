@@ -57,7 +57,9 @@ export default function CommentContent({
   return (
     <div className="relative w-full">
       <Transition show={!isEditActive} {...transitionPropsHeight}>
-        <div className={`break-all text-sm ${depth === 0 ? 'ml-[5px]' : 'ml-[5px]'}`}>
+        <div
+          className={`whitespace-pre-line break-all text-sm ${depth === 0 ? 'ml-[5px]' : 'ml-[5px]'}`}
+        >
           {isRemoved && !isMod ? (
             <RemovalMessage show={true} type="comment" className="!my-0" />
           ) : isDeleted ? (
