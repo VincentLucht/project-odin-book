@@ -39,6 +39,7 @@ interface ModMenuPostProps {
   setPost?: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>;
   token: string | null;
   isMod: IsMod | undefined;
+  isLast: boolean | undefined;
   showEditDropdown: string | null | undefined;
   setShowEditDropdown: React.Dispatch<React.SetStateAction<string | null>> | undefined;
   showModDropdown: string | null | undefined;
@@ -66,6 +67,7 @@ export default function ModMenuPost({
   showModDropdown,
   setShowModDropdown,
   isMod,
+  isLast,
   // cb functions
   onApproveComplete,
   onRemoveComplete,
@@ -109,7 +111,7 @@ export default function ModMenuPost({
       <ModerationTag
         show={showRemovalReasonModal}
         setShow={setShowRemovalReasonModal}
-        moderation={moderation}
+        moderation={moderation ?? null}
         token={token}
         apiData={{ id: post.id }}
         onUpdateRemovalReason={onUpdateRemovalReason}
@@ -129,8 +131,9 @@ export default function ModMenuPost({
 
       <div className="relative">
         <DropdownMenu
-          className={`!right-1 !top-[20px] min-w-[200px] rounded-md transition-opacity duration-300
-            ${showModDropdown === postId ? '!z-10 opacity-100' : '!-z-10 opacity-0'}`}
+          className={`!right-1 min-w-[200px] rounded-md transition-opacity duration-300
+            ${showModDropdown === postId ? '!z-10 opacity-100' : '!-z-10 opacity-0'}
+            ${isLast ? '!-top-[324px]' : '!top-[20px]'} `}
         >
           {/* Show Approve button if post is not already approved */}
           {!moderation || moderation.action === 'REMOVED' ? (
