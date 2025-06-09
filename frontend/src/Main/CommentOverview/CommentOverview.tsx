@@ -23,6 +23,7 @@ interface CommentOverviewProps {
   showPrivate?: boolean; // display a lock icon next to a comment from a private community
   showRemovedByModeration?: boolean;
   showCommentDropdown: string | null;
+  isLast: boolean;
   setShowCommentDropdown: React.Dispatch<React.SetStateAction<string | null>>;
   setUserHistory: React.Dispatch<React.SetStateAction<UserHistoryItem[] | null>>;
   navigate: NavigateFunction;
@@ -37,6 +38,7 @@ export default function CommentOverview({
   showPrivate,
   showRemovedByModeration,
   showCommentDropdown,
+  isLast,
   setShowCommentDropdown,
   setUserHistory,
   navigate,
@@ -159,6 +161,7 @@ export default function CommentOverview({
               token={token}
               moderation={null}
               showModDropdown={null}
+              isLast={isLast}
             />
           </div>
         </div>

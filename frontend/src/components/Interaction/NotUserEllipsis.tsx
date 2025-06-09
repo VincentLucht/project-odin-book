@@ -20,6 +20,7 @@ interface NotUserEllipsisProps {
   id: string;
   mode?: 'post' | 'comment';
   showDropdown: string | null;
+  isLast?: boolean;
   setShowDropdown: React.Dispatch<React.SetStateAction<string | null>>;
   setUserHistory?: React.Dispatch<React.SetStateAction<UserHistoryItem[] | null>>;
   setPosts?: React.Dispatch<React.SetStateAction<DBPostWithCommunityName[]>>;
@@ -34,6 +35,7 @@ export default function NotUserEllipsis({
   id,
   mode = 'post',
   showDropdown,
+  isLast,
   setShowDropdown,
   setUserHistory,
   setPosts,
@@ -53,7 +55,7 @@ export default function NotUserEllipsis({
       <div
         className={`cursor-pointer px-3 transition-all interaction-button-wrapper-secondary
           hover:bg-hover-gray active:bg-active-gray ${ mode === 'comment' &&
-          'text-gray-400 hover:text-white' }`}
+          'text-gray-400 hover:text-white' } `}
         onClick={(e) => {
           e.stopPropagation();
           setShowDropdown((prev) => (prev === id ? null : id));
@@ -64,8 +66,10 @@ export default function NotUserEllipsis({
       </div>
 
       <DropdownMenu
-        className={`!-left-[216px] !top-9 min-w-[256px] rounded-md text-white transition-opacity
-          duration-300 df ${show ? '!z-10 opacity-100' : '!-z-10 opacity-0'} `}
+        className={`!-left-[216px] min-w-[256px] rounded-md text-white transition-opacity duration-300 df
+          ${show ? '!z-10 opacity-100' : '!-z-10 opacity-0'}
+          ${mode === 'post' && isLast ? '' : '!top-9'}
+          ${mode === 'comment' && isLast ? '!-top-[116px]' : '!top-9'} `}
         ref={dropdownRef}
       >
         <DropdownButton

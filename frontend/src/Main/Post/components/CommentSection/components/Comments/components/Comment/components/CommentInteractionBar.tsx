@@ -40,6 +40,7 @@ interface CommentInteractionBarProps {
   token: string | null;
   hasReported: boolean;
   onModerationCb?: (action: 'APPROVED' | 'REMOVED') => void;
+  isLast?: boolean;
 }
 
 export default function CommentInteractionBar({
@@ -66,6 +67,7 @@ export default function CommentInteractionBar({
   token,
   hasReported,
   onModerationCb,
+  isLast,
 }: CommentInteractionBarProps) {
   const isUpvote = userVote?.voteType === 'UPVOTE';
   const isDownVote = userVote?.voteType === 'DOWNVOTE';
@@ -115,6 +117,7 @@ export default function CommentInteractionBar({
                   mode="comment"
                   id={commentId}
                   showDropdown={showDropdown}
+                  isLast={isLast}
                   setShowDropdown={setShowDropdown}
                   setIsEditActive={setIsEditActive && setIsEditActive}
                   deleteFunc={onDeleteComment}
@@ -128,6 +131,7 @@ export default function CommentInteractionBar({
                 token={token}
                 id={commentId}
                 mode="comment"
+                isLast={isLast}
                 showDropdown={showDropdown}
                 setShowDropdown={setShowDropdown}
                 setComments={setComments}
