@@ -48,7 +48,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               <Route path="/sign-up" element={<SignUp />} />
 
               {/* CHATS */}
-              <Route path="/chats" element={<Chats />} />
+              <Route path="/chats/*" element={<Chats />} />
 
               {/* MOD */}
               <Route path="r/:communityName/mod/" element={<ModTools />}>

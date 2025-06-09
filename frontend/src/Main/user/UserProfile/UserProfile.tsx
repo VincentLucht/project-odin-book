@@ -24,6 +24,13 @@ export interface UserProfilePagination {
   };
 }
 export type UserProfileFilters = 'both' | 'posts' | 'comments';
+export interface UserHistoryUser extends DBUser {
+  chatProperties: {
+    canCreate: boolean;
+    existsOneOnOne: boolean;
+    chatId: string | undefined;
+  };
+}
 
 export default function UserProfile() {
   const [loading, setLoading] = useState(true);
@@ -37,7 +44,7 @@ export default function UserProfile() {
       lastDate: null,
     },
   });
-  const [fetchedUser, setFetchedUser] = useState<DBUser | null>(null);
+  const [fetchedUser, setFetchedUser] = useState<UserHistoryUser | null>(null);
   const [userHistory, setUserHistory] = useState<UserHistoryItem[] | null>(null);
 
   const { user, token } = useAuth();
@@ -138,7 +145,7 @@ export default function UserProfile() {
             />
           </div>
 
-          <UserSideBar user={fetchedUser} />
+          <UserSideBar userSelfId={user?.id} user={fetchedUser} />
         </div>
       </div>
     </div>

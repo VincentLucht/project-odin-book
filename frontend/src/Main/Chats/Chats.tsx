@@ -1,11 +1,13 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import useAuthGuard from '@/context/auth/hook/useAuthGuard';
-
-import { fetchAllChatOverviews, readChat } from '@/Main/Chats/api/chatAPI';
 
 import ChatSidebar from '@/Main/Chats/components/ChatSidebar/ChatSidebar';
 import ChatCreation from '@/Main/Chats/components/ChatCreation';
 import Chat from '@/Main/Chats/components/chat/Chat';
+
+import { fetchAllChatOverviews, readChat } from '@/Main/Chats/api/chatAPI';
+import { getChatDisplayProps } from '@/Main/Chats/components/ChatOverview/util/chatUtils';
 
 import { FetchedChatOverview } from '@/Main/Chats/api/chatAPI';
 import { Pagination } from '@/interface/backendTypes';
@@ -22,9 +24,11 @@ export default function Chats() {
 
   const [loading, setLoading] = useState(true);
   const [showCreateChat, setShowCreateChat] = useState(false);
+  const [searchUsername, setSearchUsername] = useState('');
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const prevChatIdRef = useRef<string | null>(null);
 
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user, token } = useAuthGuard();
 
   const loadAllChatOverviews = useCallback(
@@ -44,36 +48,40 @@ export default function Chats() {
     [token],
   );
 
-  const onOpenChat = (
-    chatId: string,
-    chatProperties: { name: string; pfp: string | null; isGroupChat: boolean },
-  ) => {
-    setShowCreateChat(false);
+  const onOpenChat = useCallback(
+    (
+      chatId: string,
+      chatProperties: { name: string; pfp: string | null; isGroupChat: boolean },
+    ) => {
+      setShowCreateChat(false);
 
-    // ? Mark CURRENT chat as read
-    void readChat(token, chatId);
+      // ? Mark CURRENT chat as read
+      void readChat(token, chatId);
+      // ? Mark PREVIOUS chat as read
+      if (prevChatIdRef.current && prevChatIdRef.current !== chatId) {
+        void readChat(token, prevChatIdRef.current);
+      }
 
-    // ? Mark PREVIOUS chat as read
-    if (prevChatIdRef.current && prevChatIdRef.current !== chatId) {
-      void readChat(token, prevChatIdRef.current);
-    }
+      setCurrentChatId(chatId);
+      prevChatIdRef.current = chatId;
 
-    setCurrentChatId(chatId);
-    prevChatIdRef.current = chatId;
+      const chatOverview = chatOverviews.find(
+        (overview) => overview.chat_id === chatId,
+      );
+      setCurrentChatOverview(chatOverview ?? null);
+      setChatOverviews((prev) =>
+        prev.map((overview) =>
+          overview.chat_id === chatId
+            ? { ...overview, last_read_at: new Date().toISOString() }
+            : overview,
+        ),
+      );
 
-    const chatOverview = chatOverviews.find((overview) => overview.chat_id === chatId);
-    setCurrentChatOverview(chatOverview ?? null);
-    setChatOverviews((prev) =>
-      prev.map((overview) =>
-        overview.chat_id === chatId
-          ? { ...overview, last_read_at: new Date().toISOString() }
-          : overview,
-      ),
-    );
-
-    const { name, pfp, isGroupChat } = chatProperties;
-    setTempChat({ name, pfp: pfp ?? '', isGroupChat });
-  };
+      const { name, pfp, isGroupChat } = chatProperties;
+      setTempChat({ name, pfp: pfp ?? '', isGroupChat });
+    },
+    [chatOverviews, token],
+  );
 
   useEffect(() => {
     loadAllChatOverviews('', true);
@@ -97,6 +105,47 @@ export default function Chats() {
     };
   }, [token]);
 
+  // Handle chat creation/opening from props
+  useEffect(() => {
+    const createChatUsername = searchParams.get('createChat');
+    if (createChatUsername) {
+      setShowCreateChat(true);
+      setSearchUsername(createChatUsername);
+
+      setSearchParams((prev) => {
+        const newParams = new URLSearchParams(prev);
+        newParams.delete('createChat');
+        return newParams;
+      });
+    }
+
+    const openChatId = searchParams.get('openChat');
+    if (openChatId && chatOverviews.length > 0) {
+      const overview = chatOverviews.find(
+        (overview) => overview.chat_id === openChatId,
+      );
+
+      if (overview) {
+        const { chatName, pfp, isGroupChat } = getChatDisplayProps(overview, user.id);
+
+        onOpenChat(openChatId, {
+          name: chatName,
+          pfp,
+          isGroupChat,
+        });
+      } else {
+        // Fallback
+        setCurrentChatId(openChatId);
+      }
+
+      setSearchParams((prev) => {
+        const newParams = new URLSearchParams(prev);
+        newParams.delete('openChat');
+        return newParams;
+      });
+    }
+  }, [searchParams, setSearchParams, chatOverviews, onOpenChat, user.id]);
+
   return (
     <div className="grid h-dvh grid-cols-[300px_auto]">
       <ChatSidebar
@@ -113,6 +162,8 @@ export default function Chats() {
         <ChatCreation
           token={token}
           user={user}
+          searchUsername={searchUsername}
+          setSearchUsername={setSearchUsername}
           setChats={setChatOverviews}
           setShowCreateChat={setShowCreateChat}
           onOpenChat={onOpenChat}
