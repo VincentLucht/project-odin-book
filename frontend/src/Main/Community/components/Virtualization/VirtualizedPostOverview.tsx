@@ -86,8 +86,10 @@ export default function VirtualizedPostOverview({
   const ItemRenderer = useCallback(
     (index: number) => {
       const post = posts[index];
-      const isLast = index === posts.length - 1;
-      const isLastModeration = index === posts.length - 1 || index === posts.length - 2;
+      const isLast = index === posts.length - 1 && posts.length > 1;
+      const isLastModeration =
+        posts.length > 1 && (index === posts.length - 1 || index === posts.length - 2);
+
       if (!post) return null;
 
       return (

@@ -48,7 +48,9 @@ export default function VirtualizedUserHistory({
     (index: number) => {
       const item = userHistory[index];
       if (!item) return null;
-      const showRemovedByModeration = item?.removed_by_moderation === true;
+
+      const showRemovedByModeration = item.removed_by_moderation === true;
+      const isLast = index === userHistory.length - 1 && userHistory.length > 1;
 
       return (
         <div data-id={item.id + item.created_at.toString()}>
@@ -68,6 +70,7 @@ export default function VirtualizedUserHistory({
               setShowEditDropdown={setShowPostDropdown}
               showPrivate={true}
               showRemovedByModeration={showRemovedByModeration}
+              isLast={isLast}
               // Post edit functions
               deleteFunc={() => userProfilePostHandler.handleDeletePost(item.id)}
               spoilerFunc={() => userProfilePostHandler.handleSpoilerFunc(item)}
@@ -95,6 +98,7 @@ export default function VirtualizedUserHistory({
               setShowCommentDropdown={setShowCommentDropdown}
               setUserHistory={setUserHistory}
               navigate={navigate}
+              isLast={isLast}
             />
           )}
         </div>
