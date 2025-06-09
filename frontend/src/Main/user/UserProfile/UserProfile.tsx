@@ -86,7 +86,7 @@ export default function UserProfile() {
     );
   }, [loadMore]);
 
-  if (loading) {
+  if (loading && !fetchedUser) {
     return <UserProfileLazy />;
   }
 
