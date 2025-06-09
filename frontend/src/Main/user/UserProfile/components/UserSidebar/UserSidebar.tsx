@@ -49,11 +49,9 @@ export default function UserSideBar({ userSelfId, user }: UserSidebarProps) {
         </div>
       )}
 
-      <div>
-        <div className="text-sm text-gray-secondary">{user.description}</div>
+      <div className="text-sm text-gray-secondary">{user.description}</div>
 
-        <Separator className="mb-2" />
-      </div>
+      <Separator className="mb-1" />
 
       <div className="grid grid-cols-2 gap-y-5">
         <div className="flex flex-col">
