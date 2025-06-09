@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import UserSideBar from '@/Main/user/UserProfile/components/UserSidebar/UserSidebar';
 import VirtualizedUserHistory from '@/Main/user/UserProfile/components/VirtualizedUserHistory';
 import UserProfileApiFilters from '@/Main/user/UserProfile/components/UserProfileApiFilters';
+import UserProfileLazy from '@/Main/user/UserProfile/UserProfileLazy';
 
 import fetchUserProfile, {
   UserHistoryItem,
@@ -85,6 +86,10 @@ export default function UserProfile() {
     );
   }, [loadMore]);
 
+  if (loading) {
+    return <UserProfileLazy />;
+  }
+
   return (
     <div className="h-[100dvh + 56px] p-4">
       <div className="center-main">
@@ -98,15 +103,17 @@ export default function UserProfile() {
                     alt="User Profile Pictures"
                     className="h-24 w-24 rounded-full border-2 object-cover"
                   />
+
                   <div className="flex-col df">
                     <h2 className="text-xl font-bold">
-                      {fetchedUser?.display_name
-                        ? fetchedUser?.display_name
-                        : fetchedUser?.username}
+                      {fetchedUser?.display_name ?? fetchedUser?.username}
                     </h2>
-                    <span className="w-full text-gray-secondary">
-                      {fetchedUser?.username}
-                    </span>
+
+                    {fetchedUser?.display_name && (
+                      <span className="w-full text-gray-secondary">
+                        u/{fetchedUser?.username}
+                      </span>
+                    )}
                   </div>
                 </div>
 
