@@ -12,6 +12,8 @@ import { TokenUser } from '@/context/auth/AuthProvider';
 interface ChatCreationProps {
   token: string;
   user: TokenUser;
+  searchUsername: string;
+  setSearchUsername: React.Dispatch<React.SetStateAction<string>>;
   setChats: React.Dispatch<React.SetStateAction<FetchedChatOverview[]>>;
   setShowCreateChat: React.Dispatch<React.SetStateAction<boolean>>;
   onOpenChat: (
@@ -27,11 +29,12 @@ interface ChatCreationProps {
 export default function ChatCreation({
   token,
   user: userSelf,
+  searchUsername,
+  setSearchUsername,
   setChats,
   setShowCreateChat,
   onOpenChat,
 }: ChatCreationProps) {
-  const [searchUsername, setSearchUsername] = useState('');
   const [selectedUser, setSelectedUser] = useState<{
     username: string;
     already_has_chat: boolean;
