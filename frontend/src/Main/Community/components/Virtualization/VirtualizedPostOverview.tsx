@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 
 import { Virtuoso } from 'react-virtuoso';
 import PostOverview from '@/Main/Post/components/PostOverview/PostOverview';
@@ -63,9 +63,6 @@ export default function VirtualizedPostOverview({
   showModDropdown,
   setShowModDropdown,
 }: VirtualizedPostOverviewProps) {
-  // Reference to virtuoso component for scrolling
-  const virtuosoRef = useRef(null);
-
   const loadMore = () => {
     setLoadingMore(true);
     handleFetchMorePosts(
@@ -89,6 +86,8 @@ export default function VirtualizedPostOverview({
   const ItemRenderer = useCallback(
     (index: number) => {
       const post = posts[index];
+      const isLast = index === posts.length - 1;
+      const isLastModeration = index === posts.length - 1 || index === posts.length - 2;
       if (!post) return null;
 
       return (
@@ -107,6 +106,8 @@ export default function VirtualizedPostOverview({
             setShowEditDropdown={setShowEditDropdown}
             showModOptions={isMod !== false}
             isMod={isMod}
+            isLast={isLast}
+            isLastModeration={isLastModeration}
             showModDropdown={showModDropdown}
             setShowModDropdown={setShowModDropdown}
             deleteFunc={() => {
@@ -154,7 +155,6 @@ export default function VirtualizedPostOverview({
       {posts.length > 0 ? (
         <>
           <Virtuoso
-            ref={virtuosoRef}
             data={posts}
             totalCount={posts.length}
             itemContent={(index) => ItemRenderer(index)}
