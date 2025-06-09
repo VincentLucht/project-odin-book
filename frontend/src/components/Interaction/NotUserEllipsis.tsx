@@ -67,9 +67,13 @@ export default function NotUserEllipsis({
 
       <DropdownMenu
         className={`!-left-[216px] min-w-[256px] rounded-md text-white transition-opacity duration-300 df
-          ${show ? '!z-10 opacity-100' : '!-z-10 opacity-0'}
-          ${mode === 'post' && isLast ? '' : '!top-9'}
-          ${mode === 'comment' && isLast ? '!-top-[116px]' : '!top-9'} `}
+          ${show ? '!z-10 opacity-100' : '!-z-10 opacity-0'} ${
+          mode === 'post' && isLast
+              ? ''
+              : mode === 'comment' && isLast
+                ? '!-top-[116px]'
+                : '!top-9'
+          }`}
         ref={dropdownRef}
       >
         <DropdownButton

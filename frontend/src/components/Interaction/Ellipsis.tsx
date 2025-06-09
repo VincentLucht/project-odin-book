@@ -66,9 +66,13 @@ export default function Ellipsis({
 
       <DropdownMenu
         className={`!-left-[216px] min-w-[256px] rounded-md text-white transition-opacity duration-300 df
-          ${show ? '!z-10 opacity-100' : '!-z-10 opacity-0'}
-          ${isLast && mode === 'post' ? '!-top-[308px]' : '!top-9'}
-          ${isLast && mode === 'comment' ? '!-top-[164px]' : ''} `}
+          ${show ? '!z-10 opacity-100' : '!-z-10 opacity-0'} ${
+          isLast && mode === 'post'
+              ? '!-top-[308px]'
+              : isLast && mode === 'comment'
+                ? '!-top-[164px]'
+                : '!top-9'
+          } `}
         ref={dropdownRef}
       >
         {isUserSelf ? (
