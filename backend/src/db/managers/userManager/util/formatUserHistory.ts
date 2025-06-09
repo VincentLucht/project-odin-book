@@ -71,6 +71,7 @@ export default function formatUserHistory(userHistory: UserHistory[]) {
         removed_by_moderation:
           item.moderation_type === 'REMOVED' ? true : false,
         post_id: item.post_id,
+        user_id: item.user_id,
         community: {
           name: item.community_name,
           profile_picture_url: item.community_pfp,
