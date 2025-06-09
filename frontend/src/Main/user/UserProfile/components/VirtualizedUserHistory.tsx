@@ -12,11 +12,11 @@ import UserNotFound from '@/components/partials/UserNotFound';
 import { UserHistoryItem } from '@/Main/user/UserProfile/api/fetchUserProfile';
 import { UserProfilePagination } from '@/Main/user/UserProfile/UserProfile';
 import { TokenUser } from '@/context/auth/AuthProvider';
-import { DBUser } from '@/interface/dbSchema';
+import { UserHistoryUser } from '@/Main/user/UserProfile/UserProfile';
 
 interface VirtualizedModQueueProps {
   token: string | null;
-  fetchedUser: DBUser | null;
+  fetchedUser: UserHistoryUser | null;
   user: TokenUser | null;
   userHistory: UserHistoryItem[];
   setUserHistory: React.Dispatch<React.SetStateAction<UserHistoryItem[] | null>>;
