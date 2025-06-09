@@ -58,9 +58,36 @@ class UserController {
         initialFetch,
       );
 
+      let chatProperties = {};
+      if (initialFetch) {
+        if (user.id === requestUserId) {
+          chatProperties = {
+            canCreate: false,
+            existsOneOnOne: false,
+            chatId: undefined,
+          };
+        } else {
+          const checks = [
+            db.chat.canCreateChat(user.id),
+            requestUserId
+              ? db.chat.doesExist_1on1(user.id, requestUserId)
+              : Promise.resolve(null),
+          ];
+
+          const [canCreate, oneOnOneResult] = await Promise.all(checks);
+          const chatExists =
+            oneOnOneResult && typeof oneOnOneResult === 'object';
+          chatProperties = {
+            canCreate: !!canCreate,
+            existsOneOnOne: !!oneOnOneResult,
+            chatId: chatExists ? oneOnOneResult.chat_id : null,
+          };
+        }
+      }
+
       return res.status(200).json({
         message: 'Found user',
-        user: fetchedUser,
+        user: { ...fetchedUser, chatProperties },
         history,
         pagination,
       });
