@@ -16,6 +16,7 @@ interface PostEditDropdownMenuPostProps {
   isSpoiler: boolean;
   hasReported: boolean;
   showEditDropdown: string | null;
+  isLast?: boolean;
   setShowEditDropdown: React.Dispatch<React.SetStateAction<string | null>>;
   navigate: NavigateFunction;
   setFetchedUser?: React.Dispatch<React.SetStateAction<UserHistoryItem[] | null>>;
@@ -39,6 +40,7 @@ export default function PostEditDropdownMenuPost({
   isSpoiler,
   hasReported,
   showEditDropdown,
+  isLast,
   setShowEditDropdown,
   navigate,
   setFetchedUser,
@@ -64,6 +66,7 @@ export default function PostEditDropdownMenuPost({
           hasPostFlair={hasPostFlair}
           isSpoiler={isSpoiler}
           isMature={isMature}
+          isLast={isLast}
           // edit functions
           editFunc={redirectToEdit}
           deleteFunc={deleteFunc}

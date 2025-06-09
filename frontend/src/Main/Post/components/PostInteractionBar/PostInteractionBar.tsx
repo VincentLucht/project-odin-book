@@ -38,6 +38,7 @@ interface PostInteractionBarProps {
   mode?: 'post' | 'overview';
   showModOptions?: boolean;
   isMod?: IsMod;
+  isLast?: boolean;
   showEditDropdown?: string | null;
   setShowEditDropdown?: React.Dispatch<React.SetStateAction<string | null>>;
   showModDropdown?: string | null;
@@ -56,6 +57,7 @@ export default function PostInteractionBar({
   mode = 'overview',
   showModOptions = false, // TODO: Remove? Good to have, but unused
   isMod = false,
+  isLast,
   showEditDropdown,
   setShowEditDropdown,
   showModDropdown,
@@ -124,6 +126,7 @@ export default function PostInteractionBar({
           showModDropdown={showModDropdown}
           setShowModDropdown={setShowModDropdown}
           isMod={isMod}
+          isLast={isLast}
           onApproveComplete={onApproveComplete}
           onRemoveComplete={onRemoveComplete}
           onLockCommentsComplete={onLockCommentsComplete}

@@ -11,6 +11,7 @@ interface EllipsisProps {
   id: string;
   mode?: 'post' | 'comment';
   showDropdown: string | null;
+  isLast?: boolean;
   setShowDropdown: React.Dispatch<React.SetStateAction<string | null>>;
   setIsEditActive?: React.Dispatch<React.SetStateAction<boolean>>;
   deleteFunc: (commentId: string) => void;
@@ -28,6 +29,7 @@ export default function Ellipsis({
   id,
   mode = 'post',
   showDropdown,
+  isLast,
   setShowDropdown,
   setIsEditActive,
   deleteFunc,
@@ -63,8 +65,9 @@ export default function Ellipsis({
       </div>
 
       <DropdownMenu
-        className={`!-left-[216px] !top-9 min-w-[256px] rounded-md text-white transition-opacity
-          duration-300 df ${show ? '!z-10 opacity-100' : '!-z-10 opacity-0'} `}
+        className={`!-left-[216px] min-w-[256px] rounded-md text-white transition-opacity duration-300 df
+          ${show ? '!z-10 opacity-100' : '!-z-10 opacity-0'}
+          ${isLast ? '!-top-[308px]' : '!top-9'} `}
         ref={dropdownRef}
       >
         {isUserSelf ? (
