@@ -59,6 +59,8 @@ interface PostOverviewProps {
   showRemovedByModeration?: boolean;
   isMod?: IsMod;
   showModDropdown?: string | null;
+  isLast?: boolean;
+  isLastModeration?: boolean;
   setShowModDropdown?: React.Dispatch<React.SetStateAction<string | null>>;
   onToggle?: (id: string) => void;
 
@@ -84,6 +86,8 @@ export default function PostOverview({
   showPrivate = false,
   showRemovedByModeration = false,
   isMod = false,
+  isLast,
+  isLastModeration,
   showModDropdown,
   setShowModDropdown,
   showFlair = true,
@@ -213,6 +217,7 @@ export default function PostOverview({
               isSpoiler={isSpoiler}
               hasReported={hasReported}
               showEditDropdown={showEditDropdown}
+              isLast={isLast}
               setShowEditDropdown={setShowEditDropdown}
               navigate={navigate}
               // edit functions
@@ -245,21 +250,23 @@ export default function PostOverview({
           />
 
           {!showRemovedByModeration && (
-            <Transition show={showBody} {...transitionPropsHeight}>
-              <div className="whitespace-pre-line break-all">{post.body}</div>
-            </Transition>
-          )}
+            <>
+              <Transition show={showBody} {...transitionPropsHeight}>
+                <div className="whitespace-pre-line break-all">{post.body}</div>
+              </Transition>
 
-          <Transition show={hideContent} {...transitionPropsHeight}>
-            <div>
-              <HideContent
-                isMature={isMature}
-                isSpoiler={isSpoiler}
-                setShowMature={setShowMature}
-                setShowSpoiler={setShowSpoiler}
-              />
-            </div>
-          </Transition>
+              <Transition show={hideContent} {...transitionPropsHeight}>
+                <div>
+                  <HideContent
+                    isMature={isMature}
+                    isSpoiler={isSpoiler}
+                    setShowMature={setShowMature}
+                    setShowSpoiler={setShowSpoiler}
+                  />
+                </div>
+              </Transition>
+            </>
+          )}
         </div>
 
         <PostInteractionBar
@@ -274,6 +281,7 @@ export default function PostOverview({
           postRedirect={commentToPostRedirect}
           showModOptions={showModOptions}
           isMod={isMod}
+          isLast={isLastModeration}
           showModDropdown={showModDropdown}
           setShowModDropdown={setShowModDropdown}
           showEditDropdown={showEditDropdown}
