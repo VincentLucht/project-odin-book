@@ -2,9 +2,9 @@ import API_URL from '@/auth/ApiUrl';
 import {
   DBCommentWithCommunityName,
   DBPostWithCommunityName,
-  DBUser,
 } from '@/interface/dbSchema';
 import { UserProfilePagination } from '@/Main/user/UserProfile/UserProfile';
+import { UserHistoryUser } from '@/Main/user/UserProfile/UserProfile';
 
 export type UserHistoryItem =
   | (DBPostWithCommunityName & { item_type: 'post'; removed_by_moderation: boolean })
@@ -16,7 +16,7 @@ export type UserHistoryItem =
 interface FetchUserProfileResponse {
   message: string;
   error?: string;
-  user: DBUser;
+  user: UserHistoryUser;
   history: UserHistoryItem[];
   pagination: UserProfilePagination;
 }
