@@ -8,7 +8,7 @@ export default class ChatManager {
       where: {
         OR: [
           { user1_id, user2_id },
-          { user2_id, user1_id },
+          { user1_id: user2_id, user2_id: user1_id },
         ],
       },
     });
