@@ -1,6 +1,6 @@
 import PFP from '@/components/PFP';
 import Separator from '@/components/Separator';
-import UserSettingsSidebarLazy from '@/Main/user/UserSettings/components/UserSettingsSidebar/UserSettingsSidebarLazy';
+import SidebarLazy from '@/components/Lazy/SidebarLazy';
 
 import formatDate from '@/util/formatDate';
 
@@ -15,7 +15,7 @@ export default function UserSettingsSidebar({
   user,
   loading,
 }: UserSettingsSidebarProps) {
-  if (loading) return <UserSettingsSidebarLazy />;
+  if (loading) return <SidebarLazy min={225} max={335} className="mt-[70px]" />;
 
   if (!user) return;
 
