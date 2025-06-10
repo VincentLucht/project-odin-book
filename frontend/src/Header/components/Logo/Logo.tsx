@@ -10,7 +10,7 @@ export default function Logo() {
     >
       <img src="/logo.png" alt="reddnir logo" className="max-h-[40px] min-w-[40px]" />
 
-      <h1 className="text-3xl font-bold">reddnir</h1>
+      <h1 className="hidden text-3xl font-bold md:block">reddnir</h1>
     </div>
   );
 }
