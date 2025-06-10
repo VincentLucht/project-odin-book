@@ -54,7 +54,7 @@ export default function Header({
       ref={headerRef}
     >
       <div
-        className="bg-hover-transition"
+        className="bg-hover-transition max-[500px]:-ml-2"
         onClick={() => setShowSidebar && setShowSidebar((prev) => !prev)}
       >
         <MenuIcon />
