@@ -59,9 +59,12 @@ export default function CommunityHeader({
         )}
       </div>
 
-      <div className="ml-4 flex justify-between">
+      <div className="ml-4 flex justify-between max-md:flex-col">
         <div className="flex">
-          <div className="z-10 -mt-10 h-[88px] w-[88px] rounded-full border-4 bg-gray-400 df border-bg-gray">
+          <div
+            className="z-10 -mt-10 h-[88px] w-[88px] flex-shrink-0 rounded-full border-4 bg-gray-400 df
+              border-bg-gray"
+          >
             {community.profile_picture_url ? (
               <img
                 className="rounded-full"
@@ -73,21 +76,21 @@ export default function CommunityHeader({
             )}
           </div>
 
-          <h3 className="ml-2 text-3xl font-bold">r/{community.name}</h3>
+          <h3 className="ml-2 break-all text-3xl font-bold">r/{community.name}</h3>
         </div>
 
-        <div className="ml-3 flex items-center justify-center gap-2">
+        <div className="ml-3 flex items-center justify-center gap-2 max-md:mt-4 max-md:self-end">
           <button
-            className="min-h-[38px] gap-1 !font-medium transparent-btn"
+            className={'h-[38px] gap-1 !font-medium leading-4 transparent-btn'}
             onClick={() => handleCreatePostClick(pathname, navigate)}
           >
-            <PlusIcon className="-ml-2 flex-shrink-0" strokeWidth={1.7} />
+            <PlusIcon className="flex-shrink-0 md:-ml-2" strokeWidth={1.7} />
             Create Post
           </button>
 
           {isMod && (
             <button
-              className="min-h-[38px] !font-medium prm-button-blue"
+              className="min-h-[38px] flex-shrink-0 !font-medium prm-button-blue"
               onClick={() => navigate(`/r/${community.name}/mod/queue`)}
             >
               Mod tools
