@@ -133,14 +133,14 @@ export default function CreatePost() {
             </div>
           )}
 
-          <div className="flex gap-2">
+          <div className="flex gap-2 max-md:mt-2">
             <button
               onClick={() => {
                 if (activeCommunity) {
                   setShowPostFlairSelection(true);
                 }
               }}
-              className={`h-8 text-sm ${!activePostFlair ? 'prm-button-blue' : 'prm-button-red'}
+              className={`min-h-8 text-sm ${!activePostFlair ? 'prm-button-blue' : 'prm-button-red'}
                 ${!activeCommunity && '!bg-gray-700'}`}
             >
               {activePostFlair ? 'Edit Post Flair' : 'Add Post Flair'}
@@ -148,14 +148,14 @@ export default function CreatePost() {
 
             <button
               onClick={() => setIsSpoiler((prev) => !prev)}
-              className={`h-8 text-sm ${!isSpoiler ? 'prm-button-blue' : 'prm-button-red'}`}
+              className={`min-h-8 text-sm ${!isSpoiler ? 'prm-button-blue' : 'prm-button-red'}`}
             >
               {!isSpoiler ? 'Add Spoiler tag' : 'Remove Spoiler tag'}
             </button>
 
             <button
               onClick={() => setIsMature((prev) => !prev)}
-              className={`h-8 text-sm ${!isMature ? 'prm-button-blue' : 'prm-button-red'}`}
+              className={`min-h-8 text-sm ${!isMature ? 'prm-button-blue' : 'prm-button-red'}`}
             >
               {!isMature ? 'Add NSFW tag' : 'Remove NSFW tag'}
             </button>
