@@ -1,3 +1,4 @@
+import useGetScreenSize from '@/context/screen/hook/useGetScreenSize';
 import { MessageCircle } from 'lucide-react';
 
 interface ReplyProps {
@@ -11,6 +12,8 @@ export default function Reply({
   mode = 'overview',
   onClick,
 }: ReplyProps) {
+  const { isMobile } = useGetScreenSize();
+
   return (
     <button
       className={`px-4 transition-all hover:bg-hover-gray active:bg-active-gray
@@ -20,7 +23,8 @@ export default function Reply({
       <MessageCircle className="h-5 w-5" />
 
       {totalCommentCount && <span className="text-sm">{totalCommentCount}</span>}
-      {mode === 'comment' && <span className="text-xs">Reply</span>}
+
+      {!isMobile && mode === 'comment' && <span className="text-xs">Reply</span>}
     </button>
   );
 }
