@@ -58,14 +58,15 @@ export default function DropdownButton({
       {icon && <div className="h-[32px] w-[32px] df">{icon}</div>}
 
       {src && (
-        <div className="h-[32px] w-[32px] df">
+        <div className="h-[32px] w-[32px] flex-shrink-0 df">
           <img src={src} alt={alt} className={`${imgClassName} h-6 w-6 object-cover`} />
         </div>
       )}
 
       {subText ? (
         <div>
-          <div className="-mt-[2px] mb-[2px] leading-tight">{text}</div>
+          <div className="-mt-[2px] mb-[2px] break-all leading-tight">{text}</div>
+
           <div className="text-start text-xs leading-none text-gray-secondary">
             {subText}
           </div>
