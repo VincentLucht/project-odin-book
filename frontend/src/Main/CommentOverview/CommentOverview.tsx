@@ -133,7 +133,7 @@ export default function CommentOverview({
           {showRemovedByModeration ? (
             <RemovalMessage show={true} type="comment" className="!my-1" />
           ) : (
-            <div className="whitespace-pre-line break-all py-[6px]">
+            <div className="mr-6 whitespace-pre-line break-all py-[6px]">
               {comment.content}
             </div>
           )}
