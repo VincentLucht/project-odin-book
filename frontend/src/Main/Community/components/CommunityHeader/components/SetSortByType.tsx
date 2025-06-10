@@ -62,7 +62,7 @@ export default function SetSortByType({
   const showTimeframe = showDropdown === 'timeframe';
 
   return (
-    <div ref={containerRef} className={'mb-2 flex w-fit'}>
+    <div ref={containerRef} className="mb-2 flex w-fit font-semibold">
       {!excludeSortOptions && (
         <div>
           <ChevronButton
