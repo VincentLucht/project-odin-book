@@ -105,7 +105,7 @@ class CommunityValidator {
 
       body('type').trim()
         .custom((input) => {
-          isCommunityTypeValid(input);
+          return isCommunityTypeValid(input);
         }),
 
       body('topics').trim()
