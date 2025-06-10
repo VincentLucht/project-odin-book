@@ -17,7 +17,7 @@ export default function Layout() {
       setShowSidebar(false);
     }
   }, headerRef);
-  const { isDesktop } = useGetScreenSize();
+  const { isMobile, isDesktop } = useGetScreenSize();
 
   const location = useLocation();
 
@@ -50,7 +50,7 @@ export default function Layout() {
       <Header
         search={search}
         setSearch={setSearch}
-        isDesktop={isDesktop}
+        isMobile={isMobile}
         setShowSidebar={setShowSidebar}
         headerRef={headerRef}
       />
