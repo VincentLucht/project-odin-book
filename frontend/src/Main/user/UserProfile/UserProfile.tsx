@@ -1,11 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
-import useAuth from '@/context/auth/hook/useAuth';
 import { useParams } from 'react-router-dom';
+import useAuth from '@/context/auth/hook/useAuth';
+import useGetScreenSize from '@/context/screen/hook/useGetScreenSize';
 
 import UserSideBar from '@/Main/user/UserProfile/components/UserSidebar/UserSidebar';
 import VirtualizedUserHistory from '@/Main/user/UserProfile/components/VirtualizedUserHistory';
 import UserProfileApiFilters from '@/Main/user/UserProfile/components/UserProfileApiFilters';
 import UserProfileLazy from '@/Main/user/UserProfile/UserProfileLazy';
+import ShowHideButton from '@/Main/Global/ShowHideButton';
 
 import fetchUserProfile, {
   UserHistoryItem,
@@ -48,6 +50,8 @@ export default function UserProfile() {
   const [userHistory, setUserHistory] = useState<UserHistoryItem[] | null>(null);
 
   const { user, token } = useAuth();
+  const { isMobile } = useGetScreenSize();
+  const [showSidebar, setShowSidebar] = useState(false);
 
   const path = useParams();
   const { username } = path;
@@ -100,10 +104,10 @@ export default function UserProfile() {
   return (
     <div className="h-[100dvh + 56px] p-4">
       <div className="center-main">
-        <div className="center-main-content">
+        <div className="w-full md:center-main-content">
           <div className="w-full min-w-0">
             {fetchedUser && (
-              <>
+              <div>
                 <div className="flex gap-2">
                   <img
                     src={`${fetchedUser?.profile_picture_url ? fetchedUser?.profile_picture_url : '/user.svg'}`}
@@ -124,28 +128,43 @@ export default function UserProfile() {
                   </div>
                 </div>
 
-                <UserProfileApiFilters
-                  sortBy={sortBy}
-                  setSortBy={setSortBy}
-                  typeFilter={typeFilter}
-                  setTypeFilter={setTypeFilter}
-                />
-              </>
+                <div className="flex items-center justify-between gap-2">
+                  <UserProfileApiFilters
+                    sortBy={sortBy}
+                    setSortBy={setSortBy}
+                    typeFilter={typeFilter}
+                    setTypeFilter={setTypeFilter}
+                  />
+
+                  {isMobile && (
+                    <ShowHideButton
+                      show={showSidebar}
+                      onClick={() => setShowSidebar(!showSidebar)}
+                      className="mb-2 mt-4"
+                      label="about"
+                    />
+                  )}
+                </div>
+              </div>
             )}
 
-            <VirtualizedUserHistory
-              token={token}
-              fetchedUser={fetchedUser}
-              user={user}
-              userHistory={userHistory ?? []}
-              setUserHistory={setUserHistory}
-              pagination={pagination}
-              loadMore={loadMore}
-              loading={loading}
-            />
+            {(!isMobile || !showSidebar) && (
+              <VirtualizedUserHistory
+                token={token}
+                fetchedUser={fetchedUser}
+                user={user}
+                userHistory={userHistory ?? []}
+                setUserHistory={setUserHistory}
+                pagination={pagination}
+                loadMore={loadMore}
+                loading={loading}
+              />
+            )}
           </div>
 
-          <UserSideBar userSelfId={user?.id} user={fetchedUser} />
+          {(!isMobile || showSidebar) && (
+            <UserSideBar userSelfId={user?.id} user={fetchedUser} />
+          )}
         </div>
       </div>
     </div>

@@ -71,7 +71,7 @@ export default function Popular() {
           />
         </div>
 
-        <div className="relative center-main-content">
+        <div className="relative lg:center-main-content">
           <VirtualizedHomePage
             posts={posts}
             setPosts={setPosts}

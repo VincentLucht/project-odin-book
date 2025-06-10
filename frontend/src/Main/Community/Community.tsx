@@ -4,12 +4,14 @@ import useIsModerator from '@/hooks/useIsModerator';
 import useIsMember from '@/hooks/useIsMember';
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import useGetScreenSize from '@/context/screen/hook/useGetScreenSize';
 
 import CommunityHeader from '@/Main/Community/components/CommunityHeader/CommunityHeader';
 import SetSortByType from '@/Main/Community/components/CommunityHeader/components/SetSortByType';
 import CommunitySidebar from '@/Main/Community/components/CommunitySidebar/CommunitySidebar';
 import VirtualizedPostOverview from '@/Main/Community/components/Virtualization/VirtualizedPostOverview';
 import EndMessage from '@/components/partials/EndMessage';
+import ShowHideButton from '@/Main/Global/ShowHideButton';
 
 import CommunityPostManager from '@/Main/Community/util/CommunityPostManager';
 import CommunityPostHandler from '@/Main/Community/handlers/CommunityPostHandler';
@@ -44,6 +46,8 @@ export default function Community() {
 
   const { user, token } = useAuth();
   const navigate = useNavigate();
+  const { isMobile } = useGetScreenSize();
+  const [showSidebar, setShowSidebar] = useState(false);
 
   const isMod = useIsModerator(user, community?.community_moderators);
   const isMember = useIsMember(user, community);
@@ -112,52 +116,67 @@ export default function Community() {
           pathname={location.pathname}
         />
 
-        <div className="relative center-main-content">
+        <div className="relative md:center-main-content">
           <div>
-            <SetSortByType
-              sortByType={sortByType}
-              setSortByType={setSortByType}
-              timeframe={timeframe}
-              setTimeframe={setTimeframe}
-            />
+            <div className="flex items-center gap-2">
+              <SetSortByType
+                sortByType={sortByType}
+                setSortByType={setSortByType}
+                timeframe={timeframe}
+                setTimeframe={setTimeframe}
+              />
 
-            <VirtualizedPostOverview
-              community={{
-                id: community.id,
-                name: community.name,
-                profile_picture_url: community.profile_picture_url,
-                user_communities: community.user_communities,
-              }}
-              posts={posts}
-              sortByType={sortByType}
-              timeframe={timeframe}
-              cursorId={cursorId}
-              hasMore={hasMore}
-              loadingMore={loadingMore}
-              setLoadingMore={setLoadingMore}
-              onComplete={onComplete}
-              userId={user?.id}
-              token={token}
-              setPosts={setPosts}
-              navigate={navigate}
-              showEditDropdown={showEditDropdown}
-              setShowEditDropdown={setShowEditDropdown}
-              communityPostHandler={communityPostHandler}
-              communityName={communityName}
-              isMod={isMod}
-              showModDropdown={showModDropdown}
-              setShowModDropdown={setShowModDropdown}
-            />
+              <ShowHideButton
+                show={showSidebar}
+                onClick={() => setShowSidebar(!showSidebar)}
+                className="mb-2"
+                label="about"
+              />
+            </div>
 
-            {!hasMore && <EndMessage className="mt-5" />}
+            {(!isMobile || !showSidebar) && (
+              <>
+                <VirtualizedPostOverview
+                  community={{
+                    id: community.id,
+                    name: community.name,
+                    profile_picture_url: community.profile_picture_url,
+                    user_communities: community.user_communities,
+                  }}
+                  posts={posts}
+                  sortByType={sortByType}
+                  timeframe={timeframe}
+                  cursorId={cursorId}
+                  hasMore={hasMore}
+                  loadingMore={loadingMore}
+                  setLoadingMore={setLoadingMore}
+                  onComplete={onComplete}
+                  userId={user?.id}
+                  token={token}
+                  setPosts={setPosts}
+                  navigate={navigate}
+                  showEditDropdown={showEditDropdown}
+                  setShowEditDropdown={setShowEditDropdown}
+                  communityPostHandler={communityPostHandler}
+                  communityName={communityName}
+                  isMod={isMod}
+                  showModDropdown={showModDropdown}
+                  setShowModDropdown={setShowModDropdown}
+                />
+
+                {!hasMore && <EndMessage className="mt-5" />}
+              </>
+            )}
           </div>
 
-          <CommunitySidebar
-            token={token}
-            community={community}
-            isMod={false}
-            navigate={navigate}
-          />
+          {(!isMobile || showSidebar) && (
+            <CommunitySidebar
+              token={token}
+              community={community}
+              isMod={false}
+              navigate={navigate}
+            />
+          )}
         </div>
       </div>
     </div>

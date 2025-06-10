@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import useAuth from '@/context/auth/hook/useAuth';
+import useGetScreenSize from '@/context/screen/hook/useGetScreenSize';
 import useIsModerator from '@/hooks/useIsModerator';
 import useIsMember from '@/hooks/useIsMember';
 
@@ -57,6 +58,8 @@ export default function Post({
 
   const [postLoading, setPostLoading] = useState(true);
   const navigate = useNavigate();
+  const { isMobile } = useGetScreenSize();
+  const [showSidebar, setShowSidebar] = useState(false);
 
   const { postId: urlPostId, communityName } = useParams();
   const effectivePostId = mode === 'fetched' && givenPostId ? givenPostId : urlPostId;
@@ -118,7 +121,9 @@ export default function Post({
 
   return (
     <div className="p-4 center-main">
-      <div className={`center-main-content ${mode === 'fetched' && '!block'} `}>
+      <div
+        className={`w-full lg:center-main-content ${mode === 'fetched' && '!block'} `}
+      >
         <div className="flex flex-col">
           <div className="flex gap-1 text-sm">
             <PFP src={post.community.profile_picture_url} size="large" />
@@ -222,6 +227,9 @@ export default function Post({
 
           {options.showComments && (
             <CommentSection
+              isMobile={isMobile}
+              showSidebar={showSidebar}
+              setShowSidebar={setShowSidebar}
               post={{ ...post }}
               originalPoster={post.poster ? post.poster.username : null}
               user={user}
@@ -244,7 +252,7 @@ export default function Post({
           />
         </div>
 
-        {mode === 'normal' && (
+        {mode === 'normal' && (!isMobile || showSidebar) && (
           <PostSidebar
             community={post.community}
             setPost={setPost}
@@ -253,6 +261,7 @@ export default function Post({
             navigate={navigate}
             showMembership={{ show: true, isMember }}
             isMod={isMod !== false}
+            className={`${isMobile ? 'mt-8' : ''}`}
           />
         )}
       </div>

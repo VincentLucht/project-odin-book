@@ -5,6 +5,7 @@ import { useCompletionHandler, GenericOnComplete } from '@/hooks/useCompletionHa
 import VirtualizedComments from '@/Main/Post/components/CommentSection/components/Comments/VirtualizedComments';
 import AddComment from '@/Main/Post/components/CommentSection/components/AddComment/AddComment';
 import SetSortByType from '@/Main/Community/components/CommunityHeader/components/SetSortByType';
+import ShowHideButton from '@/Main/Global/ShowHideButton';
 
 import handleFetchComments from '@/Main/Post/components/CommentSection/api/handleFetchComments';
 import handleFetchReplies from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/components/MoreRepliesButton/api/handleFetchReplies';
@@ -21,6 +22,9 @@ export type CommentSortBy = 'top' | 'new';
 export type OnCompleteCommentSection = GenericOnComplete<DBCommentWithReplies>;
 
 interface CommentSectionProps {
+  isMobile: boolean;
+  showSidebar: boolean;
+  setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
   post: { id: string; title: string; lock_comments: boolean };
   originalPoster: string | null;
   user: TokenUser | null;
@@ -32,6 +36,9 @@ interface CommentSectionProps {
 }
 
 export default function CommentSection({
+  isMobile,
+  showSidebar,
+  setShowSidebar,
   post,
   originalPoster,
   user,
@@ -111,7 +118,7 @@ export default function CommentSection({
         />
       )}
 
-      <div className="relative -mb-5 mt-3">
+      <div className="relative -mb-5 mt-3 flex items-center justify-between">
         <SetSortByType
           sortByType={sortByType}
           setSortByType={(sortBy) => setSortByType(sortBy as CommentSortBy)}
@@ -119,10 +126,17 @@ export default function CommentSection({
           setTimeframe={setTimeframe}
           mode="comments"
         />
+
+        <ShowHideButton
+          show={showSidebar}
+          onClick={() => setShowSidebar(!showSidebar)}
+          className="-mt-2 px-3"
+          label="community about"
+        />
       </div>
 
-      {parentCommentId && !givenParentCommentId && (
-        <div className="-mb-4 mt-4 df">
+      {parentCommentId && !givenParentCommentId && (!isMobile || !showSidebar) && (
+        <div className="-mb-4 mt-7 df">
           <button
             className="text-sm text-blue-400 transition-all duration-1000 hover:underline"
             onClick={() => navigate(getBaseURL(location.pathname))}
@@ -132,24 +146,26 @@ export default function CommentSection({
         </div>
       )}
 
-      <VirtualizedComments
-        comments={comments}
-        post={{ ...post }}
-        user={user}
-        token={token}
-        originalPoster={originalPoster}
-        setComments={setComments}
-        setPost={setPost}
-        sortByType={sortByType}
-        timeframe={timeframe}
-        cursorId={cursorId}
-        hasMore={givenParentCommentId ? false : hasMore}
-        loading={loading}
-        setLoading={setLoading}
-        onComplete={onComplete}
-        isMod={isMod}
-        onModerationCb={onModerationCb}
-      />
+      {(!isMobile || !showSidebar) && (
+        <VirtualizedComments
+          comments={comments}
+          post={{ ...post }}
+          user={user}
+          token={token}
+          originalPoster={originalPoster}
+          setComments={setComments}
+          setPost={setPost}
+          sortByType={sortByType}
+          timeframe={timeframe}
+          cursorId={cursorId}
+          hasMore={givenParentCommentId ? false : hasMore}
+          loading={loading}
+          setLoading={setLoading}
+          onComplete={onComplete}
+          isMod={isMod}
+          onModerationCb={onModerationCb}
+        />
+      )}
     </div>
   );
 }
