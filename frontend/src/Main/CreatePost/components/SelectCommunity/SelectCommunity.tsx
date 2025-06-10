@@ -63,7 +63,7 @@ export default function SelectCommunity({
       {activeCommunity ? (
         <div className="flex items-center gap-2">
           <button
-            className="gap-[6px] !px-3 font-semibold df normal-bg-transition create-comm-btn"
+            className="h-[38px] gap-[6px] !px-3 font-semibold df normal-bg-transition create-comm-btn"
             onClick={() => setActiveCommunity(null)}
           >
             <img
@@ -134,7 +134,7 @@ export default function SelectCommunity({
       ) : (
         <button
           onClick={() => setIsSelecting(true)}
-          className="font-semibold transition-colors df normal-bg-transition create-comm-btn"
+          className="h-[38px] font-semibold transition-colors df normal-bg-transition create-comm-btn"
         >
           Select a community
         </button>
