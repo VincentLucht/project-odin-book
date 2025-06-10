@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import useAuthGuard from '@/context/auth/hook/useAuthGuard';
 
+import { BellIcon } from 'lucide-react';
+
 import { hasUnreadNotifications } from '@/Main/Notifications/api/notificationAPI';
 
 interface NotificationButtonProps {
@@ -29,14 +31,11 @@ export default function NotificationButton({ onClick }: NotificationButtonProps)
 
   return (
     <div
-      className="relative h-10 w-10 rounded-full df bg-hover-transition hover:bg-accent-gray"
+      className="relative h-10 w-10 flex-shrink-0 rounded-full df bg-hover-transition
+        hover:bg-accent-gray"
       onClick={onClick}
     >
-      <img
-        src="/bell-outline.svg"
-        alt="User profile picture"
-        className="h-6 w-6 rounded-full"
-      />
+      <BellIcon className="h-6 w-6" />
 
       {showUnread && (
         <div className="!left-[22px] !top-[5px] !h-[12px] !w-[12px] rounded bg-red-600 absolute-circle"></div>
