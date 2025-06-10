@@ -89,7 +89,7 @@ export default {
         },
         // TODO: Replace it with this class for every header btn
         '.bg-hover-transition': {
-          '@apply transition-all h-10 w-10 df rounded-full hover:bg-accent-gray cursor-pointer': {}
+          '@apply transition-all min-h-10 w-10 df rounded-full hover:bg-accent-gray cursor-pointer': {}
         },
         '.dropdown-btn-transition': {
           '@apply transition-all duration-200 hover:bg-hover-gray active:bg-active-gray ease-in-out': {}
@@ -120,16 +120,16 @@ export default {
           '@apply grid w-full max-w-[1072px] grid-cols-[1fr_300px] gap-4': {}
         },
         '.interaction-button-wrapper': {
-          '@apply flex h-8 items-center gap-1 rounded-full bg-accent-gray': {}
+          '@apply flex min-h-8 items-center gap-1 rounded-full bg-accent-gray': {}
         },
         '.interaction-button-wrapper-secondary': {
-          '@apply flex h-8 items-center gap-1 rounded-full': {}
+          '@apply flex min-h-8 items-center gap-1 rounded-full': {}
         },
         '.interaction-button-arrow': {
-          '@apply h-8 w-8 rounded-full df hover:bg-hover-gray active:bg-active-gray transition-all': {}
+          '@apply min-h-8 w-8 rounded-full df hover:bg-hover-gray active:bg-active-gray transition-all': {}
         },
         '.interaction-button-arrow-secondary': {
-          '@apply h-8 w-8 rounded-full df hover:bg-hover-gray active:bg-active-gray transition-all': {}
+          '@apply min-h-8 w-8 rounded-full df hover:bg-hover-gray active:bg-active-gray transition-all': {}
         },
         '.hover-upvote': {
           '@apply hover:bg-orange-600 active:bg-orange-700': {}
@@ -147,7 +147,7 @@ export default {
           '@apply before:absolute before:top-8 before:left-1/2 before:block before:h-1 before:w-[80%] before:rounded-lg before:bg-blue-500 before:-translate-x-1/2': {}
         },
         '.create-comm-btn' : {
-          '@apply h-8 rounded-full p-5 text-sm': {}
+          '@apply min-h-8 rounded-full p-5 text-sm': {}
         },
         '.sidebar': {
           '@apply sticky top-[70px] overflow-y-auto max-h-[calc(100dvh-84px)] flex h-fit flex-col gap-2 overscroll-contain': {}
@@ -177,7 +177,7 @@ export default {
           '@apply mb-1 text-xs font-bold': {}
         },
         '.sidebar-btn-stone': {
-          '@apply h-8 w-full rounded-full bg-stone-800 px-2 text-xs font-medium transition-colors hover:bg-stone-700 active:bg-stone-600': {}
+          '@apply min-h-8 w-full rounded-full bg-stone-800 px-2 text-xs font-medium transition-colors hover:bg-stone-700 active:bg-stone-600': {}
         },
         '.post-message': {
           '@apply flex items-center gap-3 rounded-md border border-gray-600 p-4 text-sm text-gray-400': {}

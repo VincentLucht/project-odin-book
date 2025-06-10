@@ -22,7 +22,7 @@ export default function MemberShipButton({
         </button>
       ) : (
         <button
-          className={`h-[38px] max-w-[50px] !px-7 !font-medium df prm-button-blue ${classNameNotMember}`}
+          className={`min-h-[38px] max-w-[50px] !px-7 !font-medium df prm-button-blue ${classNameNotMember}`}
           onClick={onClick}
         >
           Join

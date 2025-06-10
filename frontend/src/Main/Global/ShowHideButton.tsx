@@ -13,8 +13,8 @@ export default function ShowHideButton({
 }: ToggleButtonProps) {
   return (
     <button
-      className={`h-8 rounded-full px-3 text-sm font-semibold transition-colors interaction-button-wrapper
-        hover:bg-hover-gray active:bg-accent-gray ${className}`}
+      className={`min-h-8 rounded-full px-3 text-sm font-semibold transition-colors
+        interaction-button-wrapper hover:bg-hover-gray active:bg-accent-gray ${className}`}
       onClick={onClick}
     >
       {show ? 'Hide' : 'Show'} {label}

@@ -45,12 +45,15 @@ export default function IsCommunityMember({
   return (
     <div className="transition-all">
       {isMember ? (
-        <button className="h-6 text-[13px] transparent-btn" onClick={toggleMembership}>
+        <button
+          className="min-h-6 text-[13px] transparent-btn"
+          onClick={toggleMembership}
+        >
           Joined
         </button>
       ) : (
         <button
-          className="h-6 text-[13px] !font-semibold df prm-button-blue"
+          className="min-h-6 text-[13px] !font-semibold df prm-button-blue"
           onClick={toggleMembership}
         >
           Join
