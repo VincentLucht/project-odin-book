@@ -19,7 +19,7 @@ export default function ChatButton() {
   }, [user, token]);
 
   return (
-    <Link to="/chats">
+    <Link to="/chats" className="flex-shrink-0">
       <button className="relative h-10 w-10 rounded-full df bg-hover-transition hover:bg-accent-gray">
         <MessageCircleIcon className="h-6 w-6" />
 
