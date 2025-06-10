@@ -45,11 +45,13 @@ export default function UserSettings() {
           <div className="mb-4 flex items-center justify-between gap-6">
             <h2 className="text-3xl font-semibold">Settings</h2>
 
-            <ShowHideButton
-              show={showSidebar}
-              onClick={() => setShowSidebar(!showSidebar)}
-              label="preview"
-            />
+            {isMobile && (
+              <ShowHideButton
+                show={showSidebar}
+                onClick={() => setShowSidebar(!showSidebar)}
+                label="preview"
+              />
+            )}
           </div>
 
           {(!isMobile || !showSidebar) && (

@@ -114,11 +114,12 @@ export default function Community() {
           token={token}
           navigate={navigate}
           pathname={location.pathname}
+          isMobile={isMobile}
         />
 
         <div className="relative md:center-main-content">
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-between gap-2">
               <SetSortByType
                 sortByType={sortByType}
                 setSortByType={setSortByType}
@@ -126,12 +127,14 @@ export default function Community() {
                 setTimeframe={setTimeframe}
               />
 
-              <ShowHideButton
-                show={showSidebar}
-                onClick={() => setShowSidebar(!showSidebar)}
-                className="mb-2"
-                label="about"
-              />
+              {isMobile && (
+                <ShowHideButton
+                  show={showSidebar}
+                  onClick={() => setShowSidebar(!showSidebar)}
+                  className="mb-2"
+                  label="about"
+                />
+              )}
             </div>
 
             {(!isMobile || !showSidebar) && (
