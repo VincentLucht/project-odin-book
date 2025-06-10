@@ -5,3 +5,9 @@
 :root {
   color-scheme: light dark;
 }
+
+@media (max-width: 499px) {
+  .hide-below-500 {
+    display: none;
+  }
+}
