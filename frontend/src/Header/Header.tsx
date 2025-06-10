@@ -14,7 +14,7 @@ import { MenuIcon } from 'lucide-react';
 interface HeaderProps {
   search: string;
   setSearch: React.Dispatch<React.SetStateAction<string>>;
-  isDesktop: boolean;
+  isMobile: boolean;
   setShowSidebar?: React.Dispatch<React.SetStateAction<boolean>>;
   headerRef: React.RefObject<HTMLElement>;
 }
@@ -22,7 +22,7 @@ interface HeaderProps {
 export default function Header({
   search,
   setSearch,
-  isDesktop,
+  isMobile,
   setShowSidebar,
   headerRef,
 }: HeaderProps) {
@@ -48,21 +48,19 @@ export default function Header({
 
   return (
     <header
-      className={`fixed left-0 right-0 top-0 z-30 grid max-h-[56px] min-h-[56px] bg-gray
-        ${isDesktop ? 'grid-cols-[30%_40%_30%]' : 'grid-cols-[5%_25%_40%_30%]'} border-b px-4
-        py-2`}
+      className={`fixed left-0 right-0 top-0 z-30 grid max-h-[56px] min-h-[56px] gap-3 bg-gray
+        ${isMobile ? 'grid-cols-[7%_7%_auto_max-content] max-[500px]:grid-cols-[7%_auto_max-content]' : 'grid-cols-[5%_20%_45%_30%]'}
+        border-b px-4 py-2`}
       ref={headerRef}
     >
-      {!isDesktop && (
-        <div
-          className="bg-hover-transition"
-          onClick={() => setShowSidebar && setShowSidebar((prev) => !prev)}
-        >
-          <MenuIcon />
-        </div>
-      )}
+      <div
+        className="bg-hover-transition"
+        onClick={() => setShowSidebar && setShowSidebar((prev) => !prev)}
+      >
+        <MenuIcon />
+      </div>
 
-      <div className="flex justify-start">
+      <div className="hide-below-500 flex justify-start">
         <Logo />
       </div>
 
