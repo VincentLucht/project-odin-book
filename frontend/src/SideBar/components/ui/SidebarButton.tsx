@@ -22,7 +22,7 @@ export default function SidebarButton({
       {icon && icon}
       {src && <img className={imgClassName} src={src} alt={alt} />}
 
-      <div>{buttonName}</div>
+      <div className="truncate">{buttonName}</div>
     </button>
   );
 }
