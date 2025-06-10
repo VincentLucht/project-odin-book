@@ -21,6 +21,7 @@ interface CommunitySidebarProps {
     isMember: boolean;
     toggleMembership: () => void;
   };
+  className?: string;
 }
 
 export default function CommunitySidebar({
@@ -29,9 +30,12 @@ export default function CommunitySidebar({
   isMod,
   navigate,
   showMembership,
+  className = '',
 }: CommunitySidebarProps) {
   return (
-    <div className="!gap-0 overflow-y-auto rounded-md bg-neutral-950 px-4 py-2 pb-3 sidebar">
+    <div
+      className={`!gap-0 overflow-y-auto rounded-md bg-neutral-950 px-4 py-2 pb-3 sidebar ${className}`}
+    >
       {showMembership ? (
         <div className="mb-2 flex items-center justify-between">
           <h2 className="text-lg font-semibold">r/{community.name}</h2>

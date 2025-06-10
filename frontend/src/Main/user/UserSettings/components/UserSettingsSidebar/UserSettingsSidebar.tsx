@@ -9,18 +9,20 @@ import { DBUser } from '@/interface/dbSchema';
 interface UserSettingsSidebarProps {
   user: DBUser | null;
   loading: boolean;
+  className: string;
 }
 
 export default function UserSettingsSidebar({
   user,
   loading,
+  className,
 }: UserSettingsSidebarProps) {
   if (loading) return <SidebarLazy min={225} max={335} className="mt-[70px]" />;
 
   if (!user) return;
 
   return (
-    <div className="mt-14 rounded-2xl bg-neutral-950 p-4 sidebar">
+    <div className={`${className} rounded-2xl bg-neutral-950 p-4 sidebar`}>
       <div className="flex gap-3">
         <PFP src={user.profile_picture_url} mode="user" className="!h-20 !w-20" />
 

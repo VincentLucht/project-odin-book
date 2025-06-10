@@ -18,6 +18,7 @@ interface PostSidebarProps {
     isMember: boolean;
   };
   isMod: boolean;
+  className?: string;
 }
 
 export default function PostSidebar({
@@ -28,6 +29,7 @@ export default function PostSidebar({
   navigate,
   showMembership,
   isMod,
+  className = '',
 }: PostSidebarProps) {
   if (!community) {
     return;
@@ -66,6 +68,7 @@ export default function PostSidebar({
         toggleMembership,
       }}
       isMod={isMod}
+      className={className}
     />
   );
 }
