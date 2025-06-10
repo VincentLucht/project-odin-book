@@ -78,7 +78,10 @@ export default function Level2({
         </div>
 
         <div className="ml-4 flex">
-          <div className="z-10 -mt-10 h-[88px] w-[88px] rounded-full border-4 bg-gray-400 df border-bg-gray">
+          <div
+            className="z-10 -mt-10 h-[88px] w-[88px] flex-shrink-0 rounded-full border-4 bg-gray-400 df
+              border-bg-gray"
+          >
             {iconUrl ? (
               <img className="rounded-full" src={iconUrl} alt="Community Icon" />
             ) : (
@@ -86,7 +89,7 @@ export default function Level2({
             )}
           </div>
 
-          <h3 className="ml-2 text-3xl font-bold">r/{communityName}</h3>
+          <h3 className="ml-2 break-all text-3xl font-bold">r/{communityName}</h3>
         </div>
       </div>
 
