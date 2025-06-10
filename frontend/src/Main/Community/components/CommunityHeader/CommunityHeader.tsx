@@ -76,18 +76,18 @@ export default function CommunityHeader({
           <h3 className="ml-2 text-3xl font-bold">r/{community.name}</h3>
         </div>
 
-        <div className="flex items-center justify-center gap-2">
+        <div className="ml-3 flex items-center justify-center gap-2">
           <button
-            className="h-[38px] gap-1 !font-medium transparent-btn"
+            className="min-h-[38px] gap-1 !font-medium transparent-btn"
             onClick={() => handleCreatePostClick(pathname, navigate)}
           >
-            <PlusIcon className="-ml-2" strokeWidth={1.7} />
+            <PlusIcon className="-ml-2 flex-shrink-0" strokeWidth={1.7} />
             Create Post
           </button>
 
           {isMod && (
             <button
-              className="h-[38px] !font-medium prm-button-blue"
+              className="min-h-[38px] !font-medium prm-button-blue"
               onClick={() => navigate(`/r/${community.name}/mod/queue`)}
             >
               Mod tools

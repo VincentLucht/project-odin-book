@@ -15,7 +15,7 @@ export default function MemberShipButton({
     <div className="transition-all">
       {isMember ? (
         <button
-          className={`h-[38px] max-w-[65px] !px-10 !font-medium transparent-btn ${classNameMember}`}
+          className={`min-h-[38px] max-w-[65px] !px-10 !font-medium transparent-btn ${classNameMember}`}
           onClick={onClick}
         >
           Joined
