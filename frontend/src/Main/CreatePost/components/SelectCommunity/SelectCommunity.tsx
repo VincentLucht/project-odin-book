@@ -89,13 +89,14 @@ export default function SelectCommunity({
       ) : isSelecting ? (
         <div ref={divRef} className="relative inline-block">
           <input
-            className="bg-accent-gray create-comm-btn focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="h-[38px] bg-accent-gray create-comm-btn focus:outline-none focus:ring-2
+              focus:ring-blue-500"
             placeholder="Select a community"
             type="text"
             ref={inputRef}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            maxLength={32}
+            maxLength={23}
           />
 
           <DropdownMenu className="!top-12 z-10 w-[215px] rounded-md">
