@@ -61,7 +61,7 @@ export default function Post({
   const { isSmallScreen, isMobile, isBelow550px } = useGetScreenSize();
   const [showSidebar, setShowSidebar] = useState(false);
 
-  const { postId: urlPostId, communityName } = useParams();
+  const { postId: urlPostId } = useParams();
   const effectivePostId = mode === 'fetched' && givenPostId ? givenPostId : urlPostId;
   const [searchParams] = useSearchParams();
   const { user, token } = useAuth();
@@ -95,9 +95,7 @@ export default function Post({
   }, [post, user, searchParams, mode]);
 
   if (!post || postLoading) {
-    return (
-      <PostLazy mode={mode} communityNameLengthProp={communityName?.length ?? 0} />
-    );
+    return <PostLazy mode={mode} />;
   }
 
   const onVote = (voteType: VoteType) => {

@@ -8,13 +8,9 @@ import Separator from '@/components/Separator';
 
 interface PostLazyProps {
   mode?: 'fetched' | 'normal' | 'overview';
-  communityNameLengthProp?: number;
 }
 
-export default function PostLazy({
-  mode = 'normal',
-  communityNameLengthProp,
-}: PostLazyProps) {
+export default function PostLazy({ mode = 'normal' }: PostLazyProps) {
   const {
     communityNameLength,
     usernameLength,
@@ -23,7 +19,7 @@ export default function PostLazy({
     isMature,
     isSpoiler,
     lastLineRandom,
-  } = useSkeletonRandomValues({ communityNameLengthProp });
+  } = useSkeletonRandomValues();
 
   const isUserProfileMode = mode === 'overview';
 
