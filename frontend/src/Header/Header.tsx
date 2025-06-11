@@ -15,6 +15,7 @@ interface HeaderProps {
   search: string;
   setSearch: React.Dispatch<React.SetStateAction<string>>;
   isMobile: boolean;
+  isBelow550px: boolean;
   setShowSidebar?: React.Dispatch<React.SetStateAction<boolean>>;
   headerRef: React.RefObject<HTMLElement>;
 }
@@ -23,6 +24,7 @@ export default function Header({
   search,
   setSearch,
   isMobile,
+  isBelow550px,
   setShowSidebar,
   headerRef,
 }: HeaderProps) {
@@ -69,13 +71,13 @@ export default function Header({
         setterFunc={setSearch}
         src="/magnify.svg"
         alt="magnifying glass"
-        placeholder="Search Reddnir"
+        placeholder={isBelow550px ? 'Search' : 'Search Reddnir'}
         className="bg-accent-gray"
         onSubmit={onSearch}
         deleteButton={true}
       />
 
-      <div className="flex justify-end gap-1">
+      <div className={`flex justify-end ${isBelow550px ? '' : 'gap-1'}`}>
         {isLoggedIn && (
           <>
             <ChatButton />
