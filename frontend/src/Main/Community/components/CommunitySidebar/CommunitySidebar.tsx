@@ -38,15 +38,15 @@ export default function CommunitySidebar({
     >
       {showMembership ? (
         <div className="mb-2 flex items-center justify-between">
-          <h2 className="text-lg font-semibold">r/{community.name}</h2>
+          <h2 className="break-all text-lg font-semibold">r/{community.name}</h2>
 
           {isMod ? (
-            <div
-              className="h-[30px] cursor-pointer text-sm !font-medium df prm-button-blue"
+            <button
+              className="min-h-[30px] cursor-pointer text-sm !font-medium df prm-button-blue"
               onClick={() => navigate(`/r/${community.name}/mod/queue`)}
             >
               Mod tools
-            </div>
+            </button>
           ) : (
             <MemberShipButton
               isMember={showMembership.isMember}
