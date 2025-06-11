@@ -17,7 +17,7 @@ export default function Layout() {
       setShowSidebar(false);
     }
   }, headerRef);
-  const { isMobile, isDesktop } = useGetScreenSize();
+  const { isMobile, isDesktop, isBelow550px } = useGetScreenSize();
 
   const location = useLocation();
 
@@ -51,6 +51,7 @@ export default function Layout() {
         search={search}
         setSearch={setSearch}
         isMobile={isMobile}
+        isBelow550px={isBelow550px}
         setShowSidebar={setShowSidebar}
         headerRef={headerRef}
       />
