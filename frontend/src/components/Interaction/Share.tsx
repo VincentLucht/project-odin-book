@@ -1,6 +1,5 @@
 import { useState, useRef } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
-import useGetScreenSize from '@/context/screen/hook/useGetScreenSize';
 
 import { Share2, LinkIcon } from 'lucide-react';
 
@@ -17,15 +16,20 @@ interface ShareProps {
   mode?: 'overview' | 'comment' | 'post';
   commentId?: string;
   urlItems?: UrlItems;
+  smallMode?: boolean;
 }
 
-export default function Share({ mode = 'overview', commentId, urlItems }: ShareProps) {
+export default function Share({
+  mode = 'overview',
+  commentId,
+  urlItems,
+  smallMode = false,
+}: ShareProps) {
   const [copied, setCopied] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const location = useLocation();
   const { parentCommentId } = useParams();
-  const { isMobile } = useGetScreenSize();
 
   const isOverview = mode === 'overview' || mode === 'post';
   const iconClass = isOverview ? 'h-5 w-5' : 'h-[18px] w-[18px]';
@@ -78,7 +82,7 @@ export default function Share({ mode = 'overview', commentId, urlItems }: ShareP
       <div className="gap-1 opacity-100 transition-opacity df group-hover:opacity-0">
         <Share2 className={iconClass} />
 
-        {!isMobile && <span className={spanClass}>Share</span>}
+        {!smallMode && <span className={spanClass}>Share</span>}
       </div>
 
       <div
@@ -87,7 +91,7 @@ export default function Share({ mode = 'overview', commentId, urlItems }: ShareP
       >
         <LinkIcon className={iconClass} />
 
-        {!isMobile && <span className={spanClass}>{copied ? 'Copied' : 'Copy'}</span>}
+        {!smallMode && <span className={spanClass}>{copied ? 'Copied' : 'Copy'}</span>}
       </div>
     </button>
   );
