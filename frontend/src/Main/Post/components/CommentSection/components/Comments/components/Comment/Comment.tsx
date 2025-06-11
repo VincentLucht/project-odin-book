@@ -41,6 +41,8 @@ interface CommentProps {
   onModerationCb?: (action: 'APPROVED' | 'REMOVED') => void;
   isMobile: boolean;
   isBelow550px: boolean;
+  lastCommentId: string;
+  penultimateCommentId: string;
 }
 
 // TODO: Add user flair :)
@@ -65,6 +67,8 @@ export default function Comment({
   onModerationCb,
   isMobile,
   isBelow550px,
+  lastCommentId,
+  penultimateCommentId,
 }: CommentProps) {
   const { id: postId, lock_comments } = post;
 
@@ -193,6 +197,9 @@ export default function Comment({
               hasReported={hasReported}
               isMobile={isMobile}
               onModerationCb={onModerationCb}
+              isLast={
+                comment.id === lastCommentId || comment.id === penultimateCommentId
+              }
             />
           </div>
         </div>
@@ -254,6 +261,8 @@ export default function Comment({
                 isMod={isMod}
                 isMobile={isMobile}
                 isBelow550px={isBelow550px}
+                lastCommentId={lastCommentId}
+                penultimateCommentId={penultimateCommentId}
               />
             </li>
           ))}

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 
@@ -69,7 +69,6 @@ export default function VirtualizedComments({
   const [showDropdown, setShowDropdown] = useState<string | null>(null);
   const [showModDropdown, setShowModDropdown] = useState<string | null>(null);
 
-  const virtuosoRef = useRef(null);
   const { parentCommentId } = useParams();
   const navigate = useNavigate();
 
@@ -123,6 +122,29 @@ export default function VirtualizedComments({
   const ItemRenderer = useCallback(
     (index: number) => {
       const comment = comments[index];
+
+      /* Flattens the comments in order and returns their id's */
+      function getAllCommentsInOrder(comments: DBCommentWithReplies[]): string[] {
+        const result: string[] = [];
+
+        /* Traverses comments in DFS and saves id's */
+        function traverse(commentList: DBCommentWithReplies[]): void {
+          for (const comment of commentList) {
+            result.push(comment.id);
+            if (comment.replies && comment.replies.length > 0) {
+              traverse(comment.replies);
+            }
+          }
+        }
+
+        traverse(comments);
+        return result;
+      }
+
+      const allComments = getAllCommentsInOrder(comments);
+      const lastCommentId: string = allComments[allComments.length - 1];
+      const penultimateCommentId: string = allComments[allComments.length - 2];
+
       if (!comment) return null;
 
       return (
@@ -147,6 +169,8 @@ export default function VirtualizedComments({
             onModerationCb={onModerationCb}
             isMobile={isMobile}
             isBelow550px={isBelow550px}
+            lastCommentId={lastCommentId}
+            penultimateCommentId={penultimateCommentId}
           />
         </div>
       );
@@ -180,7 +204,6 @@ export default function VirtualizedComments({
             style={{ '--left-offset': `${21}px` } as React.CSSProperties}
           >
             <Virtuoso
-              ref={virtuosoRef}
               data={comments}
               totalCount={comments.length}
               itemContent={(index) => ItemRenderer(index)}

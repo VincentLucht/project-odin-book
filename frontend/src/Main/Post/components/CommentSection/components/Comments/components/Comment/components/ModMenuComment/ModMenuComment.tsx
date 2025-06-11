@@ -24,6 +24,7 @@ interface ModMenuCommentProps {
   showModDropdown: string | null;
   setShowModDropdown?: React.Dispatch<React.SetStateAction<string | null>>;
   onModerationCb?: (action: 'APPROVED' | 'REMOVED') => void;
+  isLast?: boolean;
 }
 
 export default function ModMenuComment({
@@ -37,6 +38,7 @@ export default function ModMenuComment({
   showModDropdown,
   setShowModDropdown,
   onModerationCb,
+  isLast,
 }: ModMenuCommentProps) {
   const [showRemovalReasonModal, setShowRemovalReasonModal] = useState(false);
 
@@ -75,7 +77,8 @@ export default function ModMenuComment({
 
       <div className="relative">
         <DropdownMenu
-          className={`!right-1 !top-[20px] min-w-[200px] rounded-md transition-opacity duration-300
+          className={`!right-1 min-w-[200px] rounded-md transition-opacity duration-300
+            ${isLast ? '!-top-[132px]' : '!top-[20px]'}
             ${showModDropdown === commentId ? '!z-10 opacity-100' : '!-z-10 opacity-0'}`}
         >
           {/* Show Approve button if post is not approved */}
