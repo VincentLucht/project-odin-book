@@ -42,21 +42,23 @@ export default class CommunityManager {
       name = name.replace('r/', '');
     }
 
-    const communities = await this.prisma.community.findMany({
-      where: {
-        name: {
-          contains: name,
-          mode: 'insensitive',
-        },
-      },
-      select: {
-        id: true,
-        name: true,
-        profile_picture_url: true,
-        total_members: true,
-      },
-      take: 15,
-    });
+    const communities = await this.prisma.$queryRaw`
+      SELECT id, name, profile_picture_url, total_members 
+      FROM "Community" AS c
+      WHERE name = ${name} 
+        OR name LIKE ${name + '%'}
+        OR name LIKE ${'%' + name}
+        OR name LIKE ${'%' + name + '%'}
+      ORDER BY 
+      CASE
+        WHEN name = ${name} THEN 1
+        WHEN name LIKE ${name + '%'} THEN 2
+        WHEN name LIKE ${'%' + name} THEN 3
+        WHEN name LIKE ${'%' + name + '%'} THEN 4
+        ELSE 5
+      END
+      LIMIT 15;
+    `;
 
     return communities;
   }
