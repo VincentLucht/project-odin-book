@@ -22,7 +22,9 @@ export type CommentSortBy = 'top' | 'new';
 export type OnCompleteCommentSection = GenericOnComplete<DBCommentWithReplies>;
 
 interface CommentSectionProps {
+  isBelow550px: boolean;
   isMobile: boolean;
+  isSmallScreen: boolean;
   showSidebar: boolean;
   setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
   post: { id: string; title: string; lock_comments: boolean };
@@ -36,7 +38,9 @@ interface CommentSectionProps {
 }
 
 export default function CommentSection({
+  isBelow550px,
   isMobile,
+  isSmallScreen,
   showSidebar,
   setShowSidebar,
   post,
@@ -127,12 +131,14 @@ export default function CommentSection({
           mode="comments"
         />
 
-        <ShowHideButton
-          show={showSidebar}
-          onClick={() => setShowSidebar(!showSidebar)}
-          className="-mt-2 px-3"
-          label="community about"
-        />
+        {(isMobile || isSmallScreen) && (
+          <ShowHideButton
+            show={showSidebar}
+            onClick={() => setShowSidebar(!showSidebar)}
+            className="-mt-2 px-3"
+            label="community about"
+          />
+        )}
       </div>
 
       {parentCommentId && !givenParentCommentId && (!isMobile || !showSidebar) && (
@@ -146,26 +152,29 @@ export default function CommentSection({
         </div>
       )}
 
-      {(!isMobile || !showSidebar) && (
-        <VirtualizedComments
-          comments={comments}
-          post={{ ...post }}
-          user={user}
-          token={token}
-          originalPoster={originalPoster}
-          setComments={setComments}
-          setPost={setPost}
-          sortByType={sortByType}
-          timeframe={timeframe}
-          cursorId={cursorId}
-          hasMore={givenParentCommentId ? false : hasMore}
-          loading={loading}
-          setLoading={setLoading}
-          onComplete={onComplete}
-          isMod={isMod}
-          onModerationCb={onModerationCb}
-        />
-      )}
+      {(isSmallScreen && showSidebar) ||
+        ((!isMobile || !showSidebar) && (
+          <VirtualizedComments
+            comments={comments}
+            post={{ ...post }}
+            user={user}
+            token={token}
+            originalPoster={originalPoster}
+            setComments={setComments}
+            setPost={setPost}
+            sortByType={sortByType}
+            timeframe={timeframe}
+            cursorId={cursorId}
+            hasMore={givenParentCommentId ? false : hasMore}
+            loading={loading}
+            setLoading={setLoading}
+            onComplete={onComplete}
+            isMod={isMod}
+            onModerationCb={onModerationCb}
+            isMobile={isMobile}
+            isBelow550px={isBelow550px}
+          />
+        ))}
     </div>
   );
 }

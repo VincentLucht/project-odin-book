@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import useGetScreenSize from '@/context/screen/hook/useGetScreenSize';
 
 import Separator from '@/components/Separator';
 import PostInteractionBar from '@/Main/Post/components/PostInteractionBar/PostInteractionBar';
@@ -113,6 +114,8 @@ export default function PostOverview({
       : null;
   const hasReported = post?.reports?.[0]?.reporter_id === userId;
 
+  const { isSuperSmallScreen, isMobile } = useGetScreenSize();
+
   const onVote = (voteType: VoteType) => {
     if (!token || !userId) {
       navigate('/login');
@@ -181,9 +184,9 @@ export default function PostOverview({
               <LockIcon className="h-4 w-4" />
             )}
 
-            <div className="gap-1 text-xs df text-gray-secondary">
-              • {getRelativeTime(post.created_at)}
-              {post.edited_at && !post.deleted_at && (
+            <div className="gap-1 whitespace-nowrap text-xs df text-gray-secondary">
+              • {getRelativeTime(post.created_at, true, isMobile)}
+              {post.edited_at && !post.deleted_at && !isSuperSmallScreen && (
                 <div className="text-xs df">
                   • edited {getRelativeTime(post.edited_at, true)}
                 </div>
@@ -192,7 +195,7 @@ export default function PostOverview({
           </div>
 
           <div className="flex items-center gap-2">
-            {showMembership && userMember && setUserHistory && (
+            {showMembership && userMember && setUserHistory && !isSuperSmallScreen && (
               <IsCommunityMember
                 userMember={userMember}
                 userId={userId}

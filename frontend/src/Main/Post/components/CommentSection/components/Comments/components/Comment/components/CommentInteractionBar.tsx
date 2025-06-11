@@ -39,6 +39,7 @@ interface CommentInteractionBarProps {
   isMod: IsModPost;
   token: string | null;
   hasReported: boolean;
+  isMobile: boolean;
   onModerationCb?: (action: 'APPROVED' | 'REMOVED') => void;
   isLast?: boolean;
 }
@@ -66,6 +67,7 @@ export default function CommentInteractionBar({
   isMod,
   token,
   hasReported,
+  isMobile,
   onModerationCb,
   isLast,
 }: CommentInteractionBarProps) {
@@ -75,7 +77,7 @@ export default function CommentInteractionBar({
   return !isEditActive ? (
     <div className={`-ml-[2px] pt-1 ${isEditActive ? 'opacity-0' : 'opacity-100'}`}>
       <div className="flex h-8 items-center justify-between">
-        <div className="flex items-center gap-1">
+        <div className="flex items-center md:gap-1">
           <div className="flex h-8 items-center gap-1 rounded-full">
             <Upvote
               isActive={userVote.hasVoted && isUpvote}
@@ -103,11 +105,16 @@ export default function CommentInteractionBar({
 
           {!isLocked && !isLocked && (
             <div onClick={() => toggleShow()}>
-              <Reply mode="comment" />
+              <Reply mode="comment" smallMode={isMobile} />
             </div>
           )}
 
-          <Share mode="comment" commentId={commentId} urlItems={urlItems} />
+          <Share
+            mode="comment"
+            commentId={commentId}
+            urlItems={urlItems}
+            smallMode={isMobile}
+          />
 
           {!isDeleted &&
             (isUserSelf ? (

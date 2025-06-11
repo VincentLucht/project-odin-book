@@ -40,6 +40,8 @@ interface VirtualizedComments {
   onComplete: OnCompleteCommentSection;
   isMod: IsModPost;
   onModerationCb?: (action: 'APPROVED' | 'REMOVED') => void;
+  isMobile: boolean;
+  isBelow550px: boolean;
 }
 
 export default function VirtualizedComments({
@@ -59,6 +61,8 @@ export default function VirtualizedComments({
   onComplete,
   isMod,
   onModerationCb,
+  isMobile,
+  isBelow550px,
 }: VirtualizedComments) {
   const { id: postId } = post;
 
@@ -141,6 +145,8 @@ export default function VirtualizedComments({
             setShowModDropdown={setShowModDropdown}
             isMod={isMod}
             onModerationCb={onModerationCb}
+            isMobile={isMobile}
+            isBelow550px={isBelow550px}
           />
         </div>
       );
@@ -160,6 +166,8 @@ export default function VirtualizedComments({
       showModDropdown,
       isMod,
       onModerationCb,
+      isMobile,
+      isBelow550px,
     ],
   );
 

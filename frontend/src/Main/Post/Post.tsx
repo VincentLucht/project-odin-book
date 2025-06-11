@@ -58,7 +58,7 @@ export default function Post({
 
   const [postLoading, setPostLoading] = useState(true);
   const navigate = useNavigate();
-  const { isMobile } = useGetScreenSize();
+  const { isSmallScreen, isMobile, isBelow550px } = useGetScreenSize();
   const [showSidebar, setShowSidebar] = useState(false);
 
   const { postId: urlPostId, communityName } = useParams();
@@ -128,17 +128,20 @@ export default function Post({
           <div className="flex gap-1 text-sm">
             <PFP src={post.community.profile_picture_url} size="large" />
 
-            <div className="flex-1 text-xs">
+            <div className="ml-1 flex-1 text-xs">
               <div className="flex gap-1">
                 <button
-                  className="text-sm font-semibold hover:underline"
+                  className="break-all text-left text-sm font-semibold hover:underline"
                   onClick={communityRedirect}
                 >
                   r/{post.community.name}
                 </button>
 
                 <div className="mt-[2px] gap-1 df text-gray-secondary">
-                  <div className="df">• {getRelativeTime(post.created_at)}</div>
+                  <div className="whitespace-nowrap df">
+                    • {getRelativeTime(post.created_at, isMobile, isMobile)}
+                  </div>
+
                   {post.edited_at && !post.deleted_at && (
                     <div className="text-xs df">
                       • edited {getRelativeTime(post.edited_at, true)}
@@ -227,7 +230,9 @@ export default function Post({
 
           {options.showComments && (
             <CommentSection
+              isBelow550px={isBelow550px}
               isMobile={isMobile}
+              isSmallScreen={isSmallScreen}
               showSidebar={showSidebar}
               setShowSidebar={setShowSidebar}
               post={{ ...post }}
@@ -252,7 +257,7 @@ export default function Post({
           />
         </div>
 
-        {mode === 'normal' && (!isMobile || showSidebar) && (
+        {mode === 'normal' && ((!isMobile && !isSmallScreen) || showSidebar) && (
           <PostSidebar
             community={post.community}
             setPost={setPost}
@@ -261,7 +266,7 @@ export default function Post({
             navigate={navigate}
             showMembership={{ show: true, isMember }}
             isMod={isMod !== false}
-            className={`${isMobile ? 'mt-8' : ''}`}
+            className={`${isSmallScreen || isMobile ? 'mt-8' : ''}`}
           />
         )}
       </div>

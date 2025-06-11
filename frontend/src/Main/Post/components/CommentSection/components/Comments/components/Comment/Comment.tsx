@@ -39,6 +39,8 @@ interface CommentProps {
   setShowModDropdown: React.Dispatch<React.SetStateAction<string | null>>;
   isMod: IsModPost;
   onModerationCb?: (action: 'APPROVED' | 'REMOVED') => void;
+  isMobile: boolean;
+  isBelow550px: boolean;
 }
 
 // TODO: Add user flair :)
@@ -61,6 +63,8 @@ export default function Comment({
   setShowModDropdown,
   isMod,
   onModerationCb,
+  isMobile,
+  isBelow550px,
 }: CommentProps) {
   const { id: postId, lock_comments } = post;
 
@@ -105,10 +109,12 @@ export default function Comment({
     <>
       <div
         className={`flex flex-col gap-1 transition-all ${depth >= 8 && hasReplyAtAll && 'comment-active'}`}
-        style={{ marginLeft: `${depth * 30}px` }}
+        style={{ marginLeft: `${depth * (isBelow550px ? 10 : 30)}px` }}
       >
         <div className="flex items-center gap-1">
-          <div className={`${depth > 0 && 'comment-connector-line'}`}></div>
+          <div
+            className={`${depth > 0 && !isBelow550px && 'comment-connector-line'}`}
+          ></div>
           <UserPFP
             url={comment.user?.profile_picture_url ?? null}
             onClick={() =>
@@ -134,7 +140,7 @@ export default function Comment({
           </div>
           {comment.edited_at && !comment.is_deleted && (
             <div className="text-xs text-gray-secondary">
-              • edited {getRelativeTime(comment.edited_at, true)}
+              • edited {getRelativeTime(comment.edited_at, true, isMobile)}
             </div>
           )}
         </div>
@@ -185,6 +191,7 @@ export default function Comment({
               isMod={isMod}
               token={token}
               hasReported={hasReported}
+              isMobile={isMobile}
               onModerationCb={onModerationCb}
             />
           </div>
@@ -219,7 +226,11 @@ export default function Comment({
       {!hideReplies && (
         <ul
           className={`${comment.replies?.length > 1 && 'comment'}`}
-          style={{ '--left-offset': `${21 + depth * 30}px` } as React.CSSProperties}
+          style={
+            {
+              '--left-offset': `${21 + depth * (isBelow550px ? 8 : 30)}px`,
+            } as React.CSSProperties
+          }
         >
           {comment.replies?.map((commentReply) => (
             <li key={commentReply.id}>
@@ -241,6 +252,8 @@ export default function Comment({
                 showModDropdown={showModDropdown}
                 setShowModDropdown={setShowModDropdown}
                 isMod={isMod}
+                isMobile={isMobile}
+                isBelow550px={isBelow550px}
               />
             </li>
           ))}
