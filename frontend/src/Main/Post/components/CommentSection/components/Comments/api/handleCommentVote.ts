@@ -23,7 +23,7 @@ export default async function handleCommentVote(
   const updateCommentState = () => {
     setComments((prev) => {
       if (!prev) return prev;
-      previousState = { ...prev };
+      previousState = [...prev];
 
       const updateComment = (comment: DBCommentWithReplies): DBCommentWithReplies => {
         // Comment found
