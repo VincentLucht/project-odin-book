@@ -16,7 +16,7 @@ export default function Reply({
 
   return (
     <button
-      className={`px-4 transition-all hover:bg-hover-gray active:bg-active-gray
+      className={`px-1 transition-all hover:bg-hover-gray active:bg-active-gray md:px-4
         ${mode === 'overview' ? 'interaction-button-wrapper' : 'text-gray-400 interaction-button-wrapper-secondary hover:text-white'}`}
       onClick={onClick && onClick}
     >
