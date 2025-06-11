@@ -53,8 +53,8 @@ export default function NotUserEllipsis({
   return (
     <div className="relative" ref={divRef}>
       <div
-        className={`cursor-pointer px-3 transition-all interaction-button-wrapper-secondary
-          hover:bg-hover-gray active:bg-active-gray ${ mode === 'comment' &&
+        className={`cursor-pointer px-[6px] transition-all interaction-button-wrapper-secondary
+          hover:bg-hover-gray active:bg-active-gray md:px-3 ${ mode === 'comment' &&
           'text-gray-400 hover:text-white' } `}
         onClick={(e) => {
           e.stopPropagation();
