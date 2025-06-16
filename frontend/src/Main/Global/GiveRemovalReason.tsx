@@ -80,7 +80,7 @@ export default function GiveRemovalReason({
       </div>
 
       <div className="-mt-1 text-sm text-gray-secondary">
-        Removing a {type} will notify a user.
+        Removing a {type} will notify the user.
       </div>
 
       <form
