@@ -11,3 +11,16 @@
     display: none;
   }
 }
+
+.mod-menu-comment {
+   display: flex;
+}
+
+@media (max-width: 410px) {
+  .mod-menu-comment {
+      flex-wrap: wrap;
+  }
+  .mod-menu-comment > :nth-child(2) {
+    margin-bottom: 34px;
+  }
+}
