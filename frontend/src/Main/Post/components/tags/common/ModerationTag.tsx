@@ -16,6 +16,7 @@ interface ModerationTag {
   moderation: DBPostModeration | DBCommentModeration | null;
   token: string | null;
   apiData: { id: string };
+  isMobile: boolean;
   className?: string;
   onUpdateRemovalReason?: (
     _postId: string,
@@ -23,6 +24,7 @@ interface ModerationTag {
     success: boolean,
   ) => void;
   type?: 'post' | 'comment';
+  useCompactMode?: boolean;
 }
 
 // TODO: Add good looking box shadow
@@ -32,9 +34,11 @@ export default function ModerationTag({
   moderation,
   token,
   apiData,
+  isMobile,
   className,
   onUpdateRemovalReason,
   type = 'post',
+  useCompactMode,
 }: ModerationTag) {
   const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
@@ -57,8 +61,9 @@ export default function ModerationTag({
 
           {isHovered && (
             <div
-              className="absolute left-4 top-10 w-fit -translate-x-1/2 whitespace-nowrap break-words rounded-md
-                bg-neutral-950 p-2 text-xs text-gray-secondary"
+              className={`absolute top-10 w-fit -translate-x-1/2 whitespace-nowrap break-words rounded-md
+              bg-neutral-950 p-2 text-xs text-gray-secondary
+              ${useCompactMode ? '-left-[30px]' : 'left-4'}`}
             >
               <span className="text-white">u/{user.username}</span> at{' '}
               {formatDate(moderation.created_at)}
@@ -67,11 +72,11 @@ export default function ModerationTag({
         </button>
 
         {approved ? (
-          <div className="absolute-circle bg-green-400">
+          <div className="bg-green-400 absolute-circle">
             <CheckIcon className="h-3 w-3 text-bg-gray" />
           </div>
         ) : (
-          <div className="absolute-circle bg-red-500">
+          <div className="bg-red-500 absolute-circle">
             <img src="/x-close-bg-gray.svg" alt="x close icon" />
           </div>
         )}
@@ -79,28 +84,33 @@ export default function ModerationTag({
 
       <span className="text-xs text-gray-secondary">
         {approved &&
+          !isMobile &&
           `Approved ${getRelativeTime(moderation.created_at as unknown as Date, false)}`}
 
-        {!approved && !moderation.reason ? (
-          <button
-            className="min-h-8 rounded-full text-xs !font-medium prm-button normal-bg-transition"
-            onClick={() => setShow(true)}
-          >
-            Add removal reason
-          </button>
-        ) : (
-          <div className="break-all">{moderation.reason}</div>
-        )}
+        {!approved && !moderation.reason
+          ? !useCompactMode && (
+              <button
+                className="min-h-8 rounded-full !px-1 text-xs !font-medium prm-button normal-bg-transition md:!px-4"
+                onClick={() => setShow(true)}
+              >
+                Add removal reason
+              </button>
+            )
+          : !useCompactMode && (
+              <div className="line-clamp-3 break-all">{moderation.reason}</div>
+            )}
       </span>
 
-      <GiveRemovalReason
-        type={type}
-        token={token}
-        apiData={apiData}
-        show={show}
-        setShow={setShow}
-        onUpdateRemovalReason={onUpdateRemovalReason}
-      />
+      {!useCompactMode && (
+        <GiveRemovalReason
+          type={type}
+          token={token}
+          apiData={apiData}
+          show={show}
+          setShow={setShow}
+          onUpdateRemovalReason={onUpdateRemovalReason}
+        />
+      )}
     </div>
   );
 }

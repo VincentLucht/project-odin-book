@@ -66,6 +66,7 @@ export default function CommentSection({
   const location = useLocation();
   const { parentCommentId: urlParentCommentId } = useParams();
   const parentCommentId = givenParentCommentId || urlParentCommentId;
+  const hasComments = comments.length > 0;
 
   const handleCompletion = useCompletionHandler();
   const onComplete: OnCompleteCommentSection = useCallback(
@@ -122,20 +123,24 @@ export default function CommentSection({
         />
       )}
 
-      <div className="relative -mb-5 mt-3 flex items-center justify-between">
-        <SetSortByType
-          sortByType={sortByType}
-          setSortByType={(sortBy) => setSortByType(sortBy as CommentSortBy)}
-          timeframe={timeframe}
-          setTimeframe={setTimeframe}
-          mode="comments"
-        />
+      <div
+        className={`relative -mb-5 mt-3 flex items-center ${hasComments ? 'justify-between' : 'justify-end'}`}
+      >
+        {hasComments && (
+          <SetSortByType
+            sortByType={sortByType}
+            setSortByType={(sortBy) => setSortByType(sortBy as CommentSortBy)}
+            timeframe={timeframe}
+            setTimeframe={setTimeframe}
+            mode="comments"
+          />
+        )}
 
         {(isMobile || isSmallScreen) && (
           <ShowHideButton
             show={showSidebar}
             onClick={() => setShowSidebar(!showSidebar)}
-            className="-mt-2 px-3"
+            className={`px-3 ${hasComments ? '-mt-2' : ''}`}
             label="community about"
           />
         )}

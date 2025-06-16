@@ -159,6 +159,7 @@ export default function CommentInteractionBar({
             setShowModDropdown={setShowModDropdown}
             onModerationCb={onModerationCb}
             isLast={isLast}
+            isMobile={isMobile}
           />
         )}
       </div>

@@ -25,6 +25,7 @@ interface ModMenuCommentProps {
   setShowModDropdown?: React.Dispatch<React.SetStateAction<string | null>>;
   onModerationCb?: (action: 'APPROVED' | 'REMOVED') => void;
   isLast?: boolean;
+  isMobile: boolean;
 }
 
 export default function ModMenuComment({
@@ -39,6 +40,7 @@ export default function ModMenuComment({
   setShowModDropdown,
   onModerationCb,
   isLast,
+  isMobile,
 }: ModMenuCommentProps) {
   const [showRemovalReasonModal, setShowRemovalReasonModal] = useState(false);
 
@@ -53,32 +55,36 @@ export default function ModMenuComment({
 
   return (
     <div className="df">
-      <ModerationTag
-        show={showRemovalReasonModal}
-        setShow={setShowRemovalReasonModal}
-        moderation={moderation}
-        token={token}
-        apiData={{ id: commentId }}
-        type="comment"
-        onUpdateRemovalReason={onUpdateRemovalReason}
-        className="mr-1"
-      />
+      <div className="mod-menu-comment items-center justify-center">
+        <ModerationTag
+          show={showRemovalReasonModal}
+          setShow={setShowRemovalReasonModal}
+          moderation={moderation}
+          token={token}
+          isMobile={isMobile}
+          apiData={{ id: commentId }}
+          type="comment"
+          onUpdateRemovalReason={onUpdateRemovalReason}
+          className={`${isMobile ? '' : 'mr-1'}`}
+          useCompactMode={isMobile}
+        />
 
-      <ModMenuButton
-        onClick={() => {
-          if (showEditDropdown) {
-            setShowEditDropdown?.(null);
-            setShowModDropdown?.(commentId);
-          } else {
-            setShowModDropdown?.((prev) => (prev === commentId ? null : commentId));
-          }
-        }}
-      />
+        <ModMenuButton
+          onClick={() => {
+            if (showEditDropdown) {
+              setShowEditDropdown?.(null);
+              setShowModDropdown?.(commentId);
+            } else {
+              setShowModDropdown?.((prev) => (prev === commentId ? null : commentId));
+            }
+          }}
+        />
+      </div>
 
       <div className="relative">
         <DropdownMenu
           className={`!right-1 min-w-[200px] rounded-md transition-opacity duration-300
-            ${isLast ? '!-top-[132px]' : '!top-[20px]'}
+            ${isLast ? (moderation?.action === 'REMOVED' && moderation?.reason ? '!-top-[132px]' : '!-top-[82px]') : '!top-[20px]'}
             ${showModDropdown === commentId ? '!z-10 opacity-100' : '!-z-10 opacity-0'}`}
         >
           {/* Show Approve button if post is not approved */}
