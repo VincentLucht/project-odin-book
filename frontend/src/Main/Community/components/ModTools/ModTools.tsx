@@ -37,7 +37,7 @@ export default function ModTools() {
   }, headerRef);
 
   const location = useLocation();
-  const { isDesktop } = useGetScreenSize();
+  const { isDesktop, isMobile, isBelow550px } = useGetScreenSize();
   const { user, token } = useAuthGuard();
   const isMod = useIsModerator(user, community?.community_moderators);
 
@@ -60,6 +60,24 @@ export default function ModTools() {
 
     getCommunity();
   }, [token, communityName]);
+
+  // Set sidebar visibility based on screen size
+  useEffect(() => {
+    setShowSidebar(isDesktop);
+  }, [isDesktop]);
+
+  // Freeze background scrolling when sidebar is open on non-desktop screens
+  useEffect(() => {
+    if (!isDesktop && showSidebar) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isDesktop, showSidebar]);
 
   if (loading) {
     return (
@@ -87,14 +105,16 @@ export default function ModTools() {
         headerRef={headerRef}
         search={search}
         setSearch={setSearch}
-        isDesktop={isDesktop}
+        isMobile={isMobile}
+        isBelow550px={isBelow550px}
+        setShowSidebar={setShowSidebar}
       />
 
       <div className={'grid flex-1 pt-[56px]'}>
         <div
           ref={sidebarRef}
           className={`fixed z-20 h-full transform transition-transform duration-200
-            ${showSidebar && isDesktop ? 'translate-x-0' : '-translate-x-full'}`}
+            ${showSidebar ? 'translate-x-0' : '-translate-x-full'}`}
         >
           <ModSidebar />
         </div>
