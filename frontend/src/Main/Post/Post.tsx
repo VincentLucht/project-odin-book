@@ -118,7 +118,7 @@ export default function Post({
   };
 
   return (
-    <div className="p-4 center-main">
+    <div className="p-4 h-full-header center-main">
       <div
         className={`w-full lg:center-main-content ${mode === 'fetched' && '!block'} `}
       >
@@ -256,16 +256,18 @@ export default function Post({
         </div>
 
         {mode === 'normal' && ((!isMobile && !isSmallScreen) || showSidebar) && (
-          <PostSidebar
-            community={post.community}
-            setPost={setPost}
-            user={user}
-            token={token}
-            navigate={navigate}
-            showMembership={{ show: true, isMember }}
-            isMod={isMod !== false}
-            className={`${isSmallScreen || isMobile ? 'mt-8' : ''}`}
-          />
+          <div className="flex-shrink-0">
+            <PostSidebar
+              community={post.community}
+              setPost={setPost}
+              user={user}
+              token={token}
+              navigate={navigate}
+              showMembership={{ show: true, isMember }}
+              isMod={isMod !== false}
+              className={`${isSmallScreen || isMobile ? 'mt-8' : ''}`}
+            />
+          </div>
         )}
       </div>
     </div>
