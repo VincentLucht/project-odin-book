@@ -95,7 +95,6 @@ export default function DisplaySearchResults({
               is_mature: post.is_mature,
               profile_picture_url: post.community.profile_picture_url,
             }}
-            navigate={navigate}
           />
         ))}
 
