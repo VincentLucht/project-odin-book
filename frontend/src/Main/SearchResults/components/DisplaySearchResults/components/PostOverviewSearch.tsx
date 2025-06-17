@@ -2,10 +2,11 @@ import Separator from '@/components/Separator';
 import PFP from '@/components/PFP';
 import SpoilerTag from '@/Main/Post/components/tags/common/SpoilerTag';
 import MatureTag from '@/Main/Post/components/tags/common/MatureTag';
+import { Link } from 'react-router-dom';
 
 import getRelativeTime from '@/util/getRelativeTime';
+import slugify from 'slugify';
 import formatCount from '@/components/sidebar/DisplayMemberCount.tsx/formatCount';
-import { NavigateFunction } from 'react-router-dom';
 
 interface PostOverviewSearchProps {
   post: {
@@ -23,31 +24,25 @@ interface PostOverviewSearchProps {
     profile_picture_url?: string | null;
     is_mature: boolean;
   };
-  navigate: NavigateFunction;
 }
 
 export default function PostOverviewSearch({
   post,
   community,
-  navigate,
 }: PostOverviewSearchProps) {
   if (!post || !community) return null;
 
   const isMature = post.is_mature || community.is_mature;
   const isSpoiler = post.is_spoiler;
 
-  const postRedirect = () => {
-    navigate(`/r/${encodeURIComponent(community.name)}/${post.id}`);
-  };
-
   return (
     <div>
       <Separator className="my-[3px]" />
 
-      <div
+      <Link
         className="flex cursor-pointer flex-col gap-2 break-all rounded-2xl px-4 py-6 text-sm
           bg-transition-hover"
-        onClick={postRedirect}
+        to={`/r/${encodeURIComponent(community.name)}/${post.id}/${slugify(post.name, { lower: true })}`}
       >
         <div className="flex items-center gap-1">
           <PFP src={community.profile_picture_url} />
@@ -78,7 +73,7 @@ export default function PostOverviewSearch({
             {post.total_comments === 1 ? 'Comment' : 'Comments'}
           </span>
         </div>
-      </div>
+      </Link>
     </div>
   );
 }
