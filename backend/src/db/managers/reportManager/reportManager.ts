@@ -8,6 +8,7 @@ export interface FetchedReports extends Report {
   parent_post_body: string | null;
   parent_post_id: string | null;
   parent_post_title: string | null;
+  parent_post_community_name: string | null;
   comment_total_vote_score: string | null;
   comment_upvote_count: number;
   comment_downvote_count: number;
@@ -17,6 +18,7 @@ export interface FetchedReports extends Report {
   post_total_vote_score: string | null;
   post_upvote_count: number;
   post_downvote_count: number;
+  post_community_name: string | null;
   // USER
   username: string;
   profile_picture_url: string | null;
@@ -96,6 +98,7 @@ export default class ReportManager {
         p.total_vote_score AS post_total_vote_score,
         p.upvote_count AS post_upvote_count,
         p.downvote_count AS post_downvote_count,
+        cmty.name AS post_community_name,
 
         c.content AS comment_content,
         c.total_vote_score AS comment_total_vote_score,
@@ -104,6 +107,7 @@ export default class ReportManager {
         post_from_comment.id AS parent_post_id,
         post_from_comment.title AS parent_post_title,
         post_from_comment.body AS parent_post_body,
+        community_from_comment.name AS parent_post_community_name,
 
         u_cm.username AS moderator_username,
         u_cm.profile_picture_url AS moderator_pfp,
@@ -113,7 +117,9 @@ export default class ReportManager {
       LEFT JOIN "User" AS u ON r.reporter_id = u.id
       LEFT JOIN "Comment" AS c ON r.comment_id = c.id
       LEFT JOIN "Post" AS p ON r.post_id = p.id
+      LEFT JOIN "Community" AS cmty ON p.community_id = cmty.id
       LEFT JOIN "Post" AS post_from_comment ON c.post_id = post_from_comment.id
+      LEFT JOIN "Community" AS community_from_comment ON post_from_comment.community_id = community_from_comment.id
       LEFT JOIN "CommunityModerator" AS cm ON r.moderator_id = cm.id
       LEFT JOIN "User" AS u_cm ON cm.user_id = u_cm.id
       WHERE r.community_id = ${community_id}

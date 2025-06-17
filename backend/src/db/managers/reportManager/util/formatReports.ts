@@ -22,6 +22,7 @@ export default function formatReports(reports: FetchedReports[]) {
       total_vote_score: report.post_total_vote_score,
       upvote_count: report.post_upvote_count,
       downvote_count: report.post_downvote_count,
+      community_name: report.post_community_name,
     },
 
     comment_id: report.comment_id,
@@ -35,6 +36,7 @@ export default function formatReports(reports: FetchedReports[]) {
         id: report.parent_post_id,
         title: report.parent_post_title,
         body: report.parent_post_body,
+        community_name: report.parent_post_community_name,
       },
     },
 

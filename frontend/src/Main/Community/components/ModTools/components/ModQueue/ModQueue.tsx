@@ -27,6 +27,7 @@ export interface FetchedReport extends DBReport {
     total_vote_score: number;
     upvote_count: number;
     downvote_count: number;
+    community_name: string;
   };
   comment: {
     id: string;
@@ -38,6 +39,7 @@ export interface FetchedReport extends DBReport {
       id: string;
       title: string;
       body: string;
+      community_name: string;
     };
   };
   user: {
