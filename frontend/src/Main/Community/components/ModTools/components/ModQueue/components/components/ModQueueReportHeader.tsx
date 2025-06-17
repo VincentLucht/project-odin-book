@@ -37,8 +37,8 @@ export default function ModQueueReportHeader({
       </div>
 
       <div
-        className={`flex gap-1 text-gray-secondary ${ isMobile || ((currentCommentId ?? currentPostId) &&
-          'flex-col') }`}
+        className={`flex gap-1 text-gray-secondary
+          ${isMobile || (currentCommentId ?? currentPostId) ? 'flex-col' : ''}`}
       >
         <div className="flex items-center gap-1">
           <div className="text-white">•</div>
