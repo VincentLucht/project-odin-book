@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSpring, animated } from '@react-spring/web';
 import useMeasure from 'react-use-measure';
+import useGetScreenSize from '@/context/screen/hook/useGetScreenSize';
 
 import Separator from '@/components/Separator';
 import ModQueueReportHeader from '@/Main/Community/components/ModTools/components/ModQueue/components/components/ModQueueReportHeader';
@@ -18,6 +19,7 @@ import { moderateComment } from '@/Main/Post/components/CommentSection/component
 import { FetchedReport } from '@/Main/Community/components/ModTools/components/ModQueue/ModQueue';
 import { TokenUser } from '@/context/auth/AuthProvider';
 import getRelativeTime from '@/util/getRelativeTime';
+import { NavigateFunction } from 'react-router-dom';
 
 interface ModQueueReportProps {
   report: FetchedReport;
@@ -28,6 +30,7 @@ interface ModQueueReportProps {
   setCurrentPostId: React.Dispatch<React.SetStateAction<string | null>>;
   currentCommentId: string | null;
   setCurrentCommentId: React.Dispatch<React.SetStateAction<string | null>>;
+  navigate: NavigateFunction;
 }
 
 export default function ModQueueReport({
@@ -39,6 +42,7 @@ export default function ModQueueReport({
   setCurrentPostId,
   currentCommentId,
   setCurrentCommentId,
+  navigate,
 }: ModQueueReportProps) {
   const [showReason, setShowReason] = useState(false);
   const [showDismissReasonModal, setShowDismissReasonModal] = useState(false);
@@ -46,6 +50,7 @@ export default function ModQueueReport({
   const [submitting, setSubmitting] = useState(false);
 
   const [ref, { height }] = useMeasure();
+  const { isBelow550px } = useGetScreenSize();
 
   const isPost = report.post_id !== null && report.comment_id === null;
   const iconClassName =
@@ -145,31 +150,53 @@ export default function ModQueueReport({
     setCurrentPostId(null);
   };
 
+  useEffect(() => {
+    if (isBelow550px) {
+      setCurrentPostId(null);
+      setCurrentCommentId(null);
+    }
+  }, [isBelow550px, setCurrentPostId, setCurrentCommentId]);
+
   return (
     <>
       <Separator className="my-3" />
 
       <div className={`${showPost && 'grid grid-cols-2'}`}>
         <div
-          className="cursor-pointer rounded-2xl p-4 bg-transition-hover"
+          className={`rounded-2xl p-4 ${!isBelow550px ? 'cursor-pointer bg-transition-hover' : ''}`}
           onClick={() => {
             if (isPost) {
-              setCurrentPostId(
-                report.post_id === currentPostId ? null : report.post_id,
-              );
-              setCurrentCommentId(null);
-            } else {
-              if (report.comment.id === currentCommentId) {
-                setCurrentPostId(null);
-                setCurrentCommentId(null);
+              if (isBelow550px) {
+                navigate(`/r/${report.post.community_name}/${report.post_id}`);
               } else {
-                setCurrentPostId(report.comment.parent_post.id);
-                setCurrentCommentId(report.comment.id);
+                setCurrentPostId(
+                  report.post_id === currentPostId ? null : report.post_id,
+                );
+                setCurrentCommentId(null);
+              }
+            } else {
+              if (isBelow550px) {
+                navigate(
+                  `/r/${report.comment.parent_post.community_name}/${report.comment.parent_post.body}`,
+                );
+              } else {
+                if (report.comment.id === currentCommentId) {
+                  setCurrentPostId(null);
+                  setCurrentCommentId(null);
+                } else {
+                  setCurrentPostId(report.comment.parent_post.id);
+                  setCurrentCommentId(report.comment.id);
+                }
               }
             }
           }}
         >
-          <ModQueueReportHeader report={report} isPost={isPost} />
+          <ModQueueReportHeader
+            report={report}
+            isPost={isPost}
+            currentPostId={currentPostId}
+            currentCommentId={currentCommentId}
+          />
 
           <div>
             {isPost ? (

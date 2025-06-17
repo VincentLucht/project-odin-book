@@ -10,11 +10,15 @@ import { FetchedReport } from '@/Main/Community/components/ModTools/components/M
 interface ModQueueReportHeaderProps {
   report: FetchedReport;
   isPost: boolean;
+  currentPostId: string | null;
+  currentCommentId: string | null;
 }
 
 export default function ModQueueReportHeader({
   report,
   isPost,
+  currentPostId,
+  currentCommentId,
 }: ModQueueReportHeaderProps) {
   const { isMobile } = useGetScreenSize();
 
@@ -22,14 +26,20 @@ export default function ModQueueReportHeader({
 
   return (
     <div className="flex items-center gap-1 text-xs">
-      <div className={`flex items-center gap-1 ${isMobile && '-mt-[20px]'}`}>
+      <div
+        className={`flex items-center gap-1 ${isMobile && '-mt-[20px]'}
+          ${(currentPostId ?? currentCommentId) ? 'flex-col' : ''}`}
+      >
         <PFP src={report.user.profile_picture_url} mode="user" className="!h-5 !w-5" />
 
         {/* TODO: Add option to ban user, similar to post */}
         <div className="break-all font-semibold">{`u/${report.user.username}`}</div>
       </div>
 
-      <div className={`flex gap-1 text-gray-secondary ${isMobile && 'flex-col'}`}>
+      <div
+        className={`flex gap-1 text-gray-secondary ${ isMobile || ((currentCommentId ?? currentPostId) &&
+          'flex-col') }`}
+      >
         <div className="flex items-center gap-1">
           <div className="text-white">•</div>
           <div className="font-medium text-white">
