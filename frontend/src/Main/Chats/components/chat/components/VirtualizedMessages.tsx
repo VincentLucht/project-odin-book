@@ -104,7 +104,13 @@ export default function VirtualizedMessages({
 
   useEffect(() => {
     setMessages([]);
-  }, [chatId, setMessages]);
+    // Reset scrolling to bottom
+    setTimeout(() => {
+      if (scrollContainerRef.current) {
+        scrollContainerRef.current.scrollTop = 0;
+      }
+    }, 0);
+  }, [chatId, setMessages, scrollContainerRef]);
 
   return (
     <div style={{ transform: 'scaleY(-1)' }}>
