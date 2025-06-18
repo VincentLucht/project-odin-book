@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { Virtuoso } from 'react-virtuoso';
 import ModQueueReport from '@/Main/Community/components/ModTools/components/ModQueue/components/ModQueueReport';
@@ -35,6 +36,7 @@ export default function VirtualizedModQueue({
 }: VirtualizedModQueueProps) {
   const [currentPostId, setCurrentPostId] = useState<string | null>(null);
   const [currentCommentId, setCurrentCommentId] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const ItemRenderer = useCallback(
     (index: number) => {
@@ -52,11 +54,12 @@ export default function VirtualizedModQueue({
             setCurrentPostId={setCurrentPostId}
             currentCommentId={currentCommentId}
             setCurrentCommentId={setCurrentCommentId}
+            navigate={navigate}
           />
         </div>
       );
     },
-    [reports, token, user, currentPostId, currentCommentId, setReports],
+    [reports, token, user, currentPostId, currentCommentId, setReports, navigate],
   );
 
   return (
