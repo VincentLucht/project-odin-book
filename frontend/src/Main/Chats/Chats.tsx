@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import useAuthGuard from '@/context/auth/hook/useAuthGuard';
+import useGetScreenSize from '@/context/screen/hook/useGetScreenSize';
+import useMeasure from 'react-use-measure';
 
 import ChatSidebar from '@/Main/Chats/components/ChatSidebar/ChatSidebar';
 import ChatCreation from '@/Main/Chats/components/ChatCreation';
@@ -31,6 +33,8 @@ export default function Chats() {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const { user, token } = useAuthGuard();
+  const { isMobile } = useGetScreenSize();
+  const [ref, { width }] = useMeasure();
 
   const loadAllChatOverviews = useCallback(
     (cursorId: string, isInitialFetch = false) => {
@@ -149,7 +153,7 @@ export default function Chats() {
 
   // Open first chat on open
   useEffect(() => {
-    if (chatOverviews && !openedFirstChat.current) {
+    if (chatOverviews && !openedFirstChat.current && !isMobile) {
       const latestChatOverview = chatOverviews[0];
       if (latestChatOverview) {
         const { chatName, pfp, isGroupChat } = getChatDisplayProps(
@@ -160,44 +164,56 @@ export default function Chats() {
         openedFirstChat.current = true;
       }
     }
-  }, [chatOverviews, onOpenChat, user]);
+  }, [chatOverviews, onOpenChat, user, isMobile]);
 
   return (
-    <div className="grid h-dvh grid-cols-[300px_auto]">
-      <ChatSidebar
-        userId={user?.id}
-        currentChatId={currentChatId}
-        chatOverviews={chatOverviews}
-        showCreateChat={showCreateChat}
-        setShowCreateChat={setShowCreateChat}
-        onOpenChat={onOpenChat}
-        loading={loading}
-      />
-
-      {showCreateChat ? (
-        <ChatCreation
-          token={token}
-          user={user}
-          searchUsername={searchUsername}
-          setSearchUsername={setSearchUsername}
-          setChats={setChatOverviews}
+    <div className={`grid h-dvh ${isMobile ? '' : 'grid-cols-[300px_auto]'}`} ref={ref}>
+      {/* Desktop: Always show sidebar
+          Mobile: Show sidebar only when no currentChatId*/}
+      {(!isMobile || !currentChatId) && (
+        <ChatSidebar
+          userId={user?.id}
+          currentChatId={currentChatId}
+          chatOverviews={chatOverviews}
+          showCreateChat={showCreateChat}
           setShowCreateChat={setShowCreateChat}
           onOpenChat={onOpenChat}
+          loading={loading}
         />
-      ) : (
-        <Chat
-          tempChat={tempChat}
-          setTempChat={setTempChat}
-          currentChatId={currentChatId}
-          setCurrentChatId={setCurrentChatId}
-          userSelfId={user?.id}
-          token={token}
-          setChatOverviews={setChatOverviews}
-          pagination={pagination}
-          setPagination={setPagination}
-          currentChatOverview={currentChatOverview}
-          setCurrentChatOverview={setCurrentChatOverview}
-        />
+      )}
+
+      {/* Desktop: Always show
+          Mobile: Show only if there is chat id */}
+      {((!isMobile || currentChatId) ?? showCreateChat) && (
+        <>
+          {showCreateChat ? (
+            <ChatCreation
+              token={token}
+              user={user}
+              searchUsername={searchUsername}
+              setSearchUsername={setSearchUsername}
+              setChats={setChatOverviews}
+              setShowCreateChat={setShowCreateChat}
+              onOpenChat={onOpenChat}
+            />
+          ) : (
+            <Chat
+              tempChat={tempChat}
+              setTempChat={setTempChat}
+              currentChatId={currentChatId}
+              setCurrentChatId={setCurrentChatId}
+              userSelfId={user?.id}
+              token={token}
+              setChatOverviews={setChatOverviews}
+              pagination={pagination}
+              setPagination={setPagination}
+              currentChatOverview={currentChatOverview}
+              setCurrentChatOverview={setCurrentChatOverview}
+              isMobile={isMobile}
+              isDesktop={width >= 1000}
+            />
+          )}
+        </>
       )}
     </div>
   );

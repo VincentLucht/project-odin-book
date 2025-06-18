@@ -5,7 +5,7 @@ import VirtualizedMessages from '@/Main/Chats/components/chat/components/Virtual
 import ChatSettings from '@/Main/Chats/components/chat/components/ChatSettings/ChatSettings';
 import TextareaAutosize from 'react-textarea-autosize';
 import ChatLazy from '@/Main/Chats/components/chat/loading/ChatLazy';
-import { SendHorizontalIcon } from 'lucide-react';
+import { SendHorizontalIcon, ChevronLeftIcon } from 'lucide-react';
 import { SettingsIcon } from 'lucide-react';
 
 import { fetchChat, FetchedChat } from '@/Main/Chats/api/chatAPI';
@@ -36,6 +36,8 @@ interface ChatProps {
   setCurrentChatOverview: React.Dispatch<
     React.SetStateAction<FetchedChatOverview | null>
   >;
+  isMobile: boolean;
+  isDesktop: boolean;
 }
 
 export default function Chat({
@@ -50,6 +52,8 @@ export default function Chat({
   setPagination,
   currentChatOverview,
   setCurrentChatOverview,
+  isMobile,
+  isDesktop,
 }: ChatProps) {
   const [chat, setChat] = useState<FetchedChat | null>(null);
   const [showChatSettings, setShowChatSettings] = useState(false);
@@ -79,10 +83,27 @@ export default function Chat({
   }
 
   return (
-    <div className={`grid h-dvh ${showChatSettings && 'grid-cols-[auto_374px]'}`}>
-      <div className="grid grid-rows-[44px_1fr_auto]">
+    <div
+      className={`grid h-dvh ${showChatSettings && isDesktop ? 'grid-cols-[auto_374px]' : 'grid-cols-1'}`}
+    >
+      <div
+        className={`grid grid-rows-[44px_1fr_auto] ${!isDesktop && showChatSettings ? 'hidden' : ''}`}
+      >
         <div className="flex items-center justify-between border-b-[0.5px] px-3">
           <div className="flex items-center gap-2 font-semibold">
+            {isMobile && (
+              <button className="bg-hover-transition">
+                <ChevronLeftIcon
+                  className="!h-7 !w-7"
+                  onClick={() => {
+                    setCurrentChatId(null);
+                    setChat(null);
+                    setTempChat({ name: '', pfp: '', isGroupChat: false });
+                  }}
+                />
+              </button>
+            )}
+
             <PFP
               src={!tempChat.pfp ? null : tempChat.pfp}
               className="!h-[32px] !w-[32px]"
@@ -215,6 +236,7 @@ export default function Chat({
           setChatOverviews={setChatOverviews}
           setTempChat={setTempChat}
           setCurrentChatId={setCurrentChatId}
+          isDesktop={isDesktop}
         />
       )}
     </div>

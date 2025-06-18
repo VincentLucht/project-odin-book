@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 
 import PFP from '@/components/PFP';
-import { BellIcon, LogOutIcon } from 'lucide-react';
+import { BellIcon, LogOutIcon, ChevronLeftIcon } from 'lucide-react';
 import ChatSettingsNotificationToggle from '@/Main/Chats/components/chat/components/ChatSettings/ChatSettingsNotificationToggle';
 
 import { leaveChat } from '@/Main/Chats/api/chatAPI';
@@ -31,6 +31,7 @@ interface ChatSettingsProps {
     }>
   >;
   setCurrentChatId: React.Dispatch<React.SetStateAction<string | null>>;
+  isDesktop: boolean;
 }
 
 export default function ChatSettings({
@@ -44,6 +45,7 @@ export default function ChatSettings({
   setCurrentChatOverview,
   setTempChat,
   setCurrentChatId,
+  isDesktop,
 }: ChatSettingsProps) {
   const [showLeaveChatModal, setShowLeaveChatModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -63,11 +65,20 @@ export default function ChatSettings({
   if (!chat && !otherUser) return null;
 
   return (
-    <div className="w-[374px] border-l-[0.5px]">
-      <div className="flex h-[44px] w-full items-center justify-between border-b-[0.5px] px-3">
-        <div className="font-semibold">Chat Settings</div>
+    <div className={` ${!isDesktop ? '' : 'w-[374px] border-l-[0.5px]'}`}>
+      <div className="flex h-[44px] w-full items-center border-b-[0.5px] px-3">
+        {!isDesktop && (
+          <button className="mr-1 bg-hover-transition">
+            <ChevronLeftIcon
+              className="!h-7 !w-7"
+              onClick={() => {
+                setShowChatSettings((v) => !v);
+              }}
+            />
+          </button>
+        )}
 
-        <button onClick={() => setShowChatSettings((prev) => !prev)}></button>
+        <div className="font-semibold">Chat Settings</div>
       </div>
 
       {chat?.is_group_chat ? (
