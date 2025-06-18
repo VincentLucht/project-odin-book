@@ -36,7 +36,9 @@ export default function ChatMessage({ message }: ChatMessageProps) {
           </div>
         </div>
 
-        <div className="whitespace-pre-wrap break-all text-sm">{message.content}</div>
+        <div className="whitespace-pre-wrap break-all pr-2 text-sm">
+          {message.content}
+        </div>
       </div>
     </div>
   );

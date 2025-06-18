@@ -4,6 +4,7 @@ import PFP from '@/components/PFP';
 import VirtualizedMessages from '@/Main/Chats/components/chat/components/VirtualizedMessages';
 import ChatSettings from '@/Main/Chats/components/chat/components/ChatSettings/ChatSettings';
 import TextareaAutosize from 'react-textarea-autosize';
+import ChatLazy from '@/Main/Chats/components/chat/loading/ChatLazy';
 import { SendHorizontalIcon } from 'lucide-react';
 import { SettingsIcon } from 'lucide-react';
 
@@ -73,9 +74,8 @@ export default function Chat({
     }
   }, [currentChatId, token, setPagination, setChat]);
 
-  // TODO: Either display first chat, or choose a chat to write a msg or smt
   if (!chat && !tempChat.name) {
-    return null;
+    return <ChatLazy />;
   }
 
   return (

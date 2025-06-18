@@ -4,7 +4,7 @@ import useGroupMessages from '@/Main/Chats/hooks/useGroupMessages';
 import { Virtuoso } from 'react-virtuoso';
 import ChatMessage from '@/Main/Chats/components/chat/components/ChatMessage';
 import DateHeader from '@/Main/Chats/components/chat/components/DateHeader';
-import EndMessageHandler from '@/Main/Global/EndMessageHandler';
+import ChatMessageLazy from '@/Main/Chats/components/chat/loading/ChatMessageLazy';
 
 import { fetchChatMessages } from '@/Main/Chats/components/chat/api/messageAPI';
 
@@ -106,11 +106,6 @@ export default function VirtualizedMessages({
     setMessages([]);
   }, [chatId, setMessages]);
 
-  if (!chatId) {
-    // TODO: Skeleton loading?
-    return <div></div>;
-  }
-
   return (
     <div style={{ transform: 'scaleY(-1)' }}>
       <Virtuoso
@@ -135,19 +130,14 @@ export default function VirtualizedMessages({
         }}
         scrollerRef={handleScrollerRef as (ref: HTMLElement | Window | null) => never}
         components={{
-          Footer: () => (
-            <div style={{ transform: 'scaleY(-1)', paddingTop: loading ? '14px' : '' }}>
-              <EndMessageHandler
-                loading={loading}
-                hasMorePages={pagination.hasMore}
-                dataLength={messages.length}
-                endMessage="You've reached the start of the chat!"
-                endMessageClassName="!pb-3"
-                noResultsMessage="No messages in this chat, write the first message!"
-                noResultsClassName="!pb-3"
-              />
-            </div>
-          ),
+          Footer: () =>
+            loading && (
+              <div style={{ transform: 'scaleY(-1)' }}>
+                {Array.from({ length: 5 }, (_, i) => (
+                  <ChatMessageLazy key={i} />
+                ))}
+              </div>
+            ),
         }}
       />
     </div>
