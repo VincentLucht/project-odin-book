@@ -84,7 +84,7 @@ export default function ModMenuComment({
       <div className="relative">
         <DropdownMenu
           className={`!right-1 min-w-[200px] rounded-md transition-opacity duration-300
-            ${isLast ? (moderation?.action === 'REMOVED' && moderation?.reason ? '!-top-[132px]' : '!-top-[82px]') : '!top-[20px]'}
+            ${isLast ? (moderation?.action ? (moderation.action === 'REMOVED' && moderation.reason ? '!-top-[132px]' : '!-top-[84px]') : '!-top-[132px]') : '!top-[20px]'}
             ${showModDropdown === commentId ? '!z-10 opacity-100' : '!-z-10 opacity-0'}`}
         >
           {/* Show Approve button if post is not approved */}
