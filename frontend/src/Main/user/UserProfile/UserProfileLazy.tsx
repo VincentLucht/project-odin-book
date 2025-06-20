@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import useGetScreenSize from '@/context/screen/hook/useGetScreenSize';
 
 import PostLazy from '@/Main/Post/components/Loading/PostLazy';
 import CommentOverviewLazy from '@/Main/CommentOverview/CommentOverviewLazy';
@@ -7,6 +8,8 @@ import LazyCompartment from '@/components/Lazy/LazyCompartment';
 import PFPLazy from '@/components/Lazy/PFPLazy';
 
 export default function UserProfileLazy() {
+  const { isMobile } = useGetScreenSize();
+
   const { usernameLength, displayNameLength } = useMemo(() => {
     return {
       usernameLength: Math.floor(Math.random() * (170 - 20 + 1)) + 20,
@@ -29,7 +32,7 @@ export default function UserProfileLazy() {
   return (
     <div className="h-[100dvh + 56px] p-4">
       <div className="center-main">
-        <div className="center-main-content">
+        <div className={`${isMobile ? 'w-full' : 'center-main-content'}`}>
           <div className="w-full min-w-0">
             <div className="flex gap-2">
               <PFPLazy className="!h-24 !w-24 rounded-full" />
@@ -48,9 +51,9 @@ export default function UserProfileLazy() {
             </div>
 
             {/* API filters */}
-            <div className="mb-2 mt-4 flex gap-5">
-              <LazyCompartment className="mb-3 ml-3 mr-2" width={180} height={20} />
-              <LazyCompartment width={50} height={20} />
+            <div className="mb-2 mt-[22px] flex gap-5">
+              <LazyCompartment className="mb-[6px] ml-3 mr-2" width={160} height={20} />
+              <LazyCompartment width={46} height={20} />
             </div>
 
             {mixedContent.map((item) =>
@@ -62,7 +65,7 @@ export default function UserProfileLazy() {
             )}
           </div>
 
-          <SidebarLazy min={200} max={300} />
+          {!isMobile && <SidebarLazy min={200} max={300} />}
         </div>
       </div>
     </div>
