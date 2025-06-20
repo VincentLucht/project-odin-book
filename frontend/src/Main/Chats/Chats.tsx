@@ -153,7 +153,7 @@ export default function Chats() {
 
   // Open first chat on open
   useEffect(() => {
-    if (chatOverviews && !openedFirstChat.current && !isMobile) {
+    if (chatOverviews && !openedFirstChat.current && !isMobile && !showCreateChat) {
       const latestChatOverview = chatOverviews[0];
       if (latestChatOverview) {
         const { chatName, pfp, isGroupChat } = getChatDisplayProps(
@@ -164,7 +164,7 @@ export default function Chats() {
         openedFirstChat.current = true;
       }
     }
-  }, [chatOverviews, onOpenChat, user, isMobile]);
+  }, [chatOverviews, onOpenChat, user, isMobile, showCreateChat]);
 
   return (
     <div className={`grid h-dvh ${isMobile ? '' : 'grid-cols-[300px_auto]'}`} ref={ref}>
@@ -195,6 +195,7 @@ export default function Chats() {
               setChats={setChatOverviews}
               setShowCreateChat={setShowCreateChat}
               onOpenChat={onOpenChat}
+              isMobile={isMobile}
             />
           ) : (
             <Chat

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import PFP from '@/components/PFP';
 import LogoLoading from '@/components/Lazy/Logo/LogoLoading';
-import { LockIcon, MessageCircleHeartIcon } from 'lucide-react';
+import { ChevronLeftIcon, LockIcon, MessageCircleHeartIcon } from 'lucide-react';
 
 import { fetchUsernames, createChat, UserList } from '@/Main/Chats/api/chatAPI';
 import { toast } from 'react-toastify';
@@ -24,6 +24,7 @@ interface ChatCreationProps {
       isGroupChat: boolean;
     },
   ) => void;
+  isMobile: boolean;
 }
 
 export default function ChatCreation({
@@ -34,6 +35,7 @@ export default function ChatCreation({
   setChats,
   setShowCreateChat,
   onOpenChat,
+  isMobile,
 }: ChatCreationProps) {
   const [selectedUser, setSelectedUser] = useState<{
     username: string;
@@ -70,8 +72,17 @@ export default function ChatCreation({
 
   return (
     <div className="flex h-dvh flex-col items-center">
-      <div className="flex min-h-[43px] w-full items-center border-b-[0.5px] pl-3">
-        New Chat
+      <div className="font- flex min-h-[43px] w-full items-center border-b-[0.5px] pl-3">
+        {isMobile && (
+          <button
+            className="mr-2 bg-hover-transition"
+            onClick={() => setShowCreateChat(false)}
+          >
+            <ChevronLeftIcon className="h-7 w-7" />
+          </button>
+        )}
+
+        <div className="font-semibold">New Chat</div>
       </div>
 
       <div className="mt-4 flex flex-col items-center gap-2">
@@ -184,7 +195,11 @@ export default function ChatCreation({
                 (chat) => {
                   setChats((prev) => [
                     // Transform into UserChats object
-                    { ...chat.userChats[0], chat: { ...chat, last_message: null } },
+                    {
+                      ...chat.userChats[0],
+                      chat: { ...chat, last_message: null },
+                      last_read_at: new Date().toISOString(),
+                    },
                     ...prev,
                   ]);
                   // ? Change for group chats
