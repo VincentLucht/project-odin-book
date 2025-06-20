@@ -353,7 +353,7 @@ model PostVote {
 model CommentModeration {
   id           String             @id @default(uuid())
   comment_id   String             @unique
-  post         Comment            @relation(fields: [comment_id], references: [id])
+  comment      Comment            @relation(fields: [comment_id], references: [id], onDelete: Cascade)
   moderator_id String
   moderator    CommunityModerator @relation(fields: [moderator_id], references: [id], onDelete: Cascade)
   action       ModerationType
