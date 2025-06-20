@@ -34,7 +34,7 @@ export default function UserCard({
       </div>
 
       <div>
-        <div className="group-hover:underline">u/{username}</div>
+        <div className="text-left group-hover:underline">u/{username}</div>
 
         {userFlair && <CommunityFlairTag flair={userFlair} />}
       </div>
