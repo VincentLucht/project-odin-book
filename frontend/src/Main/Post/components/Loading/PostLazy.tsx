@@ -5,12 +5,17 @@ import LazyCompartment from '@/components/Lazy/LazyCompartment';
 import LazyTags from '@/components/Lazy/LazyTags';
 import LazyPostFlair from '@/components/Lazy/LazyPostFlair';
 import Separator from '@/components/Separator';
+import SidebarLazy from '@/components/Lazy/SidebarLazy';
 
 interface PostLazyProps {
   mode?: 'fetched' | 'normal' | 'overview';
+  showSidebar?: boolean;
 }
 
-export default function PostLazy({ mode = 'normal' }: PostLazyProps) {
+export default function PostLazy({
+  mode = 'normal',
+  showSidebar = false,
+}: PostLazyProps) {
   const {
     communityNameLength,
     usernameLength,
@@ -29,7 +34,7 @@ export default function PostLazy({ mode = 'normal' }: PostLazyProps) {
 
       <div className={`${!isUserProfileMode ? 'p-4 center-main' : 'my-[6px] p-2'}`}>
         <div
-          className={` ${mode === 'fetched' && '!block'} ${!isUserProfileMode && 'center-main-content'}`}
+          className={`w-full ${mode === 'fetched' && '!block'} ${showSidebar ? 'center-main-content' : ''}`}
         >
           <div className="flex flex-col">
             <div className="flex gap-1 text-sm">
@@ -93,8 +98,9 @@ export default function PostLazy({ mode = 'normal' }: PostLazyProps) {
             </div>
           </div>
 
-          {/* TODO: Complete this when done with sidebar */}
-          {/* Sidebar */}
+          {mode === 'normal' && showSidebar && (
+            <SidebarLazy min={400} max={1000} className="rounded-md" />
+          )}
         </div>
       </div>
     </>

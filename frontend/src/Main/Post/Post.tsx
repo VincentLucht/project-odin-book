@@ -58,7 +58,7 @@ export default function Post({
 
   const [postLoading, setPostLoading] = useState(true);
   const navigate = useNavigate();
-  const { isSmallScreen, isMobile, isBelow550px } = useGetScreenSize();
+  const { currentWidth, isSmallScreen, isMobile, isBelow550px } = useGetScreenSize();
   const [showSidebar, setShowSidebar] = useState(false);
 
   const { postId: urlPostId } = useParams();
@@ -95,7 +95,7 @@ export default function Post({
   }, [post, user, searchParams, mode]);
 
   if (!post || postLoading) {
-    return <PostLazy mode={mode} />;
+    return <PostLazy mode={mode} showSidebar={currentWidth >= 1024} />;
   }
 
   const onVote = (voteType: VoteType) => {
