@@ -5,6 +5,7 @@ import toastUpdate from '@/util/toastUpdate';
 import { APILoadingPhasesOptional } from '@/interface/misc';
 import { CommunityTypes, DBCommunity } from '@/interface/dbSchema';
 import { CommunityModerator } from '@/Main/Community/api/fetch/fetchCommunityWithPosts';
+import { Pagination } from '@/interface/backendTypes';
 
 const endpoint = '/community/mod';
 
@@ -35,6 +36,32 @@ export async function getModInfo(
   } catch (error) {
     catchError(error);
     return false;
+  }
+}
+
+export interface FetchedModerator {
+  user: {
+    username: string;
+    profile_picture_url: string | null;
+  };
+  created_at: string;
+}
+
+export async function fetchModerators(
+  community_id: string,
+  cursorId: string,
+  onComplete: (moderators: FetchedModerator[], pagination: Pagination) => void,
+) {
+  try {
+    const response = await apiRequest<{
+      message: string;
+      moderators: FetchedModerator[];
+      pagination: Pagination;
+    }>(`${`${endpoint}/moderators?cmId=${community_id}&cId=${cursorId}`}`, 'GET', '');
+
+    onComplete(response.moderators, response.pagination);
+  } catch (error) {
+    catchError(error);
   }
 }
 

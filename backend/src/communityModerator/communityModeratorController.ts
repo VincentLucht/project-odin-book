@@ -6,6 +6,34 @@ import { asyncHandler } from '@/util/asyncHandler';
 import getAuthUser from '@/util/getAuthUser';
 
 class CommunityModeratorController {
+  fetch = asyncHandler(async (req: Request, res: Response) => {
+    if (checkValidationError(req, res)) return;
+
+    const { cmId: community_id, cId: cursorId } = req.query as {
+      cmId: string;
+      cId: string;
+    };
+
+    try {
+      const { moderators, pagination } = await db.communityModerator.fetch(
+        community_id,
+        cursorId,
+      );
+
+      return res.status(200).json({
+        message: 'Successfully fetched mods from this community',
+        moderators,
+        pagination,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        message: 'Failed to fetch mods from this community',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  });
+
   makeMod = asyncHandler(async (req: Request, res: Response) => {
     if (checkValidationError(req, res)) return;
 

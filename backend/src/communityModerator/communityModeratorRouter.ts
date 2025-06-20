@@ -6,6 +6,12 @@ import communityModeratorController from '@/communityModerator/communityModerato
 // /community/mod
 const communityModeratorRouter = express.Router();
 
+communityModeratorRouter.get(
+  '/moderators', // ?cmId=community_id&cId=cursor_id
+  communityModeratorValidator.fetchRules(),
+  communityModeratorController.fetch,
+);
+
 communityModeratorRouter.post(
   '/user',
   token.authenticate,

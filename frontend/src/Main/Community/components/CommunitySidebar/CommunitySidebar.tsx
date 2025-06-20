@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import MemberShipButton from '@/Main/Global/MemberShipButton';
 import DisplayCommunityType from '@/components/sidebar/DisplayCommunityType';
 import DisplayCreationDate from '@/components/sidebar/DisplayCreationDate';
@@ -8,7 +10,13 @@ import UserCard from '@/components/user/UserCard';
 
 import MessageMods from '@/Main/Community/components/CommunitySidebar/components/MessageMods';
 
+import { Modal } from '@/components/Modal/Modal';
+import ModalHeader from '@/components/Modal/components/ModalHeader';
+import ModalFooter from '@/components/Modal/components/ModalFooter';
+import VirtualizedCommunityModerators from '@/Main/Community/components/CommunitySidebar/components/VirtualizedCommunityModerators';
+
 import { FetchedCommunity } from '@/Main/Community/api/fetch/fetchCommunityWithPosts';
+import { FetchedModerator } from '@/Main/Community/components/ModTools/api/communityModerationAPI';
 import { NavigateFunction } from 'react-router-dom';
 
 interface CommunitySidebarProps {
@@ -32,6 +40,9 @@ export default function CommunitySidebar({
   showMembership,
   className = '',
 }: CommunitySidebarProps) {
+  const [showModal, setShowModal] = useState(false);
+  const [moderators, setModerators] = useState<FetchedModerator[]>([]);
+
   return (
     <div
       className={`!gap-0 overflow-y-auto rounded-md bg-neutral-950 px-4 py-2 pb-3 sidebar ${className}`}
@@ -113,8 +124,32 @@ export default function CommunitySidebar({
         })}
 
         {/* TODO: Add this functionality */}
-        <button className="sidebar-btn-stone">View all moderators</button>
+        <button className="sidebar-btn-stone" onClick={() => setShowModal(true)}>
+          View all moderators
+        </button>
       </div>
+
+      <Modal show={showModal} onClose={() => setShowModal(false)}>
+        <ModalHeader
+          headerName={`r/${community.name} Moderators`}
+          onClose={() => setShowModal(false)}
+        />
+
+        <VirtualizedCommunityModerators
+          show={showModal}
+          communityId={community.id}
+          moderators={moderators}
+          setModerators={setModerators}
+        />
+
+        <ModalFooter
+          onClose={() => setShowModal(false)}
+          submitting={false}
+          cancelButtonName="Close"
+          cancelButtonClassName="mt-6 cancel-button"
+          options={{ cancelButton: true, confirmButton: false }}
+        />
+      </Modal>
     </div>
   );
 }
