@@ -1,7 +1,7 @@
+import { useEffect, ReactNode } from 'react';
 import useClickOutside from '@/hooks/useClickOutside';
 import { animated, SpringValue } from '@react-spring/web';
 import { useModalTransition } from '@/components/Modal/hooks/userModalTransition';
-import { ReactNode } from 'react';
 
 // MODAL
 interface ModalProps {
@@ -12,6 +12,15 @@ interface ModalProps {
 }
 export const Modal = ({ show, onClose, children, className }: ModalProps) => {
   const { contentTransition, backdropTransition } = useModalTransition(show);
+
+  useEffect(() => {
+    if (show) {
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = 'unset';
+      };
+    }
+  }, [show]);
 
   return (
     <>
