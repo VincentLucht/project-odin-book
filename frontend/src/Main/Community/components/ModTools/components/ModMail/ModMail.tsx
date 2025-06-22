@@ -57,6 +57,8 @@ export default function ModMail() {
   return (
     <div className="p-4 center-main">
       <div className="w-full max-w-[900px]">
+        <h2 className="mb-4 text-3xl font-bold">Mod Mail</h2>
+
         <ModMailApiFilters apiFilters={apiFilters} setApiFilters={setApiFilters} />
 
         <VirtualizedModMailMessages
