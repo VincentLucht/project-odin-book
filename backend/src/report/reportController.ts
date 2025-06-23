@@ -101,6 +101,12 @@ class ReportController {
           .json({ message: `You already reported this ${typeString}` });
       }
 
+      if (await db.bannedUsers.isBanned(user_id, item.community_id)) {
+        return res
+          .status(403)
+          .json({ message: 'You are banned from this community' });
+      }
+
       const report = await db.report.report(
         type,
         user_id,
