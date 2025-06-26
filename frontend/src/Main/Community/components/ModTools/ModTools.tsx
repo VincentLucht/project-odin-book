@@ -93,7 +93,7 @@ export default function ModTools() {
     return (
       <div className="mx-auto h-screen df">
         <h2 className="text-lg font-semibold">
-          You are not a moderator in this community!
+          Could not verify if you&apos;re a moderator. Please try again.
         </h2>
       </div>
     );
