@@ -6,8 +6,8 @@ class ChatValidator {
     return [
       query('chat_id')
         .notEmpty()
-        .withMessage('Chat ID has to be a string')
-        .isString(),
+        .isString()
+        .withMessage('Chat ID is required'),
     ];
   }
 
