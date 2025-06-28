@@ -8,6 +8,7 @@ interface ModalTextAreaProps {
   maxLength: number;
   required?: boolean;
   className?: string;
+  placeholder?: string;
 }
 
 export default function ModalTextArea({
@@ -17,6 +18,7 @@ export default function ModalTextArea({
   maxLength,
   required = false,
   className = '',
+  placeholder = '',
 }: ModalTextAreaProps) {
   return (
     <div className="overscroll-contain">
@@ -32,6 +34,7 @@ export default function ModalTextArea({
         minRows={3}
         required={required}
         maxLength={maxLength}
+        placeholder={placeholder}
       />
       <MaxLengthIndicator length={value.length} maxLength={maxLength} />
     </div>
