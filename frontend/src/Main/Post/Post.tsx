@@ -118,7 +118,7 @@ export default function Post({
   };
 
   return (
-    <div className="p-4 h-full-header center-main">
+    <div className={`p-4 center-main ${mode === 'fetched' ? '' : 'h-full-header'}`}>
       <div
         className={`w-full lg:center-main-content ${mode === 'fetched' && '!block'} `}
       >
