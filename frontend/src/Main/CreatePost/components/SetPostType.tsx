@@ -16,8 +16,8 @@ export default function SetPostType({ postType, onPostTypeChange }: SetPostTypeP
       </button>
 
       <button
-        onClick={() => onPostTypeChange('images')}
-        className={`create-btn ${postType === 'images' && 'create-btn-before'}`}
+        onClick={() => onPostTypeChange('IMAGES')}
+        className={`create-btn ${postType === 'IMAGES' && 'create-btn-before'}`}
       >
         Images
       </button>
