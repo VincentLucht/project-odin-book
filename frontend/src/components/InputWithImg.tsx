@@ -98,10 +98,7 @@ export default function InputWithImg({
       />
 
       {deleteButton && value && (
-        <CloseButton
-          customFunc={onDelete}
-          classNameSvg="!h-[18px] !w-[18px] border rounded-full p-[2px]"
-        />
+        <CloseButton customFunc={onDelete} classNameSvg="close-with-circle" />
       )}
 
       {icon && imgLocation === 'right' ? icon : imgLocation === 'right' && imageElement}
