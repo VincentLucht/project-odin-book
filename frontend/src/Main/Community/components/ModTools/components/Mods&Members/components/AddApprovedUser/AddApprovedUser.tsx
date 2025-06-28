@@ -56,7 +56,7 @@ export default function AddApprovedUser({
         token,
         communityId,
         searchUsername,
-        'users',
+        'all',
         (members) => {
           setLoading(false);
           setSearchResultsMembers(members);

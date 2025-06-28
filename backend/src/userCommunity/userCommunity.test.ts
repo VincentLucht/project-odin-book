@@ -61,6 +61,14 @@ describe('/community', () => {
 
         assert.exp(response, 201, 'Successfully joined community');
       });
+
+      it('should allow approved user to join private community', async () => {
+        mockDb.community.isPrivate.mockResolvedValue(true);
+        mockDb.approvedUser.isApproved.mockResolvedValue(true);
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 201, 'Successfully joined community');
+      });
     });
 
     describe('Error cases', () => {

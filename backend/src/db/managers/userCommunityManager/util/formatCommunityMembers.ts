@@ -1,7 +1,7 @@
 /** Formats prisma and raw sql data into a FetchedCommunityMember object. */
 export default function formatCommunityMembers(
   members: any[],
-  mode: 'users' | 'moderators' | 'banned' | 'approved',
+  mode: 'users' | 'moderators' | 'banned' | 'approved' | 'all',
 ) {
   return members.map((member) => {
     const user = member.user || member;
@@ -51,8 +51,13 @@ export default function formatCommunityMembers(
         formatted.is_moderator =
           user.community_moderator?.[0]?.is_active || null;
       }
+    } else if (mode === 'all') {
+      formatted.created_at = member.created_at;
+      formatted.joined_at = member.joined_at;
+      formatted.approved_at = member.approved_at;
+      formatted.is_moderator = member.is_moderator;
+      formatted.banned_at = member.banned_at;
     }
-
     return formatted;
   });
 }

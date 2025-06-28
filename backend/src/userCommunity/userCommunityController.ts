@@ -17,7 +17,7 @@ class UserCommunityController {
     } = req.query as {
       cmId: string;
       cId: string | undefined;
-      m: 'users' | 'moderators' | 'banned' | 'approved';
+      m: 'users' | 'moderators' | 'banned' | 'approved' | 'all';
     };
 
     try {
@@ -161,9 +161,11 @@ class UserCommunityController {
           .json({ message: 'You already are a member of this community' });
       }
       if (await db.community.isPrivate(community_id)) {
-        return res
-          .status(403)
-          .json({ message: "You can't join a private community" });
+        if (!(await db.approvedUser.isApproved(user_id, community_id))) {
+          return res
+            .status(403)
+            .json({ message: "You can't join a private community" });
+        }
       }
       if (await db.bannedUsers.isBanned(user_id, community_id)) {
         return res
@@ -378,7 +380,7 @@ class UserCommunityController {
         bannedUser.id,
         'MODMESSAGE',
         `You have been unbanned from r/${community.name}`,
-        'The moderators of this community unbanned you. If you were a moderator, or a member in a private community, your role was restored.',
+        'The moderators of this community unbanned you. If you were a moderator, or a member, your role was NOT restored.',
       );
 
       return res.status(200).json({ message: 'Successfully unbanned user' });

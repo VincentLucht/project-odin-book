@@ -46,7 +46,7 @@ class UserCommunityValidator {
             throw new Error('Mode is required');
           }
 
-          if (!['users', 'moderators', 'banned', 'approved'].includes(mode)) {
+          if (!['users', 'moderators', 'banned', 'approved', 'all'].includes(mode)) {
             throw new Error('Invalid mode detected');
           }
 

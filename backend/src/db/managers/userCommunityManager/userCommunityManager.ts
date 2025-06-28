@@ -11,7 +11,7 @@ export default class UserCommunityManager {
   async getMembers(
     community_id: string,
     cursorId: string | undefined,
-    mode: 'users' | 'moderators' | 'banned' | 'approved',
+    mode: 'users' | 'moderators' | 'banned' | 'approved' | 'all',
     take = 50,
   ) {
     const cursorQuery = cursorId
@@ -132,7 +132,7 @@ export default class UserCommunityManager {
   async getMembersByName(
     community_id: string,
     username: string,
-    mode: 'users' | 'moderators' | 'banned' | 'approved',
+    mode: 'users' | 'moderators' | 'banned' | 'approved' | 'all',
     take = 30,
   ) {
     let members: any[] = [];
@@ -151,7 +151,10 @@ export default class UserCommunityManager {
 
     if (mode === 'users') {
       members = await this.prisma.$queryRaw`
-        SELECT uc.id, uc.joined_at, uc.role, u.username, u.profile_picture_url, au.approved_at, cm.is_active AS is_moderator
+        SELECT uc.id, uc.joined_at, uc.role, 
+                u.username, u.profile_picture_url, 
+                au.approved_at, 
+                cm.is_active AS is_moderator
         FROM "UserCommunity" AS uc
         LEFT JOIN "User" AS u ON u.id = uc.user_id
         LEFT JOIN "ApprovedUser" AS au ON au.user_id = u.id AND au.community_id = ${community_id}
@@ -161,7 +164,9 @@ export default class UserCommunityManager {
       `;
     } else if (mode === 'moderators') {
       members = await this.prisma.$queryRaw`
-        SELECT cm.id, cm.created_at, u.username, u.profile_picture_url, au.approved_at
+        SELECT cm.id, cm.created_at,
+                u.username, u.profile_picture_url,
+                au.approved_at
         FROM "CommunityModerator" AS cm
         LEFT JOIN "User" AS u ON u.id = cm.user_id
         LEFT JOIN "ApprovedUser" AS au ON au.user_id = u.id AND au.community_id = ${community_id}
@@ -170,7 +175,8 @@ export default class UserCommunityManager {
       `;
     } else if (mode === 'banned') {
       members = await this.prisma.$queryRaw`
-        SELECT bu.id, bu.banned_at, bu.ban_duration, bu.ban_reason, u.username, u.profile_picture_url
+        SELECT bu.id, bu.banned_at, bu.ban_duration, bu.ban_reason,
+                u.username, u.profile_picture_url
         FROM "BannedUser" AS bu
         LEFT JOIN "User" AS u ON u.id = bu.user_id
         WHERE bu.community_id = ${community_id}
@@ -178,11 +184,28 @@ export default class UserCommunityManager {
       `;
     } else if (mode === 'approved') {
       members = await this.prisma.$queryRaw`
-        SELECT au.id, au.approved_at, u.username, u.profile_picture_url, cm.is_active AS is_moderator
+        SELECT au.id, au.approved_at, 
+                u.username, u.profile_picture_url,
+                cm.is_active AS is_moderator
         FROM "ApprovedUser" AS au
         LEFT JOIN "User" AS u ON u.id = au.user_id
         LEFT JOIN "CommunityModerator" AS cm ON cm.user_id = u.id AND cm.community_id = ${community_id}
         WHERE au.community_id = ${community_id}
+        ${usernameOrderAndLimit}
+      `;
+    } else if (mode === 'all') {
+      members = await this.prisma.$queryRaw`
+        SELECT u.id, u.username, u.profile_picture_url, u.created_at,
+                uc.joined_at, uc.role,
+                au.approved_at,
+                cm.is_active AS is_moderator,
+                bu.banned_at, bu.ban_duration, bu.ban_reason
+        FROM "User" AS u
+        LEFT JOIN "UserCommunity" AS uc ON uc.user_id = u.id AND uc.community_id = ${community_id}
+        LEFT JOIN "ApprovedUser" AS au ON au.user_id = u.id AND au.community_id = ${community_id}
+        LEFT JOIN "CommunityModerator" AS cm ON cm.user_id = u.id AND cm.community_id = ${community_id}
+        LEFT JOIN "BannedUser" AS bu ON bu.user_id = u.id AND bu.community_id = ${community_id}
+        WHERE u.id IS NOT NULL
         ${usernameOrderAndLimit}
       `;
     }
