@@ -68,7 +68,7 @@ export async function getMembersByName(
   token: string | null,
   communityId: string,
   username: string,
-  mode: MemberType,
+  mode: MemberType | 'all',
   onComplete: (members: FetchedCommunityMember[]) => void,
   take?: number,
 ) {
