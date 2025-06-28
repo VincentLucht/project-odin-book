@@ -122,6 +122,14 @@ export default class CommunityManager {
     return community;
   }
 
+  async isOwner(user_id: string, community_id: string) {
+    const community = await this.prisma.community.findUnique({
+      where: { id: community_id },
+    });
+
+    return !community || community.owner_id !== user_id ? false : true;
+  }
+
   async fetch(
     communityName: string,
     communityId: string,
