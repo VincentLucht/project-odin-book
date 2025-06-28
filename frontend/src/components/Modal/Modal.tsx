@@ -10,6 +10,7 @@ interface ModalProps {
   children: ReactNode;
   className?: string;
 }
+
 export const Modal = ({ show, onClose, children, className }: ModalProps) => {
   const { contentTransition, backdropTransition } = useModalTransition(show);
 
@@ -50,6 +51,7 @@ interface ModalContainerProps {
   children: ReactNode;
   className?: string;
 }
+
 export const ModalContainer = ({
   styles,
   onClose,
@@ -59,14 +61,14 @@ export const ModalContainer = ({
   const containerRef = useClickOutside(onClose);
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center">
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4">
       <animated.div
         style={styles}
-        className={`flex max-h-[600px] w-full min-w-[300px] max-w-[500px] flex-col gap-4 rounded-lg p-3
-          bg-gray ${className}`}
+        className={`flex max-h-full w-full min-w-[300px] max-w-[500px] flex-col rounded-lg bg-gray
+          ${className}`}
         ref={containerRef}
       >
-        {children}
+        <div className="flex flex-col gap-4 overflow-y-auto p-3">{children}</div>
       </animated.div>
     </div>
   );
@@ -80,6 +82,7 @@ interface BackdropProps {
   };
   onClose: () => void;
 }
+
 export const Backdrop = ({ styles, onClose }: BackdropProps) => (
   <animated.div
     style={styles}
