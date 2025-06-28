@@ -1,7 +1,7 @@
 import { useState, useEffect, createContext } from 'react';
 
 export const ScreenSizeContext = createContext({
-  isSuperSmallScreen: false,
+  currentWidth: typeof window !== 'undefined' ? window.innerWidth : 0,
   isBelow550px: false,
   isMobile: false,
   isSmallScreen: false,
@@ -9,27 +9,23 @@ export const ScreenSizeContext = createContext({
 });
 
 export default function ScreenSizeProvider({ children }: { children: any }) {
-  const [isSuperSmallScreen, setIsSuperSmallScreen] = useState(
-    window.innerWidth <= 500,
-  );
   const [isBelow550px, setIsBelow550px] = useState(window.innerWidth <= 550);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [isSmallScreen, setIsSmallScreen] = useState(
     window.innerWidth >= 768 && window.innerWidth < 1024,
   );
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1280);
+  const [currentWidth, setCurrentWidth] = useState(window.innerWidth);
 
   useEffect(() => {
     const handleResize = () => {
       const currentWidth = window.innerWidth;
-
-      const superSmallScreen = currentWidth <= 500;
       const isBelow550px = currentWidth <= 550;
       const mobile = currentWidth < 768;
       const smallScreen = currentWidth >= 768 && currentWidth < 1024;
       const desktop = currentWidth >= 1280;
 
-      setIsSuperSmallScreen(superSmallScreen);
+      setCurrentWidth(currentWidth);
       setIsBelow550px(isBelow550px);
       setIsMobile(mobile);
       setIsSmallScreen(smallScreen);
@@ -42,7 +38,13 @@ export default function ScreenSizeProvider({ children }: { children: any }) {
 
   return (
     <ScreenSizeContext.Provider
-      value={{ isSuperSmallScreen, isBelow550px, isMobile, isSmallScreen, isDesktop }}
+      value={{
+        currentWidth,
+        isBelow550px,
+        isMobile,
+        isSmallScreen,
+        isDesktop,
+      }}
     >
       {children}
     </ScreenSizeContext.Provider>

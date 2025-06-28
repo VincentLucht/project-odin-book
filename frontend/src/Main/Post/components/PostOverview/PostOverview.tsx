@@ -114,7 +114,8 @@ export default function PostOverview({
       : null;
   const hasReported = post?.reports?.[0]?.reporter_id === userId;
 
-  const { isSuperSmallScreen, isMobile } = useGetScreenSize();
+  const { currentWidth, isMobile } = useGetScreenSize();
+  const isBelow500px = currentWidth <= 500;
 
   const onVote = (voteType: VoteType) => {
     if (!token || !userId) {
@@ -186,7 +187,7 @@ export default function PostOverview({
 
             <div className="gap-1 whitespace-nowrap text-xs df text-gray-secondary">
               • {getRelativeTime(post.created_at, true, isMobile)}
-              {post.edited_at && !post.deleted_at && !isSuperSmallScreen && (
+              {post.edited_at && !post.deleted_at && !isBelow500px && (
                 <div className="text-xs df">
                   • edited {getRelativeTime(post.edited_at, true)}
                 </div>
@@ -195,7 +196,7 @@ export default function PostOverview({
           </div>
 
           <div className="flex items-center gap-2">
-            {showMembership && userMember && setUserHistory && !isSuperSmallScreen && (
+            {showMembership && userMember && setUserHistory && !isBelow500px && (
               <IsCommunityMember
                 userMember={userMember}
                 userId={userId}
