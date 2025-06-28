@@ -48,6 +48,7 @@ async function reset() {
   await prisma.topic.deleteMany();
   await prisma.mainTopic.deleteMany();
   await prisma.userCommunity.deleteMany();
+  await prisma.approvedUser.deleteMany();
   await prisma.community.deleteMany();
 
   // Finally delete users
@@ -67,7 +68,7 @@ async function main() {
   await createFlairs(prisma);
   await createModmails(prisma);
   await createReports(prisma);
-  // await createNotifications(prisma);
+  await createNotifications(prisma);
   await createChatsAndMessages(prisma);
 }
 
