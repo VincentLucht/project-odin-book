@@ -59,6 +59,7 @@ model User {
   comment_karma Int @default(0)
 
   banned_users           BannedUser[]
+  approved_users         ApprovedUser[]
   user_communities       UserCommunity[]
   owned_communities      Community[]
   community_moderator    CommunityModerator[]
@@ -184,6 +185,7 @@ model Community {
   owner            User              @relation(fields: [owner_id], references: [id])
 
   banned_users         BannedUser[]
+  approved_users       ApprovedUser[]
   user_communities     UserCommunity[]
   community_moderators CommunityModerator[]
   posts                Post[]
@@ -457,9 +459,20 @@ model BannedUser {
   community    Community @relation(fields: [community_id], references: [id])
   banned_at    DateTime
   ban_reason   String    @db.VarChar(500)
-  ban_duration DateTime
+  ban_duration DateTime? // no date = perma ban
 
-  @@index([user_id, community_id])
+  @@unique([user_id, community_id])
+}
+
+model ApprovedUser {
+  id           String    @id @default(uuid())
+  user_id      String
+  user         User      @relation(fields: [user_id], references: [id])
+  community_id String
+  community    Community @relation(fields: [community_id], references: [id])
+  approved_at  DateTime  @default(now())
+
+  @@unique([user_id, community_id])
 }
 
 model CommunityFlair {

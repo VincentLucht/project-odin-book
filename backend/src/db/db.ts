@@ -3,8 +3,9 @@ import { PrismaClient } from '@prisma/client/default';
 import UserManager from '@/db/managers/userManager/userManager';
 import CommunityManager from '@/db/managers/communityManager/communityManager';
 import TopicManager from '@/db/managers/topicManager';
-import UserCommunityManager from '@/db/managers/userCommunityManager';
+import UserCommunityManager from '@/db/managers/userCommunityManager/userCommunityManager';
 import BannedUsersManager from '@/db/managers/bannedUsersManager';
+import ApprovedUserManager from '@/db/managers/approvedUsersManager';
 import CommunityModeratorManager from '@/db/managers/communityModeratorManager';
 import PostModerationManager from '@/db/managers/postModerationManager';
 import CommunityFlairManager from '@/db/managers/communityFlairManager';
@@ -36,6 +37,7 @@ export class DB {
   public postModeration: PostModerationManager;
   public commentModeration: CommentModerationManager;
   public bannedUsers: BannedUsersManager;
+  public approvedUser: ApprovedUserManager;
   public topic: TopicManager;
   public communityFlair: CommunityFlairManager;
   public post: PostManager;
@@ -65,6 +67,7 @@ export class DB {
     this.postModeration = new PostModerationManager(this.prisma);
     this.commentModeration = new CommentModerationManager(this.prisma);
     this.bannedUsers = new BannedUsersManager(this.prisma);
+    this.approvedUser = new ApprovedUserManager(this.prisma);
     this.topic = new TopicManager(this.prisma);
     this.communityFlair = new CommunityFlairManager(this.prisma);
     this.post = new PostManager(this.prisma);

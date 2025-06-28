@@ -20,6 +20,7 @@ import commentModerationRouter from '@/commentModeration/commentModerationRouter
 import modMailRouter from '@/modMail/modMailRouter';
 import reportRouter from '@/report/reportRouter';
 import notificationRouter from '@/notification/notificationRouter';
+import approvedUsersRouter from '@/approvedUser/approvedUserRouter';
 
 import chatRouter from '@/chats/chat/chatRouter';
 import messageRouter from '@/chats/message/messageRouter';
@@ -47,6 +48,7 @@ router.use('/topic', topicRouter);
 router.use('/modmail', modMailRouter);
 router.use('/report', reportRouter);
 router.use('/notification', notificationRouter);
+router.use('/community/user/approved', approvedUsersRouter);
 
 router.use('/chat', chatRouter);
 router.use('/chat/message', messageRouter);
