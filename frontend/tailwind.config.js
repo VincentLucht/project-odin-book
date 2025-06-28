@@ -73,7 +73,7 @@ export default {
           backgroundColor: '#696C6E'
         },
         '.bg-gray-inactive': {
-          '@apply bg-gray-700': {}
+          '@apply bg-gray-700 hover:bg-gray-700 active:bg-gray-700': {}
         },
         '.border-bg-gray': {
           borderColor: 'rgba(37,37,37,255)'
@@ -178,6 +178,15 @@ export default {
         },
         '.sidebar-btn-stone': {
           '@apply min-h-8 w-full rounded-full bg-stone-800 px-2 text-xs font-medium transition-colors hover:bg-stone-700 active:bg-stone-600': {}
+        },
+        '.close-with-circle': {
+          '@apply !h-[18px] !w-[18px] border rounded-full p-[2px]': {}
+        },
+        '.user-indicator': {
+          '@apply rounded-full px-3 py-1 text-xs font-medium': {}
+        },
+        '.user-indicator-self': {
+          '@apply rounded-full px-3 py-1 text-xs font-medium bg-emerald-100 text-emerald-800': {}
         },
         '.post-message': {
           '@apply flex items-center gap-3 rounded-md border border-gray-600 p-4 text-sm text-gray-400': {}
