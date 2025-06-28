@@ -2,7 +2,7 @@ import CloseButton from '@/components/Interaction/CloseButton';
 
 interface ModalHeaderProps {
   headerName: string;
-  description?: string;
+  description?: string | React.ReactNode;
   className?: string;
   onClose: () => void;
 }
@@ -21,7 +21,9 @@ export default function ModalHeader({
         <CloseButton customFunc={onClose} />
       </div>
 
-      {description && <div className="modal-description">{description}</div>}
+      {description && (
+        <div className="whitespace-pre-wrap modal-description">{description}</div>
+      )}
     </>
   );
 }
