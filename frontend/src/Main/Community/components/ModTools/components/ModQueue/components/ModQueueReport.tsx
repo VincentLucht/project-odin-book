@@ -304,34 +304,34 @@ export default function ModQueueReport({
             onModerationCb={onModeration}
           />
         )}
-
-        <Modal
-          show={showDismissReasonModal}
-          onClose={() => setShowDismissReasonModal(false)}
-        >
-          <ModalHeader
-            headerName={`Are you sure you want to dismiss ${report.report_count} ${report.report_count === 1 ? 'report' : 'reports'}?`}
-            onClose={() => setShowDismissReasonModal(false)}
-          />
-
-          <ModalTextArea
-            labelName="You may provide a reason for your decision"
-            value={dismissReason}
-            setterFunc={setDismissReason}
-            maxLength={100}
-          />
-
-          <ModalFooter
-            onClose={() => setShowDismissReasonModal(false)}
-            onClick={() => {
-              onModeration('REMOVED', true);
-              setShowDismissReasonModal(false);
-            }}
-            submitting={submitting}
-            confirmButtonName="Dismiss"
-          />
-        </Modal>
       </div>
+
+      <Modal
+        show={showDismissReasonModal}
+        onClose={() => setShowDismissReasonModal(false)}
+      >
+        <ModalHeader
+          headerName={`Are you sure you want to dismiss ${report.report_count} ${report.report_count === 1 ? 'report' : 'reports'}?`}
+          onClose={() => setShowDismissReasonModal(false)}
+        />
+
+        <ModalTextArea
+          labelName="You may provide a reason for your decision"
+          value={dismissReason}
+          setterFunc={setDismissReason}
+          maxLength={100}
+        />
+
+        <ModalFooter
+          onClose={() => setShowDismissReasonModal(false)}
+          onClick={() => {
+            onModeration('REMOVED', true);
+            setShowDismissReasonModal(false);
+          }}
+          submitting={submitting}
+          confirmButtonName="Dismiss"
+        />
+      </Modal>
     </>
   );
 }
