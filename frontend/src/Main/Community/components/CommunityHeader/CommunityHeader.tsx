@@ -77,6 +77,13 @@ export default function CommunityHeader({
           </div>
 
           <h3 className="ml-2 break-all text-3xl font-bold">r/{community.name}</h3>
+
+          {(community.type === 'PRIVATE' || community.type === 'RESTRICTED') && (
+            <div className="mb-1 flex items-center text-sm text-gray-secondary">
+              {community.type === 'PRIVATE' && '(PRIVATE)'}
+              {community.type === 'RESTRICTED' && '(RESTRICTED)'}
+            </div>
+          )}
         </div>
 
         <div className="ml-3 flex items-center justify-center gap-2 max-md:mt-4 max-md:self-end">
