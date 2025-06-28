@@ -37,31 +37,31 @@ class CommunityModeratorController {
   makeMod = asyncHandler(async (req: Request, res: Response) => {
     if (checkValidationError(req, res)) return;
 
-    const { community_id, target_user_id } = req.body;
+    const { community_id, username: targetUsername } = req.body;
 
     try {
       const { user_id } = getAuthUser(req.authData);
-      if (
-        !(await db.user.getById(user_id)) ||
-        !(await db.user.getById(target_user_id))
-      ) {
+      const targetUser = await db.user.getByUsername(targetUsername);
+      if (!(await db.user.getById(user_id)) || !targetUser) {
         return res.status(404).json({ message: 'User not found' });
       }
       if (!(await db.community.doesExistById(community_id))) {
         return res.status(404).json({ message: 'Community not found' });
       }
-      if (!(await db.communityModerator.isMod(user_id, community_id))) {
-        return res
-          .status(403)
-          .json({ message: 'You are not a moderator in this community' });
+
+      if (!(await db.community.isOwner(user_id, community_id))) {
+        return res.status(403).json({
+          message:
+            'Only the owner of this community can assign moderator roles',
+        });
       }
-      if (await db.communityModerator.isMod(target_user_id, community_id)) {
+      if (await db.communityModerator.isMod(targetUser.id, community_id)) {
         return res
           .status(403)
           .json({ message: 'This user already is a moderator' });
       }
 
-      await db.communityModerator.makeMod(community_id, target_user_id);
+      await db.communityModerator.makeMod(community_id, targetUser.id);
 
       return res.status(201).json({ message: 'Successfully made user mod' });
     } catch (error) {
@@ -76,34 +76,34 @@ class CommunityModeratorController {
   deleteMod = asyncHandler(async (req: Request, res: Response) => {
     if (checkValidationError(req, res)) return;
 
-    const { community_id, target_user_id } = req.body;
+    const { community_id, username: targetUsername } = req.body;
 
     try {
       const { user_id } = getAuthUser(req.authData);
-      if (
-        !(await db.user.getById(user_id)) ||
-        !(await db.user.getById(target_user_id))
-      ) {
+      const targetUser = await db.user.getByUsername(targetUsername);
+      if (!(await db.user.getById(user_id)) || !targetUser) {
         return res.status(404).json({ message: 'User not found' });
       }
       if (!(await db.community.doesExistById(community_id))) {
         return res.status(404).json({ message: 'Community not found' });
       }
-      if (!(await db.communityModerator.isMod(user_id, community_id))) {
-        return res
-          .status(403)
-          .json({ message: 'You are not a moderator in this community' });
+
+      if (!(await db.community.isOwner(user_id, community_id))) {
+        return res.status(403).json({
+          message:
+            'Only the owner of this community can remove moderator roles',
+        });
       }
-      if (!(await db.communityModerator.isMod(target_user_id, community_id))) {
+      if (!(await db.communityModerator.isMod(targetUser.id, community_id))) {
         return res
           .status(403)
           .json({ message: 'This user is not a moderator' });
       }
 
-      await db.communityModerator.deactivateMod(community_id, target_user_id);
+      await db.communityModerator.delete(community_id, targetUser.id);
 
       return res
-        .status(201)
+        .status(200)
         .json({ message: 'Successfully removed mod status' });
     } catch (error) {
       console.error(error);

@@ -29,7 +29,12 @@ describe('/community/mod', () => {
 
   const mockRequest = {
     community_id: '1',
-    target_user_id: '2',
+    username: 'targetuser',
+  };
+
+  const mockTargetUser = {
+    id: '2',
+    username: 'targetuser',
   };
 
   beforeEach(() => {
@@ -40,9 +45,10 @@ describe('/community/mod', () => {
   describe('POST /community/mod/user', () => {
     beforeEach(() => {
       mockDb.user.getById.mockResolvedValue(true);
+      mockDb.user.getByUsername.mockResolvedValue(mockTargetUser);
       mockDb.community.doesExistById.mockResolvedValue(true);
-      mockDb.communityModerator.isMod.mockResolvedValueOnce(true);
-      mockDb.communityModerator.isMod.mockResolvedValueOnce(false);
+      mockDb.community.isOwner.mockResolvedValue(true);
+      mockDb.communityModerator.isMod.mockResolvedValue(false);
       mockDb.communityModerator.makeMod.mockResolvedValue(true);
     });
 
@@ -60,7 +66,7 @@ describe('/community/mod', () => {
         assert.exp(response, 201, 'Successfully made user mod');
         expect(mockDb.communityModerator.makeMod).toHaveBeenCalledWith(
           mockRequest.community_id,
-          mockRequest.target_user_id,
+          mockTargetUser.id,
         );
       });
     });
@@ -74,7 +80,7 @@ describe('/community/mod', () => {
       });
 
       it('should handle target user not existing', async () => {
-        mockDb.user.getById.mockResolvedValue(false);
+        mockDb.user.getByUsername.mockResolvedValue(null);
         const response = await sendRequest(mockRequest);
 
         assert.user.notFound(response);
@@ -87,16 +93,14 @@ describe('/community/mod', () => {
         assert.community.notFound(response);
       });
 
-      it('should handle user not being a mod', async () => {
-        mockDb.communityModerator.isMod.mockReset();
-        mockDb.communityModerator.isMod.mockResolvedValueOnce(false);
+      it('should handle user not being the owner', async () => {
+        mockDb.community.isOwner.mockResolvedValue(false);
         const response = await sendRequest(mockRequest);
 
-        assert.exp(response, 403, 'You are not a moderator in this community');
+        assert.exp(response, 403, 'Only the owner of this community can assign moderator roles');
       });
 
       it('should handle target user already being a mod', async () => {
-        mockDb.communityModerator.isMod.mockReset();
         mockDb.communityModerator.isMod.mockResolvedValue(true);
         const response = await sendRequest(mockRequest);
 
@@ -119,8 +123,8 @@ describe('/community/mod', () => {
               {
                 'type': 'field',
                 'value': '',
-                'msg': 'Target user id required is required',
-                'path': 'target_user_id',
+                'msg': 'Username is required',
+                'path': 'username',
                 'location': 'body',
               },
             ],
@@ -140,9 +144,10 @@ describe('/community/mod', () => {
   describe('DELETE /community/mod/user', () => {
     beforeEach(() => {
       mockDb.user.getById.mockResolvedValue(true);
+      mockDb.user.getByUsername.mockResolvedValue(mockTargetUser);
       mockDb.community.doesExistById.mockResolvedValue(true);
-      mockDb.communityModerator.isMod.mockResolvedValueOnce(true);
-      mockDb.communityModerator.isMod.mockResolvedValueOnce(true);
+      mockDb.community.isOwner.mockResolvedValue(true);
+      mockDb.communityModerator.isMod.mockResolvedValue(true);
       mockDb.communityModerator.delete.mockResolvedValue(true);
     });
 
@@ -157,19 +162,24 @@ describe('/community/mod', () => {
       it('should successfully remove mod status', async () => {
         const response = await sendRequest(mockRequest);
 
-        assert.exp(response, 201, 'Successfully removed mod status');
+        assert.exp(response, 200, 'Successfully removed mod status');
         expect(mockDb.communityModerator.delete).toHaveBeenCalledWith(
           mockRequest.community_id,
-          mockRequest.target_user_id,
+          mockTargetUser.id,
         );
       });
     });
 
     describe('Error cases', () => {
+      it('should handle user not being the owner', async () => {
+        mockDb.community.isOwner.mockResolvedValue(false);
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 403, 'Only the owner of this community can remove moderator roles');
+      });
+
       it('should handle target user not being a mod', async () => {
-        mockDb.communityModerator.isMod.mockReset();
-        mockDb.communityModerator.isMod.mockResolvedValueOnce(true);
-        mockDb.communityModerator.isMod.mockResolvedValueOnce(false);
+        mockDb.communityModerator.isMod.mockResolvedValue(false);
         const response = await sendRequest(mockRequest);
 
         assert.exp(response, 403, 'This user is not a moderator');

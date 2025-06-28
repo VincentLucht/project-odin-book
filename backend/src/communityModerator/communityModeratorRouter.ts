@@ -26,6 +26,4 @@ communityModeratorRouter.delete(
   communityModeratorController.deleteMod,
 );
 
-communityModeratorRouter.get('/post', token.authenticate);
-
 export default communityModeratorRouter;

@@ -21,9 +21,9 @@ class CommunityModeratorValidator {
         .notEmpty()
         .withMessage(vm.communityIdReq()),
 
-      body('target_user_id').trim()
+      body('username').trim()
         .notEmpty()
-        .withMessage(vm.req('Target user id required')),
+        .withMessage(vm.req('Username')),
     ];
   }
 
@@ -33,9 +33,9 @@ class CommunityModeratorValidator {
         .notEmpty()
         .withMessage(vm.communityIdReq()),
 
-      body('target_user_id').trim()
+      body('username').trim()
         .notEmpty()
-        .withMessage(vm.req('Target user id required')),
+        .withMessage(vm.req('Username')),
     ];
   }
 }
