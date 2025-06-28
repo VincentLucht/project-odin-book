@@ -124,17 +124,70 @@ export default async function createCommunities(prisma: PrismaClient) {
     ],
   });
 
-  // Create admins
-  await prisma.communityModerator.create({
-    data: {
-      user_id: '1',
-      community_id: '1',
+  // Create admins - Only for users with ID 1 and 2
+  const allUsers = await prisma.user.findMany({
+    select: { id: true },
+    orderBy: {
+      created_at: 'asc',
     },
   });
-  await prisma.communityModerator.create({
+
+  // Start timestamp
+  const baseTime = new Date();
+  const priorityUserIds = ['1', '2'];
+
+  // Only get priority users (users with ID 1 and 2)
+  const priorityUsers = allUsers.filter((user) =>
+    priorityUserIds.includes(user.id),
+  );
+
+  // Create moderators only for priority users
+  const createdAt = new Date(baseTime);
+  createdAt.setHours(createdAt.getHours() - 10);
+
+  for (let i = 0; i < priorityUsers.length; i++) {
+    const user = priorityUsers[i];
+    await prisma.communityModerator.create({
+      data: {
+        user_id: user.id,
+        community_id: '1',
+        created_at: createdAt,
+      },
+    });
+    createdAt.setMinutes(createdAt.getMinutes() + 1);
+  }
+
+  // Add remaining users (excluding admins) to t1 community as regular members
+  const existingMemberIds = ['1', '2'];
+  const availableUsers = allUsers.filter(
+    (user) => !existingMemberIds.includes(user.id),
+  );
+
+  const userCommunityData = availableUsers.map((user) => ({
+    id: `random_member_${user.id}_community_1`,
+    community_id: '1',
+    user_id: user.id,
+    role: 'CONTRIBUTOR' as const,
+  }));
+
+  if (userCommunityData.length > 0) {
+    await prisma.userCommunity.createMany({
+      data: userCommunityData,
+    });
+  }
+
+  // Approve users
+  await prisma.approvedUser.create({
     data: {
-      user_id: '2',
       community_id: '1',
+      user_id: '1',
+    },
+  });
+
+  await prisma.approvedUser.create({
+    data: {
+      community_id: '1',
+      user_id: '2',
     },
   });
 
