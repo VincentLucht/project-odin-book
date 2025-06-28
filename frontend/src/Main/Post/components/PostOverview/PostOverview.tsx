@@ -256,7 +256,9 @@ export default function PostOverview({
           {!showRemovedByModeration && (
             <>
               <Transition show={showBody} {...transitionPropsHeight}>
-                <div className="whitespace-pre-line break-all">{post.body}</div>
+                <div className="line-clamp-[10] whitespace-pre-line break-all">
+                  {post.body}
+                </div>
               </Transition>
 
               <Transition show={hideContent} {...transitionPropsHeight}>
