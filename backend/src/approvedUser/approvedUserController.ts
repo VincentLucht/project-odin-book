@@ -22,7 +22,7 @@ class ApprovedUserController {
       if (!community) {
         return res.status(404).json({ message: 'Community not found' });
       }
-      if (await db.approvedUser.isApproved(community_id, approvedUser.id)) {
+      if (await db.approvedUser.isApproved(approvedUser.id, community_id)) {
         return res
           .status(400)
           .json({ message: 'This user is already approved' });
@@ -67,7 +67,7 @@ class ApprovedUserController {
           message: 'You can not unnaprove the owner of this community',
         });
       }
-      if (!(await db.approvedUser.isApproved(community_id, approvedUser.id))) {
+      if (!(await db.approvedUser.isApproved(approvedUser.id, community_id))) {
         return res.status(400).json({ message: 'This user is not approved' });
       }
 

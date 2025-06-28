@@ -3,8 +3,8 @@ import { PrismaClient } from '@prisma/client/default';
 export default class ApprovedUserManager {
   constructor(private prisma: PrismaClient) {}
 
-  async isApproved(community_id: string, user_id: string) {
-    return await this.prisma.approvedUser.findUnique({
+  async isApproved(user_id: string, community_id: string) {
+    const result = await this.prisma.approvedUser.findUnique({
       where: {
         user_id_community_id: {
           user_id,
@@ -12,6 +12,8 @@ export default class ApprovedUserManager {
         },
       },
     });
+
+    return result !== null;
   }
 
   async create(community_id: string, user_id: string) {
