@@ -7,6 +7,20 @@ import userCommunityController from '@/userCommunity/userCommunityController';
 const userCommunityRouter = express.Router();
 
 userCommunityRouter.get(
+  '/members', // ?cmId=community_id&cId=cursor_id
+  token.authenticate,
+  userCommunityValidator.getMembersRules(),
+  userCommunityController.getMembers,
+);
+
+userCommunityRouter.get(
+  '/members/search', // ?cmId=community_id&u=username
+  token.authenticate,
+  userCommunityValidator.getMembersByNameRules(),
+  userCommunityController.getMembersByName,
+);
+
+userCommunityRouter.get(
   '/homepage',
   token.authenticate,
   userCommunityController.fetchHomePage,
@@ -23,6 +37,20 @@ userCommunityRouter.post(
   token.authenticate,
   userCommunityValidator.joinRules(),
   userCommunityController.join,
+);
+
+userCommunityRouter.post(
+  '/members/ban',
+  token.authenticate,
+  userCommunityValidator.banRules(),
+  userCommunityController.ban,
+);
+
+userCommunityRouter.delete(
+  '/members/unban',
+  token.authenticate,
+  userCommunityValidator.unbanRules(),
+  userCommunityController.unban,
 );
 
 userCommunityRouter.delete(
