@@ -2,6 +2,7 @@ interface CloseButtonProps {
   className?: string;
   classNameSvg?: string;
   outline?: boolean;
+  type?: 'button' | 'reset' | 'submit';
   customFunc: () => void;
 }
 
@@ -9,6 +10,7 @@ export default function CloseButton({
   className,
   classNameSvg,
   outline = true,
+  type = 'button',
   customFunc,
 }: CloseButtonProps) {
   if (!outline) {
@@ -32,6 +34,7 @@ export default function CloseButton({
       className={`h-8 w-8 rounded-full p-1 transition-transform df normal-bg-transition active:scale-95
         ${className}`}
       onClick={customFunc}
+      type={type}
     >
       <img
         src="/x-close.svg"
