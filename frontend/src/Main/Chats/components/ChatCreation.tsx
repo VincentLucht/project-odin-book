@@ -150,9 +150,7 @@ export default function ChatCreation({
                   </div>
 
                   {userSelf.username === user.username ? (
-                    <div className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-800">
-                      You
-                    </div>
+                    <div className="user-indicator-self">You</div>
                   ) : user.can_create_chat ? (
                     <div className="flex items-center gap-2">
                       {user.already_has_chat && (
@@ -179,7 +177,7 @@ export default function ChatCreation({
         <button
           className={`fixed bottom-0 right-0 mb-2 mr-2 h-8 prm-button-blue ${
           !selectedUser.username || selectedUser.already_has_chat
-              ? '!bg-gray-inactive hover:!bg-gray-inactive active:!bg-gray-inactive'
+              ? '!bg-gray-inactive'
               : 'im active'
           }`}
           onClick={() => {
