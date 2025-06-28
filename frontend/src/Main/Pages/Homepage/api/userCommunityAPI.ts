@@ -5,6 +5,8 @@ import { Pagination } from '@/interface/backendTypes';
 import { TimeFrame } from '@/Main/Community/Community';
 import { HomepagePost } from '@/Main/Pages/Homepage/Homepage';
 
+// All calls are in userCommunityController.ts
+
 // ! GET
 interface fetchHomePageResponse {
   message: string;
@@ -25,6 +27,40 @@ export async function fetchHomePage(
   try {
     const result = await apiRequest<fetchHomePageResponse>(endpoint, 'GET', token);
     onComplete(result.posts, result.pagination);
+  } catch (error) {
+    catchError(error);
+  }
+}
+
+export async function banUser(
+  token: string,
+  apiData: {
+    community_id: string;
+    username: string;
+    ban_duration: string | null;
+    ban_reason: string;
+  },
+  onComplete: () => void,
+) {
+  try {
+    await apiRequest('/community/members/ban', 'POST', token, apiData);
+    onComplete();
+  } catch (error) {
+    catchError(error);
+  }
+}
+
+export async function unbanUser(
+  token: string,
+  apiData: {
+    community_id: string;
+    username: string;
+  },
+  onComplete: () => void,
+) {
+  try {
+    await apiRequest('/community/members/unban', 'DELETE', token, apiData);
+    onComplete();
   } catch (error) {
     catchError(error);
   }
