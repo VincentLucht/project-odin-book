@@ -5,14 +5,15 @@ import Separator from '@/components/Separator';
 import { Link } from 'react-router-dom';
 import { BanIcon, LockOpenIcon, CircleMinus } from 'lucide-react';
 import BanUserModal from '@/components/Modal/global/BanUserModal';
+import RemoveModeratorModal from '@/components/Modal/global/RemoveModeratorModal';
 import UnbanUserModal from '@/components/Modal/global/UnbanUserModal';
+import UnapproveUserModal from '@/components/Modal/global/UnapproveUserModal';
 import UserIndicators from '@/Main/Community/components/ModTools/components/Mods&Members/components/components/UserIndicators';
 
 import dayjs from 'dayjs';
 
 import { FetchedCommunityMember } from '@/Main/Community/components/ModTools/api/communityModerationAPI';
 import { MemberType } from '@/Main/Community/components/ModTools/components/Mods&Members/components/CommunityMembersApiFilters';
-import UnapproveUserModal from '@/components/Modal/global/UnapproveUserModal';
 
 interface CommunityMemberProps {
   member: FetchedCommunityMember;
@@ -40,6 +41,7 @@ export default function CommunityMember({
   setSearchResultsMembers,
 }: CommunityMemberProps) {
   const [showBanModal, setShowBanModal] = useState(false);
+  const [showRemoveModModal, setShowRemoveModModal] = useState(false);
   const [showUnbanModal, setShowUnbanModal] = useState(false);
   const [showUnapproveModal, setShowUnapproveModal] = useState(false);
 
@@ -54,8 +56,7 @@ export default function CommunityMember({
         );
   };
 
-  const isBanAllowed =
-    type === 'users' || (type === 'moderators' && username === ownerName);
+  const isBanAllowed = type === 'users';
   const isUserSelf = memberUsername === username;
   const isOwner = memberUsername === ownerName;
 
@@ -143,6 +144,15 @@ export default function CommunityMember({
               </button>
             )}
 
+            {type === 'moderators' && !isOwner && (
+              <button
+                onClick={() => setShowRemoveModModal(true)}
+                className="bg-hover-transition"
+              >
+                <CircleMinus className="text-red-500" />
+              </button>
+            )}
+
             {type === 'approved' && !isUserSelf && !isOwner && (
               <button
                 onClick={() => setShowUnapproveModal(true)}
@@ -163,6 +173,17 @@ export default function CommunityMember({
           token={token}
           communityId={communityId}
           onBan={() => removeMemberFromList(memberUsername)}
+        />
+      )}
+
+      {type === 'moderators' && (
+        <RemoveModeratorModal
+          show={showRemoveModModal}
+          onClose={() => setShowRemoveModModal(false)}
+          memberUsername={memberUsername}
+          token={token}
+          communityId={communityId}
+          onRemoveModerator={() => removeMemberFromList(memberUsername)}
         />
       )}
 
