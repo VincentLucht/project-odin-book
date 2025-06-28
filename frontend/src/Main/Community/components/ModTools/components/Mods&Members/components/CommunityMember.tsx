@@ -94,12 +94,12 @@ export default function CommunityMember({
         </Link>
 
         <div
-          className={`grid gap-1 ${type === 'banned' ? 'grid-cols-3' : 'grid-cols-2'}`}
+          className={`grid gap-1 ${type === 'banned' ? 'grid-cols-[6fr_3fr_3fr]' : 'grid-cols-2'}`}
         >
           {type === 'users' ? (
             <div className="flex items-center break-all">{member?.role}</div>
           ) : (
-            <div className="flex items-center break-all pr-1">{member.ban_reason}</div>
+            <div className="flex items-center break-all pr-2">{member.ban_reason}</div>
           )}
 
           {type === 'banned' && (

@@ -122,7 +122,8 @@ export default function ModMembers() {
             <div>USERNAME</div>
 
             <div
-              className={`grid gap-1 ${selectedMemberType === 'banned' ? 'grid-cols-3' : 'grid-cols-2'}`}
+              className={`grid gap-1
+                ${selectedMemberType === 'banned' ? 'grid-cols-[6fr_3fr_3fr]' : 'grid-cols-2'}`}
             >
               {selectedMemberType === 'banned' && (
                 <>
