@@ -82,8 +82,8 @@ describe('/community/flair', () => {
         assert.exp(response, 409, 'Flair already exists');
       });
 
-      it('should handle user not being a mod', async () => {
-        mockDb.communityModerator.isMod.mockResolvedValue(false);
+      it('should handle user not being a member', async () => {
+        mockDb.userCommunity.isMember.mockResolvedValue(false);
         const response = await sendRequest(mockRequest);
 
         assert.communityModerator.notAdmin(response);

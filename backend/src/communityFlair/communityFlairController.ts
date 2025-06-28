@@ -109,10 +109,10 @@ class CommunityFlairController {
         return res.status(404).json({ message: 'Community not found' });
       }
 
-      if (!(await db.communityModerator.isMod(user_id, community.id))) {
+      if (!(await db.userCommunity.isMember(user_id, community.id))) {
         return res
           .status(403)
-          .json({ message: 'You are not moderator in this community' });
+          .json({ message: 'You are not member of this community' });
       }
 
       const { flairs, pagination } = await db.communityFlair.fetch(
