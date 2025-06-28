@@ -15,6 +15,7 @@ const mockDb = {
     getByName: jest.fn(),
     isPrivate: jest.fn(),
     create: jest.fn(),
+    isOwner: jest.fn(),
   },
   userCommunity: {
     isMember: jest.fn(),
@@ -94,6 +95,11 @@ const mockDb = {
   },
   modMail: {
     sendMessage: jest.fn(),
+  },
+  approvedUser: {
+    isApproved: jest.fn(),
+    create: jest.fn(),
+    delete: jest.fn(),
   },
 };
 
