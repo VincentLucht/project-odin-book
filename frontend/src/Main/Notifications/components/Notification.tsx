@@ -80,7 +80,7 @@ export default function Notification({
           <div
             className={`text-gray-secondary ${
               notification.type === 'MODMESSAGE'
-                ? 'break-all'
+                ? 'break-words'
                 : notification.type === 'MODMAILREPLY'
                   ? 'whitespace-pre-wrap'
                   : 'text-hidden-ellipsis'
