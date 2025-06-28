@@ -41,12 +41,17 @@ export default class CommunityModeratorManager {
   }
 
   async isMod(user_id: string, community_id: string) {
-    const count = await this.prisma.communityModerator.count({
-      where: { user_id, community_id },
+    const moderator = await this.prisma.communityModerator.findUnique({
+      where: {
+        community_id_user_id: {
+          user_id,
+          community_id,
+        },
+      },
     });
-    return count > 0;
-  }
 
+    return moderator && moderator.is_active;
+  }
   async getById(user_id: string, community_id: string) {
     const moderator = await this.prisma.communityModerator.findUnique({
       where: {
@@ -80,6 +85,17 @@ export default class CommunityModeratorManager {
     await this.prisma.communityModerator.update({
       where: { community_id_user_id: { community_id, user_id } },
       data: { is_active: false },
+    });
+  }
+
+  async delete(community_id: string, user_id: string) {
+    await this.prisma.communityModerator.delete({
+      where: {
+        community_id_user_id: {
+          community_id,
+          user_id,
+        },
+      },
     });
   }
 }
