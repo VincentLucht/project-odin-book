@@ -116,7 +116,7 @@ export default function ModTools() {
           className={`fixed z-20 h-full transform transition-transform duration-200
             ${showSidebar ? 'translate-x-0' : '-translate-x-full'}`}
         >
-          <ModSidebar />
+          <ModSidebar setShowSidebar={setShowSidebar} isDesktop={isDesktop} />
         </div>
 
         <div className={`flex-1 ${isDesktop && showSidebar ? 'ml-[320px]' : ''}`}>
