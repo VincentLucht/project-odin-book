@@ -2,12 +2,14 @@ import bcrypt from 'bcrypt';
 import { PrismaClient } from '@prisma/client/default';
 
 export default async function createUsers(prisma: PrismaClient) {
+  const createdAt = new Date();
+  createdAt.setHours(createdAt.getHours() - 20);
+
   // Users for populating search results
   for (let i = 0; i < 300; i++) {
     const isMature = Math.random() < 0.1;
 
     // Increment by 1 min for each iteration
-    const createdAt = new Date();
     createdAt.setMinutes(createdAt.getMinutes() + i);
 
     const user = await prisma.user.create({
