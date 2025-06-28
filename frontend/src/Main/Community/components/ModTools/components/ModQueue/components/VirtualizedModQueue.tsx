@@ -44,52 +44,52 @@ export default function VirtualizedModQueue({
       if (!report) return null;
 
       return (
-        <div data-id={report.id}>
-          <ModQueueReport
-            report={report}
-            user={user}
-            setReports={setReports}
-            token={token}
-            currentPostId={currentPostId}
-            setCurrentPostId={setCurrentPostId}
-            currentCommentId={currentCommentId}
-            setCurrentCommentId={setCurrentCommentId}
-            navigate={navigate}
-          />
-        </div>
+        <ModQueueReport
+          report={report}
+          user={user}
+          setReports={setReports}
+          token={token}
+          currentPostId={currentPostId}
+          setCurrentPostId={setCurrentPostId}
+          currentCommentId={currentCommentId}
+          setCurrentCommentId={setCurrentCommentId}
+          navigate={navigate}
+        />
       );
     },
     [reports, token, user, currentPostId, currentCommentId, setReports, navigate],
   );
 
   return (
-    <div>
-      <Virtuoso
-        data={reports}
-        itemContent={(index) => ItemRenderer(index)}
-        overscan={200}
-        useWindowScroll
-        scrollerRef={() => window}
-        computeItemKey={(index) => reports[index]?.id || index.toString()}
-        endReached={() => {
-          if (pagination.hasMore && !loading) {
-            loadMore(
-              pagination.nextCursor.lastScore,
-              pagination.nextCursor.lastDate,
-              pagination.nextCursor.lastId,
-              false,
-            );
-          }
-        }}
-      />
-
-      <EndMessageHandler
-        loading={loading}
-        hasMorePages={pagination.hasMore}
-        dataLength={reports.length}
-        noResultsMessage="No reports found."
-        endMessageClassName="mt-14"
-      />
-    </div>
+    <Virtuoso
+      data={reports}
+      itemContent={(index) => ItemRenderer(index)}
+      overscan={200}
+      useWindowScroll
+      scrollerRef={() => window}
+      computeItemKey={(index) => reports[index]?.id || index.toString()}
+      endReached={() => {
+        if (pagination.hasMore && !loading) {
+          loadMore(
+            pagination.nextCursor.lastScore,
+            pagination.nextCursor.lastDate,
+            pagination.nextCursor.lastId,
+            false,
+          );
+        }
+      }}
+      components={{
+        Footer: () => (
+          <EndMessageHandler
+            loading={loading}
+            hasMorePages={pagination.hasMore}
+            dataLength={reports.length}
+            noResultsMessage="No reports found."
+            logoClassName="mt-4 mb-2"
+            endMessageClassName="mt-14"
+          />
+        ),
+      }}
+    />
   );
 }
