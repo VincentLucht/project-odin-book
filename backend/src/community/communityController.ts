@@ -109,11 +109,12 @@ class CommunityController {
           return res.status(404).json({ message: 'User not found' });
         }
 
-        const isMember = await db.userCommunity.isMember(
-          user_id,
-          foundCommunity.id,
-        );
-        if (!isMember) {
+        const [isMember, isApproved] = await Promise.all([
+          db.userCommunity.isMember(user_id, foundCommunity.id),
+          db.approvedUser.isApproved(user_id, foundCommunity.id),
+        ]);
+
+        if (!isMember && !isApproved) {
           return res
             .status(403)
             .json({ message: 'You are not part of this community' });
