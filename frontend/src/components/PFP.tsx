@@ -18,8 +18,13 @@ export default function PFP({
   className,
 }: CommunityPFPProps) {
   const pfp =
-    mode === 'user' ? (src ?? '/user.svg') : (src ?? '/community-default.svg');
-
+    mode === 'user'
+      ? src && src.trim() !== ''
+        ? src
+        : '/user.svg'
+      : src && src.trim() !== ''
+        ? src
+        : '/community-default.svg';
   return (
     <img
       src={pfp}
