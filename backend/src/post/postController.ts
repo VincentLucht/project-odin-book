@@ -35,18 +35,28 @@ class PostController {
           .json({ message: response?.message });
       }
 
-      const postAndCommunity = await db.post.getByIdAndCommunity(
-        post.id,
-        post.community_id,
-        response.user_id,
-      );
+      const [postAndCommunity, isMod] = await Promise.all([
+        db.post.getByIdAndCommunity(
+          post.id,
+          post.community_id,
+          response.user_id,
+        ),
+        response.user_id
+          ? db.communityModerator.isMod(response.user_id, post.community_id)
+          : Promise.resolve(false),
+      ]);
+
       if (response.user_id) {
         await db.recentCommunities.assign(response.user_id, post.community_id);
       }
 
-      return res
-        .status(200)
-        .json({ message: 'Successfully fetched post', postAndCommunity });
+      return res.status(200).json({
+        message: 'Successfully fetched post',
+        postAndCommunity: {
+          ...postAndCommunity,
+          community: { ...postAndCommunity?.community, is_moderator: isMod },
+        },
+      });
     } catch (error) {
       console.error(error);
       return res.status(500).json({
