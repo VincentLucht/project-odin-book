@@ -2,7 +2,7 @@ import { useEffect, useCallback } from 'react';
 
 import { Virtuoso } from 'react-virtuoso';
 import PostOverview from '@/Main/Post/components/PostOverview/PostOverview';
-import LogoLoading from '@/components/Lazy/Logo/LogoLoading';
+import EndMessageHandler from '@/Main/Global/EndMessageHandler';
 
 import handleFetchMorePosts from '@/Main/Community/api/fetch/posts/handleFetchMorePosts';
 
@@ -12,11 +12,7 @@ import { CommunityInfo } from '@/Main/Post/components/PostOverview/PostOverview'
 import { FetchedPost, SortByType, TimeFrame } from '@/Main/Community/Community';
 import { CommunityModerator } from '@/Main/Community/api/fetch/fetchCommunityWithPosts';
 
-export type IsMod =
-  | false
-  | {
-      user: CommunityModerator;
-    };
+export type IsMod = CommunityModerator | false;
 
 interface VirtualizedPostOverviewProps {
   community: CommunityInfo;
@@ -153,29 +149,30 @@ export default function VirtualizedPostOverview({
   );
 
   return (
-    <div>
-      {posts.length > 0 ? (
-        <>
-          <Virtuoso
-            data={posts}
-            totalCount={posts.length}
-            itemContent={(index) => ItemRenderer(index)}
-            overscan={200} // Pre-render items outside viewport for smoother scrolling
-            useWindowScroll
-            scrollerRef={() => window}
-            computeItemKey={(index) => posts[index]?.id || index.toString()}
-            endReached={() => {
-              if (hasMore && !loadingMore) {
-                loadMore();
-              }
-            }}
+    <Virtuoso
+      data={posts}
+      totalCount={posts.length}
+      itemContent={(index) => ItemRenderer(index)}
+      overscan={200} // Pre-render items outside viewport for smoother scrolling
+      useWindowScroll
+      scrollerRef={() => window}
+      computeItemKey={(index) => posts[index]?.id || index.toString()}
+      endReached={() => {
+        if (hasMore && !loadingMore) {
+          loadMore();
+        }
+      }}
+      components={{
+        Footer: () => (
+          <EndMessageHandler
+            loading={loadingMore}
+            hasMorePages={hasMore}
+            dataLength={posts.length}
+            logoClassName="mt-2"
+            noResultsMessage="No posts found"
           />
-
-          {loadingMore && <LogoLoading className="mt-8" />}
-        </>
-      ) : (
-        <div>No posts available</div>
-      )}
-    </div>
+        ),
+      }}
+    />
   );
 }

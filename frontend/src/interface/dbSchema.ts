@@ -307,7 +307,7 @@ export interface DBCommentWithCommunityName extends DBComment {
 export interface DBPostWithCommunity extends DBPostWithModeration {
   poster: { username: string; deleted_at: string | null } | null;
   post_votes: VotingRecord[];
-  community: FetchedCommunity;
+  community: FetchedCommunity & { is_moderator?: boolean };
   post_assigned_flair: PostAssignedFlair;
   reports: DBReport[];
 }

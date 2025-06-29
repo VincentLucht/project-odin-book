@@ -39,7 +39,7 @@ export default function ModTools() {
   const location = useLocation();
   const { isDesktop, isMobile, isBelow550px } = useGetScreenSize();
   const { user, token } = useAuthGuard();
-  const isMod = useIsModerator(user, community?.community_moderators);
+  const isMod = useIsModerator(user, community ? true : false);
 
   useEffect(() => {
     setCommunityName(getCommunityName(location.pathname));

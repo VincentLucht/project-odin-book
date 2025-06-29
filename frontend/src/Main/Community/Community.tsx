@@ -10,8 +10,8 @@ import CommunityHeader from '@/Main/Community/components/CommunityHeader/Communi
 import SetSortByType from '@/Main/Community/components/CommunityHeader/components/SetSortByType';
 import CommunitySidebar from '@/Main/Community/components/CommunitySidebar/CommunitySidebar';
 import VirtualizedPostOverview from '@/Main/Community/components/Virtualization/VirtualizedPostOverview';
-import EndMessage from '@/components/partials/EndMessage';
 import ShowHideButton from '@/Main/Global/ShowHideButton';
+import CommunityLazy from '@/Main/Community/loading/CommunityLazy';
 
 import CommunityPostManager from '@/Main/Community/util/CommunityPostManager';
 import CommunityPostHandler from '@/Main/Community/handlers/CommunityPostHandler';
@@ -26,7 +26,6 @@ export type TimeFrame = 'day' | 'week' | 'month' | 'year' | 'all';
 
 export type FetchedPost = Omit<DBPostWithCommunityName, 'community'>;
 
-// TODO: Add no posts
 export default function Community() {
   const location = useLocation();
   const [showEditDropdown, setShowEditDropdown] = useState<string | null>(null);
@@ -49,7 +48,7 @@ export default function Community() {
   const { isMobile } = useGetScreenSize();
   const [showSidebar, setShowSidebar] = useState(false);
 
-  const isMod = useIsModerator(user, community?.community_moderators);
+  const isMod = useIsModerator(user, community?.is_moderator);
   const isMember = useIsMember(user, community);
 
   const communityPostHandler = useMemo(
@@ -87,6 +86,7 @@ export default function Community() {
   useEffect(() => {
     setCursorId('');
     setHasMore(true);
+    setCommunity(null);
 
     handleFetchCommunity(
       communityName,
@@ -98,8 +98,18 @@ export default function Community() {
     );
   }, [communityName, sortByType, timeframe, token, onComplete]);
 
-  if (!community || loading) {
-    return <div>No community found!</div>;
+  if (loading || !community) {
+    return <CommunityLazy isMobile={isMobile} />;
+  }
+
+  if (!community && !loading) {
+    return (
+      <div>
+        <div>No community with this name found.</div>
+
+        <div>Are you sure this is the correct name? </div>
+      </div>
+    );
   }
 
   return (
@@ -165,8 +175,6 @@ export default function Community() {
                   showModDropdown={showModDropdown}
                   setShowModDropdown={setShowModDropdown}
                 />
-
-                {!hasMore && <EndMessage className="mt-5" />}
               </>
             )}
           </div>

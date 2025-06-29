@@ -21,6 +21,7 @@ export interface FetchedCommunityWithPosts {
   created_at: Date;
   is_mature: boolean;
   is_post_flair_required: boolean;
+  is_moderator: boolean;
   name: string;
   owner_id: string;
   profile_picture_url: string | null;

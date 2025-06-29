@@ -26,12 +26,12 @@ export default function usePostModerationCommunity(
                   id: 'tempId',
                   action: 'APPROVED',
                   created_at: new Date().toISOString(),
-                  moderator_id: isMod.user.id,
+                  moderator_id: isMod.id,
                   post_id: postId,
                   moderator: {
                     user: {
-                      username: isMod.user.username,
-                      profile_picture_url: isMod.user.profile_picture_url,
+                      username: isMod.username,
+                      profile_picture_url: isMod.profile_picture_url,
                     },
                   },
                 },
@@ -56,12 +56,12 @@ export default function usePostModerationCommunity(
                   id: 'tempId',
                   action: 'REMOVED',
                   created_at: new Date().toISOString(),
-                  moderator_id: isMod.user.id,
+                  moderator_id: isMod.id,
                   post_id: postId,
                   moderator: {
                     user: {
-                      username: isMod.user.username,
-                      profile_picture_url: isMod.user.profile_picture_url,
+                      username: isMod.username,
+                      profile_picture_url: isMod.profile_picture_url,
                     },
                   },
                 },

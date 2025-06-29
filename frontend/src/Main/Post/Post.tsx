@@ -26,14 +26,6 @@ import { DBPostWithCommunity } from '@/interface/dbSchema';
 import { VoteType } from '@/interface/backendTypes';
 import { HandlePostVoteType } from '@/Main/Post/api/vote/handlePostVote';
 import { IsMod } from '@/Main/Community/components/Virtualization/VirtualizedPostOverview';
-import { CommunityModerator } from '@/Main/Community/api/fetch/fetchCommunityWithPosts';
-
-export type IsModPost =
-  | false
-  | {
-      is_active: boolean;
-      user: Omit<CommunityModerator, 'user_assigned_flair'>;
-    };
 
 interface PostProps {
   mode?: 'fetched' | 'normal';
@@ -42,7 +34,6 @@ interface PostProps {
   givenPostId?: string | null;
 }
 
-// TODO: Add loading + not found
 // TODO: Add go back button => but like completely back
 export default function Post({
   mode = 'normal',
@@ -75,7 +66,7 @@ export default function Post({
     handleFetchPost(effectivePostId ?? '', token, setPost, onComplete);
   }, [effectivePostId, token, mode]);
 
-  const isMod = useIsModerator(user, post?.community?.community_moderators);
+  const isMod = useIsModerator(user, post?.community?.is_moderator);
   const isMember = useIsMember(user, post?.community);
   const hasReported = (post?.reports?.length ?? 0) > 0;
 
@@ -219,6 +210,7 @@ export default function Post({
             onVote={onVote}
             showModOptions={isMod !== false}
             isMod={isMod as IsMod}
+            isMobile={isMobile}
             showModDropdown={showModDropdown}
             setShowModDropdown={setShowModDropdown}
             showEditDropdown={showEditDropdown}

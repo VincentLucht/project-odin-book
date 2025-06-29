@@ -15,7 +15,7 @@ import { DBCommentWithReplies } from '@/interface/dbSchema';
 import { DBPostWithCommunity } from '@/interface/dbSchema';
 import { TokenUser } from '@/context/auth/AuthProvider';
 import { TimeFrame } from '@/Main/Community/Community';
-import { IsModPost } from '@/Main/Post/Post';
+import { IsMod } from '@/Main/Community/components/Virtualization/VirtualizedPostOverview';
 
 export type CommentSortBy = 'top' | 'new';
 
@@ -32,7 +32,7 @@ interface CommentSectionProps {
   user: TokenUser | null;
   token: string | null;
   setPost: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>;
-  isMod: IsModPost;
+  isMod: IsMod;
   givenParentCommentId?: string;
   onModerationCb?: (action: 'APPROVED' | 'REMOVED') => void;
 }

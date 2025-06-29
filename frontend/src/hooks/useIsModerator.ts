@@ -2,16 +2,21 @@ import { useMemo } from 'react';
 
 import { TokenUser } from '@/context/auth/AuthProvider';
 
-export default function useIsModerator<
-  Mod extends { is_active: boolean; user: { id: string | number } },
->(user: TokenUser | null, communityModerators: Mod[] | undefined) {
+export default function useIsModerator(
+  user: TokenUser | null,
+  isModerator: boolean | undefined,
+) {
   return useMemo(() => {
-    if (!user?.id || !communityModerators) return false;
+    if (!user || !isModerator) return false;
 
-    const activeModerator = communityModerators.find(
-      (mod) => mod.user.id === user.id && mod.is_active,
-    );
-
-    return activeModerator?.is_active ? activeModerator : false;
-  }, [communityModerators, user]);
+    return isModerator
+      ? {
+          id: user.id,
+          profile_picture_url: user.profile_picture_url ?? '',
+          username: user.username,
+          is_active: true,
+          user_assigned_flair: [],
+        }
+      : false;
+  }, [isModerator, user]);
 }
