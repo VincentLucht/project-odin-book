@@ -4,6 +4,7 @@ import PFPLazy from '@/components/Lazy/PFPLazy';
 import LazyCompartment from '@/components/Lazy/LazyCompartment';
 import LazyTags from '@/components/Lazy/LazyTags';
 import LazyPostFlair from '@/components/Lazy/LazyPostFlair';
+import ContentLazy from '@/components/Lazy/ContentLazy';
 import Separator from '@/components/Separator';
 import SidebarLazy from '@/components/Lazy/SidebarLazy';
 
@@ -24,6 +25,7 @@ export default function PostLazy({
     isMature,
     isSpoiler,
     lastLineRandom,
+    hasFlair,
   } = useSkeletonRandomValues();
 
   const isUserProfileMode = mode === 'overview';
@@ -76,19 +78,10 @@ export default function PostLazy({
             <LazyCompartment height={28 * postTitleLength} className="mt-2" />
 
             {/* Post Flair */}
-            <LazyPostFlair className="mt-2" />
+            {hasFlair && <LazyPostFlair className="mt-2" />}
 
             {/* Content */}
-            <div className="!mb-4 !mt-2">
-              {Array.from({ length: contentLines }).map((_, i) => (
-                <div
-                  key={i}
-                  className={`skeleton h-6 ${i === 0 && 'rounded-t-md'} ${i === contentLines - 1 && 'rounded-b-md'}
-                  ${i === contentLines - 2 && 'rounded-bl-none rounded-br-md'} `}
-                  style={i === contentLines - 1 ? { width: `${lastLineRandom}%` } : {}}
-                />
-              ))}
-            </div>
+            <ContentLazy contentLines={contentLines} lastLineRandom={lastLineRandom} />
 
             {/* Interaction bar */}
             <div className="flex items-center gap-3">

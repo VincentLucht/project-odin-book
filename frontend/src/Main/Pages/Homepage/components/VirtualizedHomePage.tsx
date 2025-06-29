@@ -6,6 +6,7 @@ import EndMessageHandler from '@/Main/Global/EndMessageHandler';
 
 import CommunityPostManager from '@/Main/Community/util/CommunityPostManager';
 import CommunityPostHandler from '@/Main/Community/handlers/CommunityPostHandler';
+import HomepageLazy from '@/Main/Pages/Homepage/components/HomepageLazy';
 
 import { HomepagePost } from '@/Main/Pages/Homepage/Homepage';
 import { NavigateFunction } from 'react-router-dom';
@@ -104,6 +105,7 @@ export default function VirtualizedHomePage({
       />
 
       <EndMessageHandler
+        loadingComponent={<HomepageLazy showSidebar={false} />}
         loading={loading}
         hasMorePages={pagination.hasMore}
         dataLength={posts.length}
