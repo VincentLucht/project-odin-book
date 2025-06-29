@@ -162,7 +162,6 @@ export default class CommunityManager {
 
     return {
       community,
-      // Assume there are more posts
       pagination: { nextCursor, hasMore: community?.posts.length === limit },
     };
   }
