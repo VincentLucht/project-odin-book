@@ -40,6 +40,7 @@ interface ModMenuPostProps {
   token: string | null;
   isMod: IsMod | undefined;
   isLast: boolean | undefined;
+  isMobile: boolean;
   showEditDropdown: string | null | undefined;
   setShowEditDropdown: React.Dispatch<React.SetStateAction<string | null>> | undefined;
   showModDropdown: string | null | undefined;
@@ -68,6 +69,7 @@ export default function ModMenuPost({
   setShowModDropdown,
   isMod,
   isLast,
+  isMobile,
   // cb functions
   onApproveComplete,
   onRemoveComplete,
@@ -116,6 +118,7 @@ export default function ModMenuPost({
         apiData={{ id: post.id }}
         onUpdateRemovalReason={onUpdateRemovalReason}
         className="mr-1"
+        isMobile={isMobile}
       />
 
       <ModMenuButton

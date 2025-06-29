@@ -288,6 +288,7 @@ export default function PostOverview({
           showModOptions={showModOptions}
           isMod={isMod}
           isLast={isLastModeration}
+          isMobile={isMobile}
           showModDropdown={showModDropdown}
           setShowModDropdown={setShowModDropdown}
           showEditDropdown={showEditDropdown}

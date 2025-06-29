@@ -35,6 +35,7 @@ interface PostInteractionBarProps {
   userVote: { hasVoted: boolean; voteType: VoteType | undefined };
   onVote: (voteType: VoteType) => void;
   postRedirect?: () => void;
+  isMobile: boolean;
   mode?: 'post' | 'overview';
   showModOptions?: boolean;
   isMod?: IsMod;
@@ -54,6 +55,7 @@ export default function PostInteractionBar({
   userVote,
   onVote,
   postRedirect,
+  isMobile,
   mode = 'overview',
   showModOptions = false, // TODO: Remove? Good to have, but unused
   isMod = false,
@@ -127,6 +129,7 @@ export default function PostInteractionBar({
           setShowModDropdown={setShowModDropdown}
           isMod={isMod}
           isLast={isLast}
+          isMobile={isMobile}
           onApproveComplete={onApproveComplete}
           onRemoveComplete={onRemoveComplete}
           onLockCommentsComplete={onLockCommentsComplete}
