@@ -51,7 +51,7 @@ export default function Header({
   return (
     <header
       className={`fixed left-0 right-0 top-0 z-30 grid max-h-[56px] min-h-[56px] bg-gray
-        ${isMobile ? 'grid-cols-[7%_7%_auto_max-content] gap-3 max-[500px]:grid-cols-[7%_auto_max-content]' : 'grid-cols-[5%_20%_45%_30%]'}
+        ${isMobile ? 'grid-cols-[7%_7%_auto_max-content] gap-3 max-[499px]:grid-cols-[7%_auto_max-content]' : 'grid-cols-[5%_20%_45%_30%]'}
         border-b px-4 py-2`}
       ref={headerRef}
     >
