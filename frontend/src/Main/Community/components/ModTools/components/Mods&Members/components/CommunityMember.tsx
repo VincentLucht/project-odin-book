@@ -57,8 +57,8 @@ export default function CommunityMember({
   };
 
   const isBanAllowed = type === 'users';
-  const isUserSelf = memberUsername === username;
-  const isOwner = memberUsername === ownerName;
+  const isMemberUserSelf = memberUsername === username;
+  const isUserOwner = memberUsername === ownerName;
 
   return (
     <>
@@ -86,8 +86,8 @@ export default function CommunityMember({
             </div>
 
             <UserIndicators
-              isUserSelf={isUserSelf}
-              isOwner={isOwner}
+              isUserSelf={isMemberUserSelf}
+              isOwner={isUserOwner}
               isModerator={member.is_moderator ?? false}
               isApproved={typeof member.approved_at === 'string'}
             />
@@ -126,7 +126,7 @@ export default function CommunityMember({
               </div>
             </div>
 
-            {!isUserSelf && !isOwner && isBanAllowed && (
+            {!isMemberUserSelf && !isUserOwner && isBanAllowed && (
               <button
                 onClick={() => setShowBanModal(true)}
                 className="bg-hover-transition"
@@ -144,7 +144,7 @@ export default function CommunityMember({
               </button>
             )}
 
-            {type === 'moderators' && !isOwner && (
+            {type === 'moderators' && username === ownerName && !isUserOwner && (
               <button
                 onClick={() => setShowRemoveModModal(true)}
                 className="bg-hover-transition"
@@ -153,7 +153,7 @@ export default function CommunityMember({
               </button>
             )}
 
-            {type === 'approved' && !isUserSelf && !isOwner && (
+            {type === 'approved' && !isMemberUserSelf && !isUserOwner && (
               <button
                 onClick={() => setShowUnapproveModal(true)}
                 className="bg-hover-transition"
