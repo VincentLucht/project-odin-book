@@ -103,16 +103,20 @@ class CommunityController {
         requestUserId = id;
       }
 
+      let isMod = false;
       if (foundCommunity.type === 'PRIVATE') {
         const { user_id } = getAuthUser(req.authData);
         if (!(await db.user.getById(user_id))) {
           return res.status(404).json({ message: 'User not found' });
         }
 
-        const [isMember, isApproved] = await Promise.all([
+        const [isModResult, isMember, isApproved] = await Promise.all([
+          db.communityModerator.isMod(user_id, foundCommunity.id),
           db.userCommunity.isMember(user_id, foundCommunity.id),
           db.approvedUser.isApproved(user_id, foundCommunity.id),
         ]);
+
+        isMod = isModResult ? true : false;
 
         if (!isMember && !isApproved) {
           return res
@@ -154,7 +158,7 @@ class CommunityController {
 
       return res.status(200).json({
         message: 'Successfully fetched community',
-        community,
+        community: { ...community, is_moderator: isMod },
         pagination,
       });
     } catch (error) {
