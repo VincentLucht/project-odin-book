@@ -12,6 +12,7 @@ interface EndMessageHandlerProps {
   noResultsClassName?: string;
   logoClassName?: string;
   noResultsComponent?: ReactNode;
+  loadingComponent?: ReactNode;
 }
 
 /**
@@ -27,15 +28,19 @@ export default function EndMessageHandler({
   noResultsClassName = '',
   logoClassName = '',
   noResultsComponent,
+  loadingComponent,
 }: EndMessageHandlerProps) {
   return (
     <>
-      {loading && <LogoLoading className={logoClassName} />}
-
+      {loading &&
+        (loadingComponent ? (
+          <>{loadingComponent}</>
+        ) : (
+          <LogoLoading className={logoClassName} />
+        ))}
       {!loading && !hasMorePages && dataLength > 0 && (
         <EndMessage message={endMessage} className={endMessageClassName} />
       )}
-
       {!loading &&
         !hasMorePages &&
         dataLength === 0 &&
