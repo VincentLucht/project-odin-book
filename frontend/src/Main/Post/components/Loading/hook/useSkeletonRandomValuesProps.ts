@@ -19,6 +19,7 @@ export function useSkeletonRandomValues({
       isMature: Math.random() < 0.05,
       isSpoiler: Math.random() < 0.05,
       lastLineRandom: Math.floor(Math.random() * (80 - 20 + 1)) + 20,
+      hasFlair: Math.random() < 0.5,
     }),
     [communityNameLengthProp],
   );
