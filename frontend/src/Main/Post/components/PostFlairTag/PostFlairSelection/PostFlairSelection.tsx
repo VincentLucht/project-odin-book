@@ -43,7 +43,7 @@ export default function PostFlairSelection({
 
   const loadMore = useCallback(
     (cursorId: string, isInitialFetch = false) => {
-      if (!communityName) return;
+      if (!communityName || !show) return;
       setLoading(true);
 
       void fetchCommunityFlairs(
@@ -62,7 +62,7 @@ export default function PostFlairSelection({
         },
       );
     },
-    [token, communityName],
+    [token, communityName, show],
   );
 
   useEffect(() => {
