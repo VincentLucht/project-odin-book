@@ -3,7 +3,13 @@ import useClickOutside from '@/hooks/useClickOutside';
 
 import DropdownMenu from '@/components/DropdownMenu/DropdownMenu';
 import DropdownButton from '@/components/DropdownMenu/components/DropdownButton';
-import { EllipsisIcon, PencilIcon, BookmarkIcon, TrashIcon } from 'lucide-react';
+import {
+  EllipsisIcon,
+  PencilIcon,
+  BookmarkIcon,
+  BookmarkMinusIcon,
+  TrashIcon,
+} from 'lucide-react';
 import { SquarePenIcon, TagIcon, CircleAlertIcon, BanIcon } from 'lucide-react';
 
 interface EllipsisProps {
@@ -22,6 +28,8 @@ interface EllipsisProps {
   isMature?: boolean;
   matureFunc?: () => void;
   editFunc?: () => void;
+  isSaved?: boolean;
+  manageSaveFunc?: (action: boolean) => void;
 }
 
 export default function Ellipsis({
@@ -40,6 +48,8 @@ export default function Ellipsis({
   isMature,
   matureFunc,
   editFunc,
+  isSaved,
+  manageSaveFunc,
 }: EllipsisProps) {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const divRef = useClickOutside(() => {
@@ -97,14 +107,27 @@ export default function Ellipsis({
           <></>
         )}
 
-        <DropdownButton
-          text={`${mode === 'post' ? 'Save post' : 'Save comment'}`}
-          icon={<BookmarkIcon />}
-          alt={`${mode === 'post' ? 'Save post' : 'Save comment'}`}
-          imgClassName="rounded-full border h-[32px] w-[32px]"
-          setterFunc={setShowDropdown}
-          show={show}
-        />
+        {isSaved ? (
+          <DropdownButton
+            text={`${mode === 'post' ? 'Remove post from saved' : 'Remove comment from saved'}`}
+            icon={<BookmarkMinusIcon />}
+            alt={`${mode === 'post' ? 'Remove post from saved' : 'Remove comment from saved'}`}
+            imgClassName="rounded-full border h-[32px] w-[32px]"
+            setterFunc={setShowDropdown}
+            customFunc={() => manageSaveFunc?.(false)}
+            show={show}
+          />
+        ) : (
+          <DropdownButton
+            text={`${mode === 'post' ? 'Save post' : 'Save comment'}`}
+            icon={<BookmarkIcon />}
+            alt={`${mode === 'post' ? 'Save post' : 'Save comment'}`}
+            imgClassName="rounded-full border h-[32px] w-[32px]"
+            setterFunc={setShowDropdown}
+            customFunc={() => manageSaveFunc?.(true)}
+            show={show}
+          />
+        )}
 
         {isUserSelf ? (
           <div

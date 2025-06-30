@@ -288,6 +288,7 @@ export interface DBPostWithCommunityName extends DBPostWithModeration {
   } | null;
   post_assigned_flair: PostAssignedFlair;
   reports: DBReport[];
+  saved_by: { user_id: string }[];
 }
 
 export interface DBCommentWithCommunityName extends DBComment {
@@ -310,6 +311,7 @@ export interface DBPostWithCommunity extends DBPostWithModeration {
   community: FetchedCommunity & { is_moderator?: boolean };
   post_assigned_flair: PostAssignedFlair;
   reports: DBReport[];
+  saved_by: { user_id: string }[];
 }
 
 export interface DBCommentWithReplies extends DBComment {

@@ -108,25 +108,17 @@ export default function VirtualizedPostOverview({
             isLastModeration={isLastModeration}
             showModDropdown={showModDropdown}
             setShowModDropdown={setShowModDropdown}
-            deleteFunc={() => {
-              const deleteHandler = communityPostHandler.handleDeletePost(post.id);
-              return deleteHandler();
-            }}
-            spoilerFunc={() => {
-              const spoilerHandler = communityPostHandler.handleSpoilerFunc(post);
-              return spoilerHandler();
-            }}
-            matureFunc={() => {
-              const matureHandler = communityPostHandler.handleMatureFunc(post);
-              return matureHandler();
-            }}
-            removePostFlairFunc={() => {
-              const removeFlairHandler = communityPostHandler.handleDeletePostFlair(
-                post,
-                () => navigate(`/r/${communityName}/${post.id}?edit-post-flair=true`),
-              );
-              return removeFlairHandler();
-            }}
+            deleteFunc={() => communityPostHandler.handleDeletePost(post.id)}
+            spoilerFunc={() => communityPostHandler.handleSpoilerFunc(post)}
+            matureFunc={() => communityPostHandler.handleMatureFunc(post)}
+            removePostFlairFunc={() =>
+              communityPostHandler.handleDeletePostFlair(post, () =>
+                navigate(`/r/${communityName}/${post.id}?edit-post-flair=true`),
+              )
+            }
+            manageSaveFunc={(action) =>
+              communityPostHandler.handleManageSavedPost(post.id, userId ?? '', action)
+            }
           />
         </div>
       );

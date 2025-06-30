@@ -6,8 +6,9 @@ import PostOverview from '@/Main/Post/components/PostOverview/PostOverview';
 import CommentOverview from '@/Main/CommentOverview/CommentOverview';
 import EndMessageHandler from '@/Main/Global/EndMessageHandler';
 import CommunityPostManager from '@/Main/Community/util/CommunityPostManager';
-import UserProfilePostHandler from '@/Main/user/UserProfile/handlers/UserProfilePostHandler';
 import UserNotFound from '@/components/partials/UserNotFound';
+
+import CommunityPostHandler from '@/Main/Community/handlers/CommunityPostHandler';
 
 import { UserHistoryItem } from '@/Main/user/UserProfile/api/fetchUserProfile';
 import { UserProfilePagination } from '@/Main/user/UserProfile/UserProfile';
@@ -39,8 +40,14 @@ export default function VirtualizedUserHistory({
   const [showCommentDropdown, setShowCommentDropdown] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const userProfilePostHandler = useMemo(
-    () => new UserProfilePostHandler(new CommunityPostManager(token), setUserHistory),
+  const communityPostHandler = useMemo(
+    () =>
+      new CommunityPostHandler<UserHistoryItem & { item_type: 'post' }>(
+        new CommunityPostManager(token),
+        setUserHistory as React.Dispatch<
+          React.SetStateAction<(UserHistoryItem & { item_type: 'post' })[]>
+        >,
+      ),
     [token, setUserHistory],
   );
 
@@ -72,12 +79,19 @@ export default function VirtualizedUserHistory({
               showRemovedByModeration={showRemovedByModeration}
               isLast={isLast}
               // Post edit functions
-              deleteFunc={() => userProfilePostHandler.handleDeletePost(item.id)}
-              spoilerFunc={() => userProfilePostHandler.handleSpoilerFunc(item)}
-              matureFunc={() => userProfilePostHandler.handleMatureFunc(item)}
+              deleteFunc={() => communityPostHandler.handleDeletePost(item.id)}
+              spoilerFunc={() => communityPostHandler.handleSpoilerFunc(item)}
+              matureFunc={() => communityPostHandler.handleMatureFunc(item)}
               removePostFlairFunc={() =>
-                userProfilePostHandler.handleDeletePostFlair(item, () =>
+                communityPostHandler.handleDeletePostFlair(item, () =>
                   navigate(`/r/${item.community.name}/${item.id}?edit-post-flair=true`),
+                )
+              }
+              manageSaveFunc={(action) =>
+                communityPostHandler.handleManageSavedPost(
+                  item.id,
+                  user?.id ?? '',
+                  action,
                 )
               }
             />
@@ -112,7 +126,7 @@ export default function VirtualizedUserHistory({
       navigate,
       showCommentDropdown,
       showPostDropdown,
-      userProfilePostHandler,
+      communityPostHandler,
     ],
   );
 

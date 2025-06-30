@@ -4,7 +4,7 @@ import useClickOutside from '@/hooks/useClickOutside';
 import DropdownMenu from '@/components/DropdownMenu/DropdownMenu';
 import DropdownButton from '@/components/DropdownMenu/components/DropdownButton';
 import ReportModal from '@/Main/Global/ReportModal';
-import { EllipsisIcon, BookmarkIcon, FlagIcon } from 'lucide-react';
+import { EllipsisIcon, BookmarkIcon, BookmarkMinusIcon, FlagIcon } from 'lucide-react';
 
 import { UserHistoryItem } from '@/Main/user/UserProfile/api/fetchUserProfile';
 import {
@@ -14,7 +14,6 @@ import {
 } from '@/interface/dbSchema';
 
 interface NotUserEllipsisProps {
-  hasSaved: boolean;
   hasReported: boolean;
   token: string | null;
   id: string;
@@ -26,10 +25,11 @@ interface NotUserEllipsisProps {
   setPosts?: React.Dispatch<React.SetStateAction<DBPostWithCommunityName[]>>;
   setPost?: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>;
   setComments?: React.Dispatch<React.SetStateAction<DBCommentWithReplies[]>>;
+  isSaved: boolean;
+  manageSaveFunc?: (action: boolean) => void;
 }
 
 export default function NotUserEllipsis({
-  hasSaved = false, // TODO: Remove this and implement
   hasReported,
   token,
   id,
@@ -41,6 +41,8 @@ export default function NotUserEllipsis({
   setPosts,
   setPost,
   setComments,
+  isSaved,
+  manageSaveFunc,
 }: NotUserEllipsisProps) {
   const [showReportModal, setShowReportModal] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -76,14 +78,27 @@ export default function NotUserEllipsis({
           }`}
         ref={dropdownRef}
       >
-        <DropdownButton
-          text={hasSaved ? `Saved ${mode}` : `Save ${mode}`}
-          icon={<BookmarkIcon />}
-          alt={hasSaved ? `Saved ${mode}` : `Save ${mode}`}
-          imgClassName="rounded-full border h-[32px] w-[32px]"
-          setterFunc={setShowDropdown}
-          show={show}
-        />
+        {isSaved ? (
+          <DropdownButton
+            text={`${mode === 'post' ? 'Remove post from saved' : 'Remove comment from saved'}`}
+            icon={<BookmarkMinusIcon />}
+            alt={`${mode === 'post' ? 'Remove post from saved' : 'Remove comment from saved'}`}
+            imgClassName="rounded-full border h-[32px] w-[32px]"
+            setterFunc={setShowDropdown}
+            customFunc={() => manageSaveFunc?.(false)}
+            show={show}
+          />
+        ) : (
+          <DropdownButton
+            text={`${mode === 'post' ? 'Save post' : 'Save comment'}`}
+            icon={<BookmarkIcon />}
+            alt={`${mode === 'post' ? 'Save post' : 'Save comment'}`}
+            imgClassName="rounded-full border h-[32px] w-[32px]"
+            setterFunc={setShowDropdown}
+            customFunc={() => manageSaveFunc?.(true)}
+            show={show}
+          />
+        )}
 
         <DropdownButton
           text={hasReported ? `Already reported ${mode}` : `Report ${mode}`}

@@ -5,14 +5,14 @@ import catchError from '@/util/catchError';
 import confirmAction from '@/util/confirmAction';
 import editPost from '@/Main/Post/api/edit/editPost';
 import deletePostFlair from '@/Main/Post/components/PostFlairTag/api/deletePostFlair';
+import apiRequest from '@/util/apiRequest';
 
 import CommunityPostHandler from '@/Main/Community/handlers/CommunityPostHandler';
-import UserProfilePostHandler from '@/Main/user/UserProfile/handlers/UserProfilePostHandler';
 
 /**
  * Handles API calls related to posts, like deleting a post.
  *
- * Called by {@link CommunityPostHandler} and {@link UserProfilePostHandler}.
+ * Called by {@link CommunityPostHandler}.
  */
 export default class CommunityPostManager {
   public token: string | null;
@@ -113,5 +113,26 @@ export default class CommunityPostManager {
       .catch((error) => {
         catchError(error);
       });
+  }
+
+  async manageSavedPost(
+    post_id: string,
+    action: 'save' | 'unsave',
+    cb: (postId: string) => void,
+  ) {
+    if (!this.isLoggedIn()) return;
+
+    try {
+      const method = action === 'save' ? 'POST' : 'DELETE';
+      await apiRequest('/post/save', method, this.token, { post_id });
+      toast.success(
+        action === 'save'
+          ? 'Successfully saved this post'
+          : 'Successfully removed post from save',
+      );
+      cb(post_id);
+    } catch (error) {
+      catchError(error);
+    }
   }
 }

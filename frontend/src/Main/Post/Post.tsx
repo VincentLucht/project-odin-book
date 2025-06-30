@@ -159,6 +159,7 @@ export default function Post({
               {/* TODO: Add saved */}
               <PostEditDropdownMenu
                 hasReported={hasReported}
+                userId={user?.id}
                 isUserPoster={isUserPoster}
                 postId={post.id}
                 token={token}
@@ -169,6 +170,7 @@ export default function Post({
                 newBody={post.body}
                 isMature={post.is_mature}
                 isSpoiler={post.is_spoiler}
+                isSaved={post?.saved_by?.[0]?.user_id === user?.id}
                 setShowPostFlairSelection={setShowPostFlairSelection}
               />
             </div>

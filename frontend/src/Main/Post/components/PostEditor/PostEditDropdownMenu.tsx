@@ -6,11 +6,15 @@ import handleDeletePost from '@/Main/Post/api/delete/handleDeletePost';
 import handleEditPost from '@/Main/Post/api/edit/handleEditPost';
 
 import { toast } from 'react-toastify';
+import catchError from '@/util/catchError';
+import apiRequest from '@/util/apiRequest';
+
 import { DBPostWithCommunity } from '@/interface/dbSchema';
 
 interface PostEditDropdownMenuProps {
   hasReported: boolean;
   isUserPoster: boolean;
+  userId: string | undefined;
   postId: string;
   token: string | null;
   showDropdown: string | null;
@@ -20,12 +24,14 @@ interface PostEditDropdownMenuProps {
   newBody: string;
   isMature: boolean;
   isSpoiler: boolean;
+  isSaved: boolean;
   setShowPostFlairSelection: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 // TODO: Add saving posts (+comments)
 export default function PostEditDropdownMenu({
   hasReported,
+  userId,
   isUserPoster,
   postId,
   token,
@@ -36,6 +42,7 @@ export default function PostEditDropdownMenu({
   newBody,
   isMature,
   isSpoiler,
+  isSaved,
   setShowPostFlairSelection,
 }: PostEditDropdownMenuProps) {
   const deletePost = () => {
@@ -88,6 +95,31 @@ export default function PostEditDropdownMenu({
     setShowPostFlairSelection((v) => !v);
   };
 
+  const manageSavedPost = (action: boolean) => {
+    if (!token || !userId) {
+      toast.error('You are not logged in');
+      return;
+    }
+
+    const method = action ? 'POST' : 'DELETE';
+    apiRequest('/post/save', method, token, { post_id: postId })
+      .then(() => {
+        toast.success(
+          action
+            ? 'Successfully saved this post'
+            : 'Successfully removed post from save',
+        );
+        setPost((prev) => {
+          if (!prev) return prev;
+
+          return action
+            ? { ...prev, saved_by: [{ user_id: userId }] }
+            : { ...prev, saved_by: [] };
+        });
+      })
+      .catch((error) => catchError(error));
+  };
+
   return (
     <div>
       {isUserPoster ? (
@@ -103,10 +135,12 @@ export default function PostEditDropdownMenu({
           matureFunc={addMatureTag}
           isSpoiler={isSpoiler}
           spoilerFunc={addSpoilerTag}
+          isSaved={isSaved}
+          manageSaveFunc={manageSavedPost}
         />
       ) : (
         <NotUserEllipsis
-          hasSaved={false} // TODO: Implement saved
+          isSaved={false} // TODO: Implement saved
           hasReported={hasReported}
           token={token}
           id={postId}

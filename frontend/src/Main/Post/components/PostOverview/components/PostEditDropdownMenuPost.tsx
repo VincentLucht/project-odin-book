@@ -15,6 +15,7 @@ interface PostEditDropdownMenuPostProps {
   isMature: boolean;
   isSpoiler: boolean;
   hasReported: boolean;
+  isSaved: boolean;
   showEditDropdown: string | null;
   isLast?: boolean;
   setShowEditDropdown: React.Dispatch<React.SetStateAction<string | null>>;
@@ -27,6 +28,7 @@ interface PostEditDropdownMenuPostProps {
   spoilerFunc: () => void;
   matureFunc: () => void;
   removePostFlairFunc: () => void;
+  manageSaveFunc: (action: boolean) => void;
 }
 
 export default function PostEditDropdownMenuPost({
@@ -39,6 +41,7 @@ export default function PostEditDropdownMenuPost({
   isMature,
   isSpoiler,
   hasReported,
+  isSaved,
   showEditDropdown,
   isLast,
   setShowEditDropdown,
@@ -50,6 +53,7 @@ export default function PostEditDropdownMenuPost({
   spoilerFunc,
   matureFunc,
   removePostFlairFunc,
+  manageSaveFunc,
 }: PostEditDropdownMenuPostProps) {
   const redirectToEdit = () => {
     navigate(`/r/${communityName}/${postId}/${postName}?edit=true`);
@@ -73,10 +77,11 @@ export default function PostEditDropdownMenuPost({
           spoilerFunc={spoilerFunc}
           matureFunc={matureFunc}
           postFlairFunc={removePostFlairFunc}
+          manageSaveFunc={manageSaveFunc}
+          isSaved={isSaved}
         />
       ) : (
         <NotUserEllipsis
-          hasSaved={false} // TODO: Implement saved
           hasReported={hasReported}
           token={token}
           id={postId}
@@ -84,6 +89,8 @@ export default function PostEditDropdownMenuPost({
           setShowDropdown={setShowEditDropdown}
           setUserHistory={setFetchedUser}
           setPosts={setPosts}
+          isSaved={isSaved}
+          manageSaveFunc={manageSaveFunc}
         />
       )}
     </div>

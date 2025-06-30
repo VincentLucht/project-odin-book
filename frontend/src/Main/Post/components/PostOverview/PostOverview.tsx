@@ -69,6 +69,7 @@ interface PostOverviewProps {
   spoilerFunc: () => void;
   matureFunc: () => void;
   removePostFlairFunc: () => void;
+  manageSaveFunc: (action: boolean) => void;
 }
 
 export default function PostOverview({
@@ -97,6 +98,7 @@ export default function PostOverview({
   spoilerFunc,
   matureFunc,
   removePostFlairFunc,
+  manageSaveFunc,
 }: PostOverviewProps) {
   const [showSpoiler, setShowSpoiler] = useState(false);
   const [showMature, setShowMature] = useState(false);
@@ -113,6 +115,7 @@ export default function PostOverview({
       ? (post.community.user_communities ?? [])
       : null;
   const hasReported = post?.reports?.[0]?.reporter_id === userId;
+  const isSaved = post?.saved_by?.[0]?.user_id === userId;
 
   const { currentWidth, isMobile } = useGetScreenSize();
   const isBelow500px = currentWidth <= 500;
@@ -224,13 +227,15 @@ export default function PostOverview({
               isLast={isLast}
               setShowEditDropdown={setShowEditDropdown}
               navigate={navigate}
+              setFetchedUser={setUserHistory}
+              setPosts={setPosts}
               // edit functions
               deleteFunc={deleteFunc}
               spoilerFunc={spoilerFunc}
               matureFunc={matureFunc}
               removePostFlairFunc={removePostFlairFunc}
-              setFetchedUser={setUserHistory}
-              setPosts={setPosts}
+              manageSaveFunc={manageSaveFunc}
+              isSaved={isSaved}
             />
           </div>
         </div>
