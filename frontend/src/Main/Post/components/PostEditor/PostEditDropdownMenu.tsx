@@ -140,13 +140,14 @@ export default function PostEditDropdownMenu({
         />
       ) : (
         <NotUserEllipsis
-          isSaved={false} // TODO: Implement saved
           hasReported={hasReported}
           token={token}
           id={postId}
           showDropdown={showDropdown}
           setShowDropdown={setShowDropdown}
           setPost={setPost}
+          isSaved={isSaved}
+          manageSaveFunc={manageSavedPost}
         />
       )}
     </div>
