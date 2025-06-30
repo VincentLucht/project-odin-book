@@ -370,7 +370,6 @@ class CommunityController {
         return res.status(404).json({ message: 'Community not found' });
       }
 
-      console.log(await db.communityFlair.getPostFlairCount(foundCommunity.id));
       if (
         is_post_flair_required &&
         (await db.communityFlair.getPostFlairCount(foundCommunity.id)) === 0
