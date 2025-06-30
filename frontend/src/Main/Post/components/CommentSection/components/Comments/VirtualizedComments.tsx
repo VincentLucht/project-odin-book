@@ -21,7 +21,7 @@ import {
 } from '@/Main/Post/components/CommentSection/CommentSection';
 import { TokenUser } from '@/context/auth/AuthProvider';
 import { TimeFrame } from '@/Main/Community/Community';
-import { IsModPost } from '@/Main/Post/Post';
+import { IsMod } from '@/Main/Community/components/Virtualization/VirtualizedPostOverview';
 
 interface VirtualizedComments {
   comments: DBCommentWithReplies[];
@@ -38,7 +38,7 @@ interface VirtualizedComments {
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   onComplete: OnCompleteCommentSection;
-  isMod: IsModPost;
+  isMod: IsMod;
   onModerationCb?: (action: 'APPROVED' | 'REMOVED') => void;
   isMobile: boolean;
   isBelow550px: boolean;
