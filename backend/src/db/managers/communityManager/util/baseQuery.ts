@@ -11,6 +11,10 @@ export function getPostInfo(
         where: { user_id: requestUserId },
         select: { user_id: true, vote_type: true },
       },
+      saved_by: {
+        where: { user_id: requestUserId },
+        select: { user_id: true },
+      },
     }),
     poster: {
       select: {

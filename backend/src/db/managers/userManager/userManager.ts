@@ -18,6 +18,8 @@ type HistoryItemBase = {
   community_type: string;
   moderation_type: 'APPROVED' | 'REMOVED';
 
+  saved_user_id: string;
+
   // Report
   report_id: string | null;
   report_item_type: string | null;
@@ -32,6 +34,18 @@ type HistoryItemBase = {
   report_community_id: string | null;
   report_post_id: string | null;
   report_comment_id: string | null;
+
+  // Flair fields
+  post_assigned_flair_id: string | null;
+  flair_id: string | null;
+  flair_community_id: string | null;
+  flair_name: string | null;
+  flair_text_color: string | null;
+  flair_color: string | null;
+  flair_is_assignable_to_posts: boolean | null;
+  flair_is_assignable_to_user: boolean | null;
+  flair_emoji: string | null;
+  flair_created_at: Date | null;
 };
 type PostHistory = HistoryItemBase & {
   record_type: 'post';
@@ -234,6 +248,7 @@ export default class UserManager {
           p.total_vote_score AS vote_score,
           p.title AS title,
           p.body AS content,
+
           p.poster_id AS user_id,
           p.community_id AS community_id,
           NULL AS post_id,
@@ -279,14 +294,29 @@ export default class UserManager {
           r.removal_reason AS report_removal_reason,
           r.community_id AS report_community_id,
           r.post_id AS report_post_id,
-          r.comment_id AS report_comment_id
-
+          r.comment_id AS report_comment_id,
+          -- Flair
+          paf.id AS post_assigned_flair_id,
+          cf.id AS flair_id,
+          cf.community_id AS flair_community_id,
+          cf.name AS flair_name,
+          cf."textColor" AS flair_text_color,
+          cf.color AS flair_color,
+          cf.is_assignable_to_posts AS flair_is_assignable_to_posts,
+          cf.is_assignable_to_users AS flair_is_assignable_to_user,
+          cf.emoji AS flair_emoji,
+          cf.created_at AS flair_created_at,
+          -- Saved
+          sp.user_id AS saved_user_id
 
         FROM "Post" AS p
         LEFT JOIN "Community" AS pc ON pc.id = p.community_id
         LEFT JOIN "PostVote" AS pv on pv.post_id = p.id AND pv.user_id = ${requestUserId}
         LEFT JOIN "Report" AS r ON r.post_id = p.id AND reporter_id = ${requestUserId}
         LEFT JOIN "PostModeration" AS pm ON pm.post_id = p.id
+        LEFT JOIN "PostAssignedFlair" AS paf ON paf.post_id = p.id
+        LEFT JOIN "CommunityFlair" AS cf ON cf.id = paf.community_flair_id
+        LEFT JOIN "SavedPost" AS sp ON sp.post_id = p.id AND sp.user_id = ${requestUserId}
 
         WHERE p.poster_id = ${user_id} 
         AND (
@@ -351,7 +381,20 @@ export default class UserManager {
           r.removal_reason AS report_removal_reason,
           r.community_id AS report_community_id,
           r.post_id AS report_post_id,
-          r.comment_id AS report_comment_id
+          r.comment_id AS report_comment_id,
+          -- Flair (doesn't exist)
+          NULL AS post_assigned_flair_id,
+          NULL AS flair_id,
+          NULL AS flair_community_id,
+          NULL AS flair_name,
+          NULL AS flair_text_color,
+          NULL AS flair_color,
+          NULL AS flair_is_assignable_to_posts,
+          NULL AS flair_is_assignable_to_user,
+          NULL AS flair_emoji,
+          NULL AS flair_created_at,
+          -- Saved
+          sc.user_id AS saved_user_id
 
         FROM "Comment" AS c
         LEFT JOIN "Post" AS p ON p.id = c.post_id
@@ -360,6 +403,7 @@ export default class UserManager {
         LEFT JOIN "User" AS u ON u.id = p.poster_id
         LEFT JOIN "Report" AS r ON r.comment_id = c.id
         LEFT JOIN "CommentModeration" AS cm ON cm.comment_id = c.id
+        LEFT JOIN "SavedComment" AS sc ON sc.comment_id = c.id AND sc.user_id = ${requestUserId}
 
         WHERE c.user_id = ${user_id}
         AND cc.type != 'PRIVATE'

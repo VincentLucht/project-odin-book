@@ -52,6 +52,8 @@ const mockDb = {
     create: jest.fn(),
     edit: jest.fn(),
     getByIdAndCommunity: jest.fn(),
+    getPopular: jest.fn(),
+    getBy: jest.fn(),
   },
   postVote: {
     hasVoted: jest.fn(),
@@ -100,6 +102,16 @@ const mockDb = {
     isApproved: jest.fn(),
     create: jest.fn(),
     delete: jest.fn(),
+  },
+  savedPost: {
+    isSaved: jest.fn(),
+    save: jest.fn(),
+    unsave: jest.fn(),
+  },
+  savedComment: {
+    isSaved: jest.fn(),
+    save: jest.fn(),
+    unsave: jest.fn(),
   },
 };
 

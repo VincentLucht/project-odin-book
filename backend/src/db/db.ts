@@ -22,6 +22,8 @@ import SearchResultsManager from '@/db/managers/misc/searchResultsManager';
 import NotificationManager from '@/db/managers/notificationManager';
 import ModMailManager from '@/db/managers/modMailManager';
 import ReportManager from '@/db/managers/reportManager/reportManager';
+import SavedPostManager from '@/db/managers/savedPostManager';
+import SavedCommentManager from '@/db/managers/savedCommentManager';
 
 import ChatManager from '@/db/managers/chat/chatManager';
 import MessageManager from '@/db/managers/chat/messageManager';
@@ -52,6 +54,8 @@ export class DB {
   public notification: NotificationManager;
   public modMail: ModMailManager;
   public report: ReportManager;
+  public savedPost: SavedPostManager;
+  public savedComment: SavedCommentManager;
 
   public chat: ChatManager;
   public message: MessageManager;
@@ -82,6 +86,8 @@ export class DB {
     this.notification = new NotificationManager(this.prisma, this.user);
     this.modMail = new ModMailManager(this.prisma);
     this.report = new ReportManager(this.prisma);
+    this.savedPost = new SavedPostManager(this.prisma);
+    this.savedComment = new SavedCommentManager(this.prisma);
 
     this.chat = new ChatManager(this.prisma);
     this.message = new MessageManager(this.prisma);

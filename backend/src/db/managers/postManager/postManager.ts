@@ -44,6 +44,10 @@ export default class PostManager {
             where: { user_id },
             select: { user_id: true, vote_type: true },
           },
+          saved_by: {
+            where: { user_id },
+            select: { user_id: true },
+          },
         }),
         post_assigned_flair: {
           select: {
@@ -96,6 +100,7 @@ export default class PostManager {
       },
       orderBy,
       include: getPostInfo(requestUserId),
+      // include: { saved_by: { where: { user_id: requestUserId ?? '' } } },
       ...(cursorId && {
         cursor: {
           id: cursorId,
@@ -125,6 +130,9 @@ export default class PostManager {
     take = 30,
   ) {
     const { orderBy, convertedTimeframe } = createSortParams(sortBy, timeframe);
+
+    console.log('Ran');
+    console.log(requestUserId);
 
     const posts = await this.prisma.post.findMany({
       where: {

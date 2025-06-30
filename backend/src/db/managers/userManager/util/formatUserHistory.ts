@@ -55,6 +55,23 @@ export default function formatUserHistory(userHistory: UserHistory[]) {
             comment_id: item.report_comment_id,
           },
         ],
+        post_assigned_flair: [
+          {
+            id: item.post_assigned_flair_id,
+            community_flair: {
+              id: item.flair_id,
+              community_id: item.community_id,
+              name: item.flair_name,
+              textColor: item.flair_text_color,
+              color: item.flair_color,
+              is_assignable_to_posts: item.flair_is_assignable_to_posts,
+              is_assignable_to_users: item.flair_is_assignable_to_user,
+              emoji: item.flair_emoji,
+              created_at: item.flair_created_at,
+            },
+          },
+        ],
+        saved_by: [{ user_id: item.saved_user_id }],
       };
     } else if (item.record_type === 'comment') {
       return {

@@ -82,6 +82,8 @@ model User {
   chat_trackers_as_user1 ChatTracker[]        @relation("User1")
   chat_trackers_as_user2 ChatTracker[]        @relation("User2")
   owned_chat             ChatTracker[]        @relation("ChatOwner")
+  saved_posts            SavedPost[]
+  saved_comments         SavedComment[]
 }
 
 enum RequestStatus {
@@ -322,6 +324,7 @@ model Post {
   comments            Comment[]
   post_votes          PostVote[]
   post_assigned_flair PostAssignedFlair[]
+  saved_by            SavedPost[]
 
   moderation PostModeration?
 
@@ -337,6 +340,18 @@ model Post {
   @@index([community_id, total_vote_score]) // for sorted by score
   @@index([poster_id, created_at]) // for user post history
   @@index([community_id, created_at, deleted_at]) // for fetching
+}
+
+model SavedPost {
+  id       String   @id @default(uuid())
+  saved_at DateTime @default(now())
+  post_id  String
+  post     Post     @relation(fields: [post_id], references: [id])
+  user_id  String
+  user     User     @relation(fields: [user_id], references: [id])
+
+  @@unique([post_id, user_id])
+  @@index([post_id])
 }
 
 model PostVote {
@@ -392,8 +407,9 @@ model Comment {
   // Child relation
   replies           Comment[] @relation("CommentReplies")
 
-  times_reported Int      @default(0)
+  times_reported Int            @default(0)
   reports        Report[]
+  saved_by       SavedComment[]
 
   @@index([post_id]) // for lookups of comments by post
   @@index([parent_comment_id]) // for comment replies
@@ -403,6 +419,18 @@ model Comment {
   @@index([created_at, id]) // for date sorting
   @@index([user_id, created_at]) // for user history with date sorting
   @@index([user_id, total_vote_score]) // for user history with score sorting
+}
+
+model SavedComment {
+  id         String   @id @default(uuid())
+  saved_at   DateTime @default(now())
+  comment_id String
+  comment    Comment  @relation(fields: [comment_id], references: [id])
+  user_id    String
+  user       User     @relation(fields: [user_id], references: [id])
+
+  @@unique([comment_id, user_id])
+  @@index([comment_id])
 }
 
 model CommentVote {
