@@ -128,7 +128,7 @@ export default class CommunityPostManager {
       toast.success(
         action === 'save'
           ? 'Successfully saved this post'
-          : 'Successfully removed post from save',
+          : 'Successfully removed post from saved',
       );
       cb(post_id);
     } catch (error) {
