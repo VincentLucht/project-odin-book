@@ -38,6 +38,15 @@ class CommunityModeratorValidator {
         .withMessage(vm.req('Username')),
     ];
   }
+
+  leaveModRules() {
+    return [
+      body('community_id').trim()
+        .isString()
+        .notEmpty()
+        .withMessage('Community ID is required'),
+    ];
+  }
 }
 
 const communityModeratorValidator = new CommunityModeratorValidator();

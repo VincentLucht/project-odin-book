@@ -186,3 +186,16 @@ export async function removeMod(
     catchError(error);
   }
 }
+
+export async function leaveMod(
+  token: string,
+  apiData: { community_id: string },
+  onComplete: () => void,
+) {
+  try {
+    await apiRequest(`${endpoint}/user/leave`, 'DELETE', token, apiData);
+    onComplete();
+  } catch (error) {
+    catchError(error);
+  }
+}

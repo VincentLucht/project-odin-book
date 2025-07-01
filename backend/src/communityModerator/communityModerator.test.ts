@@ -193,4 +193,64 @@ describe('/community/mod', () => {
       });
     });
   });
+
+  describe('DELETE /community/mod/user/leave', () => {
+  beforeEach(() => {
+    mockDb.user.getById.mockResolvedValue(mockUser);
+    mockDb.community.doesExistById.mockResolvedValue(true);
+    mockDb.community.isOwner.mockResolvedValue(false);
+    mockDb.communityModerator.isMod.mockResolvedValue(true);
+    mockDb.communityModerator.delete.mockResolvedValue(true);
+  });
+
+  const sendRequest = (body: any) => {
+    return request(app)
+      .delete('/community/mod/user/leave')
+      .set('Authorization', `Bearer ${token}`)
+      .send(body);
+  };
+
+  describe('Success cases', () => {
+    it('should successfully remove own mod status', async () => {
+      const response = await sendRequest(mockRequest);
+      assert.exp(response, 200, 'Successfully removed mod status');
+      expect(mockDb.communityModerator.delete).toHaveBeenCalledWith(
+        mockRequest.community_id,
+        mockUser.id,
+      );
+    });
+  });
+
+  describe('Error cases', () => {
+    it('should handle user not found', async () => {
+      mockDb.user.getById.mockResolvedValue(null);
+      const response = await sendRequest(mockRequest);
+      assert.exp(response, 404, 'User not found');
+    });
+
+    it('should handle community not found', async () => {
+      mockDb.community.doesExistById.mockResolvedValue(false);
+      const response = await sendRequest(mockRequest);
+      assert.exp(response, 404, 'Community not found');
+    });
+
+    it('should handle user not being a moderator', async () => {
+      mockDb.communityModerator.isMod.mockResolvedValue(false);
+      const response = await sendRequest(mockRequest);
+      assert.exp(response, 403, 'You are not a moderator');
+    });
+
+    it('should handle owner trying to leave mod status', async () => {
+      mockDb.community.isOwner.mockResolvedValue(true);
+      const response = await sendRequest(mockRequest);
+      assert.exp(response, 403, 'As the owner, you can not forfeit your moderator status');
+    });
+
+    it('should handle db error', async () => {
+      mockDb.user.getById.mockRejectedValue(new Error('DB error'));
+      const response = await sendRequest(mockRequest);
+      assert.dbError(response);
+    });
+  });
+});
 });

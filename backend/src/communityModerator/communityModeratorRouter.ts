@@ -26,4 +26,11 @@ communityModeratorRouter.delete(
   communityModeratorController.deleteMod,
 );
 
+communityModeratorRouter.delete(
+  '/user/leave',
+  token.authenticate,
+  communityModeratorValidator.leaveModRules(),
+  communityModeratorController.leaveMod,
+);
+
 export default communityModeratorRouter;

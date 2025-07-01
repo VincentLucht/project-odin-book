@@ -113,6 +113,44 @@ class CommunityModeratorController {
       });
     }
   });
+
+  leaveMod = asyncHandler(async (req: Request, res: Response) => {
+    if (checkValidationError(req, res)) return;
+
+    const { community_id } = req.body;
+
+    try {
+      const { user_id } = getAuthUser(req.authData);
+      const user = await db.user.getById(user_id);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      if (!(await db.community.doesExistById(community_id))) {
+        return res.status(404).json({ message: 'Community not found' });
+      }
+
+      if (!(await db.communityModerator.isMod(user_id, community_id))) {
+        return res.status(403).json({ message: 'You are not a moderator' });
+      }
+      if (await db.community.isOwner(user_id, community_id)) {
+        return res.status(403).json({
+          message: 'As the owner, you can not forfeit your moderator status',
+        });
+      }
+
+      await db.communityModerator.delete(community_id, user_id);
+
+      return res
+        .status(200)
+        .json({ message: 'Successfully removed mod status' });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        message: 'Failed to remove mod status',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  });
 }
 
 const communityModeratorController = new CommunityModeratorController();
