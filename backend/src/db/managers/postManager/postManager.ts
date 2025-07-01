@@ -100,7 +100,6 @@ export default class PostManager {
       },
       orderBy,
       include: getPostInfo(requestUserId),
-      // include: { saved_by: { where: { user_id: requestUserId ?? '' } } },
       ...(cursorId && {
         cursor: {
           id: cursorId,
