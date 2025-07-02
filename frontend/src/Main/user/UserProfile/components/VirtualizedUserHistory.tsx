@@ -60,7 +60,7 @@ export default function VirtualizedUserHistory({
       const isLast = index === userHistory.length - 1 && userHistory.length > 1;
 
       return (
-        <div data-id={item.id + item.created_at.toString()}>
+        <div>
           {item.item_type === 'post' ? (
             <PostOverview
               key={item.id + item.created_at.toString()}
@@ -108,11 +108,11 @@ export default function VirtualizedUserHistory({
               token={token}
               showPrivate={true}
               showRemovedByModeration={showRemovedByModeration}
+              isLast={isLast}
               showCommentDropdown={showCommentDropdown}
               setShowCommentDropdown={setShowCommentDropdown}
-              setUserHistory={setUserHistory}
               navigate={navigate}
-              isLast={isLast}
+              setUserHistory={setUserHistory}
             />
           )}
         </div>
