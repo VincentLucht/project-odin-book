@@ -8,6 +8,13 @@ const savedValidator = savedPostsAndCommentsValidator;
 const savedController = savedPostsAndCommentsController;
 
 // Posts
+savedRouter.get(
+  '/saved/posts',
+  token.authenticate,
+  savedValidator.fetchSavedPostsRules(),
+  savedController.fetchSavedPosts,
+);
+
 savedRouter.post(
   '/post/save',
   token.authenticate,
@@ -23,6 +30,13 @@ savedRouter.delete(
 );
 
 // Comments
+savedRouter.get(
+  '/saved/comments',
+  token.authenticate,
+  savedValidator.fetchSavedCommentsRules(),
+  savedController.fetchSavedComments,
+);
+
 savedRouter.post(
   '/comment/save',
   token.authenticate,

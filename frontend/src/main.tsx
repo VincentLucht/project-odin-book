@@ -29,6 +29,8 @@ import CommunityFlairSettings from '@/Main/Community/components/ModTools/compone
 import Post from '@/Main/Post/Post';
 import CreatePost from '@/Main/CreatePost/CreatePost';
 
+import Saved from '@/Main/Saved/Saved';
+
 import Chats from '@/Main/Chats/Chats';
 
 import ScreenSizeProvider from '@/context/screen/ScreenSizeProvider';
@@ -102,6 +104,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                   path="r/:communityName/:postId/:postName?/:editCommentId"
                   element={<Post />}
                 />
+
+                {/* SAVED */}
+                <Route path="/saved" element={<Saved />} />
 
                 {/* CREATION */}
                 <Route path="/create-community" element={<CreateCommunity />} />

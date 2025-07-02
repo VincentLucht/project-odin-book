@@ -5,7 +5,7 @@ import UserPFP from '@/components/user/UserPFP';
 import DropdownMenu from '@/components/DropdownMenu/DropdownMenu';
 import useClickOutside from '@/hooks/useClickOutside';
 import DropdownButton from '@/components/DropdownMenu/components/DropdownButton';
-import { SettingsIcon, LogOutIcon } from 'lucide-react';
+import { SettingsIcon, LogOutIcon, BookmarkIcon } from 'lucide-react';
 
 interface UserButtonProps {
   showDropDown: boolean;
@@ -59,6 +59,14 @@ export default function UserButton({
           text="Settings"
           icon={<SettingsIcon strokeWidth={1.5} />}
           route="/user/settings"
+          setterFunc={setShowDropDown}
+          show={showDropDown}
+        />
+
+        <DropdownButton
+          text="Saved"
+          icon={<BookmarkIcon strokeWidth={1.5} />}
+          route="/saved"
           setterFunc={setShowDropDown}
           show={showDropDown}
         />

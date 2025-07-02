@@ -3,6 +3,14 @@ import { body, query } from 'express-validator/lib';
 // prettier-ignore
 class SavedPostsAndCommentsValidator {
   // Posts
+  fetchSavedPostsRules() {
+    return [
+      query('cId').trim()
+        .isString()
+        .optional(),
+    ];
+  }
+
   savePostRules() {
     return [
       body('post_id').trim()
@@ -22,6 +30,14 @@ class SavedPostsAndCommentsValidator {
   }
 
   // Comments
+  fetchSavedCommentsRules() {
+    return [
+      query('cId').trim()
+        .isString()
+        .optional(),
+    ];
+  }
+
   saveCommentRules() {
     return [
       body('comment_id').trim()

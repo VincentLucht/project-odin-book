@@ -6,7 +6,73 @@ import { asyncHandler } from '@/util/asyncHandler';
 import getAuthUser from '@/util/getAuthUser';
 
 class SavedPostsAndCommentsController {
-  // ! POST
+  // ! READ
+  fetchSavedPosts = asyncHandler(async (req: Request, res: Response) => {
+    if (checkValidationError(req, res)) return;
+
+    const { cId: cursor_id } = req.query as {
+      cId: string | undefined;
+    };
+
+    try {
+      const { user_id } = getAuthUser(req.authData);
+      if (!(await db.user.getById(user_id))) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      const { posts, pagination } = await db.savedPost.fetch(
+        user_id,
+        cursor_id,
+      );
+
+      return res.status(200).json({
+        message: 'Successfully fetched saved posts',
+        posts,
+        pagination,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        message: 'Failed fetch saved posts',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  });
+
+  fetchSavedComments = asyncHandler(async (req: Request, res: Response) => {
+    if (checkValidationError(req, res)) return;
+
+    const { cId: cursor_id } = req.query as {
+      cId: string | undefined;
+    };
+
+    try {
+      const { user_id } = getAuthUser(req.authData);
+
+      if (!(await db.user.getById(user_id))) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      const { comments, pagination } = await db.savedComment.fetch(
+        user_id,
+        cursor_id,
+      );
+
+      return res.status(200).json({
+        message: 'Successfully fetched saved comments',
+        comments,
+        pagination,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        message: 'Failed to fetch saved comments',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  });
+
+  // ! CREATE
   savePost = asyncHandler(async (req: Request, res: Response) => {
     if (checkValidationError(req, res)) return;
 
