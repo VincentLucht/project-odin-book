@@ -18,7 +18,7 @@ export default function Saved() {
     nextCursor: '',
   });
 
-  const [typeFilter, setTypeFilter] = useState<'posts' | 'comments'>('comments');
+  const [typeFilter, setTypeFilter] = useState<'posts' | 'comments'>('posts');
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
