@@ -10,14 +10,14 @@ import { CheckIcon, PlusIcon } from 'lucide-react';
 
 import { moderateComment } from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/components/ModMenuComment/api/commentModerationAPI';
 
-import { IsModPost } from '@/Main/Post/Post';
+import { IsMod } from '@/Main/Community/components/Virtualization/VirtualizedPostOverview';
 import { DBCommentModeration, DBCommentWithReplies } from '@/interface/dbSchema';
 
 interface ModMenuCommentProps {
   commentId: string;
   moderation: DBCommentModeration | null;
-  setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[]>>;
-  isMod: IsModPost;
+  setComments?: React.Dispatch<React.SetStateAction<DBCommentWithReplies[]>>;
+  isMod: IsMod;
   token: string | null;
   showEditDropdown: string | null | undefined;
   setShowEditDropdown: React.Dispatch<React.SetStateAction<string | null>> | undefined;
