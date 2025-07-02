@@ -89,38 +89,36 @@ export default function VirtualizedPostOverview({
       if (!post) return null;
 
       return (
-        <div data-post-id={post.id}>
-          <PostOverview
-            key={post.id}
-            post={post}
-            community={community}
-            userId={userId}
-            token={token}
-            setPosts={setPosts}
-            navigate={navigate}
-            showPoster={true}
-            showMembership={false}
-            showEditDropdown={showEditDropdown}
-            setShowEditDropdown={setShowEditDropdown}
-            showModOptions={isMod !== false}
-            isMod={isMod}
-            isLast={isLast}
-            isLastModeration={isLastModeration}
-            showModDropdown={showModDropdown}
-            setShowModDropdown={setShowModDropdown}
-            deleteFunc={() => communityPostHandler.handleDeletePost(post.id)}
-            spoilerFunc={() => communityPostHandler.handleSpoilerFunc(post)}
-            matureFunc={() => communityPostHandler.handleMatureFunc(post)}
-            removePostFlairFunc={() =>
-              communityPostHandler.handleDeletePostFlair(post, () =>
-                navigate(`/r/${communityName}/${post.id}?edit-post-flair=true`),
-              )
-            }
-            manageSaveFunc={(action) =>
-              communityPostHandler.handleManageSavedPost(post.id, userId ?? '', action)
-            }
-          />
-        </div>
+        <PostOverview
+          key={post.id}
+          post={post}
+          community={community}
+          userId={userId}
+          token={token}
+          setPosts={setPosts}
+          navigate={navigate}
+          showPoster={true}
+          showMembership={false}
+          showEditDropdown={showEditDropdown}
+          setShowEditDropdown={setShowEditDropdown}
+          showModOptions={isMod !== false}
+          isMod={isMod}
+          isLast={isLast}
+          isLastModeration={isLastModeration}
+          showModDropdown={showModDropdown}
+          setShowModDropdown={setShowModDropdown}
+          deleteFunc={() => communityPostHandler.handleDeletePost(post.id)}
+          spoilerFunc={() => communityPostHandler.handleSpoilerFunc(post)}
+          matureFunc={() => communityPostHandler.handleMatureFunc(post)}
+          removePostFlairFunc={() =>
+            communityPostHandler.handleDeletePostFlair(post, () =>
+              navigate(`/r/${communityName}/${post.id}?edit-post-flair=true`),
+            )
+          }
+          manageSaveFunc={(action) =>
+            communityPostHandler.handleManageSavedPost(post.id, userId ?? '', action)
+          }
+        />
       );
     },
     [
@@ -143,7 +141,6 @@ export default function VirtualizedPostOverview({
   return (
     <Virtuoso
       data={posts}
-      totalCount={posts.length}
       itemContent={(index) => ItemRenderer(index)}
       overscan={200} // Pre-render items outside viewport for smoother scrolling
       useWindowScroll
