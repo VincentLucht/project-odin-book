@@ -6,6 +6,7 @@ import HideOrShow from '@/Main/Post/components/CommentSection/components/Comment
 import ReplyEditor from '@/Main/Post/components/ReplyEditor/ReplyEditor';
 import MoreRepliesButton from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/components/MoreRepliesButton/MoreRepliesButton';
 import CommentContent from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/components/CommentContent/CommentContent';
+import { Link } from 'react-router-dom';
 
 import getRelativeTime from '@/util/getRelativeTime';
 import { manageSavedComments } from '@/Main/Saved/api/savedApi';
@@ -48,7 +49,6 @@ interface CommentProps {
 }
 
 // TODO: Add user flair :)
-// TODO: Add save functionality for comment
 export default function Comment({
   comment,
   depth,
@@ -135,7 +135,12 @@ export default function Comment({
             {comment.is_deleted || userDeleted ? (
               <span className="text-gray-300">[deleted]</span>
             ) : (
-              comment.user?.username
+              <Link
+                to={comment.user?.username ? `/user/${comment.user?.username}` : ''}
+                className="hover:underline"
+              >
+                {comment.user?.username}
+              </Link>
             )}
           </div>
 
