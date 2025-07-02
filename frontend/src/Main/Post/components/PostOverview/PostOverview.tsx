@@ -28,7 +28,7 @@ import {
 import { FetchedPost } from '@/Main/Community/Community';
 import { UserHistoryItem } from '@/Main/user/UserProfile/api/fetchUserProfile';
 import { VoteType } from '@/interface/backendTypes';
-import { NavigateFunction } from 'react-router-dom';
+import { Link, NavigateFunction } from 'react-router-dom';
 import { HandlePostVoteType } from '@/Main/Post/api/vote/handlePostVote';
 import { IsMod } from '@/Main/Community/components/Virtualization/VirtualizedPostOverview';
 import { LockIcon } from 'lucide-react';
@@ -62,6 +62,7 @@ interface PostOverviewProps {
   isMod?: IsMod;
   showModDropdown?: string | null;
   isLast?: boolean;
+  showCommunityAndUser?: boolean;
   isLastModeration?: boolean;
   setShowModDropdown?: React.Dispatch<React.SetStateAction<string | null>>;
   onToggle?: (id: string) => void;
@@ -90,6 +91,7 @@ export default function PostOverview({
   showRemovedByModeration = false,
   isMod = false,
   isLast,
+  showCommunityAndUser = false,
   isLastModeration,
   showModDropdown,
   setShowModDropdown,
@@ -109,6 +111,7 @@ export default function PostOverview({
 
   const showBody = showMature || showSpoiler || !(isMature || isSpoiler);
   const hideContent = !showMature && !showSpoiler && (isMature || isSpoiler);
+  const mode = showCommunityAndUser ? 'community' : showPoster ? 'user' : 'community';
 
   const isUserPoster = userId === post.poster_id ? true : false;
   const userMember =
@@ -165,18 +168,45 @@ export default function PostOverview({
         onClick={postRedirect}
       >
         <div className="flex justify-between">
-          <div className="gap-1 text-sm df">
-            <PFP
-              src={
-                post.poster
-                  ? post.poster?.profile_picture_url
-                  : community.profile_picture_url
+          <div className="group gap-1 text-sm df">
+            <Link
+              to={
+                mode === 'community'
+                  ? `/r/${community.name}`
+                  : `/user/${post.poster?.username}`
               }
-            />
+              onClick={(e) => e.stopPropagation()}
+            >
+              <PFP
+                src={
+                  showCommunityAndUser
+                    ? community.profile_picture_url
+                    : showPoster
+                      ? post.poster?.profile_picture_url
+                      : community.profile_picture_url
+                }
+                mode={mode}
+              />
+            </Link>
 
-            {showPoster ? (
+            {showCommunityAndUser ? (
+              <div className="flex items-center gap-1">
+                <div className="font-semibold">r/{community.name}</div>
+
+                <span>•</span>
+
+                <button
+                  className="font-medium group-hover:underline"
+                  onClick={() => !post.poster?.deleted_at && userRedirect()}
+                >
+                  {(post.poster?.deleted_at ?? post.deleted_at)
+                    ? '[deleted]'
+                    : `u/${post.poster?.username}`}
+                </button>
+              </div>
+            ) : showPoster ? (
               <button
-                className="font-medium hover:underline"
+                className="font-medium group-hover:underline"
                 onClick={() => !post.poster?.deleted_at && userRedirect()}
               >
                 {(post.poster?.deleted_at ?? post.deleted_at)
@@ -184,7 +214,13 @@ export default function PostOverview({
                   : `u/${post.poster?.username}`}
               </button>
             ) : (
-              <div className="font-semibold">r/{community.name}</div>
+              <Link
+                to={`/r/${community.name}`}
+                className="font-semibold hover:underline"
+                onClick={(e) => e.stopPropagation()}
+              >
+                r/{community.name}
+              </Link>
             )}
 
             {showPrivate && community?.type === 'PRIVATE' && (

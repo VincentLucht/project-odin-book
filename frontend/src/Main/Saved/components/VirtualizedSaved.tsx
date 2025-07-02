@@ -56,7 +56,6 @@ export default function VirtualizedSaved({
       const isLast = index === posts.length - 1 && posts.length > 1;
       if (!post) return null;
 
-      // TODO: Add where you can see both poster + community
       return (
         <PostOverview
           key={post.id}
@@ -74,6 +73,7 @@ export default function VirtualizedSaved({
           setShowEditDropdown={setShowDropdown}
           showRemovedByModeration={post?.moderation?.action === 'REMOVED'}
           showPrivate={true}
+          showCommunityAndUser={true}
           isLast={isLast}
           deleteFunc={() => communityPostHandler.handleDeletePost(post.id)}
           spoilerFunc={() => communityPostHandler.handleSpoilerFunc(post)}
