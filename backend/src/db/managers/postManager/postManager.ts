@@ -130,9 +130,6 @@ export default class PostManager {
   ) {
     const { orderBy, convertedTimeframe } = createSortParams(sortBy, timeframe);
 
-    console.log('Ran');
-    console.log(requestUserId);
-
     const posts = await this.prisma.post.findMany({
       where: {
         deleted_at: null,
