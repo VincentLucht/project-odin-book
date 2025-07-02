@@ -16,7 +16,10 @@ export default function handleCreateCommunity(
   profile_picture_url: string | null,
   token: string,
   navigate: NavigateFunction,
+  setSubmitting: React.Dispatch<React.SetStateAction<boolean>>,
 ) {
+  setSubmitting(true);
+
   const convertedTopics: string[] = [];
   topics.forEach((topic) => {
     convertedTopics.push(topic.id);
@@ -37,8 +40,10 @@ export default function handleCreateCommunity(
   )
     .then(() => {
       navigate(`/r/${name}`);
+      setSubmitting(false);
     })
     .catch((error) => {
       catchError(error);
+      setSubmitting(false);
     });
 }

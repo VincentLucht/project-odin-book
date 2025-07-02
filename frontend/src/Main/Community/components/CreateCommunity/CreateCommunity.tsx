@@ -7,6 +7,7 @@ import Level1 from '@/Main/Community/components/CreateCommunity/Levels/Level1';
 import Level2 from '@/Main/Community/components/CreateCommunity/Levels/Level2/Level2';
 import Level3 from '@/Main/Community/components/CreateCommunity/Levels/Level3/Level3';
 import Level4 from '@/Main/Community/components/CreateCommunity/Levels/Level4';
+import SpinnerDots from '@/components/SpinnerDots';
 
 import handleCreateCommunity from '@/Main/Community/components/CreateCommunity/api/handleCreateCommunity';
 
@@ -32,13 +33,14 @@ export default function CreateCommunity() {
   const [isPostFlairRequired, setIsPostFlairRequired] = useState(false);
   const [allowBasicUserPosts, setAllowBasicUserPosts] = useState(true);
 
-  const [level, setLevel] = useState(1);
+  const [level, setLevel] = useState(4);
   const [isValid, setIsValid] = useState<IsValid>({
     1: false,
     2: true,
     3: false,
     4: true,
   });
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
   const { token } = useAuthGuard();
 
@@ -68,6 +70,7 @@ export default function CreateCommunity() {
       iconUrl,
       token,
       navigate,
+      setSubmitting,
     );
   };
 
@@ -137,7 +140,7 @@ export default function CreateCommunity() {
                 }
               }}
             >
-              {level !== 4 ? 'Next' : 'Create Community'}
+              {submitting ? <SpinnerDots /> : level !== 4 ? 'Next' : 'Create Community'}
             </button>
           </div>
         </div>
