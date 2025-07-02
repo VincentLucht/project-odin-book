@@ -80,9 +80,9 @@ export default function NotUserEllipsis({
       >
         {isSaved ? (
           <DropdownButton
-            text={`${mode === 'post' ? 'Remove post from saved' : 'Remove comment from saved'}`}
+            text={`Remove ${mode === 'post' ? 'post' : 'comment'} from saved`}
             icon={<BookmarkMinusIcon />}
-            alt={`${mode === 'post' ? 'Remove post from saved' : 'Remove comment from saved'}`}
+            alt={`Remove ${mode === 'post' ? 'post' : 'comment'} from saved`}
             imgClassName="rounded-full border h-[32px] w-[32px]"
             setterFunc={setShowDropdown}
             customFunc={() => manageSaveFunc?.(false)}
