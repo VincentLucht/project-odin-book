@@ -170,7 +170,9 @@ export default function Post({
                 newBody={post.body}
                 isMature={post.is_mature}
                 isSpoiler={post.is_spoiler}
-                isSaved={post?.saved_by?.[0]?.user_id === user?.id}
+                isSaved={
+                  post?.saved_by?.[0]?.user_id === user?.id && user?.id !== undefined
+                }
                 setShowPostFlairSelection={setShowPostFlairSelection}
               />
             </div>
