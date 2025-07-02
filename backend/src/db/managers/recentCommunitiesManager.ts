@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client/default';
+import { Prisma, PrismaClient } from '@prisma/client/default';
 
 export default class RecentCommunitiesManager {
   constructor(private prisma: PrismaClient) {
@@ -22,9 +22,15 @@ export default class RecentCommunitiesManager {
     return recent;
   }
 
-  async assign(user_id: string, community_id: string) {
+  async assign(
+    user_id: string,
+    community_id: string,
+    tx?: Prisma.TransactionClient,
+  ) {
+    const client = tx || this.prisma;
+
     // Update if in recent
-    await this.prisma.recentCommunities.upsert({
+    await client.recentCommunities.upsert({
       where: {
         community_id_user_id: {
           community_id,
@@ -41,7 +47,7 @@ export default class RecentCommunitiesManager {
       },
     });
 
-    const recentCommunities = await this.prisma.recentCommunities.findMany({
+    const recentCommunities = await client.recentCommunities.findMany({
       where: { user_id },
       orderBy: { interacted_at: 'desc' },
       select: {
@@ -54,8 +60,7 @@ export default class RecentCommunitiesManager {
     // If limit hit, remove oldest
     if (recentCommunities.length > 5) {
       const oldestRecent = recentCommunities[recentCommunities.length - 1];
-
-      await this.prisma.recentCommunities.delete({
+      await client.recentCommunities.delete({
         where: { id: oldestRecent.id },
       });
     }
