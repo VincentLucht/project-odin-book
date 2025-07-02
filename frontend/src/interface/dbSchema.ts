@@ -300,9 +300,26 @@ export interface DBCommentWithCommunityName extends DBComment {
       type?: CommunityTypes;
     };
   };
-  user_communities: CommunityMembership[];
   comment_votes: VotingRecord[] | undefined;
   user: { username: string };
+  saved_by?: { user_id: string }[];
+  reports?: DBReport[];
+}
+
+export interface SavedComment extends DBComment {
+  post: {
+    title: string;
+    community: {
+      name: string;
+      profile_picture_url: string | null;
+      type?: CommunityTypes;
+    };
+  };
+  comment_votes: VotingRecord[] | undefined;
+  user: { username: string };
+  moderator_id: string | null;
+  moderation: DBCommentModeration;
+  saved_by?: { user_id: string }[];
 }
 
 export interface DBPostWithCommunity extends DBPostWithModeration {
@@ -323,6 +340,7 @@ export interface DBCommentWithReplies extends DBComment {
   reports?: DBReport[];
   comment_votes: VotingRecord[];
   replies: DBCommentWithReplies[];
+  saved_by: { user_id: string }[];
   _count: { replies: number };
   moderation: DBCommentModeration;
 }
