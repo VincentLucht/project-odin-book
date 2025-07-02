@@ -15,6 +15,11 @@ export default function Resources({ navigate }: ResourcesProps) {
     <div>
       <ShowOrHideTab show={show} tabName="Resources" setShow={setShow}>
         <SidebarButton
+          navigate={() => navigate('/saved')}
+          buttonName="Saved Posts & Comments"
+        />
+
+        <SidebarButton
           navigate={() => navigate('/about-reddnir')}
           buttonName="About Reddnir"
         />
