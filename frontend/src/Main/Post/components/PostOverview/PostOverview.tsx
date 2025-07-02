@@ -13,6 +13,7 @@ import LockedCommentsTag from '@/Main/Post/components/tags/common/LockedComments
 import { Transition } from '@headlessui/react';
 import transitionPropsHeight from '@/util/transitionProps';
 import RemovalMessage from '@/components/Message/RemovalMessage';
+import DeletedByPoster from '@/components/DeletedByPoster';
 
 import getRelativeTime from '@/util/getRelativeTime';
 import IsCommunityMember from '@/Main/Post/components/IsCommunityMember/IsCommunityMember';
@@ -115,7 +116,7 @@ export default function PostOverview({
       ? (post.community.user_communities ?? [])
       : null;
   const hasReported = post?.reports?.[0]?.reporter_id === userId;
-  const isSaved = post?.saved_by?.[0]?.user_id === userId;
+  const isSaved = post?.saved_by?.[0]?.user_id === userId && userId !== undefined;
 
   const { currentWidth, isMobile } = useGetScreenSize();
   const isBelow500px = currentWidth <= 500;
@@ -178,7 +179,9 @@ export default function PostOverview({
                 className="font-medium hover:underline"
                 onClick={() => !post.poster?.deleted_at && userRedirect()}
               >
-                {post.poster?.deleted_at ? '[deleted]' : `u/${post.poster?.username}`}
+                {(post.poster?.deleted_at ?? post.deleted_at)
+                  ? '[deleted]'
+                  : `u/${post.poster?.username}`}
               </button>
             ) : (
               <div className="font-semibold">r/{community.name}</div>
@@ -258,26 +261,29 @@ export default function PostOverview({
             className="mb-2"
           />
 
-          {!showRemovedByModeration && (
-            <>
-              <Transition show={showBody} {...transitionPropsHeight}>
-                <div className="line-clamp-[10] whitespace-pre-line break-all">
-                  {post.body}
-                </div>
-              </Transition>
+          {!showRemovedByModeration &&
+            (post.deleted_at ? (
+              <DeletedByPoster type="post" />
+            ) : (
+              <>
+                <Transition show={showBody} {...transitionPropsHeight}>
+                  <div className="line-clamp-[10] whitespace-pre-line break-all">
+                    {post.body}
+                  </div>
+                </Transition>
 
-              <Transition show={hideContent} {...transitionPropsHeight}>
-                <div>
-                  <HideContent
-                    isMature={isMature}
-                    isSpoiler={isSpoiler}
-                    setShowMature={setShowMature}
-                    setShowSpoiler={setShowSpoiler}
-                  />
-                </div>
-              </Transition>
-            </>
-          )}
+                <Transition show={hideContent} {...transitionPropsHeight}>
+                  <div>
+                    <HideContent
+                      isMature={isMature}
+                      isSpoiler={isSpoiler}
+                      setShowMature={setShowMature}
+                      setShowSpoiler={setShowSpoiler}
+                    />
+                  </div>
+                </Transition>
+              </>
+            ))}
         </div>
 
         <PostInteractionBar
