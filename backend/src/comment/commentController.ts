@@ -339,12 +339,13 @@ class CommentController {
           .json({ message: 'You are banned from this community' });
       }
 
+      await db.comment.softDelete(comment_id, user_id);
       // Fully delete comment if no reply, else soft delete
-      if ('replies' in comment && comment.replies?.length) {
-        await db.comment.softDelete(comment_id, user_id);
-      } else {
-        await db.comment.delete(comment_id, user_id);
-      }
+      // if ('replies' in comment && comment.replies?.length) {
+      //   await db.comment.softDelete(comment_id, user_id);
+      // } else {
+      //   await db.comment.delete(comment_id, user_id);
+      // }
 
       return res.status(200).json({ message: 'Successfully deleted Comment' });
     } catch (error) {
