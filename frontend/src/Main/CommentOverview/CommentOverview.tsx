@@ -1,7 +1,11 @@
+import { useState } from 'react';
+
 import Separator from '@/components/Separator';
 import CommentInteractionBar from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/components/CommentInteractionBar';
 import RemovalMessage from '@/components/Message/RemovalMessage';
 import DeletedByPoster from '@/components/DeletedByPoster';
+import PFP from '@/components/PFP';
+import { Link } from 'react-router-dom';
 
 import getRelativeTime from '@/util/getRelativeTime';
 import handleCommentVoteOverview from '@/Main/CommentOverview/api/handleCommentVoteOverview';
@@ -52,6 +56,8 @@ export default function CommentOverview({
   setSavedComments,
   navigate,
 }: CommentOverviewProps) {
+  const [isHovered, setIsHovered] = useState(false);
+
   const redirectToComment = (isReply: boolean, e?: React.MouseEvent) => {
     // Only redirect when clicking outside a button
     if (e && (e.target as HTMLElement).closest('button')) {
@@ -111,19 +117,25 @@ export default function CommentOverview({
           hover:bg-hover-gray-secondary"
         onClick={(e) => redirectToComment(false, e)}
       >
-        <img
-          src={
-            comment.post.community.profile_picture_url
-              ? comment.post.community.profile_picture_url
-              : '/community-default.svg'
-          }
-          alt="Community Profile Picture"
-          className="h-6 w-6 rounded-full border"
-        />
+        <Link
+          to={`/r/${comment.post.community.name}`}
+          onClick={(e) => e.stopPropagation()}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          className="h-fit"
+        >
+          <PFP src={comment.post.community.profile_picture_url} mode="community" />
+        </Link>
 
         <div>
           <div className="flex gap-[4px] text-sm">
-            <span className="font-semibold">r/{comment.post.community.name}</span>
+            <Link
+              className={`hover:underline focus:underline ${isHovered ? 'underline' : ''}`}
+              to={`/r/${comment.post.community.name}`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <span className="font-semibold">r/{comment.post.community.name}</span>
+            </Link>
 
             {showPrivate && comment.post.community?.type === 'PRIVATE' && (
               <LockIcon className="h-4 w-4" />

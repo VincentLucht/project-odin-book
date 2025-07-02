@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import useAuth from '@/context/auth/hook/useAuth';
 import useGetScreenSize from '@/context/screen/hook/useGetScreenSize';
 import useIsModerator from '@/hooks/useIsModerator';
@@ -115,7 +115,13 @@ export default function Post({
       >
         <div className="flex flex-col">
           <div className="flex gap-1 text-sm">
-            <PFP src={post.community.profile_picture_url} size="large" />
+            <Link
+              to={`/r/${post.community.name}`}
+              onClick={(e) => e.stopPropagation()}
+              className="-ml-1 -mr-1 -mt-1 !h-11 !w-11 bg-hover-transition"
+            >
+              <PFP src={post.community.profile_picture_url} size="large" />
+            </Link>
 
             <div className="ml-1 flex-1 text-xs">
               <div className="flex gap-1">
