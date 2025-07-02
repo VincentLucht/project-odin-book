@@ -3,7 +3,8 @@ import { useState } from 'react';
 import PostEditor from '@/Main/Post/components/PostEditor/PostEditor';
 import HideContent from '@/Main/Post/components/tags/common/HideContent';
 import RemovalMessage from '@/components/Message/RemovalMessage';
-import { LockIcon, TrashIcon } from 'lucide-react';
+import DeletedByPoster from '@/components/DeletedByPoster';
+import { LockIcon } from 'lucide-react';
 import { Transition } from '@headlessui/react';
 
 import transitionPropsHeight from '@/util/transitionProps';
@@ -43,13 +44,7 @@ export default function PostContent({
       <Transition show={!isEditActive} {...transitionPropsHeight}>
         <div>
           {post.deleted_at ? (
-            <div className="my-4 post-message">
-              <TrashIcon className="flex-shrink-0 text-red-500" />
-
-              <span className="break-words">
-                Sorry, this post was deleted by the person who originally posted it.
-              </span>
-            </div>
+            <DeletedByPoster type="post" />
           ) : (
             !isRemovedByMod && (
               <div>
