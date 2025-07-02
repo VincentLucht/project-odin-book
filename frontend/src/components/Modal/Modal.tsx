@@ -67,6 +67,7 @@ export const ModalContainer = ({
         className={`flex max-h-full w-full min-w-[300px] max-w-[500px] flex-col rounded-lg bg-gray
           ${className}`}
         ref={containerRef}
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="flex flex-col gap-4 overflow-y-auto p-3">{children}</div>
       </animated.div>
