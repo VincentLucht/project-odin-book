@@ -8,13 +8,15 @@ import MoreRepliesButton from '@/Main/Post/components/CommentSection/components/
 import CommentContent from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/components/CommentContent/CommentContent';
 
 import getRelativeTime from '@/util/getRelativeTime';
+import { manageSavedComments } from '@/Main/Saved/api/savedApi';
+import { onCommentUpdate } from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/components/ModMenuComment/hooks/useCommentModeration';
 
 import { DBCommentWithReplies } from '@/interface/dbSchema';
 import { DBPostWithCommunity } from '@/interface/dbSchema';
 import { NavigateFunction } from 'react-router-dom';
 import { VoteType } from '@/interface/backendTypes';
 import { TokenUser } from '@/context/auth/AuthProvider';
-import { IsModPost } from '@/Main/Post/Post';
+import { IsMod } from '@/Main/Community/components/Virtualization/VirtualizedPostOverview';
 import './css/comment.css';
 
 interface CommentProps {
@@ -24,6 +26,15 @@ interface CommentProps {
   user: TokenUser | null;
   token: string | null;
   originalPoster: string | null;
+  isMod: IsMod;
+  isMobile: boolean;
+  isBelow550px: boolean;
+  lastCommentId: string;
+  penultimateCommentId: string;
+  showDropdown: string | null;
+  setShowDropdown: React.Dispatch<React.SetStateAction<string | null>>;
+  showModDropdown: string | null;
+  setShowModDropdown: React.Dispatch<React.SetStateAction<string | null>>;
   navigate: NavigateFunction;
   onVote: (
     commentId: string,
@@ -33,16 +44,7 @@ interface CommentProps {
   onDelete: (commentId: string) => void;
   setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[]>>;
   setPost: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>;
-  showDropdown: string | null;
-  setShowDropdown: React.Dispatch<React.SetStateAction<string | null>>;
-  showModDropdown: string | null;
-  setShowModDropdown: React.Dispatch<React.SetStateAction<string | null>>;
-  isMod: IsModPost;
   onModerationCb?: (action: 'APPROVED' | 'REMOVED') => void;
-  isMobile: boolean;
-  isBelow550px: boolean;
-  lastCommentId: string;
-  penultimateCommentId: string;
 }
 
 // TODO: Add user flair :)
@@ -81,6 +83,8 @@ export default function Comment({
   const hasReply = comment.replies?.length > 0;
   const userDeleted = comment.user?.deleted_at;
   const hasReported = (comment?.reports?.length ?? 0) > 0;
+  const isSaved =
+    comment?.saved_by?.[0]?.user_id === user?.id && user?.id !== undefined;
 
   const redirectToUser = (username: string) => {
     if (!userDeleted) {
@@ -183,6 +187,25 @@ export default function Comment({
               isDeleted={comment.is_deleted}
               onVoteComment={onVote}
               onDeleteComment={onDelete}
+              manageSaveFunc={(action) => {
+                if (!token || !user) return;
+
+                void manageSavedComments(
+                  token,
+                  comment.id,
+                  action ? 'save' : 'unsave',
+                  () => {
+                    onCommentUpdate(
+                      comment.id,
+                      (commentToUpdate) => ({
+                        ...commentToUpdate,
+                        saved_by: action ? [{ user_id: user.id }] : [],
+                      }),
+                      setComments,
+                    );
+                  },
+                );
+              }}
               toggleShow={toggleShow}
               isUserSelf={comment.user_id === user?.id}
               showDropdown={showDropdown}
@@ -197,6 +220,7 @@ export default function Comment({
               hasReported={hasReported}
               isMobile={isMobile}
               onModerationCb={onModerationCb}
+              isSaved={isSaved}
               isLast={
                 comment.id === lastCommentId || comment.id === penultimateCommentId
               }
@@ -248,21 +272,22 @@ export default function Comment({
                 user={user}
                 token={token}
                 originalPoster={originalPoster}
-                navigate={navigate}
-                key={commentReply.id}
-                onVote={onVote}
-                onDelete={onDelete}
-                setComments={setComments}
-                setPost={setPost}
                 showDropdown={showDropdown}
                 setShowDropdown={setShowDropdown}
                 showModDropdown={showModDropdown}
                 setShowModDropdown={setShowModDropdown}
                 isMod={isMod}
+                onModerationCb={onModerationCb}
                 isMobile={isMobile}
                 isBelow550px={isBelow550px}
                 lastCommentId={lastCommentId}
                 penultimateCommentId={penultimateCommentId}
+                navigate={navigate}
+                onVote={onVote}
+                onDelete={onDelete}
+                setComments={setComments}
+                setPost={setPost}
+                key={commentReply.id}
               />
             </li>
           ))}

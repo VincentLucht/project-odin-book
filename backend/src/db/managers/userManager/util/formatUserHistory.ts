@@ -127,6 +127,7 @@ export default function formatUserHistory(userHistory: UserHistory[]) {
             comment_id: item.report_comment_id,
           },
         ],
+        saved_by: [{ user_id: item.saved_user_id }],
       };
     }
   });

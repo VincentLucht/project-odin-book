@@ -101,6 +101,7 @@ export default class CommentManager {
         },
         ...(user_id && {
           reports: { where: { reporter_id: user_id } },
+          saved_by: { where: { user_id } },
         }),
         moderation: {
           include: {
@@ -120,6 +121,7 @@ export default class CommentManager {
               select: { user_id: true, vote_type: true },
               where: { user_id: 'someuseridthatwillneverexist1234_2' }, // ? ensure empty arr
             },
+        reports: { where: { reporter_id: user_id } },
         _count: { select: { replies: true } },
         ...get8Replies(user_id),
       },
@@ -171,6 +173,7 @@ export default class CommentManager {
         },
         ...(user_id && {
           reports: { where: { reporter_id: user_id } },
+          saved_by: { where: { user_id } },
         }),
         moderation: {
           include: {

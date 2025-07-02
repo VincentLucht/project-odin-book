@@ -148,31 +148,29 @@ export default function VirtualizedComments({
       if (!comment) return null;
 
       return (
-        <div data-post-id={comment.id}>
-          <Comment
-            comment={comment}
-            depth={0}
-            post={{ ...post }}
-            user={user}
-            token={token}
-            originalPoster={originalPoster}
-            navigate={navigate}
-            onVote={onVote}
-            onDelete={onDelete}
-            setComments={setComments}
-            setPost={setPost}
-            showDropdown={showDropdown}
-            setShowDropdown={setShowDropdown}
-            showModDropdown={showModDropdown}
-            setShowModDropdown={setShowModDropdown}
-            isMod={isMod}
-            onModerationCb={onModerationCb}
-            isMobile={isMobile}
-            isBelow550px={isBelow550px}
-            lastCommentId={lastCommentId}
-            penultimateCommentId={penultimateCommentId}
-          />
-        </div>
+        <Comment
+          comment={comment}
+          depth={0}
+          post={{ ...post }}
+          user={user}
+          token={token}
+          originalPoster={originalPoster}
+          showDropdown={showDropdown}
+          setShowDropdown={setShowDropdown}
+          showModDropdown={showModDropdown}
+          setShowModDropdown={setShowModDropdown}
+          isMod={isMod}
+          onModerationCb={onModerationCb}
+          isMobile={isMobile}
+          isBelow550px={isBelow550px}
+          lastCommentId={lastCommentId}
+          penultimateCommentId={penultimateCommentId}
+          navigate={navigate}
+          onVote={onVote}
+          onDelete={onDelete}
+          setComments={setComments}
+          setPost={setPost}
+        />
       );
     },
     [
@@ -205,7 +203,6 @@ export default function VirtualizedComments({
           >
             <Virtuoso
               data={comments}
-              totalCount={comments.length}
               itemContent={(index) => ItemRenderer(index)}
               overscan={200}
               useWindowScroll

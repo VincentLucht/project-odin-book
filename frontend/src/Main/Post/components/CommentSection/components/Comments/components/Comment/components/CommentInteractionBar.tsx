@@ -8,7 +8,7 @@ import NotUserEllipsis from '@/components/Interaction/NotUserEllipsis';
 
 import { VoteType } from '@/interface/backendTypes';
 import { UrlItems } from '@/components/Interaction/Share';
-import { IsModPost } from '@/Main/Post/Post';
+import { IsMod } from '@/Main/Community/components/Virtualization/VirtualizedPostOverview';
 import { DBCommentWithReplies } from '@/interface/dbSchema';
 import { DBCommentModeration } from '@/interface/dbSchema';
 
@@ -25,6 +25,7 @@ interface CommentInteractionBarProps {
     previousVoteType: VoteType | undefined,
   ) => void;
   onDeleteComment: (commentId: string) => void;
+  manageSaveFunc: (action: boolean) => void;
   toggleShow: () => void;
   isUserSelf: boolean;
   showDropdown: string | null;
@@ -36,12 +37,13 @@ interface CommentInteractionBarProps {
   urlItems?: UrlItems;
   onEdit?: () => void;
   isLocked?: boolean;
-  isMod: IsModPost;
+  isMod: IsMod;
   token: string | null;
   hasReported: boolean;
   isMobile: boolean;
-  onModerationCb?: (action: 'APPROVED' | 'REMOVED') => void;
+  isSaved: boolean;
   isLast?: boolean;
+  onModerationCb?: (action: 'APPROVED' | 'REMOVED') => void;
 }
 
 export default function CommentInteractionBar({
@@ -53,6 +55,7 @@ export default function CommentInteractionBar({
   isDeleted,
   onVoteComment,
   onDeleteComment,
+  manageSaveFunc,
   toggleShow,
   isUserSelf,
   showDropdown,
@@ -68,8 +71,9 @@ export default function CommentInteractionBar({
   token,
   hasReported,
   isMobile,
-  onModerationCb,
+  isSaved,
   isLast,
+  onModerationCb,
 }: CommentInteractionBarProps) {
   const isUpvote = userVote?.voteType === 'UPVOTE';
   const isDownVote = userVote?.voteType === 'DOWNVOTE';
@@ -129,11 +133,12 @@ export default function CommentInteractionBar({
                   setIsEditActive={setIsEditActive && setIsEditActive}
                   deleteFunc={onDeleteComment}
                   editFunc={onEdit}
+                  manageSaveFunc={manageSaveFunc}
+                  isSaved={isSaved}
                 />
               </div>
             ) : (
               <NotUserEllipsis
-                hasSaved={false} // TODO: Complete saved
                 hasReported={hasReported}
                 token={token}
                 id={commentId}
@@ -142,6 +147,8 @@ export default function CommentInteractionBar({
                 showDropdown={showDropdown}
                 setShowDropdown={setShowDropdown}
                 setComments={setComments}
+                isSaved={isSaved}
+                manageSaveFunc={manageSaveFunc}
               />
             ))}
         </div>
@@ -150,7 +157,7 @@ export default function CommentInteractionBar({
           <ModMenuComment
             commentId={commentId}
             moderation={moderation}
-            setComments={setComments!}
+            setComments={setComments}
             isMod={isMod}
             token={token}
             showEditDropdown={showDropdown}

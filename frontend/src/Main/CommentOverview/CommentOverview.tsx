@@ -1,15 +1,21 @@
 import Separator from '@/components/Separator';
 import CommentInteractionBar from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/components/CommentInteractionBar';
 import RemovalMessage from '@/components/Message/RemovalMessage';
+import DeletedByPoster from '@/components/DeletedByPoster';
 
 import getRelativeTime from '@/util/getRelativeTime';
 import handleCommentVoteOverview from '@/Main/CommentOverview/api/handleCommentVoteOverview';
 import handleDeleteCommentOverview from '@/Main/CommentOverview/api/handleDeleteCommentOverview';
 import getCommentThreadUrl from '@/util/getCommentThreadUrl';
 import confirmDelete from '@/util/confirmDelete';
+import { manageSavedComments } from '@/Main/Saved/api/savedApi';
 
 import { UserHistoryItem } from '@/Main/user/UserProfile/api/fetchUserProfile';
-import { DBCommentWithCommunityName } from '@/interface/dbSchema';
+import {
+  DBCommentWithCommunityName,
+  SavedComment,
+  DBCommentWithReplies,
+} from '@/interface/dbSchema';
 import { VoteType } from '@/interface/backendTypes';
 import { UrlItems } from '@/components/Interaction/Share';
 import { NavigateFunction } from 'react-router-dom';
@@ -22,11 +28,13 @@ interface CommentOverviewProps {
   token: string | null;
   showPrivate?: boolean; // display a lock icon next to a comment from a private community
   showRemovedByModeration?: boolean;
-  showCommentDropdown: string | null;
   isLast: boolean;
+  showCommentDropdown: string | null;
   setShowCommentDropdown: React.Dispatch<React.SetStateAction<string | null>>;
-  setUserHistory: React.Dispatch<React.SetStateAction<UserHistoryItem[] | null>>;
   navigate: NavigateFunction;
+
+  setUserHistory?: React.Dispatch<React.SetStateAction<UserHistoryItem[] | null>>;
+  setSavedComments?: React.Dispatch<React.SetStateAction<SavedComment[]>>;
 }
 
 // TODO: Add replied to if it is a reply??
@@ -37,10 +45,11 @@ export default function CommentOverview({
   token,
   showPrivate,
   showRemovedByModeration,
-  showCommentDropdown,
   isLast,
+  showCommentDropdown,
   setShowCommentDropdown,
   setUserHistory,
+  setSavedComments,
   navigate,
 }: CommentOverviewProps) {
   const redirectToComment = (isReply: boolean, e?: React.MouseEvent) => {
@@ -71,6 +80,7 @@ export default function CommentOverview({
       previousVoteType,
       token,
       setUserHistory,
+      setSavedComments,
     );
   };
 
@@ -88,7 +98,7 @@ export default function CommentOverview({
     }
 
     if (confirmDelete('comment')) {
-      handleDeleteCommentOverview(token, commentId, setUserHistory);
+      handleDeleteCommentOverview(token, commentId, setUserHistory, setSavedComments);
     }
   };
 
@@ -123,7 +133,7 @@ export default function CommentOverview({
           </div>
 
           <div className="flex gap-1 py-[6px]">
-            <div className="text-sm font-semibold">{comment.user.username}</div>
+            <div className="text-sm font-semibold">{comment?.user?.username}</div>
 
             <div className="mb-[1px] self-end text-xs text-gray-secondary">
               commented {getRelativeTime(comment.created_at, true)}
@@ -134,7 +144,11 @@ export default function CommentOverview({
             <RemovalMessage show={true} type="comment" className="!my-1" />
           ) : (
             <div className="mr-6 whitespace-pre-line break-all py-[6px]">
-              {comment.content}
+              {comment.is_deleted ? (
+                <DeletedByPoster type="comment" />
+              ) : (
+                comment.content
+              )}
             </div>
           )}
 
@@ -161,7 +175,47 @@ export default function CommentOverview({
               token={token}
               moderation={null}
               showModDropdown={null}
+              isSaved={
+                comment?.saved_by?.[0]?.user_id === userId && userId !== undefined
+              }
+              hasReported={
+                comment?.reports?.[0]?.reporter_id === userId && userId !== undefined
+              }
+              isMobile={false}
               isLast={isLast}
+              setComments={
+                setSavedComments as unknown as React.Dispatch<
+                  React.SetStateAction<DBCommentWithReplies[]>
+                >
+              }
+              manageSaveFunc={(action) => {
+                if (!token || !userId) return;
+
+                void manageSavedComments(
+                  token,
+                  comment.id,
+                  action ? 'save' : 'unsave',
+                  () => {
+                    setUserHistory?.((prev) => {
+                      if (!prev) return prev;
+
+                      return prev.map((item) =>
+                        item.item_type === 'comment'
+                          ? { ...item, saved_by: action ? [{ user_id: userId }] : [] }
+                          : item,
+                      );
+                    });
+
+                    setSavedComments?.((prev) => {
+                      if (!prev) return prev;
+
+                      return prev.filter(
+                        (savedComment) => savedComment.id !== comment.id,
+                      );
+                    });
+                  },
+                );
+              }}
             />
           </div>
         </div>

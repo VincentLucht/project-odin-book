@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 
 import { VoteType } from '@/interface/backendTypes';
 import { UserHistoryItem } from '@/Main/user/UserProfile/api/fetchUserProfile';
+import { SavedComment } from '@/interface/dbSchema';
 
 export default async function handleCommentVoteOverview(
   commentId: string,
@@ -14,7 +15,8 @@ export default async function handleCommentVoteOverview(
   voteType: VoteType,
   previousVoteType: VoteType | undefined,
   token: string | undefined,
-  setUserHistory: React.Dispatch<React.SetStateAction<UserHistoryItem[] | null>>,
+  setUserHistory?: React.Dispatch<React.SetStateAction<UserHistoryItem[] | null>>,
+  setSavedComments?: React.Dispatch<React.SetStateAction<SavedComment[]>>,
 ) {
   if (!userId || !token) {
     toast.error('You need to log in to vote');
@@ -24,7 +26,7 @@ export default async function handleCommentVoteOverview(
   let previousState = null;
 
   const updateState = () => {
-    setUserHistory((prev) => {
+    setUserHistory?.((prev) => {
       if (!prev) return prev;
       previousState = [...prev];
 
@@ -47,6 +49,28 @@ export default async function handleCommentVoteOverview(
         return value;
       });
     });
+
+    setSavedComments?.((prev) => {
+      if (!prev) return prev;
+      previousState = [...prev];
+
+      return prev.map((comment) => {
+        return comment.id === commentId
+          ? {
+              ...comment,
+              comment_votes:
+                previousVoteType === voteType
+                  ? []
+                  : [{ user_id: userId, vote_type: voteType }],
+              total_vote_score: getNewScore(
+                comment.total_vote_score,
+                voteType,
+                previousVoteType,
+              ),
+            }
+          : comment;
+      });
+    });
   };
 
   updateState();
@@ -59,7 +83,7 @@ export default async function handleCommentVoteOverview(
     }
   } catch (error) {
     if (previousState) {
-      setUserHistory(previousState);
+      setUserHistory?.(previousState);
     }
 
     const errorObj = error as { message?: string };

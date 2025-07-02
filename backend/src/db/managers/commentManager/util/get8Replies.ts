@@ -23,7 +23,17 @@ export const createCommentInclude = (
     },
     ...(userId && {
       reports: { where: { reporter_id: userId } },
+      saved_by: { where: { user_id: userId } },
     }),
+    moderation: {
+      include: {
+        moderator: {
+          select: {
+            user: { select: { username: true, profile_picture_url: true } },
+          },
+        },
+      },
+    },
     comment_votes:
       includeUserVotes && userId
         ? {
@@ -34,15 +44,6 @@ export const createCommentInclude = (
             select: { user_id: true, vote_type: true },
             where: { user_id: 'someuseridthatwillneverexist1234_2' }, // ensure empty array
           },
-    moderation: {
-      include: {
-        moderator: {
-          select: {
-            user: { select: { username: true, profile_picture_url: true } },
-          },
-        },
-      },
-    },
     _count: { select: { replies: true } },
   };
 
