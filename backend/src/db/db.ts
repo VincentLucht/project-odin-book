@@ -66,6 +66,7 @@ export class DB {
     this.prisma = new PrismaClient();
     this.user = new UserManager(this.prisma);
     this.community = new CommunityManager(this.prisma);
+    this.recentCommunities = new RecentCommunitiesManager(this.prisma);
     this.userCommunity = new UserCommunityManager(this.prisma);
     this.communityModerator = new CommunityModeratorManager(this.prisma);
     this.postModeration = new PostModerationManager(this.prisma);
@@ -74,13 +75,12 @@ export class DB {
     this.approvedUser = new ApprovedUserManager(this.prisma);
     this.topic = new TopicManager(this.prisma);
     this.communityFlair = new CommunityFlairManager(this.prisma);
-    this.post = new PostManager(this.prisma);
+    this.post = new PostManager(this.prisma, this.recentCommunities);
     this.postVote = new PostVoteManager(this.prisma);
     this.comment = new CommentManager(this.prisma);
     this.commentVote = new CommentVoteManager(this.prisma);
     this.userAssignedFlair = new UserAssignedFlairManager(this.prisma);
     this.postAssignedFlair = new PostAssignedFlairManager(this.prisma);
-    this.recentCommunities = new RecentCommunitiesManager(this.prisma);
     this.joinRequest = new JoinRequestManager(this.prisma);
     this.searchResults = new SearchResultsManager(this.prisma);
     this.notification = new NotificationManager(this.prisma, this.user);

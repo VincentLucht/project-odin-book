@@ -4,9 +4,13 @@ import { postSelectFields } from '@/db/managers/postManager/util/postUtils';
 import { TimeFrame } from '@/db/managers/util/types';
 import createSortParams from '@/util/paginationUtils';
 import { getCommunityInfo } from '@/db/managers/communityManager/util/baseQuery';
+import RecentCommunitiesManager from '@/db/managers/recentCommunitiesManager';
 
 export default class PostManager {
-  constructor(private prisma: PrismaClient) {}
+  constructor(
+    private prisma: PrismaClient,
+    private recentCommunities: RecentCommunitiesManager,
+  ) {}
   // ! GET
   async getById(post_id: string) {
     const post = await this.prisma.post.findUnique({
@@ -193,26 +197,40 @@ export default class PostManager {
     post_type: PostType,
     flair_id: string | undefined,
   ) {
-    const post = await this.prisma.post.create({
-      data: {
-        community_id,
-        poster_id,
-        title,
-        body,
-        is_spoiler,
-        is_mature,
-        post_type,
-        ...(flair_id && {
-          post_assigned_flair: {
-            create: {
-              community_flair_id: flair_id,
+    return await this.prisma.$transaction(async (tx) => {
+      const post = await tx.post.create({
+        data: {
+          community_id,
+          poster_id,
+          title,
+          body,
+          is_spoiler,
+          is_mature,
+          post_type,
+          ...(flair_id && {
+            post_assigned_flair: {
+              create: {
+                community_flair_id: flair_id,
+              },
             },
-          },
-        }),
-      },
-    });
+          }),
+          total_vote_score: 1,
+          upvote_count: 1,
+        },
+      });
 
-    return post;
+      await tx.postVote.create({
+        data: {
+          post_id: post.id,
+          user_id: poster_id,
+          vote_type: 'UPVOTE',
+        },
+      });
+
+      await this.recentCommunities.assign(poster_id, community_id, tx);
+
+      return post;
+    });
   }
 
   // ! PUT
