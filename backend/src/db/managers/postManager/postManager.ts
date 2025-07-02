@@ -240,29 +240,43 @@ export default class PostManager {
     is_spoiler: boolean,
     is_mature: boolean,
   ) {
-    await this.prisma.post.update({
-      where: {
-        id: post_id,
-      },
-      data: {
-        body,
-        is_spoiler,
-        edited_at: new Date().toISOString(),
-        is_mature,
-      },
+    return await this.prisma.$transaction(async (tx) => {
+      const updatedPost = await tx.post.update({
+        where: {
+          id: post_id,
+        },
+        data: {
+          body,
+          is_spoiler,
+          edited_at: new Date().toISOString(),
+          is_mature,
+        },
+      });
+
+      await this.recentCommunities.assign(
+        updatedPost.id,
+        updatedPost.community_id,
+        tx,
+      );
     });
   }
 
   // ! DELETE
-  async deletePost(post_id: string) {
-    await this.prisma.post.update({
-      where: { id: post_id },
-      data: {
-        deleted_at: new Date().toISOString(),
-        poster_id: null,
-        body: '',
-        pinned_at: null,
-      },
+  async deletePost(post_id: string, user_id: string, community_id: string) {
+    return await this.prisma.$transaction(async (tx) => {
+      const deletedPost = await tx.post.update({
+        where: { id: post_id },
+        data: {
+          deleted_at: new Date().toISOString(),
+          poster_id: null,
+          body: '',
+          pinned_at: null,
+        },
+      });
+
+      await this.recentCommunities.assign(user_id, community_id, tx);
+
+      return deletedPost;
     });
   }
 }

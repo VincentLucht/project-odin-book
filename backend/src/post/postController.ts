@@ -260,7 +260,6 @@ class PostController {
       }
 
       await db.post.edit(post_id, body, is_spoiler, is_mature);
-      await db.recentCommunities.assign(user_id, community.id);
 
       return res.status(200).json({ message: 'Successfully edited post' });
     } catch (error) {
@@ -320,8 +319,7 @@ class PostController {
           .json({ message: 'You are banned from this community' });
       }
 
-      await db.post.deletePost(post_id);
-      await db.recentCommunities.assign(user_id, community.id);
+      await db.post.deletePost(post_id, user_id, community.id);
 
       return res.status(200).json({ message: 'Successfully deleted post' });
     } catch (error) {
