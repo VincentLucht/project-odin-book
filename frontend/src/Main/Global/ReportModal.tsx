@@ -7,7 +7,7 @@ import ModalInput from '@/components/Modal/components/ModalInput';
 import ModalTextArea from '@/components/Modal/components/ModalTextArea';
 
 import { report } from '@/Main/Global/api/reportAPI';
-import { onCommentModeration } from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/components/ModMenuComment/hooks/useCommentModeration';
+import { onCommentUpdate } from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/components/ModMenuComment/hooks/useCommentModeration';
 import { toast } from 'react-toastify';
 
 import { UserHistoryItem } from '@/Main/user/UserProfile/api/fetchUserProfile';
@@ -89,11 +89,19 @@ export default function ReportModal({
         );
       });
 
+      setComments?.((prev) => {
+        if (!prev) return prev;
+
+        return prev.map((comment) =>
+          apiData.item_id === comment.id ? { ...comment, reports: [report] } : comment,
+        );
+      });
+
       apiData.type === 'COMMENT' &&
-        onCommentModeration(
+        onCommentUpdate(
           apiData.item_id,
           (comment) => ({ ...comment, reports: [report] }),
-          setComments!,
+          setComments,
         );
     });
   };
