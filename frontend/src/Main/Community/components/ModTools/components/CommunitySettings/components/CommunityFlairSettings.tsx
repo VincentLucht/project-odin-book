@@ -84,7 +84,7 @@ export default function CommunityFlairSettings({
   }, [loadMore]);
 
   return (
-    <div className="h-full-header p-4 center-main">
+    <div className="p-4 h-full-header center-main">
       <div
         className={`grid w-full max-w-[900px] ${editPanel.show ? 'grid-cols-2' : 'grid-cols-1'}`}
       >
@@ -104,7 +104,7 @@ export default function CommunityFlairSettings({
             </div>
 
             <button
-              className="h-10 !font-medium prm-button-blue"
+              className="min-h-10 !font-medium prm-button-blue"
               onClick={() =>
                 setEditPanel((prev) => ({
                   count: prev.count,
