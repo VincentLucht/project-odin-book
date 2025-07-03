@@ -30,6 +30,8 @@ import Post from '@/Main/Post/Post';
 import CreatePost from '@/Main/CreatePost/CreatePost';
 
 import Saved from '@/Main/Saved/Saved';
+import About from '@/Main/Pages/About/About';
+import Help from '@/Main/Pages/Help/Help';
 
 import Chats from '@/Main/Chats/Chats';
 
@@ -105,8 +107,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                   element={<Post />}
                 />
 
-                {/* SAVED */}
+                {/* RESOURCES */}
                 <Route path="/saved" element={<Saved />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/help" element={<Help />} />
 
                 {/* CREATION */}
                 <Route path="/create-community" element={<CreateCommunity />} />
