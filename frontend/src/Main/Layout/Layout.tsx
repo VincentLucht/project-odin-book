@@ -66,7 +66,7 @@ export default function Layout() {
             <Sidebar />
           </div>
 
-          <div className={`flex-1 ${isDesktop && showSidebar ? 'ml-[270px]' : ''}`}>
+          <div className={`flex-1 ${isDesktop ? 'ml-[270px]' : ''}`}>
             <Outlet />
           </div>
         </div>
