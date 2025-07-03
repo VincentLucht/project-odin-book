@@ -4,6 +4,7 @@ import ShowOrHideTab from '@/Sidebar/components/ui/ShowOrHideTab';
 import SidebarButton from '@/Sidebar/components/ui/SidebarButton';
 
 import getJoinedCommunities from '@/Sidebar/components/JoinedCommunities/api/getJoinedCommunities';
+import isCurrentCommunity from '@/Sidebar/components/RecentCommunities/util/isCurrentCommunity';
 import catchError from '@/util/catchError';
 
 import { JoinedCommunity } from '@/Sidebar/components/JoinedCommunities/api/getJoinedCommunities';
@@ -13,9 +14,14 @@ import { PlusIcon } from 'lucide-react';
 interface JoinedCommunitiesProps {
   navigate: NavigateFunction;
   token: string;
+  route: string;
 }
 
-export default function JoinedCommunities({ navigate, token }: JoinedCommunitiesProps) {
+export default function JoinedCommunities({
+  navigate,
+  token,
+  route,
+}: JoinedCommunitiesProps) {
   const [joinedCommunities, setJoinedCommunities] = useState<JoinedCommunity[]>([]);
   const [show, setShow] = useState(false);
   const [page, setPage] = useState(1);
@@ -41,7 +47,12 @@ export default function JoinedCommunities({ navigate, token }: JoinedCommunities
 
   return (
     <div>
-      <ShowOrHideTab show={show} tabName="Communities" setShow={setShow}>
+      <ShowOrHideTab
+        show={show}
+        tabName="Communities"
+        setShow={setShow}
+        className="flex flex-col gap-[6px]"
+      >
         <SidebarButton
           navigate={() => navigate('/create-community')}
           buttonName="Create a community"
@@ -59,7 +70,7 @@ export default function JoinedCommunities({ navigate, token }: JoinedCommunities
                 ? community.profile_picture_url
                 : '/community-default.svg'
             }
-            className="gap-2"
+            className={`gap-2 ${isCurrentCommunity(route, community.name) ? 'bg-accent-gray' : ''}`}
             imgClassName="h-8 w-8 rounded-full border"
           />
         ))}

@@ -1,7 +1,5 @@
-import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import useAuth from '@/context/auth/hook/useAuth';
-import useSetActiveButton from '@/Sidebar/hooks/useSetActiveButton';
 
 import SidebarButton from '@/Sidebar/components/ui/SidebarButton';
 import Separator from '@/components/Separator';
@@ -9,13 +7,13 @@ import SidebarNotLoggedIn from '@/Sidebar/components/SidebarNotLoggedIn/SidebarN
 import RecentCommunities from '@/Sidebar/components/RecentCommunities/RecentCommunities';
 import JoinedCommunities from '@/Sidebar/components/JoinedCommunities/JoinedCommunities';
 import Resources from '@/Sidebar/components/Resources/Resources';
+import { HouseIcon, ArrowUpWideNarrow } from 'lucide-react';
 
 export default function Sidebar() {
-  const [activeButton, setActiveButton] = useState('');
   const location = useLocation();
   const navigate = useNavigate();
   const { user, token } = useAuth();
-  useSetActiveButton(location, setActiveButton);
+  const route = location.pathname;
 
   if (!user) {
     return <SidebarNotLoggedIn />;
@@ -27,32 +25,32 @@ export default function Sidebar() {
         bg-gray"
     >
       <div className="flex-col py-4 df">
-        <SidebarButton
-          navigate={() => navigate('')}
-          buttonName="Home"
-          src={activeButton === 'Home' ? '/home.svg' : '/home-outline.svg'}
-          alt="Home"
-        />
+        <div className="flex flex-col gap-[6px]">
+          <SidebarButton
+            navigate={() => navigate('')}
+            buttonName="Home"
+            alt="Home"
+            icon={<HouseIcon />}
+            className={route === '/' ? 'bg-accent-gray' : ''}
+          />
 
-        <SidebarButton
-          navigate={() => navigate('/popular')}
-          buttonName="Popular"
-          src={
-            activeButton === 'trending'
-              ? '/trending-up.svg'
-              : '/trending-up-outline.svg'
-          }
-          alt="Trending"
-        />
-
-        <Separator mode="sidebar" />
-        <RecentCommunities navigate={navigate} />
+          <SidebarButton
+            navigate={() => navigate('/popular')}
+            buttonName="Popular"
+            alt="Trending"
+            className={` ${route === '/popular' ? 'bg-accent-gray' : ''}`}
+            icon={<ArrowUpWideNarrow className="-mr-[2px] ml-[2px]" />}
+          />
+        </div>
 
         <Separator mode="sidebar" />
-        <JoinedCommunities navigate={navigate} token={token} />
+        <RecentCommunities navigate={navigate} route={route} />
 
         <Separator mode="sidebar" />
-        <Resources navigate={navigate} />
+        <JoinedCommunities navigate={navigate} token={token} route={route} />
+
+        <Separator mode="sidebar" />
+        <Resources navigate={navigate} route={route} />
       </div>
     </nav>
   );

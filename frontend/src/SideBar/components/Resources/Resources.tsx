@@ -6,25 +6,37 @@ import { NavigateFunction } from 'react-router-dom';
 
 interface ResourcesProps {
   navigate: NavigateFunction;
+  route: string;
 }
 
-export default function Resources({ navigate }: ResourcesProps) {
+export default function Resources({ navigate, route }: ResourcesProps) {
   const [show, setShow] = useState(false);
 
   return (
     <div>
-      <ShowOrHideTab show={show} tabName="Resources" setShow={setShow}>
+      <ShowOrHideTab
+        show={show}
+        tabName="Resources"
+        setShow={setShow}
+        className="flex flex-col gap-[6px]"
+      >
         <SidebarButton
           navigate={() => navigate('/saved')}
           buttonName="Saved Posts & Comments"
+          className={`${route === '/saved' ? 'bg-hover-gray' : ''}`}
         />
 
         <SidebarButton
-          navigate={() => navigate('/about-reddnir')}
+          navigate={() => navigate('/about')}
           buttonName="About Reddnir"
+          className={`${route === '/about' ? 'bg-hover-gray' : ''}`}
         />
 
-        <SidebarButton navigate={() => navigate('/help')} buttonName="Help" />
+        <SidebarButton
+          navigate={() => navigate('/help')}
+          buttonName="Help"
+          className={`${route === '/help' ? 'bg-hover-gray' : ''}`}
+        />
 
         <SidebarButton
           navigate={() =>
