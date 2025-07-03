@@ -75,7 +75,7 @@ export class DB {
     this.approvedUser = new ApprovedUserManager(this.prisma);
     this.topic = new TopicManager(this.prisma);
     this.communityFlair = new CommunityFlairManager(this.prisma);
-    this.post = new PostManager(this.prisma, this.recentCommunities);
+    this.post = new PostManager(this.prisma);
     this.postVote = new PostVoteManager(this.prisma);
     this.comment = new CommentManager(this.prisma);
     this.commentVote = new CommentVoteManager(this.prisma);
