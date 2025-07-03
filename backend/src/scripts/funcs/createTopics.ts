@@ -5,7 +5,7 @@ export default async function createTopics(prisma: PrismaClient) {
 
   const mainTopics = [
     {
-      name: 'Technology',
+      name: 'Technology 💻',
       subtopics: [
         'Programming',
         'Artificial Intelligence',
@@ -25,7 +25,7 @@ export default async function createTopics(prisma: PrismaClient) {
       ],
     },
     {
-      name: 'Entertainment',
+      name: 'Entertainment 🎬',
       subtopics: [
         'Movies',
         'Television',
@@ -45,7 +45,7 @@ export default async function createTopics(prisma: PrismaClient) {
       ],
     },
     {
-      name: 'Science',
+      name: 'Science 🔬',
       subtopics: [
         'Space',
         'Physics',
@@ -65,7 +65,7 @@ export default async function createTopics(prisma: PrismaClient) {
       ],
     },
     {
-      name: 'Sports',
+      name: 'Sports ⚽',
       subtopics: [
         'Football',
         'Basketball',
@@ -85,7 +85,7 @@ export default async function createTopics(prisma: PrismaClient) {
       ],
     },
     {
-      name: 'Art & Design',
+      name: 'Art & Design 🎨',
       subtopics: [
         'Digital Art',
         'Photography',
@@ -105,7 +105,7 @@ export default async function createTopics(prisma: PrismaClient) {
       ],
     },
     {
-      name: 'Food & Cooking',
+      name: 'Food & Cooking 🍳',
       subtopics: [
         'Recipes',
         'Baking',
@@ -125,7 +125,7 @@ export default async function createTopics(prisma: PrismaClient) {
       ],
     },
     {
-      name: 'Lifestyle',
+      name: 'Lifestyle 🧘',
       subtopics: [
         'Fitness',
         'Mental Health',
@@ -145,7 +145,7 @@ export default async function createTopics(prisma: PrismaClient) {
       ],
     },
     {
-      name: 'Education',
+      name: 'Education 📚',
       subtopics: [
         'Online Learning',
         'Study Tips',
@@ -165,7 +165,7 @@ export default async function createTopics(prisma: PrismaClient) {
       ],
     },
     {
-      name: 'Business',
+      name: 'Business 💼',
       subtopics: [
         'Entrepreneurship',
         'Marketing',
@@ -185,7 +185,7 @@ export default async function createTopics(prisma: PrismaClient) {
       ],
     },
     {
-      name: 'Politics & Current Events',
+      name: 'Politics & Current Events ⚡️',
       subtopics: [
         'World News',
         'Local Politics',
@@ -205,7 +205,7 @@ export default async function createTopics(prisma: PrismaClient) {
       ],
     },
     {
-      name: 'Hobbies & Crafts',
+      name: 'Hobbies & Crafts ✨',
       subtopics: [
         'DIY',
         'Woodworking',
@@ -225,7 +225,7 @@ export default async function createTopics(prisma: PrismaClient) {
       ],
     },
     {
-      name: 'Gaming',
+      name: 'Gaming 🎮',
       subtopics: [
         'PC Gaming',
         'Console Gaming',
@@ -245,7 +245,7 @@ export default async function createTopics(prisma: PrismaClient) {
       ],
     },
     {
-      name: 'Humor',
+      name: 'Humor 🎪',
       subtopics: [
         'Memes',
         'Jokes',
@@ -265,7 +265,7 @@ export default async function createTopics(prisma: PrismaClient) {
       ],
     },
     {
-      name: 'Nature & Environment',
+      name: 'Nature & Environment 🌿',
       subtopics: [
         'Wildlife',
         'Conservation',
@@ -285,7 +285,7 @@ export default async function createTopics(prisma: PrismaClient) {
       ],
     },
     {
-      name: 'Philosophy & Religion',
+      name: 'Philosophy & Religion 🙏',
       subtopics: [
         'Ethics',
         'Metaphysics',
