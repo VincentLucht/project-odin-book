@@ -57,13 +57,11 @@ class PostVoteController {
             .json({ message: 'You already voted for this post' });
         } else {
           await db.postVote.update(post_id, user_id, vote_type);
-          await db.recentCommunities.assign(user_id, community.id);
           return res.status(200).json({ message: 'Successfully updated vote' });
         }
       }
 
-      await db.postVote.create(post_id, user_id, vote_type);
-      await db.recentCommunities.assign(user_id, community.id);
+      await db.postVote.vote(post_id, user_id, vote_type);
 
       return res.status(201).json({
         message: 'Successfully voted for post',

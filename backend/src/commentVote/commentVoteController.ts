@@ -63,7 +63,6 @@ class CommentVoteController {
           vote_type,
           comment.user_id,
         );
-        await db.recentCommunities.assign(user_id, community.id);
 
         return res
           .status(200)
@@ -76,7 +75,6 @@ class CommentVoteController {
         vote_type,
         comment.user_id,
       );
-      await db.recentCommunities.assign(user_id, community.id);
 
       return res.status(201).json({
         message: 'Successfully voted for Comment',
