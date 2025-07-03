@@ -7,9 +7,10 @@ import { NavigateFunction } from 'react-router-dom';
 interface ResourcesProps {
   navigate: NavigateFunction;
   route: string;
+  isLoggedIn: boolean;
 }
 
-export default function Resources({ navigate, route }: ResourcesProps) {
+export default function Resources({ navigate, route, isLoggedIn }: ResourcesProps) {
   const [show, setShow] = useState(false);
 
   return (
@@ -20,11 +21,13 @@ export default function Resources({ navigate, route }: ResourcesProps) {
         setShow={setShow}
         className="flex flex-col gap-[6px]"
       >
-        <SidebarButton
-          navigate={() => navigate('/saved')}
-          buttonName="Saved Posts & Comments"
-          className={`${route === '/saved' ? 'bg-hover-gray' : ''}`}
-        />
+        {isLoggedIn && (
+          <SidebarButton
+            navigate={() => navigate('/saved')}
+            buttonName="Saved Posts & Comments"
+            className={`${route === '/saved' ? 'bg-hover-gray' : ''}`}
+          />
+        )}
 
         <SidebarButton
           navigate={() => navigate('/about')}
