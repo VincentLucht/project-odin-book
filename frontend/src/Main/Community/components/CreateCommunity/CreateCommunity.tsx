@@ -33,7 +33,7 @@ export default function CreateCommunity() {
   const [isPostFlairRequired, setIsPostFlairRequired] = useState(false);
   const [allowBasicUserPosts, setAllowBasicUserPosts] = useState(true);
 
-  const [level, setLevel] = useState(4);
+  const [level, setLevel] = useState(1);
   const [isValid, setIsValid] = useState<IsValid>({
     1: false,
     2: true,
