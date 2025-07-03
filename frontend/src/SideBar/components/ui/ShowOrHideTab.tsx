@@ -7,6 +7,7 @@ interface ShowOrHideTabProps {
   tabName: string;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   children: React.ReactNode;
+  className?: string;
 }
 
 export default function ShowOrHideTab({
@@ -14,6 +15,7 @@ export default function ShowOrHideTab({
   tabName,
   setShow,
   children,
+  className,
 }: ShowOrHideTabProps) {
   const [ref, { height }] = useMeasure();
 
@@ -34,7 +36,7 @@ export default function ShowOrHideTab({
   });
 
   return (
-    <div>
+    <div className="mb-[6px]">
       <button
         className="flex justify-between !pl-3 text-gray-400 sidebar-btn"
         onClick={() => setShow((v) => !v)}
@@ -49,7 +51,9 @@ export default function ShowOrHideTab({
         (styles, item) =>
           item && (
             <animated.div style={styles}>
-              <div ref={ref}>{children}</div>
+              <div ref={ref} className={className}>
+                {children}
+              </div>
             </animated.div>
           ),
       )}
