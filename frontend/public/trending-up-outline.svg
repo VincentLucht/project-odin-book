@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 26">
-  <!-- Circle -->
-  <circle cx="13" cy="13" r="12" fill="none" stroke="white" stroke-width="1.5"/>
-  
-  <!-- arrow path -->
-  <path d="M17.5,7.5L19.29,9.29L14.41,14.17L10.41,10.17L3.5,18.09L4.41,19L10.41,13.5L14.41,17.5L20.21,10.71L22.5,13V7.5H17.5Z" fill="white"/>
-
-</svg>
