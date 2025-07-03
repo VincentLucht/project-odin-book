@@ -23,7 +23,7 @@ export default class PostVoteManager {
     return count > 0;
   }
 
-  async create(post_id: string, user_id: string, vote_type: VoteType) {
+  async vote(post_id: string, user_id: string, vote_type: VoteType) {
     try {
       await this.prisma.$transaction(async (tx) => {
         await tx.postVote.create({
@@ -45,6 +45,18 @@ export default class PostVoteManager {
               : {
                   downvote_count: { increment: 1 },
                   total_vote_score: { decrement: 1 },
+                },
+        });
+
+        await tx.user.update({
+          where: { id: user_id },
+          data:
+            vote_type === 'UPVOTE'
+              ? {
+                  post_karma: { increment: 1 },
+                }
+              : {
+                  post_karma: { decrement: 1 },
                 },
         });
       });
@@ -83,6 +95,18 @@ export default class PostVoteManager {
                   total_vote_score: { increment: 2 },
                 },
         });
+
+        await tx.user.update({
+          where: { id: user_id },
+          data:
+            vote_type === 'DOWNVOTE'
+              ? {
+                  post_karma: { decrement: 2 },
+                }
+              : {
+                  post_karma: { increment: 2 },
+                },
+        });
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -112,6 +136,18 @@ export default class PostVoteManager {
               : {
                   upvote_count: { decrement: 1 },
                   total_vote_score: { decrement: 1 },
+                },
+        });
+
+        await tx.user.update({
+          where: { id: user_id },
+          data:
+            previous_vote_type === 'DOWNVOTE'
+              ? {
+                  post_karma: { increment: 1 },
+                }
+              : {
+                  post_karma: { decrement: 1 },
                 },
         });
       });
