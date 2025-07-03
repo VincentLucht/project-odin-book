@@ -4,13 +4,9 @@ import { postSelectFields } from '@/db/managers/postManager/util/postUtils';
 import { TimeFrame } from '@/db/managers/util/types';
 import createSortParams from '@/util/paginationUtils';
 import { getCommunityInfo } from '@/db/managers/communityManager/util/baseQuery';
-import RecentCommunitiesManager from '@/db/managers/recentCommunitiesManager';
 
 export default class PostManager {
-  constructor(
-    private prisma: PrismaClient,
-    private recentCommunities: RecentCommunitiesManager,
-  ) {}
+  constructor(private prisma: PrismaClient) {}
   // ! GET
   async getById(post_id: string) {
     const post = await this.prisma.post.findUnique({
@@ -227,8 +223,6 @@ export default class PostManager {
         },
       });
 
-      await this.recentCommunities.assign(poster_id, community_id, tx);
-
       return post;
     });
   }
@@ -240,43 +234,29 @@ export default class PostManager {
     is_spoiler: boolean,
     is_mature: boolean,
   ) {
-    return await this.prisma.$transaction(async (tx) => {
-      const updatedPost = await tx.post.update({
-        where: {
-          id: post_id,
-        },
-        data: {
-          body,
-          is_spoiler,
-          edited_at: new Date().toISOString(),
-          is_mature,
-        },
-      });
-
-      await this.recentCommunities.assign(
-        updatedPost.id,
-        updatedPost.community_id,
-        tx,
-      );
+    await this.prisma.post.update({
+      where: {
+        id: post_id,
+      },
+      data: {
+        body,
+        is_spoiler,
+        edited_at: new Date().toISOString(),
+        is_mature,
+      },
     });
   }
 
   // ! DELETE
-  async deletePost(post_id: string, user_id: string, community_id: string) {
-    return await this.prisma.$transaction(async (tx) => {
-      const deletedPost = await tx.post.update({
-        where: { id: post_id },
-        data: {
-          deleted_at: new Date().toISOString(),
-          poster_id: null,
-          body: '',
-          pinned_at: null,
-        },
-      });
-
-      await this.recentCommunities.assign(user_id, community_id, tx);
-
-      return deletedPost;
+  async deletePost(post_id: string) {
+    await this.prisma.post.update({
+      where: { id: post_id },
+      data: {
+        deleted_at: new Date().toISOString(),
+        poster_id: null,
+        body: '',
+        pinned_at: null,
+      },
     });
   }
 }

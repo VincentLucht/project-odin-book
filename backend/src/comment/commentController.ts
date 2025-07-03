@@ -205,7 +205,6 @@ class CommentController {
           ? `${baseUrl}?reply=${comment.id}`
           : baseUrl,
       );
-      await db.recentCommunities.assign(user_id, community.id);
 
       return res.status(201).json({
         message: parent_comment_id
