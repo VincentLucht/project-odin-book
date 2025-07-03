@@ -127,8 +127,8 @@ export default class CommentManager {
       },
       orderBy:
         sort_by_type === 'top'
-          ? { total_vote_score: 'desc' }
-          : { created_at: 'desc' },
+          ? [{ total_vote_score: 'desc' }, { id: 'asc' }]
+          : [{ created_at: 'desc' }, { id: 'asc' }],
       ...(cursorId && {
         cursor: {
           id: cursorId,
