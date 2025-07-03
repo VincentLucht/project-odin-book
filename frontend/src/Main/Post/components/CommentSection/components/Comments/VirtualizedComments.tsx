@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 
 import { Virtuoso } from 'react-virtuoso';
 import Comment from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/Comment';
-import LogoLoading from '@/components/Lazy/Logo/LogoLoading';
+import EndMessageHandler from '@/Main/Global/EndMessageHandler';
 
 import handleCommentVote from '@/Main/Post/components/CommentSection/components/Comments/api/handleCommentVote';
 import handleDeleteComment from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/api/delete/handleDeleteComment';
@@ -195,33 +195,34 @@ export default function VirtualizedComments({
 
   return (
     <div className="my-8">
-      {comments.length > 0 ? (
-        <>
-          <ul
-            className="comment"
-            style={{ '--left-offset': `${21}px` } as React.CSSProperties}
-          >
-            <Virtuoso
-              data={comments}
-              itemContent={(index) => ItemRenderer(index)}
-              overscan={200}
-              useWindowScroll
-              components={{
-                Footer: () => (loading ? <LogoLoading className="mt-4" /> : null),
-              }}
-              endReached={() => {
-                if (hasMore && !loading && !parentCommentId) {
-                  loadMore();
-                }
-              }}
-            />
-          </ul>
-        </>
-      ) : !loading ? (
-        <div>No comments available</div>
-      ) : (
-        <LogoLoading className="mt-8" />
-      )}
+      <ul
+        className="comment"
+        style={{ '--left-offset': `${21}px` } as React.CSSProperties}
+      >
+        <Virtuoso
+          data={comments}
+          itemContent={(index) => ItemRenderer(index)}
+          overscan={200}
+          useWindowScroll
+          computeItemKey={(index) => comments[index]?.id || index.toString()}
+          components={{
+            Footer: () => (
+              <EndMessageHandler
+                loading={loading}
+                hasMorePages={hasMore}
+                dataLength={comments.length}
+                noResultsMessage="No comments found. Be the first one to comment!"
+                endMessage=""
+              />
+            ),
+          }}
+          endReached={() => {
+            if (hasMore && !loading && !parentCommentId) {
+              loadMore();
+            }
+          }}
+        />
+      </ul>
     </div>
   );
 }
