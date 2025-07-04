@@ -2,12 +2,12 @@ import Separator from '@/components/Separator';
 import { Link } from 'react-router-dom';
 import { UserHistoryUser } from '@/Main/user/UserProfile/UserProfile';
 import { MessageCircleHeartIcon, MessageCirclePlusIcon } from 'lucide-react';
+
 interface UserSidebarProps {
   userSelfId: string | undefined;
   user: UserHistoryUser | null;
 }
 
-// TODO: Add description
 export default function UserSideBar({ userSelfId, user }: UserSidebarProps) {
   if (!user) {
     return null;
@@ -20,7 +20,7 @@ export default function UserSideBar({ userSelfId, user }: UserSidebarProps) {
       <div className="flex justify-between">
         <div className="font-semibold">{user.username}</div>
 
-        <div>Dots</div>
+        <div></div>
       </div>
 
       {userSelfId !== user.id && (
