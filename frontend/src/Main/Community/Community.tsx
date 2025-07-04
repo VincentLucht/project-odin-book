@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import useAuth from '@/context/auth/hook/useAuth';
 import useIsModerator from '@/hooks/useIsModerator';
 import useIsMember from '@/hooks/useIsMember';
@@ -36,6 +36,7 @@ export default function Community() {
   const [posts, setPosts] = useState<FetchedPost[]>([]);
 
   const communityName = getCommunityName(location.pathname);
+  const previousCommunityName = useRef(communityName);
   const [sortByType, setSortByType] = useState<SortByType>('new'); // ! TODO: Change back
   const [timeframe, setTimeframe] = useState<TimeFrame>('day');
 
@@ -89,8 +90,13 @@ export default function Community() {
   useEffect(() => {
     setCursorId('');
     setHasMore(true);
-    setCommunity(null);
-    resetInitialFetch();
+    setPosts([]);
+    setLoadingMore(true);
+
+    if (previousCommunityName.current !== communityName) {
+      setCommunity(null);
+      resetInitialFetch();
+    }
 
     handleFetchCommunity(
       communityName,

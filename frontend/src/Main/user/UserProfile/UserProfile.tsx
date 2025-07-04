@@ -91,6 +91,7 @@ export default function UserProfile() {
   );
 
   useEffect(() => {
+    setUserHistory([]);
     loadMore(
       { hasMore: true, nextCursor: { lastId: '', lastScore: null, lastDate: null } },
       true,

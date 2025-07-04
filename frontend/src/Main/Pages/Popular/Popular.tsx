@@ -51,6 +51,7 @@ export default function Popular() {
   );
 
   useEffect(() => {
+    setPosts([]);
     loadMore('', true);
   }, [loadMore, apiParams]);
 
