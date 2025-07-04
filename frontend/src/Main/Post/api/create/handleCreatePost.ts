@@ -12,11 +12,13 @@ export default function handleCreatePost(
   type: PostType,
   token: string,
   flair_id: string,
+  onComplete: () => void,
   navigate?: NavigateFunction,
 ) {
   createPost(community_id, title, body, is_spoiler, is_mature, type, flair_id, token)
     .then((response) => {
       const { post, communityName } = response;
+      onComplete();
       navigate && navigate(`/r/${communityName}/${post.id}`);
     })
     .catch((error) => {
