@@ -59,6 +59,7 @@ export default function Homepage() {
       navigate('/popular');
       return;
     }
+    setPosts([]);
     loadMore('', true);
   }, [loadMore, apiParams, token, navigate]);
 
