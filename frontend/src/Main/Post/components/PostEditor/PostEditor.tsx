@@ -17,7 +17,6 @@ interface PostEditorProps {
   token: string | null;
 }
 
-// TODO: Complete UI (border color => grey, white on focus, buttons)
 // TODO: Add Text Editor
 export default function PostEditor({
   post,
@@ -27,8 +26,6 @@ export default function PostEditor({
   token,
 }: PostEditorProps) {
   const [editText, setEditText] = useState(post.body);
-  const [isSpoiler, setIsSpoiler] = useState(post.is_spoiler);
-  const [isMature, setIsMature] = useState(post.is_mature);
 
   const textareaRef = useRef(null);
   useFocusLastPosition(textareaRef);
@@ -44,11 +41,10 @@ export default function PostEditor({
         token,
         post.id,
         editText,
-        isSpoiler,
-        isMature,
+        post.is_spoiler,
+        post.is_mature,
         setIsEditActive,
         setPost,
-        post.post_assigned_flair?.[0]?.community_flair_id,
       );
     }
   };
