@@ -35,6 +35,8 @@ import Help from '@/Main/Pages/Help/Help';
 
 import Chats from '@/Main/Chats/Chats';
 
+import PageNotFound from '@/components/partials/PageNotFound';
+
 import ScreenSizeProvider from '@/context/screen/ScreenSizeProvider';
 import AuthProvider from '@/context/auth/AuthProvider';
 import RecentCommunitiesProvider from '@/Sidebar/components/RecentCommunities/context/RecentCommunitiesProvider';
@@ -114,9 +116,20 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 
                 {/* CREATION */}
                 <Route path="/create-community" element={<CreateCommunity />} />
-
                 <Route path="/create" element={<CreatePost />} />
                 <Route path="/create/r/:communityName" element={<CreatePost />} />
+
+                {/* CATCH ALL */}
+                <Route
+                  path="*"
+                  element={
+                    <div className="p-4 center-main">
+                      <div className="h-full df lg:center-main-content">
+                        <PageNotFound className="mt-10" />
+                      </div>
+                    </div>
+                  }
+                />
               </Route>
             </Routes>
           </RecentCommunitiesProvider>
