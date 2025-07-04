@@ -91,7 +91,9 @@ export default function VirtualizedHomePage({
         components={{
           Footer: () => (
             <EndMessageHandler
-              loadingComponent={<HomepageLazy showSidebar={false} />}
+              loadingComponent={
+                <HomepageLazy showSidebar={false} amount={posts.length > 0 ? 3 : 6} />
+              }
               loading={loading}
               hasMorePages={pagination.hasMore}
               dataLength={posts.length}

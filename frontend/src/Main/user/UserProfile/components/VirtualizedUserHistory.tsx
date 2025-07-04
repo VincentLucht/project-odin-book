@@ -7,6 +7,7 @@ import CommentOverview from '@/Main/CommentOverview/CommentOverview';
 import EndMessageHandler from '@/Main/Global/EndMessageHandler';
 import CommunityPostManager from '@/Main/Community/util/CommunityPostManager';
 import UserNotFound from '@/components/partials/UserNotFound';
+import PostsAndCommentsLoading from '@/Main/user/UserProfile/components/loading/PostsAndCommentsLoading';
 
 import CommunityPostHandler from '@/Main/Community/handlers/CommunityPostHandler';
 
@@ -165,6 +166,9 @@ export default function VirtualizedUserHistory({
           ) : (
             <UserNotFound className="mt-10" />
           )
+        }
+        loadingComponent={
+          <PostsAndCommentsLoading amount={userHistory.length > 0 ? 3 : 6} />
         }
       />
     </div>

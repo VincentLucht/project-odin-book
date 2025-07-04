@@ -3,6 +3,7 @@ import { useEffect, useCallback } from 'react';
 import { Virtuoso } from 'react-virtuoso';
 import PostOverview from '@/Main/Post/components/PostOverview/PostOverview';
 import EndMessageHandler from '@/Main/Global/EndMessageHandler';
+import HomepageLazy from '@/Main/Pages/Homepage/components/HomepageLazy';
 
 import handleFetchMorePosts from '@/Main/Community/api/fetch/posts/handleFetchMorePosts';
 
@@ -159,6 +160,12 @@ export default function VirtualizedPostOverview({
             dataLength={posts.length}
             logoClassName="mt-2"
             noResultsMessage="No posts found"
+            loadingComponent={
+              <HomepageLazy
+                showSidebar={false}
+                amount={community && posts.length > 0 ? 3 : 6}
+              />
+            }
           />
         ),
       }}
