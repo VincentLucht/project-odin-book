@@ -10,7 +10,7 @@ export default function UserNotFound({ className }: UserNotFoundProps) {
   return (
     <div className={`flex-col gap-4 df ${className}`}>
       <div className="flex-col df">
-        <img src="/logo.png" alt="Reddnir logo" className="w-20 rotate-[135deg]" />
+        <img src="/logo.webp" alt="Reddnir logo" className="w-20 rotate-[135deg]" />
         <div className="-mt-[5.5px] w-[60px] border-b-2"></div>
       </div>
 

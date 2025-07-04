@@ -32,7 +32,7 @@ export default function ChatSidebar({
         <div className="flex items-center gap-2">
           <Link to="/">
             <img
-              src="/logo.png"
+              src="/logo.webp"
               alt="reddnir logo"
               className="max-h-[32px] min-w-[32px]"
             />

@@ -9,7 +9,7 @@ export default function LogoLoading({ className }: LogoLoadingProps) {
     <div className="df">
       <img
         className={`h-10 w-10 ${className ?? ''} spin-animation`}
-        src="/logo.png"
+        src="/logo.webp"
         alt="Loading comments"
       />
     </div>
