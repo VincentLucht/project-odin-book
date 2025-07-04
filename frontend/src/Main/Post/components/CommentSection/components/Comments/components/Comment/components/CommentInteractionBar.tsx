@@ -124,6 +124,7 @@ export default function CommentInteractionBar({
             (isUserSelf ? (
               <div onClick={(e) => e.stopPropagation()}>
                 <Ellipsis
+                  token={token}
                   isUserSelf={isUserSelf}
                   mode="comment"
                   id={commentId}

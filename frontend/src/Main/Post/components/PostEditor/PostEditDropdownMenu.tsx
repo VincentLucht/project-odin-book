@@ -124,6 +124,7 @@ export default function PostEditDropdownMenu({
     <div>
       {isUserPoster ? (
         <Ellipsis
+          token={token}
           isUserSelf={isUserPoster}
           id={postId}
           showDropdown={showDropdown}

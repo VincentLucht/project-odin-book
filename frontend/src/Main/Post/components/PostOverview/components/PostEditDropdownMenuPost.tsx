@@ -63,6 +63,7 @@ export default function PostEditDropdownMenuPost({
     <div onClick={(e) => e.stopPropagation()}>
       {isUserPoster ? (
         <Ellipsis
+          token={token}
           isUserSelf={isUserPoster}
           id={postId}
           showDropdown={showEditDropdown}
