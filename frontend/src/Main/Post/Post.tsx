@@ -4,6 +4,7 @@ import useAuth from '@/context/auth/hook/useAuth';
 import useGetScreenSize from '@/context/screen/hook/useGetScreenSize';
 import useIsModerator from '@/hooks/useIsModerator';
 import useIsMember from '@/hooks/useIsMember';
+import { useUpdateRecentCommunities } from '@/Sidebar/components/RecentCommunities/context/useUpdateRecentCommunities';
 
 import PostSidebar from '@/Main/Post/components/PostSidebar/PostSidebar';
 import PFP from '@/components/PFP';
@@ -56,6 +57,7 @@ export default function Post({
   const effectivePostId = mode === 'fetched' && givenPostId ? givenPostId : urlPostId;
   const [searchParams] = useSearchParams();
   const { user, token } = useAuth();
+  useUpdateRecentCommunities(post?.community, user);
 
   const isUserPoster = user?.id === post?.poster_id;
 
@@ -162,7 +164,6 @@ export default function Post({
             <div className="gap-2 df">
               {post.lock_comments && <LockedCommentsTag className="-mr-[5px]" />}
 
-              {/* TODO: Add saved */}
               <PostEditDropdownMenu
                 hasReported={hasReported}
                 userId={user?.id}

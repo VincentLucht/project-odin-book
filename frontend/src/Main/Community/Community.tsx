@@ -5,6 +5,7 @@ import useIsMember from '@/hooks/useIsMember';
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import useGetScreenSize from '@/context/screen/hook/useGetScreenSize';
+import { useUpdateRecentCommunities } from '@/Sidebar/components/RecentCommunities/context/useUpdateRecentCommunities';
 
 import CommunityHeader from '@/Main/Community/components/CommunityHeader/CommunityHeader';
 import SetSortByType from '@/Main/Community/components/CommunityHeader/components/SetSortByType';
@@ -42,11 +43,13 @@ export default function Community() {
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(false);
 
   const { user, token } = useAuth();
   const navigate = useNavigate();
   const { isMobile } = useGetScreenSize();
-  const [showSidebar, setShowSidebar] = useState(false);
+
+  const { resetInitialFetch } = useUpdateRecentCommunities(community, user);
 
   const isMod = useIsModerator(user, community?.is_moderator);
   const isMember = useIsMember(user, community);
@@ -87,6 +90,7 @@ export default function Community() {
     setCursorId('');
     setHasMore(true);
     setCommunity(null);
+    resetInitialFetch();
 
     handleFetchCommunity(
       communityName,
@@ -96,7 +100,7 @@ export default function Community() {
       setCommunity,
       onComplete,
     );
-  }, [communityName, sortByType, timeframe, token, onComplete]);
+  }, [communityName, sortByType, timeframe, token, onComplete, resetInitialFetch]);
 
   if (loading || !community) {
     return <CommunityLazy isMobile={isMobile} />;
