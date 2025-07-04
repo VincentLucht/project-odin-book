@@ -123,7 +123,6 @@ export default function CommunitySidebar({
           );
         })}
 
-        {/* TODO: Add this functionality */}
         <button className="sidebar-btn-stone" onClick={() => setShowModal(true)}>
           View all moderators
         </button>
