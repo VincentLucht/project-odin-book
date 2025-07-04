@@ -1,5 +1,7 @@
 import editPost from '@/Main/Post/api/edit/editPost';
 import catchError from '@/util/catchError';
+import { toast } from 'react-toastify';
+import toastUpdate from '@/util/toastUpdate';
 import { DBPostWithCommunity } from '@/interface/dbSchema';
 
 export default function handleEditPost(
@@ -11,6 +13,8 @@ export default function handleEditPost(
   setIsEditActive: React.Dispatch<React.SetStateAction<boolean>>,
   setPost: React.Dispatch<React.SetStateAction<DBPostWithCommunity | null>>,
 ) {
+  const toastId = toast.loading('Editing post...');
+
   editPost(postId, newBody, isSpoiler, isMature, token)
     .then(() => {
       setPost((prev) => {
@@ -25,9 +29,11 @@ export default function handleEditPost(
         };
       });
 
+      toastUpdate(toastId, 'success', 'Successfully edited post');
       setIsEditActive(false);
     })
     .catch((error) => {
+      toastUpdate(toastId, 'error', 'Failed edited post');
       catchError(error);
     });
 }
