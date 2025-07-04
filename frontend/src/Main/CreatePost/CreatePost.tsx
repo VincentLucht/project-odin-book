@@ -15,6 +15,7 @@ import { CircleAlertIcon } from 'lucide-react';
 import TextareaAutosize from 'react-textarea-autosize';
 import MaxLengthIndicator from '@/components/MaxLengthIndicator';
 import CloseButton from '@/components/Interaction/CloseButton';
+import SpinnerDots from '@/components/SpinnerDots';
 
 import CreatePostSidebar from '@/Main/CreatePost/components/CreatePostSidebar/CreatePostSidebar';
 
@@ -32,6 +33,7 @@ export default function CreatePost() {
   const [body, setBody] = useState('');
   const [isSpoiler, setIsSpoiler] = useState(false);
   const [isMature, setIsMature] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const [showPostFlairSelection, setShowPostFlairSelection] = useState(false);
   const [activePostFlair, setActivePostFlair] = useState<DBCommunityFlair | null>(null);
@@ -58,6 +60,8 @@ export default function CreatePost() {
     if (!token) return;
     if (!activeCommunity || isPostFlairRequired) return;
 
+    setSubmitting(true);
+
     handleCreatePost(
       activeCommunity.id,
       title,
@@ -67,6 +71,7 @@ export default function CreatePost() {
       postType,
       token,
       activePostFlair?.id ?? '',
+      () => setSubmitting(false),
       navigate,
     );
   };
@@ -109,7 +114,7 @@ export default function CreatePost() {
             value={title}
             setterFunc={setTitle}
             src=""
-            alt=""
+            alt="title"
             placeholder="Title*"
             className="mt-2 !h-12 !rounded-2xl"
             icon={<CaptionsIcon className="mr-1" />}
@@ -188,7 +193,7 @@ export default function CreatePost() {
                   }
                 }}
               >
-                Post
+                {submitting ? <SpinnerDots /> : 'Create Post'}
               </button>
             </div>
           </div>
