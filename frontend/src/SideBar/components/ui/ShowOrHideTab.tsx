@@ -36,9 +36,9 @@ export default function ShowOrHideTab({
   });
 
   return (
-    <div className="mb-[6px]">
+    <div>
       <button
-        className="flex justify-between !pl-3 text-gray-400 sidebar-btn"
+        className="mb-[6px] flex justify-between !pl-3 text-gray-400 sidebar-btn"
         onClick={() => setShow((v) => !v)}
       >
         {tabName}
