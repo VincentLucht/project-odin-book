@@ -2,6 +2,8 @@ import { useState } from 'react';
 
 import ShowOrHideTab from '@/Sidebar/components/ui/ShowOrHideTab';
 import SidebarButton from '@/Sidebar/components/ui/SidebarButton';
+import { Link } from 'react-router-dom';
+
 import { NavigateFunction } from 'react-router-dom';
 
 interface ResourcesProps {
@@ -41,12 +43,9 @@ export default function Resources({ navigate, route, isLoggedIn }: ResourcesProp
           className={`${route === '/help' ? 'bg-hover-gray' : ''}`}
         />
 
-        <SidebarButton
-          navigate={() =>
-            (window.location.href = 'https://github.com/VincentLucht/project-odin-book')
-          }
-          buttonName="Source Code"
-        />
+        <Link to={'https://github.com/VincentLucht/project-odin-book'}>
+          <SidebarButton navigate={() => void 0} buttonName="Source Code" />
+        </Link>
       </ShowOrHideTab>
     </div>
   );
