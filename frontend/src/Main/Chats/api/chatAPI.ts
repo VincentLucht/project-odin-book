@@ -59,7 +59,7 @@ interface FetchAllChatOverviewsResponse {
   chats: FetchedChatOverview[];
 }
 export async function fetchAllChatOverviews(
-  token: string | null,
+  token: string,
   cursorId: string,
   onComplete: (chats: FetchedChatOverview[]) => void,
 ) {
