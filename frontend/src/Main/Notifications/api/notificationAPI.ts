@@ -76,7 +76,7 @@ export async function readAllNotifications(
   }
 }
 
-export async function openAllNotifications(token: string | null) {
+export async function openAllNotifications(token: string) {
   try {
     await apiRequest(`${`${endpoint}/open`}`, 'PUT', token);
   } catch (error) {
@@ -85,7 +85,7 @@ export async function openAllNotifications(token: string | null) {
 }
 
 export async function readNotification(
-  token: string | null,
+  token: string,
   apiData: { notification_id: string },
   onComplete: () => void,
 ) {
@@ -98,7 +98,7 @@ export async function readNotification(
 }
 
 export async function hideNotification(
-  token: string | null,
+  token: string,
   apiData: { notification_id: string },
 ) {
   const toastId = toast.loading('Hiding notification...');

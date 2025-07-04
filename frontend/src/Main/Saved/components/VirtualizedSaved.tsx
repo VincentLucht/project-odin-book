@@ -27,8 +27,8 @@ interface VirtualizedSavedProps {
   loadMore: (cursorId: string, isInitialFetch?: boolean) => void;
   loading: boolean;
   navigate: NavigateFunction;
-  token: string;
-  userId: string;
+  token: string | null;
+  userId: string | undefined;
 }
 
 export default function VirtualizedSaved({

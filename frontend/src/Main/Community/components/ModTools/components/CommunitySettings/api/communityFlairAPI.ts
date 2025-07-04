@@ -14,7 +14,7 @@ interface FetchedPostFlairsResponse {
   communityFlairCount?: number;
 }
 export async function fetchCommunityFlairs(
-  token: string | null,
+  token: string,
   apiData: {
     community_name: string;
     cursor_id: string | null;
