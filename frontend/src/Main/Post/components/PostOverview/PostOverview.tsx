@@ -19,6 +19,7 @@ import getRelativeTime from '@/util/getRelativeTime';
 import IsCommunityMember from '@/Main/Post/components/IsCommunityMember/IsCommunityMember';
 import slugify from 'slugify';
 import handlePostVote from '@/Main/Post/api/vote/handlePostVote';
+import notLoggedInError from '@/util/notLoggedInError';
 
 import {
   CommunityMembership,
@@ -126,9 +127,10 @@ export default function PostOverview({
 
   const onVote = (voteType: VoteType) => {
     if (!token || !userId) {
-      navigate('/login');
+      notLoggedInError('You need to log in to vote');
       return;
     }
+
     void handlePostVote(
       post.id,
       userId,
@@ -251,7 +253,6 @@ export default function PostOverview({
 
             {post.lock_comments && <LockedCommentsTag className="-mr-[5px]" />}
 
-            {/* TODO: Add saved stuff */}
             <PostEditDropdownMenuPost
               token={token}
               isUserPoster={isUserPoster}

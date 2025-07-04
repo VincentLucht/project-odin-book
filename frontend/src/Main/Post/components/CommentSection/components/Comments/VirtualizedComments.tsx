@@ -9,8 +9,8 @@ import EndMessageHandler from '@/Main/Global/EndMessageHandler';
 import handleCommentVote from '@/Main/Post/components/CommentSection/components/Comments/api/handleCommentVote';
 import handleDeleteComment from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/api/delete/handleDeleteComment';
 import confirmDelete from '@/util/confirmDelete';
-import { toast } from 'react-toastify';
 import handleFetchComments from '@/Main/Post/components/CommentSection/api/handleFetchComments';
+import notLoggedInError from '@/util/notLoggedInError';
 
 import { DBCommentWithReplies } from '@/interface/dbSchema';
 import { VoteType } from '@/interface/backendTypes';
@@ -65,6 +65,7 @@ export default function VirtualizedComments({
   isBelow550px,
 }: VirtualizedComments) {
   const { id: postId } = post;
+  const loggedIn = token && user;
 
   const [showDropdown, setShowDropdown] = useState<string | null>(null);
   const [showModDropdown, setShowModDropdown] = useState<string | null>(null);
@@ -93,6 +94,11 @@ export default function VirtualizedComments({
 
   const onVote = useCallback(
     (commentId: string, voteType: VoteType, previousVoteType: VoteType | undefined) => {
+      if (!loggedIn) {
+        notLoggedInError('You need to log in to vote');
+        return;
+      }
+
       void handleCommentVote(
         commentId,
         user?.id,
@@ -102,13 +108,13 @@ export default function VirtualizedComments({
         previousVoteType,
       );
     },
-    [user?.id, token, setComments],
+    [user?.id, token, setComments, loggedIn],
   );
 
   const onDelete = useCallback(
     (commentId: string) => {
-      if (!token) {
-        toast.error('You are not logged in');
+      if (!loggedIn) {
+        notLoggedInError('You need to log in to vote');
         return;
       }
 
@@ -116,7 +122,7 @@ export default function VirtualizedComments({
         handleDeleteComment(token, commentId, setComments);
       }
     },
-    [token, setComments],
+    [token, setComments, loggedIn],
   );
 
   const ItemRenderer = useCallback(

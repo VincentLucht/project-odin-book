@@ -22,11 +22,11 @@ import LockedCommentsTag from '@/Main/Post/components/tags/common/LockedComments
 import handleFetchPost from '@/Main/Post/api/fetch/handleFetchPost';
 import handlePostVote from '@/Main/Post/api/vote/handlePostVote';
 import getRelativeTime from '@/util/getRelativeTime';
+import notLoggedInError from '@/util/notLoggedInError';
 
 import { DBPostWithCommunity } from '@/interface/dbSchema';
 import { VoteType } from '@/interface/backendTypes';
 import { HandlePostVoteType } from '@/Main/Post/api/vote/handlePostVote';
-import { IsMod } from '@/Main/Community/components/Virtualization/VirtualizedPostOverview';
 
 interface PostProps {
   mode?: 'fetched' | 'normal';
@@ -92,6 +92,11 @@ export default function Post({
   }
 
   const onVote = (voteType: VoteType) => {
+    if (!token || !user) {
+      notLoggedInError('You need to log in to vote');
+      return;
+    }
+
     void handlePostVote(
       post.id,
       user?.id ?? '',
@@ -220,7 +225,7 @@ export default function Post({
             mode="post"
             onVote={onVote}
             showModOptions={isMod !== false}
-            isMod={isMod as IsMod}
+            isMod={isMod}
             isMobile={isMobile}
             showModDropdown={showModDropdown}
             setShowModDropdown={setShowModDropdown}

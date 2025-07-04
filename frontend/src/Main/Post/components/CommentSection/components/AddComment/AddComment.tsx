@@ -2,6 +2,8 @@ import { useState } from 'react';
 
 import ReplyEditor from '@/Main/Post/components/ReplyEditor/ReplyEditor';
 
+import notLoggedInError from '@/util/notLoggedInError';
+
 import { TokenUser } from '@/context/auth/AuthProvider';
 import { DBPostWithCommunity } from '@/interface/dbSchema';
 import { DBCommentWithReplies } from '@/interface/dbSchema';
@@ -24,7 +26,14 @@ export default function AddComment({
   const [show, setShow] = useState(false);
   const [commentText, setCommentText] = useState('');
 
+  const loggedIn = token && user;
+
   const toggleShow = (wasSubmitted = false) => {
+    if (!loggedIn) {
+      notLoggedInError('Please log in to write comments');
+      return;
+    }
+
     if (wasSubmitted) {
       setCommentText('');
       setShow(false);
@@ -57,23 +66,26 @@ export default function AddComment({
           }`}
         onClick={() => toggleShow()}
       >
-        Add a comment
+        Add a comment {!loggedIn ? '(login required)' : ''}
       </div>
 
-      <ReplyEditor
-        show={show}
-        depth={0}
-        toggleShow={toggleShow}
-        commentText={commentText}
-        setCommentText={setCommentText}
-        postId={postId}
-        parentCommentId={undefined}
-        setComments={setComments}
-        setPost={setPost}
-        user={user}
-        token={token}
-        commentId=""
-      />
+      {loggedIn && (
+        <ReplyEditor
+          show={show}
+          repliesHidden={false}
+          depth={0}
+          toggleShow={toggleShow}
+          commentText={commentText}
+          setCommentText={setCommentText}
+          postId={postId}
+          parentCommentId={undefined}
+          setComments={setComments}
+          setPost={setPost}
+          user={user}
+          token={token}
+          commentId=""
+        />
+      )}
     </div>
   );
 }

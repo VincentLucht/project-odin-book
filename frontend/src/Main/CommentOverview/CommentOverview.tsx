@@ -24,6 +24,7 @@ import { VoteType } from '@/interface/backendTypes';
 import { UrlItems } from '@/components/Interaction/Share';
 import { NavigateFunction } from 'react-router-dom';
 import { LockIcon } from 'lucide-react';
+import notLoggedInError from '@/util/notLoggedInError';
 
 interface CommentOverviewProps {
   comment: DBCommentWithCommunityName;
@@ -75,7 +76,7 @@ export default function CommentOverview({
     previousVoteType: VoteType | undefined,
   ) => {
     if (!token || !userId) {
-      navigate('/login');
+      notLoggedInError('You need to log in to vote');
       return;
     }
 

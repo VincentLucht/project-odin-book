@@ -6,6 +6,8 @@ import DropdownButton from '@/components/DropdownMenu/components/DropdownButton'
 import ReportModal from '@/Main/Global/ReportModal';
 import { EllipsisIcon, BookmarkIcon, BookmarkMinusIcon, FlagIcon } from 'lucide-react';
 
+import notLoggedInError from '@/util/notLoggedInError';
+
 import { UserHistoryItem } from '@/Main/user/UserProfile/api/fetchUserProfile';
 import {
   DBPostWithCommunityName,
@@ -95,7 +97,13 @@ export default function NotUserEllipsis({
             alt={`${mode === 'post' ? 'Save post' : 'Save comment'}`}
             imgClassName="rounded-full border h-[32px] w-[32px]"
             setterFunc={setShowDropdown}
-            customFunc={() => manageSaveFunc?.(true)}
+            customFunc={() => {
+              if (!token) {
+                notLoggedInError('Please log in to save posts');
+                return;
+              }
+              manageSaveFunc?.(true);
+            }}
             show={show}
           />
         )}
@@ -107,6 +115,12 @@ export default function NotUserEllipsis({
           imgClassName="rounded-full border h-8 w-8"
           setterFunc={setShowDropdown}
           customFunc={() => {
+            if (!token) {
+              notLoggedInError(
+                `Please log in to report ${mode === 'post' ? 'posts' : 'comments'}`,
+              );
+              return;
+            }
             if (hasReported) return;
             setShowReportModal(true);
           }}

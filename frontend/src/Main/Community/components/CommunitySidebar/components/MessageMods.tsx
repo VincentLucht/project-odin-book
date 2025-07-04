@@ -8,6 +8,7 @@ import ModalInput from '@/components/Modal/components/ModalInput';
 import ModalTextArea from '@/components/Modal/components/ModalTextArea';
 
 import { sendMessage as sendMessageToModMail } from '@/Main/Community/components/ModTools/components/ModMail/api/modMailAPI';
+import notLoggedInError from '@/util/notLoggedInError';
 
 interface MessageModsProps {
   community_id: string;
@@ -29,9 +30,18 @@ export default function MessageMods({ community_id, token }: MessageModsProps) {
 
   return (
     <>
-      <button className="gap-2 df sidebar-btn-stone" onClick={() => setShowModal(true)}>
+      <button
+        className="gap-2 df sidebar-btn-stone"
+        onClick={() => {
+          if (!token) {
+            notLoggedInError('You need to log in to write messages to mods');
+            return;
+          }
+          setShowModal(true);
+        }}
+      >
         <MailIcon className="w-5" strokeWidth={1.7} />
-        Message Mods
+        Message Mods {!token ? '(login required)' : ''}
       </button>
 
       <Modal show={showModal} onClose={onClose}>

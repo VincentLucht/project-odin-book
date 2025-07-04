@@ -1,6 +1,8 @@
 import { useRef } from 'react';
 import useClickOutside from '@/hooks/useClickOutside';
 
+import notLoggedInError from '@/util/notLoggedInError';
+
 import DropdownMenu from '@/components/DropdownMenu/DropdownMenu';
 import DropdownButton from '@/components/DropdownMenu/components/DropdownButton';
 import {
@@ -13,6 +15,7 @@ import {
 import { SquarePenIcon, TagIcon, CircleAlertIcon, BanIcon } from 'lucide-react';
 
 interface EllipsisProps {
+  token: string | null;
   isUserSelf: boolean;
   id: string;
   mode?: 'post' | 'comment';
@@ -33,6 +36,7 @@ interface EllipsisProps {
 }
 
 export default function Ellipsis({
+  token,
   isUserSelf,
   id,
   mode = 'post',
@@ -114,7 +118,13 @@ export default function Ellipsis({
             alt={`${mode === 'post' ? 'Remove post from saved' : 'Remove comment from saved'}`}
             imgClassName="rounded-full border h-[32px] w-[32px]"
             setterFunc={setShowDropdown}
-            customFunc={() => manageSaveFunc?.(false)}
+            customFunc={() => {
+              if (!token) {
+                notLoggedInError();
+                return;
+              }
+              manageSaveFunc?.(false);
+            }}
             show={show}
           />
         ) : (
@@ -124,7 +134,9 @@ export default function Ellipsis({
             alt={`${mode === 'post' ? 'Save post' : 'Save comment'}`}
             imgClassName="rounded-full border h-[32px] w-[32px]"
             setterFunc={setShowDropdown}
-            customFunc={() => manageSaveFunc?.(true)}
+            customFunc={() => {
+              manageSaveFunc?.(true);
+            }}
             show={show}
           />
         )}

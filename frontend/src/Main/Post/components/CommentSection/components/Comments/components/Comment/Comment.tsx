@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom';
 import getRelativeTime from '@/util/getRelativeTime';
 import { manageSavedComments } from '@/Main/Saved/api/savedApi';
 import { onCommentUpdate } from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/components/ModMenuComment/hooks/useCommentModeration';
+import notLoggedInError from '@/util/notLoggedInError';
 
 import { DBCommentWithReplies } from '@/interface/dbSchema';
 import { DBPostWithCommunity } from '@/interface/dbSchema';
@@ -85,6 +86,7 @@ export default function Comment({
   const hasReported = (comment?.reports?.length ?? 0) > 0;
   const isSaved =
     comment?.saved_by?.[0]?.user_id === user?.id && user?.id !== undefined;
+  const loggedIn = token && user;
 
   const redirectToUser = (username: string) => {
     if (!userDeleted) {
@@ -93,6 +95,11 @@ export default function Comment({
   };
 
   const toggleShow = (wasSubmitted = false) => {
+    if (!loggedIn) {
+      notLoggedInError('You need to log in to reply to comments');
+      return;
+    }
+
     if (wasSubmitted) {
       setCommentText('');
       setShowReply(false);
