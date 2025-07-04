@@ -99,7 +99,9 @@ class CommentController {
           .json({ message: response.message });
       }
 
-      const { id: userId } = req.authData as AuthPayload;
+      const userId = req.authData
+        ? (req.authData as AuthPayload).id
+        : undefined;
 
       const comments = await db.comment.getMoreReplies(
         parent_comment_id,
