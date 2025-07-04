@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useAuthGuard from '@/context/auth/hook/useAuthGuard';
+import useAuth from '@/context/auth/hook/useAuth';
 
 import SetSortByType from '@/Main/Community/components/CommunityHeader/components/SetSortByType';
 import VirtualizedHomePage from '@/Main/Pages/Homepage/components/VirtualizedHomePage';
@@ -27,7 +27,7 @@ export default function Popular() {
   });
 
   const navigate = useNavigate();
-  const { user, token } = useAuthGuard();
+  const { user, token } = useAuth();
 
   const loadMore = useCallback(
     (cursorId: string, isInitialFetch = false) => {
@@ -75,7 +75,7 @@ export default function Popular() {
           <VirtualizedHomePage
             posts={posts}
             setPosts={setPosts}
-            userId={user.id}
+            userId={user?.id ?? ''}
             token={token}
             navigate={navigate}
             loading={loading}

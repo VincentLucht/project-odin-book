@@ -57,6 +57,8 @@ export default function CreateCommunity() {
   };
 
   const onCreate = () => {
+    if (!token) return;
+
     void handleCreateCommunity(
       communityName,
       description,
@@ -73,6 +75,8 @@ export default function CreateCommunity() {
       setSubmitting,
     );
   };
+
+  if (!token) return;
 
   return (
     <div className="overflow-y-scroll p-4 center-main">

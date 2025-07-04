@@ -54,6 +54,8 @@ export default function CommunityFlairSettings({
 
   const loadMore = useCallback(
     (cursorId: string, isInitialFetch = false) => {
+      if (!token) return;
+
       setLoading(true);
       void fetchCommunityFlairs(
         token,

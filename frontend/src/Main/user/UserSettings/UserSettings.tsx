@@ -35,8 +35,11 @@ export default function UserSettings() {
   const [showSidebar, setShowSidebar] = useState(false);
 
   useEffect(() => {
+    if (!token) return;
     handleGetUserSettings(setUser, setSettings, setLoading, token);
   }, [token]);
+
+  if (!token) return;
 
   return (
     <div className="overflow-y-scroll p-4 center-main">

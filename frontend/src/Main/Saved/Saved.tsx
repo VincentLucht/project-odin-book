@@ -26,6 +26,8 @@ export default function Saved() {
 
   const loadMore = useCallback(
     (cursorId: string, isInitialFetch = false) => {
+      if (!token) return;
+
       setLoading(true);
 
       typeFilter === 'posts'
@@ -71,7 +73,7 @@ export default function Saved() {
               loading={loading}
               navigate={navigate}
               token={token}
-              userId={user.id}
+              userId={user?.id}
             />
           </div>
 

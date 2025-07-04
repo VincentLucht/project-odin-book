@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import useAuth from '@/context/auth/hook/useAuth';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import notLoggedInError from '@/util/notLoggedInError';
 
 export default function useAuthGuard() {
   const { user, token, logout } = useAuth();
@@ -9,10 +9,10 @@ export default function useAuthGuard() {
 
   useEffect(() => {
     if (!user || !token) {
-      toast.error('You are not logged in');
+      notLoggedInError();
       navigate('/login');
     }
   }, [user, token, navigate]);
 
-  return { user: user!, token: token!, logout };
+  return { user, token, logout };
 }

@@ -55,9 +55,8 @@ export default function CreatePost() {
   };
 
   const onCreate = () => {
-    if (!activeCommunity || isPostFlairRequired) {
-      return;
-    }
+    if (!token) return;
+    if (!activeCommunity || isPostFlairRequired) return;
 
     handleCreatePost(
       activeCommunity.id,
@@ -75,6 +74,8 @@ export default function CreatePost() {
   useEffect(() => {
     setActivePostFlair(null);
   }, [activeCommunity]);
+
+  if (!token || !user) return;
 
   return (
     <div className="h-full overflow-y-scroll p-4 center-main">

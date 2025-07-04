@@ -108,6 +108,8 @@ export default function ModTools() {
     );
   }
 
+  if (!token) return;
+
   return (
     <div>
       <Header

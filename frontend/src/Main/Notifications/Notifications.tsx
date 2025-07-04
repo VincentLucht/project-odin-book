@@ -13,6 +13,7 @@ import {
 import { DBNotification } from '@/interface/dbSchema';
 import { Pagination } from '@/interface/backendTypes';
 
+// TODO: Add skeleton loading
 export default function Notifications() {
   const [loading, setLoading] = useState(true);
   const [sortByType, setSortByType] = useState<'all' | 'read' | 'unread'>('all');
@@ -43,13 +44,15 @@ export default function Notifications() {
   );
 
   useEffect(() => {
+    if (!token) return;
+
     void openAllNotifications(token);
     loadMore('', true);
   }, [token, loadMore]);
 
   return (
     <div className="p-4 center-main">
-      <div className="center-main-content">
+      <div className="w-full lg:center-main-content">
         <div>
           <h2 className="mb-4 text-3xl font-bold">Notifications</h2>
 

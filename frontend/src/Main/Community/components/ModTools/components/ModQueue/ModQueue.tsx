@@ -107,6 +107,8 @@ export default function ModQueue() {
     loadMore('', '', '', true);
   }, [loadMore, apiFilters]);
 
+  if (!token || !user) return;
+
   return (
     <div className="p-4 center-main">
       <div className="w-full max-w-[1500px]">

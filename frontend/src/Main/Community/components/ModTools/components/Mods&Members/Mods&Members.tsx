@@ -67,6 +67,8 @@ export default function ModMembers() {
     loadMore('', true);
   }, [loadMore]);
 
+  if (!token || !user) return;
+
   return (
     <div className="h-[calc(100dvh-56px)] p-4 center-main">
       <div

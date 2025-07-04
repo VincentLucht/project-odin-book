@@ -38,6 +38,8 @@ export default function Chats() {
 
   const loadAllChatOverviews = useCallback(
     (cursorId: string, isInitialFetch = false) => {
+      if (!token) return;
+
       setLoading(true);
 
       void fetchAllChatOverviews(token, cursorId, (chats) => {
@@ -58,6 +60,8 @@ export default function Chats() {
       chatId: string,
       chatProperties: { name: string; pfp: string | null; isGroupChat: boolean },
     ) => {
+      if (!token) return;
+
       setShowCreateChat(false);
 
       // ? Mark CURRENT chat as read
@@ -94,6 +98,8 @@ export default function Chats() {
 
   // Mark as read when leaving/closing chat
   useEffect(() => {
+    if (!token) return;
+
     const handleBeforeUnload = () => {
       if (prevChatIdRef.current) {
         void readChat(token, prevChatIdRef.current);
@@ -112,6 +118,8 @@ export default function Chats() {
 
   // Handle chat creation/opening from props
   useEffect(() => {
+    if (!token || !user) return;
+
     const createChatUsername = searchParams.get('createChat');
     if (createChatUsername) {
       setShowCreateChat(true);
@@ -149,11 +157,18 @@ export default function Chats() {
         return newParams;
       });
     }
-  }, [searchParams, setSearchParams, chatOverviews, onOpenChat, user.id]);
+  }, [searchParams, setSearchParams, chatOverviews, onOpenChat, user, token]);
 
   // Open first chat on open
   useEffect(() => {
-    if (chatOverviews && !openedFirstChat.current && !isMobile && !showCreateChat) {
+    if (
+      chatOverviews &&
+      !openedFirstChat.current &&
+      !isMobile &&
+      !showCreateChat &&
+      token &&
+      user
+    ) {
       const latestChatOverview = chatOverviews[0];
       if (latestChatOverview) {
         const { chatName, pfp, isGroupChat } = getChatDisplayProps(
@@ -164,7 +179,11 @@ export default function Chats() {
         openedFirstChat.current = true;
       }
     }
-  }, [chatOverviews, onOpenChat, user, isMobile, showCreateChat]);
+  }, [chatOverviews, onOpenChat, user, token, isMobile, showCreateChat]);
+
+  if (!token || !user) {
+    return;
+  }
 
   return (
     <div className={`grid h-dvh ${isMobile ? '' : 'grid-cols-[300px_auto]'}`} ref={ref}>

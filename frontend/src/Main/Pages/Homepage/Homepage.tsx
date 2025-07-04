@@ -55,14 +55,25 @@ export default function Homepage() {
   );
 
   useEffect(() => {
+    if (!token) {
+      navigate('/popular');
+      return;
+    }
     loadMore('', true);
-  }, [loadMore, apiParams]);
+  }, [loadMore, apiParams, token, navigate]);
 
   if (!token) {
     return (
-      <div>
-        You are not logged in. You can take a look at the{' '}
-        <a onClick={() => navigate('/popular')}>Popular posts</a>
+      <div className="p-4 center-main">
+        <div className="w-full max-w-[1072px]">
+          You are not logged in. You can take a look at the{' '}
+          <a
+            onClick={() => navigate('/popular')}
+            className="cursor-pointer text-blue-600 hover:underline"
+          >
+            Popular posts.
+          </a>
+        </div>
       </div>
     );
   }
