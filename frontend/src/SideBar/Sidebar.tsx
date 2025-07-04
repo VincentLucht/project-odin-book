@@ -55,7 +55,7 @@ export default function Sidebar() {
         )}
 
         <Separator mode="sidebar" />
-        <Resources navigate={navigate} route={route} />
+        <Resources navigate={navigate} route={route} isLoggedIn={user !== null} />
       </div>
     </nav>
   );
