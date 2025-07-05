@@ -167,10 +167,20 @@ describe('/community', () => {
       });
 
       it('should handle a user not being inside a community', async () => {
-        mockDb.userCommunity.isMember.mockResolvedValue(false);
+        mockDb.userCommunity.isMember.mockResolvedValueOnce(false);
         const response = await sendRequest(mockRequest);
 
         assert.userCommunity.isNotMember(response);
+      });
+
+      it('should handle preventing an owner trying to leave', async () => {
+        mockDb.userCommunity.isMember.mockResolvedValueOnce(true);
+        mockDb.community.isOwner.mockResolvedValueOnce(true);
+        const response = await sendRequest(mockRequest);
+
+        console.log(response.body);
+
+        assert.exp(response, 400, 'As the owner, you can not leave a community');
       });
 
       it('should handle missing inputs', async () => {

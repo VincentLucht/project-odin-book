@@ -245,6 +245,11 @@ class UserCommunityController {
           .status(403)
           .json({ message: 'You are not part of this community' });
       }
+      if (await db.community.isOwner(user_id, community_id)) {
+        return res
+          .status(400)
+          .json({ message: 'As the owner, you can not leave a community' });
+      }
 
       const isMod = await db.communityModerator.isMod(user_id, community_id);
       if (isMod) {
