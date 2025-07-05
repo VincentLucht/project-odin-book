@@ -60,14 +60,17 @@ export default function VirtualizedModMailMessages({
             loadMore(pagination.nextCursor);
           }
         }}
-      />
-
-      <EndMessageHandler
-        loading={loading}
-        hasMorePages={pagination.hasMore}
-        dataLength={modMail.length}
-        noResultsMessage="No Modmail found."
-        endMessageClassName="mt-[100px]"
+        components={{
+          Footer: () => (
+            <EndMessageHandler
+              loading={loading}
+              hasMorePages={pagination.hasMore}
+              dataLength={modMail.length}
+              noResultsMessage="No Modmail found."
+              logoClassName="mb-2"
+            />
+          ),
+        }}
       />
     </div>
   );
