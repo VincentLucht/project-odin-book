@@ -6,6 +6,7 @@ import handleDeletePost from '@/Main/Post/api/delete/handleDeletePost';
 import handleEditPost from '@/Main/Post/api/edit/handleEditPost';
 
 import { toast } from 'react-toastify';
+import toastUpdate from '@/util/toastUpdate';
 import catchError from '@/util/catchError';
 import apiRequest from '@/util/apiRequest';
 
@@ -108,12 +109,6 @@ export default function PostEditDropdownMenu({
     const method = action ? 'POST' : 'DELETE';
     apiRequest('/post/save', method, token, { post_id: postId })
       .then(() => {
-        toast.success(
-          action
-            ? 'Successfully saved this post'
-            : 'Successfully removed post from save',
-        );
-
         setPost((prev) => {
           if (!prev) return prev;
           return action
@@ -121,11 +116,18 @@ export default function PostEditDropdownMenu({
             : { ...prev, saved_by: [] };
         });
 
-        toast.dismiss(toastId);
+        toastUpdate(
+          toastId,
+          'success',
+          action
+            ? 'Successfully saved this post'
+            : 'Successfully removed post from saved',
+        );
       })
       .catch((error) => {
-        toast.dismiss(toastId);
-        toast.error(
+        toastUpdate(
+          toastId,
+          'error',
           action ? 'Failed to save post' : 'Failed to remove post from saved',
         );
         catchError(error);
