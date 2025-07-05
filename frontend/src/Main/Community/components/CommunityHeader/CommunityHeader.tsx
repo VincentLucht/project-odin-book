@@ -18,6 +18,7 @@ interface CommunityHeaderProps {
   token: string | null;
   navigate: NavigateFunction;
   pathname: string;
+  isMobile: boolean;
 }
 
 export default function CommunityHeader({
@@ -29,6 +30,7 @@ export default function CommunityHeader({
   token,
   navigate,
   pathname,
+  isMobile,
 }: CommunityHeaderProps) {
   const toggleMembership = () => {
     if (!user || !token) {
@@ -51,7 +53,13 @@ export default function CommunityHeader({
         {community.banner_url_desktop ? (
           <img
             className="h-auto w-full rounded-lg object-contain"
-            src={community.banner_url_desktop}
+            src={
+              isMobile
+                ? community.banner_url_mobile
+                  ? community.banner_url_mobile
+                  : community.banner_url_desktop
+                : community.banner_url_desktop
+            }
             alt="Community Banner"
           />
         ) : (
