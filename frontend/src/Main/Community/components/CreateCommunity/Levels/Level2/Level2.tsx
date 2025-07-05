@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import AddOrRemove from '@/Main/Community/components/CreateCommunity/Levels/Level2/AddOrRemove';
 
 import Swal from 'sweetalert2';
@@ -27,6 +29,8 @@ export default function Level2({
   iconUrl,
   setIconUrl,
 }: Level2Props) {
+  const [showMobile, setShowMobile] = useState(false);
+
   if (level !== 2) {
     return;
   }
@@ -51,28 +55,41 @@ export default function Level2({
     });
   };
 
+  const bannerSrc = showMobile ? bannerUrlMobile : bannerUrl;
+
   return (
     <>
       <div className="mb-3">
-        <h2 className="text-2xl font-bold">Style your community</h2>
+        <div>
+          <h2 className="text-2xl font-bold">Style your community</h2>
 
-        <div className="mb-4 mt-2 text-sm text-gray-secondary">
-          Note: You can update this at any time.
+          <div className="flex items-center justify-between">
+            <div className="mb-4 mt-2 text-sm text-gray-secondary">
+              Note: You can update this at any time.
+            </div>
+
+            <button
+              onClick={() => setShowMobile(!showMobile)}
+              className="h-9 prm-button-blue"
+            >
+              {showMobile ? 'Show desktop banner' : 'Show mobile banner'}
+            </button>
+          </div>
         </div>
 
         <div
           className={`my-2 max-h-[128px] max-w-[1072px] overflow-hidden rounded-lg df
-            ${bannerUrl ? '' : 'bg-neutral-200'}`}
+            ${bannerSrc ? '' : 'bg-neutral-200'} ${showMobile ? '!max-w-[500px]' : ''}`}
         >
-          {bannerUrl ? (
+          {bannerSrc ? (
             <img
               className="h-auto w-full rounded-lg object-contain"
-              src={bannerUrl}
+              src={bannerSrc ?? ''}
               alt="Community Banner"
             />
           ) : (
             <div className="min-h-[128px] text-2xl font-semibold df text-bg-gray">
-              Banner Preview
+              {showMobile ? 'Mobile Banner Preview' : 'Banner Preview'}
             </div>
           )}
         </div>
@@ -89,7 +106,13 @@ export default function Level2({
             )}
           </div>
 
-          <h3 className="ml-2 break-all text-3xl font-bold">r/{communityName}</h3>
+          <div className="flex w-full justify-between">
+            <h3 className="ml-2 break-all text-3xl font-bold">r/{communityName}</h3>
+
+            <div className="text-sm text-gray-secondary">
+              {showMobile ? '(Currently mobile banner)' : '(Currently desktop banner)'}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -108,9 +131,15 @@ export default function Level2({
           name="Banner (mobile)"
           onAdd={() => onAdd('mobile')}
           subText={
-            <span>
-              <b>Optional:</b> will be displayed on mobile devices instead.
-            </span>
+            <div className="flex flex-col">
+              <span>
+                <b>Mobile banner:</b> Optional fallback for mobile devices.
+              </span>
+
+              <span>
+                <b>Note:</b> Default banner typically works well on mobile.
+              </span>
+            </div>
           }
         />
 

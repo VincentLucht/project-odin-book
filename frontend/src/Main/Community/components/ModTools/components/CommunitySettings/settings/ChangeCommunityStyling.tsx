@@ -31,6 +31,8 @@ export default function ChangeCommunityStyling({
     community.banner_url_desktop,
   );
   const [bannerUrlMobile, setBannerUrlMobile] = useState(community.banner_url_mobile);
+  const [showMobile, setShowMobile] = useState(false);
+  const bannerSrc = showMobile ? bannerUrlMobile : bannerUrlDesktop;
 
   const [showSelectionModal, setShowSelectionModal] = useState(false);
   const [currentImageType, setCurrentImageType] = useState<
@@ -116,6 +118,15 @@ export default function ChangeCommunityStyling({
         onClose={handleClose}
       />
 
+      <div className="flex items-center justify-end">
+        <button
+          onClick={() => setShowMobile(!showMobile)}
+          className="-mb-2 h-9 w-fit prm-button-blue"
+        >
+          {showMobile ? 'Show desktop banner' : 'Show mobile banner'}
+        </button>
+      </div>
+
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -125,17 +136,17 @@ export default function ChangeCommunityStyling({
         <div className="mb-3">
           <div
             className={`my-2 max-h-[128px] min-h-[128px] max-w-[1072px] overflow-hidden rounded-lg df
-              ${bannerUrlDesktop ? '' : 'bg-neutral-200'}`}
+              ${bannerSrc ? '' : 'bg-neutral-200'} ${showMobile ? '!max-w-[500px]' : ''}`}
           >
-            {bannerUrlDesktop ? (
+            {bannerSrc ? (
               <img
                 className="h-auto w-full rounded-lg object-contain"
-                src={bannerUrlDesktop}
+                src={bannerSrc ?? ''}
                 alt="Community Banner"
               />
             ) : (
               <div className="min-h-[128px] text-2xl font-semibold df text-bg-gray">
-                Banner Preview
+                {showMobile ? 'Mobile Banner Preview' : 'Banner Preview'}
               </div>
             )}
           </div>
@@ -153,7 +164,15 @@ export default function ChangeCommunityStyling({
               )}
             </div>
 
-            <h3 className="ml-2 text-3xl font-bold">r/{community.name}</h3>
+            <div className="flex w-full justify-between">
+              <h3 className="ml-2 text-3xl font-bold">r/{community.name}</h3>
+
+              <div className="text-sm text-gray-secondary">
+                {showMobile
+                  ? '(Currently mobile banner)'
+                  : '(Currently desktop banner)'}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -173,9 +192,15 @@ export default function ChangeCommunityStyling({
             name="Banner (mobile)"
             onAdd={() => handleOpenModal('mobile')}
             subText={
-              <span>
-                <b>Optional:</b> will be displayed on mobile devices instead.
-              </span>
+              <div className="flex flex-col">
+                <span>
+                  <b>Mobile banner:</b> Optional fallback for mobile devices.
+                </span>
+
+                <span>
+                  <b>Note:</b> Default banner typically works well on mobile.
+                </span>
+              </div>
             }
             type="button"
           />
