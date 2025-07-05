@@ -31,6 +31,11 @@ class ApprovedUserController {
       if (!(await db.communityModerator.isMod(user_id, community_id))) {
         return res.status(403).json({ message: 'You are not a moderator' });
       }
+      if (await db.bannedUsers.isBanned(approvedUser.id, community_id)) {
+        return res
+          .status(403)
+          .json({ message: 'You can not approve a user that is banned' });
+      }
 
       await db.approvedUser.create(community_id, approvedUser.id);
 

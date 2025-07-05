@@ -48,6 +48,7 @@ describe('/community/user/approved', () => {
       mockDb.community.getById.mockResolvedValue({ type: 'PUBLIC' });
       mockDb.approvedUser.isApproved.mockResolvedValue(false);
       mockDb.communityModerator.isMod.mockResolvedValue(true);
+      mockDb.bannedUsers.isBanned.mockResolvedValue(false);
       mockDb.approvedUser.create.mockResolvedValue(true);
     });
 
@@ -108,6 +109,13 @@ describe('/community/user/approved', () => {
         const response = await sendRequest();
 
         assert.exp(response, 403, 'You are not a moderator');
+      });
+
+      it('should approved user being banned', async () => {
+        mockDb.bannedUsers.isBanned.mockResolvedValueOnce(true);
+        const response = await sendRequest();
+
+        assert.exp(response, 403, 'You can not approve a user that is banned');
       });
 
       it('should handle missing community_id', async () => {
