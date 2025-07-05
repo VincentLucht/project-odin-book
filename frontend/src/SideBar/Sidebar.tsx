@@ -50,7 +50,7 @@ export default function Sidebar() {
         {user && (
           <>
             <Separator mode="sidebar" />
-            <JoinedCommunities navigate={navigate} token={token} route={route} />
+            <JoinedCommunities navigate={navigate} token={token} />
           </>
         )}
 
