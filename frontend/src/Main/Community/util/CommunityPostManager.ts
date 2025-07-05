@@ -1,5 +1,6 @@
 import deletePost from '@/Main/Post/api/delete/deletePost';
 import { toast } from 'react-toastify';
+import toastUpdate from '@/util/toastUpdate';
 import catchError from '@/util/catchError';
 
 import confirmAction from '@/util/confirmAction';
@@ -31,19 +32,22 @@ export default class CommunityPostManager {
 
   async deletePost(postId: string, cb: (postId: string) => void) {
     if (!this.isLoggedIn()) return;
-
     if (
       !(await confirmAction('Are you sure you want to delete your post?', 'Delete'))
     ) {
       return;
     }
 
+    const toastId = toast.loading('Deleting post...');
+
     deletePost(postId, this.token!)
       .then(() => {
-        toast.success('Successfully deleted post');
+        toastUpdate(toastId, 'success', 'Successfully deleted post');
+
         cb(postId);
       })
       .catch((error) => {
+        toastUpdate(toastId, 'error', 'Failed to delete post');
         catchError(error);
       });
   }
@@ -56,10 +60,15 @@ export default class CommunityPostManager {
     cb: (postId: string) => void,
   ) {
     if (!this.isLoggedIn()) return;
+    const toastId = toast.loading(
+      isSpoiler ? 'Removing spoiler tag...' : 'Adding spoiler tag...',
+    );
 
     editPost(postId, body, !isSpoiler, isMature, this.token!)
       .then(() => {
-        toast.success(
+        toastUpdate(
+          toastId,
+          'success',
           isSpoiler
             ? 'Successfully removed spoiler tag from post'
             : 'Successfully added spoiler tag to post',
@@ -68,6 +77,11 @@ export default class CommunityPostManager {
         cb(postId);
       })
       .catch((error) => {
+        toastUpdate(
+          toastId,
+          'error',
+          isSpoiler ? 'Failed to remove spoiler tag' : 'Failed to add spoiler tag',
+        );
         catchError(error);
       });
   }
@@ -80,10 +94,15 @@ export default class CommunityPostManager {
     cb: (postId: string) => void,
   ) {
     if (!this.isLoggedIn()) return;
+    const toastId = toast.loading(
+      isMature ? 'Removing NSFW tag...' : 'Adding NSFW tag...',
+    );
 
     editPost(postId, body, isSpoiler, !isMature, this.token!)
       .then(() => {
-        toast.success(
+        toastUpdate(
+          toastId,
+          'success',
           isMature
             ? 'Successfully removed NSFW tag from post'
             : 'Successfully added NSFW tag to post',
@@ -92,6 +111,11 @@ export default class CommunityPostManager {
         cb(postId);
       })
       .catch((error) => {
+        toastUpdate(
+          toastId,
+          'error',
+          isMature ? 'Failed to remove NSFW tag' : 'Failed to add NSFW tag',
+        );
         catchError(error);
       });
   }
@@ -104,13 +128,15 @@ export default class CommunityPostManager {
     if (!this.isLoggedIn()) return;
     if (!post_assigned_flair_id) return;
 
+    const toastId = toast.loading('Removing post flair...');
+
     deletePostFlair(postId, post_assigned_flair_id, this.token!)
       .then(() => {
-        toast.success('Successfully removed post flair');
-
+        toastUpdate(toastId, 'success', 'Successfully removing post flair');
         cb(postId);
       })
       .catch((error) => {
+        toastUpdate(toastId, 'error', 'Failed to remove post flair');
         catchError(error);
       });
   }
@@ -122,16 +148,24 @@ export default class CommunityPostManager {
   ) {
     if (!this.isLoggedIn()) return;
 
+    const toastId = toast.loading(
+      action === 'save' ? 'Saving post...' : 'Removing post from saved...',
+    );
+
     try {
       const method = action === 'save' ? 'POST' : 'DELETE';
       await apiRequest('/post/save', method, this.token, { post_id });
-      toast.success(
+      const successMessage =
         action === 'save'
           ? 'Successfully saved this post'
-          : 'Successfully removed post from saved',
-      );
+          : 'Successfully removed post from saved';
+
+      toastUpdate(toastId, 'success', successMessage);
       cb(post_id);
     } catch (error) {
+      const errorMessage =
+        action === 'save' ? 'Failed to save post' : 'Failed to remove post';
+      toastUpdate(toastId, 'error', errorMessage);
       catchError(error);
     }
   }

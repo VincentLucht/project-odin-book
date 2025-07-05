@@ -28,7 +28,6 @@ interface PostEditDropdownMenuProps {
   setShowPostFlairSelection: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-// TODO: Add saving posts (+comments)
 export default function PostEditDropdownMenu({
   hasReported,
   userId,
@@ -53,7 +52,8 @@ export default function PostEditDropdownMenu({
 
     // TODO: Replace with custom modal
     if (confirmDelete('post')) {
-      handleDeletePost(postId, token, setPost);
+      const toastId = toast.loading('Deleting post...');
+      handleDeletePost(postId, token, setPost, toastId);
     }
   };
 
@@ -101,6 +101,10 @@ export default function PostEditDropdownMenu({
       return;
     }
 
+    const toastId = toast.loading(
+      action ? 'Saving post...' : 'Removing post from saved...',
+    );
+
     const method = action ? 'POST' : 'DELETE';
     apiRequest('/post/save', method, token, { post_id: postId })
       .then(() => {
@@ -109,15 +113,23 @@ export default function PostEditDropdownMenu({
             ? 'Successfully saved this post'
             : 'Successfully removed post from save',
         );
+
         setPost((prev) => {
           if (!prev) return prev;
-
           return action
             ? { ...prev, saved_by: [{ user_id: userId }] }
             : { ...prev, saved_by: [] };
         });
+
+        toast.dismiss(toastId);
       })
-      .catch((error) => catchError(error));
+      .catch((error) => {
+        toast.dismiss(toastId);
+        toast.error(
+          action ? 'Failed to save post' : 'Failed to remove post from saved',
+        );
+        catchError(error);
+      });
   };
 
   return (
