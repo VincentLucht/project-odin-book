@@ -4,6 +4,7 @@ import useClickOutside from '@/hooks/useClickOutside';
 import DropdownMenu from '@/components/DropdownMenu/DropdownMenu';
 import DropdownButton from '@/components/DropdownMenu/components/DropdownButton';
 import CloseButton from '@/components/Interaction/CloseButton';
+import LogoLoading from '@/components/Lazy/Logo/LogoLoading';
 
 import handleSearchByName from '@/Main/CreatePost/components/SelectCommunity/api/handleSearchByName';
 import handleGetCreationInfo from '@/Main/CreatePost/components/SelectCommunity/api/handleGetCreationInfo';
@@ -27,8 +28,9 @@ export default function SelectCommunity({
   setIsLoading,
 }: SelectCommunityProps) {
   const [search, setSearch] = useState(communityName ? communityName : '');
-  const [isSelecting, setIsSelecting] = useState(false);
   const [foundCommunities, setFoundCommunities] = useState<CommunitySearch[]>([]);
+  const [isSelecting, setIsSelecting] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const divRef = useClickOutside(() => {
     setIsSelecting(false);
@@ -44,7 +46,7 @@ export default function SelectCommunity({
   useEffect(() => {
     const debounceTimeout = setTimeout(() => {
       if (isSelecting && search.length > 0) {
-        handleSearchByName(search, token, setFoundCommunities, true);
+        handleSearchByName(search, token, setFoundCommunities, setLoading, true);
       }
     }, 300);
 
@@ -100,7 +102,11 @@ export default function SelectCommunity({
           />
 
           <DropdownMenu className="!top-12 z-10 w-[215px] rounded-md">
-            {foundCommunities.length === 0 ? (
+            {loading ? (
+              <div className="flex items-center justify-center p-4">
+                <LogoLoading />
+              </div>
+            ) : foundCommunities.length === 0 ? (
               <span>No communities found</span>
             ) : (
               foundCommunities.map((community) => {
