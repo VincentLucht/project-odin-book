@@ -24,7 +24,6 @@ import formatDate from '@/util/formatDate';
 
 import { DBUser, DBUserSettings } from '@/interface/dbSchema';
 
-// TODO: Add loading screen when all settings are here
 export default function UserSettings() {
   const [user, setUser] = useState<DBUser | null>(null);
   const [settings, setSettings] = useState<DBUserSettings | null>(null);
