@@ -206,6 +206,11 @@ export default class UserCommunityManager {
         LEFT JOIN "CommunityModerator" AS cm ON cm.user_id = u.id AND cm.community_id = ${community_id}
         LEFT JOIN "BannedUser" AS bu ON bu.user_id = u.id AND bu.community_id = ${community_id}
         WHERE u.id IS NOT NULL
+        AND NOT EXISTS (
+          SELECT 1 FROM "BannedUser" AS bu2 
+          WHERE bu2.user_id = u.id 
+          AND bu2.community_id = ${community_id}
+        )
         ${usernameOrderAndLimit}
       `;
     }
