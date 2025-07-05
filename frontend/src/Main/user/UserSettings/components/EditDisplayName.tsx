@@ -49,7 +49,7 @@ export default function EditDisplayName({
 
             const toastId = toast.loading('Changing Display Name...');
             try {
-              await editUserSettings(token, { password, description: newDisplayName });
+              await editUserSettings(token, { password, display_name: newDisplayName });
               toast.update(toastId, {
                 type: 'success',
                 render: 'Successfully updated Display Name',
@@ -59,7 +59,7 @@ export default function EditDisplayName({
 
               setSettings((prev) => {
                 if (!prev) return prev;
-                return { ...prev, description: newDisplayName };
+                return { ...prev, display_name: newDisplayName };
               });
 
               return true;
