@@ -17,6 +17,7 @@ export default async function handleCommunityMembershipHeader(
   const handleMembership = (community: FetchedCommunity, wasMember: boolean) => {
     return {
       ...community,
+      is_moderator: wasMember ? false : true,
       community_moderators: community.community_moderators.map((mod) => {
         if (mod.user.id !== user_id) return mod;
 
