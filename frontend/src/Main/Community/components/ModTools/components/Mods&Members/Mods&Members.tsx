@@ -64,6 +64,7 @@ export default function ModMembers() {
   );
 
   useEffect(() => {
+    setMembers([]);
     loadMore('', true);
   }, [loadMore]);
 

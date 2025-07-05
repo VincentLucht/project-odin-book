@@ -51,6 +51,7 @@ export default function ModMail() {
   );
 
   useEffect(() => {
+    setModMail([]);
     loadMore('', true);
   }, [loadMore, apiFilters]);
 
