@@ -99,7 +99,9 @@ export default function NotUserEllipsis({
             setterFunc={setShowDropdown}
             customFunc={() => {
               if (!token) {
-                notLoggedInError('Please log in to save posts');
+                notLoggedInError(
+                  `Please log in to save ${mode === 'post' ? 'posts' : 'comments'}`,
+                );
                 return;
               }
               manageSaveFunc?.(true);
