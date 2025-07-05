@@ -28,6 +28,7 @@ const mockDb = {
     getById: jest.fn(),
     delete: jest.fn(),
     makeMod: jest.fn(),
+    deactivateMod: jest.fn(),
   },
   postModeration: {
     moderate: jest.fn(),
