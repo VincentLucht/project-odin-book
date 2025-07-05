@@ -11,6 +11,11 @@ export default function validateSignup(
 
   if (!username) {
     errors = { ...errors, username: 'Username is required' };
+  } else if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+    errors = {
+      ...errors,
+      username: 'Username can only contain letters, numbers, and underscores',
+    };
   }
   if (!email) {
     errors = { ...errors, email: 'Email is required' };

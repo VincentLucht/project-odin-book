@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '@/context/auth/hook/useAuth';
 import useGetScreenSize from '@/context/screen/hook/useGetScreenSize';
@@ -82,6 +82,15 @@ export default function SignUp() {
         setErrors(defaultErrors);
       });
   };
+
+  useEffect(() => {
+    if (!/^[a-zA-Z0-9_]+$/.test(username) && username.length > 0) {
+      setErrors((prev) => ({
+        ...prev,
+        username: 'Username can only contain letters, numbers, and underscores',
+      }));
+    }
+  }, [username]);
 
   return (
     <div className="h-dvh flex-col df">
