@@ -202,6 +202,33 @@ export default async function createComments(prisma: PrismaClient) {
     },
   });
 
+  // Create nested comments to depth 50
+  await prisma.comment.create({
+    data: {
+      id: '1000',
+      content: 'Depth 0',
+      post_id: '2',
+      user_id: '1',
+      parent_comment_id: null,
+    },
+  });
+  let currentId = 1000;
+  let nextAvailableId = 1001;
+
+  for (let depth = 1; depth <= 50; depth++) {
+    await prisma.comment.create({
+      data: {
+        id: `${nextAvailableId}`,
+        content: `Depth ${depth}`,
+        post_id: '2',
+        user_id: '1',
+        parent_comment_id: `${currentId}`,
+      },
+    });
+    currentId = nextAvailableId;
+    nextAvailableId++;
+  }
+
   // ! CREATE COMMENT IN PRIVATE COMMUNITY
   await prisma.post.create({
     data: {
