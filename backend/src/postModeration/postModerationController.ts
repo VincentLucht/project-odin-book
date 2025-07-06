@@ -72,7 +72,7 @@ class PostModerationController {
         if (post.moderation.moderator_id !== moderator.id) {
           if (!(await db.community.isOwner(user_id, community.id))) {
             return res.status(409).json({
-              message: 'This post was already moderated by another user',
+              message: 'This post was already moderated by another moderator',
             });
           }
         }
@@ -89,6 +89,7 @@ class PostModerationController {
         await db.postModeration.updateModeration(
           post_id,
           moderation_action,
+          moderator.id,
           reason,
         );
 
