@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
+import slugify from 'slugify';
 
 import { Share2, LinkIcon } from 'lucide-react';
 
@@ -17,6 +18,11 @@ interface ShareProps {
   commentId?: string;
   urlItems?: UrlItems;
   smallMode?: boolean;
+  postInfo?: {
+    postId: string;
+    postTitle: string;
+    communityName: string;
+  };
 }
 
 export default function Share({
@@ -24,6 +30,7 @@ export default function Share({
   commentId,
   urlItems,
   smallMode = false,
+  postInfo,
 }: ShareProps) {
   const [copied, setCopied] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -54,8 +61,21 @@ export default function Share({
       }
     }
 
+    const getPostUrl = (postInfo: {
+      postId: string;
+      postTitle: string;
+      communityName: string;
+    }) => {
+      const { postId, postTitle, communityName } = postInfo;
+      return `${window.location.origin}/r/${communityName}/${postId}/${slugify(postTitle, { lower: true })}`;
+    };
+
     if (mode === 'post') {
-      void navigator.clipboard.writeText(`${window.location.href}`);
+      const url = postInfo ? getPostUrl(postInfo) : window.location.href;
+      void navigator.clipboard.writeText(url);
+    }
+    if (mode === 'overview' && postInfo) {
+      void navigator.clipboard.writeText(getPostUrl(postInfo));
     }
 
     setCopied(true);

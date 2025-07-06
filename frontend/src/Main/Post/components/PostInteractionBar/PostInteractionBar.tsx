@@ -20,6 +20,7 @@ import { IsMod } from '@/Main/Community/components/Virtualization/VirtualizedPos
 interface PostInteractionBarProps {
   post: {
     id: string;
+    title: string;
     total_vote_score: number;
     total_comment_score: number;
     is_mature: boolean;
@@ -115,7 +116,14 @@ export default function PostInteractionBar({
 
         <Reply totalCommentCount={total_comment_score} onClick={postRedirect} />
 
-        <Share mode={mode && mode} />
+        <Share
+          mode={mode && mode}
+          postInfo={{
+            postId: post.id,
+            postTitle: post.title,
+            communityName: post.community.name,
+          }}
+        />
       </div>
 
       {showModOptions && isMod && (
