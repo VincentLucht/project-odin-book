@@ -28,6 +28,9 @@ class PostModerationController {
         return res.status(404).json({ message: 'Post not found' });
       }
       const community = await db.community.getById(post.community_id);
+      if (!community) {
+        return res.status(404).json({ message: 'Community not found' });
+      }
 
       const moderator = await db.communityModerator.getById(
         user_id,
@@ -67,9 +70,11 @@ class PostModerationController {
 
       if (post?.moderation) {
         if (post.moderation.moderator_id !== moderator.id) {
-          return res.status(409).json({
-            message: 'This post was already moderated by another user',
-          });
+          if (!(await db.community.isOwner(user_id, community.id))) {
+            return res.status(409).json({
+              message: 'This post was already moderated by another user',
+            });
+          }
         }
 
         if (
@@ -103,8 +108,6 @@ class PostModerationController {
 
       await sendNotification();
       await updateAllPendingReports();
-
-      // TODO: Send notif that moderation is done
 
       return res.status(201).json({ message: 'Successfully moderated post' });
     } catch (error) {
@@ -169,29 +172,6 @@ class PostModerationController {
       console.error(error);
       return res.status(500).json({
         message: 'Failed to update post',
-        error: error instanceof Error ? error.message : String(error),
-      });
-    }
-  });
-
-  deleteMod = asyncHandler(async (req: Request, res: Response) => {
-    if (checkValidationError(req, res)) return;
-
-    const { community_id, target_user_id } = req.body;
-
-    try {
-      const { user_id } = getAuthUser(req.authData);
-      if (!(await db.user.getById(user_id))) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-
-      return res
-        .status(201)
-        .json({ message: 'Successfully removed mod status' });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({
-        message: 'Failed to remove mod status',
         error: error instanceof Error ? error.message : String(error),
       });
     }
