@@ -29,7 +29,6 @@ export default function Chats() {
   const [searchUsername, setSearchUsername] = useState('');
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const prevChatIdRef = useRef<string | null>(null);
-  const openedFirstChat = useRef(false);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const { user, token } = useAuthGuard();
@@ -158,28 +157,6 @@ export default function Chats() {
       });
     }
   }, [searchParams, setSearchParams, chatOverviews, onOpenChat, user, token]);
-
-  // Open first chat on open
-  useEffect(() => {
-    if (
-      chatOverviews &&
-      !openedFirstChat.current &&
-      !isMobile &&
-      !showCreateChat &&
-      token &&
-      user
-    ) {
-      const latestChatOverview = chatOverviews[0];
-      if (latestChatOverview) {
-        const { chatName, pfp, isGroupChat } = getChatDisplayProps(
-          latestChatOverview,
-          user.id,
-        );
-        onOpenChat(latestChatOverview.chat_id, { name: chatName, pfp, isGroupChat });
-        openedFirstChat.current = true;
-      }
-    }
-  }, [chatOverviews, onOpenChat, user, token, isMobile, showCreateChat]);
 
   if (!token || !user) {
     return;
