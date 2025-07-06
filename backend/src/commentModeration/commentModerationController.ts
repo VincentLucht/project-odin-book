@@ -58,9 +58,14 @@ class CommentModerationController {
 
       if (comment?.moderation) {
         if (comment.moderation.moderator_id !== moderator.id) {
-          return res.status(409).json({
-            message: 'This comment was already moderated by another user',
-          });
+          if (
+            !(await db.community.isOwner(user_id, comment.post.community_id))
+          ) {
+            return res.status(409).json({
+              message:
+                'This comment was already moderated by another moderator',
+            });
+          }
         }
 
         if (
@@ -75,6 +80,7 @@ class CommentModerationController {
         await db.commentModeration.updateModeration(
           comment_id,
           moderation_action,
+          moderator.id,
           reason,
         );
 

@@ -80,6 +80,32 @@ describe('/community/mod/post', () => {
         expect(mockDb.commentModeration.updateModeration).toHaveBeenCalledWith(
           mockRequest.comment_id,
           'REMOVED',
+          moderatorId,
+          mockRequest.reason,
+        );
+      });
+
+      it('should allow community owner to override moderation by another moderator', async () => {
+        mockDb.comment.getByIdAndModeration.mockResolvedValue({
+          id: '1',
+          post: { community_id: '1' },
+          moderation: {
+            moderator_id: 'different-moderator-id',
+          },
+        });
+        mockDb.community.isOwner.mockResolvedValue(true);
+
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 200, 'Successfully updated comment moderation');
+        expect(mockDb.community.isOwner).toHaveBeenCalledWith(
+          mockUser.id,
+          '1',
+        );
+        expect(mockDb.commentModeration.updateModeration).toHaveBeenCalledWith(
+          mockRequest.comment_id,
+          'REMOVED',
+          moderatorId,
           mockRequest.reason,
         );
       });
@@ -115,9 +141,10 @@ describe('/community/mod/post', () => {
             moderator_id: 'different-moderator-id',
           },
         });
+        mockDb.community.isOwner.mockResolvedValue(false);
 
         const response = await sendRequest(mockRequest);
-        assert.exp(response, 409, 'This comment was already moderated by another user');
+        assert.exp(response, 409, 'This comment was already moderated by another moderator');
       });
 
       it('should handle user being inactive mode', async () => {

@@ -21,6 +21,7 @@ export default class CommentModerationManager {
   async updateModeration(
     comment_id: string,
     moderation_action: ModerationType,
+    moderator_id: string,
     reason?: string,
   ) {
     await this.prisma.commentModeration.update({
@@ -29,6 +30,7 @@ export default class CommentModerationManager {
         action: moderation_action,
         reason: moderation_action === 'APPROVED' ? null : reason,
         created_at: new Date(),
+        moderator_id,
       },
     });
   }
