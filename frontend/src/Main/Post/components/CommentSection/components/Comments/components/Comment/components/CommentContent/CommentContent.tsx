@@ -8,7 +8,7 @@ import { Transition } from '@headlessui/react';
 import transitionPropsHeight from '@/util/transitionProps';
 
 import { DBCommentModeration, DBCommentWithReplies } from '@/interface/dbSchema';
-import { IsModPost } from '@/Main/Post/Post';
+import { IsMod } from '@/Main/Community/components/Virtualization/VirtualizedPostOverview';
 
 interface CommentContentProps {
   comment: {
@@ -17,7 +17,7 @@ interface CommentContentProps {
     moderation: DBCommentModeration;
     is_deleted: boolean;
   };
-  isMod: IsModPost;
+  isMod: IsMod;
   depth: number;
   isEditActive: boolean;
   setIsEditActive: React.Dispatch<React.SetStateAction<boolean>>;
