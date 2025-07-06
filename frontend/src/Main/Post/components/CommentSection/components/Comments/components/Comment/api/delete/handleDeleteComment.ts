@@ -1,12 +1,16 @@
 import { DBCommentWithReplies } from '@/interface/dbSchema';
 import deleteComment from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/api/delete/deleteComment';
 import catchError from '@/util/catchError';
+import { toast } from 'react-toastify';
+import toastUpdate from '@/util/toastUpdate';
 
 export default function handleDeleteComment(
   token: string,
   commentId: string,
   setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[]>>,
 ) {
+  const toastId = toast.loading('Deleting comment...');
+
   deleteComment(token, commentId)
     .then(() => {
       let previousState: DBCommentWithReplies[] | undefined = undefined;
@@ -44,15 +48,19 @@ export default function handleDeleteComment(
 
           return prev.map((comment) => deleteCommentInTree(comment));
         });
+
+        toastUpdate(toastId, 'success', 'Successfully deleted comment');
       } catch (error) {
         if (previousState) {
           setComments(previousState);
         }
 
+        toastUpdate(toastId, 'error', 'Failed to delete comment');
         catchError(error);
       }
     })
     .catch((error) => {
+      toastUpdate('Failed to delete comment', 'error', 'Failed to delete comment');
       catchError(error);
     });
 }

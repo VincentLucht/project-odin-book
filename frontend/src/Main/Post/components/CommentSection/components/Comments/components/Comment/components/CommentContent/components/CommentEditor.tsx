@@ -1,6 +1,7 @@
-import { useRef } from 'react';
+import { useState, useRef } from 'react';
 
 import TextareaAutosize from 'react-textarea-autosize';
+import SpinnerDots from '@/components/SpinnerDots';
 
 import handleInputKeyDown from '@/util/handleInputKeyDown';
 import useFocusLastPosition from '@/hooks/useFocusLastPosition';
@@ -30,6 +31,7 @@ export default function CommentEditor({
   token,
   setIsEditActive,
 }: CommentEditorProps) {
+  const [submitting, setSubmitting] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   useFocusLastPosition(textareaRef);
 
@@ -40,7 +42,15 @@ export default function CommentEditor({
     }
 
     if (editText.trim()) {
-      handleEditComment(token, commentId, editText, setComments, setIsEditActive);
+      setSubmitting(true);
+      handleEditComment(
+        token,
+        commentId,
+        editText,
+        setComments,
+        setIsEditActive,
+        setSubmitting,
+      );
     }
   };
 
@@ -71,7 +81,7 @@ export default function CommentEditor({
               className="!px-3 py-2 text-xs prm-button-blue"
               onClick={() => handleSubmit()}
             >
-              Edit Comment
+              {submitting ? <SpinnerDots /> : 'Edit Comment'}
             </button>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import apiRequest from '@/util/apiRequest';
 import catchError from '@/util/catchError';
 import { toast } from 'react-toastify';
+import toastUpdate from '@/util/toastUpdate';
 
 import { DBPostWithCommunity, SavedComment } from '@/interface/dbSchema';
 import { Pagination } from '@/interface/backendTypes';
@@ -53,16 +54,23 @@ export async function manageSavedComments(
   action: 'save' | 'unsave',
   onComplete: () => void,
 ) {
+  const toastId = toast.loading(
+    action === 'save' ? 'Saving comment...' : 'Removing comment from saved...',
+  );
   try {
     const method = action === 'save' ? 'POST' : 'DELETE';
     await apiRequest('/comment/save', method, token, { comment_id });
-    toast.success(
+    const successMessage =
       action === 'save'
-        ? 'Successfully saved this comment'
-        : 'Successfully removed comment from saved',
-    );
+        ? 'Successfully saved comment'
+        : 'Successfully removed comment from saved';
+
+    toastUpdate(toastId, 'success', successMessage);
     onComplete();
   } catch (error) {
+    const errorMessage =
+      action === 'save' ? 'Failed to save comment' : 'Failed to remove comment';
+    toastUpdate(toastId, 'error', errorMessage);
     catchError(error);
   }
 }

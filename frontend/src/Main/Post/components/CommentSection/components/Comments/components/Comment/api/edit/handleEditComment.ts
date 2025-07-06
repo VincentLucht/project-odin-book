@@ -1,6 +1,8 @@
 import { DBCommentWithReplies } from '@/interface/dbSchema';
 import editComment from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/api/edit/editComment';
 import catchError from '@/util/catchError';
+import { toast } from 'react-toastify';
+import toastUpdate from '@/util/toastUpdate';
 
 export default function handleEditComment(
   token: string,
@@ -8,7 +10,10 @@ export default function handleEditComment(
   newContent: string,
   setComments: React.Dispatch<React.SetStateAction<DBCommentWithReplies[]>>,
   setIsEditActive: React.Dispatch<React.SetStateAction<boolean>>,
+  setSubmitting: React.Dispatch<React.SetStateAction<boolean>>,
 ) {
+  const toastId = toast.loading('Editing comment...');
+
   editComment(token, commentId, newContent)
     .then((response) => {
       const { updatedComment } = response;
@@ -40,15 +45,21 @@ export default function handleEditComment(
         });
 
         setIsEditActive(false);
+        toastUpdate(toastId, 'success', 'Successfully edited comment');
+        setSubmitting(false);
       } catch (error) {
         if (previousState) {
           setComments(previousState);
         }
 
         catchError(error);
+        toastUpdate(toastId, 'error', 'Failed to edit comment');
+        setSubmitting(false);
       }
     })
     .catch((error) => {
       catchError(error);
+      toastUpdate(toastId, 'error', 'Failed to edit comment');
+      setSubmitting(false);
     });
 }
