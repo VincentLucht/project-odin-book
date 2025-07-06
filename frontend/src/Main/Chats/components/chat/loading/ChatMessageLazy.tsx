@@ -42,8 +42,8 @@ export default function ChatMessageLazy() {
           {Array.from({ length: contentLines }).map((_, i) => (
             <div
               key={i}
-              className={`skeleton mb-1 h-5 ${i === 0 && 'rounded-t-md'} ${ i === contentLines - 1 &&
-              'rounded-b-md' }`}
+              className={`skeleton h-5 ${i === 0 && 'rounded-t-md'} ${i === contentLines - 1 && 'rounded-b-md'}
+              ${i === contentLines - 2 && 'rounded-br-md'}`}
               style={i === contentLines - 1 ? { width: `${lastLineRandom}%` } : {}}
             />
           ))}
