@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import useGroupMessages from '@/Main/Chats/hooks/useGroupMessages';
 
 import { Virtuoso } from 'react-virtuoso';
@@ -19,8 +19,6 @@ interface VirtualizedMessagesProps {
   setMessages: React.Dispatch<React.SetStateAction<DBMessage[]>>;
   pagination: Pagination;
   setPagination: React.Dispatch<React.SetStateAction<Pagination>>;
-  loading: boolean;
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   scrollContainerRef: React.MutableRefObject<HTMLDivElement | null>;
 }
 
@@ -32,10 +30,9 @@ export default function VirtualizedMessages({
   setMessages,
   pagination,
   setPagination,
-  loading,
-  setLoading,
   scrollContainerRef,
 }: VirtualizedMessagesProps) {
+  const [loading, setLoading] = useState(false);
   const groupedItems = useGroupMessages(messages);
 
   const handleScrollerRef = useCallback(
@@ -103,14 +100,13 @@ export default function VirtualizedMessages({
   };
 
   useEffect(() => {
-    setMessages([]);
     // Reset scrolling to bottom
     setTimeout(() => {
       if (scrollContainerRef.current) {
         scrollContainerRef.current.scrollTop = 0;
       }
     }, 0);
-  }, [chatId, setMessages, scrollContainerRef]);
+  }, [chatId, scrollContainerRef]);
 
   return (
     <div style={{ transform: 'scaleY(-1)' }}>
@@ -120,7 +116,7 @@ export default function VirtualizedMessages({
         overscan={200}
         computeItemKey={(index) => groupedItems[index]?.id || index.toString()}
         endReached={() => {
-          if (pagination.hasMore && !loading && chatId) {
+          if (pagination.hasMore && !loading && chatId && groupedItems.length > 0) {
             setLoading(true);
             void fetchChatMessages(
               token,

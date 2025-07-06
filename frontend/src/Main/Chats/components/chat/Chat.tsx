@@ -83,7 +83,7 @@ export default function Chat({
     return <ChatPlaceholder />;
   }
 
-  if (!chat && !tempChat.name) {
+  if (loading) {
     return <ChatLazy />;
   }
 
@@ -138,8 +138,6 @@ export default function Chat({
           setMessages={setMessages}
           pagination={pagination}
           setPagination={setPagination}
-          loading={loading}
-          setLoading={setLoading}
           scrollContainerRef={scrollContainerRef}
         />
 
