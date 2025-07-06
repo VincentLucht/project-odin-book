@@ -76,7 +76,7 @@ export default function PostEditor({
               className="!px-3 py-2 text-xs prm-button-blue"
               onClick={() => handleSubmit()}
             >
-              Edit Comment
+              Edit Post
             </button>
           </div>
         </div>
