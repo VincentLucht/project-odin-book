@@ -5,6 +5,7 @@ import VirtualizedMessages from '@/Main/Chats/components/chat/components/Virtual
 import ChatSettings from '@/Main/Chats/components/chat/components/ChatSettings/ChatSettings';
 import TextareaAutosize from 'react-textarea-autosize';
 import ChatLazy from '@/Main/Chats/components/chat/loading/ChatLazy';
+import ChatPlaceholder from '@/Main/Chats/components/chat/components/ChatPlaceholder';
 import { SendHorizontalIcon, ChevronLeftIcon } from 'lucide-react';
 import { SettingsIcon } from 'lucide-react';
 
@@ -77,6 +78,10 @@ export default function Chat({
       void loadChat(currentChatId);
     }
   }, [currentChatId, token, setPagination, setChat]);
+
+  if (!currentChatId) {
+    return <ChatPlaceholder />;
+  }
 
   if (!chat && !tempChat.name) {
     return <ChatLazy />;
