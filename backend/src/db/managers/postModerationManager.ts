@@ -22,6 +22,7 @@ export default class PostModerationManager {
   async updateModeration(
     post_id: string,
     moderation_action: ModerationType,
+    moderator_id: string,
     reason?: string,
   ) {
     await this.prisma.postModeration.update({
@@ -30,6 +31,7 @@ export default class PostModerationManager {
         action: moderation_action,
         reason: moderation_action === 'APPROVED' ? null : reason,
         created_at: new Date(),
+        moderator_id,
       },
     });
   }
