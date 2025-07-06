@@ -114,6 +114,12 @@ const mockDb = {
     save: jest.fn(),
     unsave: jest.fn(),
   },
+  report: {
+    updateAllPendingReports: jest.fn(),
+  },
+  notification: {
+    send: jest.fn(),
+  },
 };
 
 export default mockDb;
