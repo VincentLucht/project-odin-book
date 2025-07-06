@@ -134,6 +134,7 @@ export default function Community() {
           token={token}
           navigate={navigate}
           pathname={location.pathname}
+          isMobile={isMobile}
         />
 
         <div className="relative md:center-main-content">
