@@ -18,11 +18,13 @@ import SpoilerTag from '@/Main/Post/components/tags/common/SpoilerTag';
 import MatureTag from '@/Main/Post/components/tags/common/MatureTag';
 import PostLazy from '@/Main/Post/components/Loading/PostLazy';
 import LockedCommentsTag from '@/Main/Post/components/tags/common/LockedCommentsTag';
+import PostNotFound from '@/Main/Post/components/Loading/PostNotFound';
 
-import handleFetchPost from '@/Main/Post/api/fetch/handleFetchPost';
+import fetchPost from '@/Main/Post/api/fetch/fetchPost';
 import handlePostVote from '@/Main/Post/api/vote/handlePostVote';
 import getRelativeTime from '@/util/getRelativeTime';
 import notLoggedInError from '@/util/notLoggedInError';
+import catchError from '@/util/catchError';
 
 import { DBPostWithCommunity } from '@/interface/dbSchema';
 import { VoteType } from '@/interface/backendTypes';
@@ -50,6 +52,7 @@ export default function Post({
 
   const [postLoading, setPostLoading] = useState(true);
   const navigate = useNavigate();
+  const [postNotFound, setPostNotFound] = useState(false);
   const { currentWidth, isSmallScreen, isMobile, isBelow550px } = useGetScreenSize();
   const [showSidebar, setShowSidebar] = useState(false);
 
@@ -63,9 +66,16 @@ export default function Post({
 
   useEffect(() => {
     setPostLoading(true);
-    const onComplete = () => setPostLoading(false);
 
-    handleFetchPost(effectivePostId ?? '', token, setPost, onComplete);
+    fetchPost(effectivePostId ?? '', token)
+      .then((response) => {
+        setPost(response.postAndCommunity);
+        setPostLoading(false);
+      })
+      .catch((error) => {
+        catchError(error);
+        setPostNotFound(true);
+      });
   }, [effectivePostId, token, mode]);
 
   const isMod = useIsModerator(user, post?.community?.is_moderator);
@@ -86,6 +96,10 @@ export default function Post({
       setShowPostFlairSelection(true);
     }
   }, [post, user, searchParams, mode]);
+
+  if (postNotFound) {
+    return <PostNotFound className="mt-10" />;
+  }
 
   if (!post || postLoading) {
     return <PostLazy mode={mode} showSidebar={currentWidth >= 1024} />;
