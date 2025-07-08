@@ -6,6 +6,8 @@ import Ellipsis from '@/components/Interaction/Ellipsis';
 import ModMenuComment from '@/Main/Post/components/CommentSection/components/Comments/components/Comment/components/ModMenuComment/ModMenuComment';
 import NotUserEllipsis from '@/components/Interaction/NotUserEllipsis';
 
+import formatCount from '@/components/sidebar/DisplayMemberCount.tsx/formatCount';
+
 import { VoteType } from '@/interface/backendTypes';
 import { UrlItems } from '@/components/Interaction/Share';
 import { IsMod } from '@/Main/Community/components/Virtualization/VirtualizedPostOverview';
@@ -94,7 +96,7 @@ export default function CommentInteractionBar({
 
             {/* TODO: Add: 1000 => 1k... */}
             <span className="-mx-[2px] text-sm font-medium text-gray-400">
-              {totalVoteCount <= 0 ? 0 : totalVoteCount}
+              {formatCount(totalVoteCount)}
             </span>
 
             <Downvote

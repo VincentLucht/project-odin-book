@@ -8,6 +8,8 @@ import Reply from '@/components/Interaction/Reply';
 import Share from '@/components/Interaction/Share';
 import ModMenuPost from '@/Main/Post/components/PostInteractionBar/components/ModMenuPost';
 
+import formatCount from '@/components/sidebar/DisplayMemberCount.tsx/formatCount';
+
 import { VoteType } from '@/interface/backendTypes';
 import {
   DBPostModeration,
@@ -102,9 +104,8 @@ export default function PostInteractionBar({
             onVote={onVote}
           />
 
-          {/* TODO: Really change this to not visible?? */}
           <span className="-mx-[2px] text-sm font-medium">
-            {total_vote_score <= 0 ? 0 : total_vote_score}
+            {formatCount(total_vote_score)}
           </span>
 
           <Downvote

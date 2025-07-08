@@ -1,5 +1,7 @@
 import { MessageCircle } from 'lucide-react';
 
+import formatCount from '@/components/sidebar/DisplayMemberCount.tsx/formatCount';
+
 interface ReplyProps {
   totalCommentCount?: number;
   mode?: 'overview' | 'comment';
@@ -21,7 +23,9 @@ export default function Reply({
     >
       <MessageCircle className="h-5 w-5" />
 
-      {totalCommentCount && <span className="text-sm">{totalCommentCount}</span>}
+      {totalCommentCount && (
+        <span className="text-sm">{formatCount(totalCommentCount)}</span>
+      )}
 
       {!smallMode && mode === 'comment' && <span className="text-xs">Reply</span>}
     </button>
