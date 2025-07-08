@@ -18,11 +18,20 @@ export function useUpdateRecentCommunities<T extends CommunityBase>(
   const isInitialFetchRef = useRef(true);
 
   useEffect(() => {
-    if (community && isInitialFetchRef.current && !isLoadingRecentCommunities && user) {
+    if (community && !isLoadingRecentCommunities && user) {
       setRecentCommunities((prev) => {
         if (!prev) return prev;
-
         const recent = prev.find((recent) => recent.community_id === community.id);
+
+        // Only skip if this is the initial fetch AND the community is already first
+        if (
+          isInitialFetchRef.current &&
+          recent &&
+          prev[0]?.community_id === community.id
+        ) {
+          isInitialFetchRef.current = false;
+          return prev;
+        }
 
         if (!recent) {
           return [
@@ -43,10 +52,10 @@ export function useUpdateRecentCommunities<T extends CommunityBase>(
         const recentWithout = prev.filter(
           (recent) => recent.community_id !== community.id,
         );
+
+        isInitialFetchRef.current = false;
         return [recent, ...recentWithout];
       });
-
-      isInitialFetchRef.current = false;
     }
   }, [community, isLoadingRecentCommunities, setRecentCommunities, user]);
 
