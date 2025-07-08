@@ -199,7 +199,7 @@ export default function Chats() {
               setTempChat={setTempChat}
               currentChatId={currentChatId}
               setCurrentChatId={setCurrentChatId}
-              userSelfId={user?.id}
+              userSelf={user}
               token={token}
               setChatOverviews={setChatOverviews}
               pagination={pagination}
