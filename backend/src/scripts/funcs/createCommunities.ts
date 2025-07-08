@@ -134,7 +134,7 @@ export default async function createCommunities(prisma: PrismaClient) {
 
   // Start timestamp
   const baseTime = new Date();
-  const priorityUserIds = ['1', '2'];
+  const priorityUserIds = ['1', '2', '4'];
 
   // Only get priority users (users with ID 1 and 2)
   const priorityUsers = allUsers.filter((user) =>
