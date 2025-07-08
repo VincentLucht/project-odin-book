@@ -29,7 +29,7 @@ export default function NotificationButton() {
 
   return (
     <Link to="/notifications">
-      <button className="bg-hover-transition">
+      <button className="relative bg-hover-transition">
         <BellIcon className="h-6 w-6" />
 
         {showUnread && (
