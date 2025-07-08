@@ -16,7 +16,7 @@ export default async function createComments(prisma: PrismaClient) {
         created_at: createdAt,
         post_id: '1',
         user_id: '1',
-        total_vote_score: i,
+        total_vote_score: i === 299 ? 10325 : i,
         times_reported: i,
       },
     });

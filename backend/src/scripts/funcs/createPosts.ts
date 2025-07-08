@@ -47,10 +47,12 @@ export default async function createPosts(prisma: PrismaClient) {
         is_spoiler: false,
         is_mature: false,
         post_type: 'BASIC',
-        total_comment_score: 10,
+        total_comment_score: 3284,
+        total_vote_score: 10783,
         created_at: new Date(latestCreatedAt),
       },
     }),
+
     prisma.post.create({
       data: {
         id: '2',
@@ -61,6 +63,8 @@ export default async function createPosts(prisma: PrismaClient) {
         is_spoiler: true,
         is_mature: true,
         post_type: 'BASIC',
+        total_comment_score: 50,
+        total_vote_score: -3213,
         created_at: new Date(latestCreatedAt),
       },
     }),
