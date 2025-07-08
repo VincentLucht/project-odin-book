@@ -68,18 +68,39 @@ export default function Chat({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const loadChat = async (currentChatId: string) => {
+    const loadChat = async (
+      currentChatId: string,
+      abortController: AbortController,
+    ) => {
       setLoading(true);
-      await fetchChat(currentChatId, token, (chat, messages, pagination) => {
-        setChat(chat);
-        setMessages(messages);
-        setPagination(pagination);
-        setLoading(false);
-      });
+      try {
+        await fetchChat(
+          currentChatId,
+          token,
+          abortController.signal,
+          (chat, messages, pagination) => {
+            if (!abortController.signal.aborted) {
+              setChat(chat);
+              setMessages(messages);
+              setPagination(pagination);
+              setLoading(false);
+            }
+          },
+        );
+      } catch (error) {
+        if (!abortController.signal.aborted) {
+          setLoading(false);
+        }
+      }
     };
 
     if (currentChatId) {
-      void loadChat(currentChatId);
+      const abortController = new AbortController();
+      void loadChat(currentChatId, abortController);
+
+      return () => {
+        abortController.abort();
+      };
     }
   }, [currentChatId, token, setPagination, setChat]);
 
