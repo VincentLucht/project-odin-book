@@ -5,6 +5,7 @@ export default async function apiRequest<T>(
   method: 'GET' | 'POST' | 'PUT' | 'DELETE',
   token: string | null,
   body?: any,
+  abortSignal?: AbortSignal,
 ): Promise<T> {
   const response = await fetch(`${API_URL}${endpoint}`, {
     method,
@@ -13,6 +14,7 @@ export default async function apiRequest<T>(
       ...(token && { authorization: token }),
     },
     ...(body && { body: JSON.stringify(body) }),
+    ...(abortSignal && { signal: abortSignal }),
   } as RequestInit);
 
   if (!response.ok) {

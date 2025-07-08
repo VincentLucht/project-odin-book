@@ -91,6 +91,7 @@ interface FetchChatResponse {
 export async function fetchChat(
   chat_id: string,
   token: string,
+  abortSignal: AbortSignal,
   onComplete: (
     chat: FetchedChat,
     messages: DBMessage[],
@@ -101,17 +102,19 @@ export async function fetchChat(
     const params = new URLSearchParams({
       chat_id,
     });
-
     const response = await apiRequest<FetchChatResponse>(
       `/chat?${params.toString()}`,
       'GET',
       token,
+      undefined, // ? body
+      abortSignal,
     );
-
     const { messages, ...chatWithoutMessages } = response.chat;
     onComplete(chatWithoutMessages, messages, response.pagination);
   } catch (error) {
-    catchError(error);
+    if (error instanceof Error && error.name !== 'AbortError') {
+      catchError(error);
+    }
   }
 }
 
