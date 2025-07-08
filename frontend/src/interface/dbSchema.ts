@@ -240,7 +240,7 @@ export interface DBMessage {
     id: string;
     username: string;
     profile_picture_url: string | null;
-    deleted_at: string;
+    deleted_at: string | null;
   };
   is_system_message: boolean;
   chat_id: string;
