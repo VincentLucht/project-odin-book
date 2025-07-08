@@ -89,7 +89,7 @@ export default function Post({
 
     if (!isUserPoster) return;
 
-    if (searchParams.get('edit')) {
+    if (searchParams.get('edit-post')) {
       setIsEditActive(true);
     }
     if (searchParams.get('edit-post-flair')) {

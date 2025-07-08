@@ -56,7 +56,7 @@ export default function PostEditDropdownMenuPost({
   manageSaveFunc,
 }: PostEditDropdownMenuPostProps) {
   const redirectToEdit = () => {
-    navigate(`/r/${communityName}/${postId}/${postName}?edit=true`);
+    navigate(`/r/${communityName}/${postId}/${postName}?edit-post=true`);
   };
 
   return (
