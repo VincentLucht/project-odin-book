@@ -4,7 +4,6 @@ import bcrypt from 'bcrypt';
 import db from '@/db/db';
 
 import { checkValidationError } from '@/util/checkValidationError';
-import isCakeDayValid from '@/community/util/isCakeDayValid';
 
 type User = {
   id: string;
@@ -58,33 +57,17 @@ class AuthController {
   async signUp(req: Request, res: Response) {
     if (checkValidationError(req, res)) return;
 
-    const {
-      username,
-      email,
-      password,
-      display_name,
-      profile_picture_url,
-      cake_day,
-    } = req.body;
+    const { username, email, password } = req.body;
 
     try {
       if (await db.user.getByUsername(username)) {
-        return res.status(409).json({ message: 'User already exists' });
+        return res.status(409).json({ message: 'Username already in use' });
       }
       if (await db.user.getByEmail(email)) {
         return res.status(409).json({ message: 'Email already in use' });
       }
 
-      isCakeDayValid(cake_day);
-
-      await db.user.create(
-        username,
-        email,
-        await bcrypt.hash(password, 10),
-        display_name,
-        profile_picture_url,
-        cake_day,
-      );
+      await db.user.create(username, email, await bcrypt.hash(password, 10));
 
       return res.status(201).json({ message: 'User created successfully' });
     } catch (error) {
