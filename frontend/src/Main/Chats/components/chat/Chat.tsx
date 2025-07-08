@@ -3,14 +3,18 @@ import { useState, useEffect, useRef } from 'react';
 import PFP from '@/components/PFP';
 import VirtualizedMessages from '@/Main/Chats/components/chat/components/VirtualizedMessages';
 import ChatSettings from '@/Main/Chats/components/chat/components/ChatSettings/ChatSettings';
-import TextareaAutosize from 'react-textarea-autosize';
 import ChatLazy from '@/Main/Chats/components/chat/loading/ChatLazy';
 import ChatPlaceholder from '@/Main/Chats/components/chat/components/ChatPlaceholder';
-import { SendHorizontalIcon, ChevronLeftIcon } from 'lucide-react';
+import ChatMessageForm from '@/Main/Chats/components/chat/components/ChatForm/ChatForm';
+import { ChevronLeftIcon } from 'lucide-react';
 import { SettingsIcon } from 'lucide-react';
 
 import { fetchChat, FetchedChat } from '@/Main/Chats/api/chatAPI';
 import { sendChatMessage } from '@/Main/Chats/components/chat/api/messageAPI';
+import {
+  sendChatMessageOptimistic,
+  retryMessage as retryMessageFunc,
+} from '@/Main/Chats/components/chat/components/ChatForm/chatFormUtils';
 
 import '@/Main/Chats/components/chat/css/hideLine.css';
 import { FetchedChatOverview } from '@/Main/Chats/api/chatAPI';
@@ -28,7 +32,7 @@ interface ChatProps {
   >;
   currentChatId: string | null;
   setCurrentChatId: React.Dispatch<React.SetStateAction<string | null>>;
-  userSelfId: string;
+  userSelf: { id: string; profile_picture_url: string | null; username: string };
   token: string;
   setChatOverviews: React.Dispatch<React.SetStateAction<FetchedChatOverview[]>>;
   pagination: Pagination;
@@ -46,7 +50,7 @@ export default function Chat({
   setTempChat,
   currentChatId,
   setCurrentChatId,
-  userSelfId,
+  userSelf,
   token,
   setChatOverviews,
   pagination,
@@ -86,6 +90,37 @@ export default function Chat({
   if (loading) {
     return <ChatLazy />;
   }
+
+  const sendMessage = async () => {
+    if (!chat || !message) return;
+
+    await sendChatMessageOptimistic(
+      chat.id,
+      message,
+      setMessage,
+      setMessages,
+      setChatOverviews,
+      scrollContainerRef,
+      token,
+      userSelf,
+      sendChatMessage,
+    );
+  };
+
+  const retryMessage = async (message: DBMessage) => {
+    if (!chat || !message) return;
+
+    await retryMessageFunc(
+      message,
+      setMessage,
+      setMessages,
+      setChatOverviews,
+      scrollContainerRef,
+      token,
+      userSelf,
+      sendChatMessage,
+    );
+  };
 
   return (
     <div
@@ -133,103 +168,26 @@ export default function Chat({
         <VirtualizedMessages
           token={token}
           chatId={currentChatId}
-          userId={userSelfId}
+          userId={userSelf.id}
           messages={messages}
           setMessages={setMessages}
           pagination={pagination}
           setPagination={setPagination}
           scrollContainerRef={scrollContainerRef}
+          retryMessage={retryMessage}
         />
 
-        <form
-          className="relative flex min-h-[56px] gap-3 p-2 pr-4"
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (chat && message) {
-              void sendChatMessage(token, chat.id, message, (newMessage) => {
-                setMessages((prev) => [newMessage, ...prev]);
-                setMessage('');
-
-                // Scroll to bottom
-                if (scrollContainerRef.current) {
-                  scrollContainerRef.current.scrollTop = 0;
-                }
-
-                // Mark chat as newest + last message
-                setChatOverviews((prev) => {
-                  const index = prev.findIndex(
-                    (overview) => overview.chat_id === chat.id,
-                  );
-                  if (index === -1) return prev;
-
-                  const overview = prev[index];
-                  const updatedOverview = {
-                    ...overview,
-                    chat: {
-                      ...overview.chat,
-                      updated_at: new Date().toISOString(),
-                      last_message_id: 'temp',
-                      last_message: {
-                        user_id: userSelfId,
-                        user: { username: 'temp' },
-                        is_system_message: false,
-                        content: message,
-                        time_created: new Date().toISOString(),
-                      },
-                    },
-                  };
-
-                  return [
-                    updatedOverview,
-                    ...prev.slice(0, index),
-                    ...prev.slice(index + 1),
-                  ];
-                });
-              });
-            }
-          }}
-        >
-          <div
-            className="h-full w-full rounded-3xl py-[10px] df bg-accent-gray hover:cursor-text"
-            onClick={() => document.getElementById('send-message-textarea')?.focus()}
-          >
-            <TextareaAutosize
-              className="ml-4 mr-1 w-full pr-4 text-sm bg-accent-gray focus:outline-none"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              name="message-textarea"
-              id="send-message-textarea"
-              autoFocus
-              autoComplete="off"
-              placeholder="Message"
-              style={{ resize: 'none', scrollPadding: '10px' }}
-              maxRows={5}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  e.currentTarget.form?.requestSubmit();
-                }
-              }}
-            />
-          </div>
-
-          <div className="min-w-6"></div>
-
-          <button
-            className={`fixed bottom-4 right-4 ${showChatSettings && 'mr-[374px]'}`}
-            type="submit"
-          >
-            <SendHorizontalIcon
-              className={`transition-colors ${!message ? 'text-[#374151]' : 'text-blue-500'}`}
-              fill={`${!message ? '#374151' : '#3b82f6'}`}
-            />
-          </button>
-        </form>
+        <ChatMessageForm
+          message={message}
+          setMessage={setMessage}
+          showChatSettings={showChatSettings}
+          sendMessage={sendMessage}
+        />
       </div>
 
       {showChatSettings && (
         <ChatSettings
-          userSelfId={userSelfId}
+          userSelfId={userSelf.id}
           token={token}
           chat={chat}
           setChat={setChat}

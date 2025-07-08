@@ -20,6 +20,7 @@ interface VirtualizedMessagesProps {
   pagination: Pagination;
   setPagination: React.Dispatch<React.SetStateAction<Pagination>>;
   scrollContainerRef: React.MutableRefObject<HTMLDivElement | null>;
+  retryMessage: (message: DBMessage) => Promise<void>;
 }
 
 export default function VirtualizedMessages({
@@ -31,6 +32,7 @@ export default function VirtualizedMessages({
   pagination,
   setPagination,
   scrollContainerRef,
+  retryMessage,
 }: VirtualizedMessagesProps) {
   const [loading, setLoading] = useState(false);
   const groupedItems = useGroupMessages(messages);
@@ -94,7 +96,7 @@ export default function VirtualizedMessages({
 
     return (
       <div data-id={item.message.id} style={{ transform: 'scaleY(-1)' }}>
-        <ChatMessage message={item.message} />
+        <ChatMessage message={item.message} retryMessage={retryMessage} />
       </div>
     );
   };

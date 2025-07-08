@@ -44,8 +44,7 @@ export async function sendChatMessage(
   token: string | null,
   chat_id: string,
   content: string,
-  onComplete: (message: DBMessage) => void,
-) {
+): Promise<DBMessage> {
   try {
     const response = await apiRequest<SendChatMessageResponse>(
       '/chat/message',
@@ -57,12 +56,21 @@ export async function sendChatMessage(
       },
     );
 
-    onComplete(response.sentMessage);
+    return response.sentMessage;
   } catch (error) {
-    catchError(error);
-    const toastId = 'send-message-error';
-    if (!toast.isActive(toastId)) {
-      toast.error('Failed to send message', { toastId });
+    const toastId1 = 'toastId1';
+    const toastId2 = 'toastId2';
+    const errorMessage = 'Failed to send message, please try again';
+
+    if (toast.isActive(toastId1)) {
+      toast.dismiss(toastId1);
+      toast.error(errorMessage, { toastId: toastId2 });
+    } else if (toast.isActive(toastId2)) {
+      toast.dismiss(toastId2);
+      toast.error(errorMessage, { toastId: toastId1 });
+    } else {
+      toast.error(errorMessage, { toastId: toastId1 });
     }
+    throw error;
   }
 }

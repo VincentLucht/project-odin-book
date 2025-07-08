@@ -1,13 +1,14 @@
 import PFP from '@/components/PFP';
 import formatTimeCompact from '@/util/formatTimeCompact';
 import { DBMessage } from '@/interface/dbSchema';
-import { ShieldIcon } from 'lucide-react';
+import { ShieldIcon, CircleAlertIcon } from 'lucide-react';
 
 interface ChatMessageProps {
   message: DBMessage;
+  retryMessage: (message: DBMessage) => Promise<void>;
 }
 
-export default function ChatMessage({ message }: ChatMessageProps) {
+export default function ChatMessage({ message, retryMessage }: ChatMessageProps) {
   const isSystemMessage = message.user_id === 'system_id';
 
   return (
@@ -34,6 +35,21 @@ export default function ChatMessage({ message }: ChatMessageProps) {
           <div className="whitespace-nowrap text-gray-400">
             • {formatTimeCompact(message.time_created)}
           </div>
+
+          {message.status === 'failed' && (
+            <>
+              <div className="text-gray-400">•</div>
+
+              <button
+                className="group flex cursor-pointer items-center gap-1"
+                onClick={() => retryMessage(message)}
+              >
+                <CircleAlertIcon className="text-red-500" />
+
+                <span className="text-red-500 group-hover:underline">Retry</span>
+              </button>
+            </>
+          )}
         </div>
 
         <div className="whitespace-pre-wrap break-all pr-2 text-sm">
