@@ -17,6 +17,7 @@ export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [authLoading, setAuthLoading] = useState(false);
 
   const [errors, setErrors] = useState<ValidationError>({});
 
@@ -59,6 +60,7 @@ export default function Login() {
             text="Login"
             isLoading={isLoading}
             func={() =>
+              !isLoading &&
               handleLogin(username, password, setErrors, loginAuth, setIsLoading)
             }
           />
@@ -80,9 +82,19 @@ export default function Login() {
               <hr className="border-t border-gray-600" />
             </div>
 
-            <LoginAsGuestButton setErrors={setErrors} loginAuth={loginAuth} />
+            <LoginAsGuestButton
+              setErrors={setErrors}
+              loginAuth={loginAuth}
+              authLoading={authLoading}
+              setAuthLoading={setAuthLoading}
+            />
 
-            <LoginAsAdminButton setErrors={setErrors} loginAuth={loginAuth} />
+            <LoginAsAdminButton
+              setErrors={setErrors}
+              loginAuth={loginAuth}
+              authLoading={authLoading}
+              setAuthLoading={setAuthLoading}
+            />
           </div>
         </div>
       </form>

@@ -4,11 +4,15 @@ import { ValidationError } from '@/interface/backendErrors';
 interface LoginAsAdminButtonProps {
   setErrors: React.Dispatch<React.SetStateAction<ValidationError>>;
   loginAuth: (newToken: string) => void;
+  authLoading: boolean;
+  setAuthLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function LoginAsAdminButton({
   setErrors,
   loginAuth,
+  authLoading,
+  setAuthLoading,
 }: LoginAsAdminButtonProps) {
   return (
     <button
@@ -17,7 +21,8 @@ export default function LoginAsAdminButton({
         hover:bg-purple-100 active:scale-95 active:bg-purple-200"
       onClick={(e) => {
         e.preventDefault();
-        handleLogin('guest_admin', 'adminpw', setErrors, loginAuth);
+        !authLoading &&
+          handleLogin('guest_admin', 'adminpw', setErrors, loginAuth, setAuthLoading);
       }}
     >
       <img

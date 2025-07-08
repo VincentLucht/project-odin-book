@@ -16,6 +16,7 @@ import LoadingButton from '@/components/LoadingButton';
 
 import { ValidationError, ResponseError } from '@/interface/backendErrors';
 import { toast } from 'react-toastify';
+import toastUpdate from '@/util/toastUpdate';
 
 export default function SignUp() {
   const [username, setUsername] = useState('');
@@ -23,6 +24,7 @@ export default function SignUp() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [authLoading, setAuthLoading] = useState(false);
 
   const [errors, setErrors] = useState<ValidationError>({});
 
@@ -43,12 +45,19 @@ export default function SignUp() {
     signup(username, email, password, confirmPassword)
       .then(() => {
         toast.success('Successfully signed in');
+
+        const toastId = toast.loading('Logging in...');
         login(username, password)
           .then((response) => {
+            toastUpdate(toastId, 'success', 'Successfully logged in');
             loginAuth(response.token);
           })
           .catch(() => {
-            toast.error('An unknown error occurred while logging in, please try again');
+            toastUpdate(
+              toastId,
+              'error',
+              'An unknown error occurred while logging in, please try again',
+            );
           });
       })
       .catch((response: ResponseError) => {
@@ -154,7 +163,7 @@ export default function SignUp() {
           <LoadingButton
             text="Sign Up"
             isLoading={isLoading}
-            func={() => handleSignUp(username, password)}
+            func={() => !isLoading && handleSignUp(username, password)}
           />
 
           <div className="w-full text-center">
@@ -174,9 +183,19 @@ export default function SignUp() {
               <hr className="border-t border-gray-600" />
             </div>
 
-            <LoginAsGuestButton setErrors={setErrors} loginAuth={loginAuth} />
+            <LoginAsGuestButton
+              setErrors={setErrors}
+              loginAuth={loginAuth}
+              authLoading={authLoading}
+              setAuthLoading={setAuthLoading}
+            />
 
-            <LoginAsAdminButton setErrors={setErrors} loginAuth={loginAuth} />
+            <LoginAsAdminButton
+              setErrors={setErrors}
+              loginAuth={loginAuth}
+              authLoading={authLoading}
+              setAuthLoading={setAuthLoading}
+            />
           </div>
         </div>
       </form>
