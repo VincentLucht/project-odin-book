@@ -30,6 +30,7 @@ export default async function createCommunities(prisma: PrismaClient) {
       name: 't11',
       type: CommunityType.PUBLIC,
       owner_id: '1',
+      total_members: 127238,
       description:
         'Lorem ipsum odor amet, consectetuer adipiscing elit. Felis ad finibus tellus placerat vestibulum ridiculus vivamus commodo quam vehicula per nibh facilisi varius semper magna.',
     },
