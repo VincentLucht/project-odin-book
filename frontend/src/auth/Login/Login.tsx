@@ -6,7 +6,7 @@ import useGetScreenSize from '@/context/screen/hook/useGetScreenSize';
 import handleLogin from '@/auth/Login/util/handleLogin';
 
 import LoginAsGuestButton from '@/auth/Login/components/LoginAsGuestButton';
-import LoginAsAdminButton from '@/auth/Login/components/LoginAsAdminButton';
+import LoginAsModButton from '@/auth/Login/components/LoginAsModButton';
 import InputWithError from '@/components/InputWithError';
 import LoadingButton from '@/components/LoadingButton';
 import SVG_PATHS from '@/auth/Login/svg/SVG_PATHS';
@@ -89,7 +89,7 @@ export default function Login() {
               setAuthLoading={setAuthLoading}
             />
 
-            <LoginAsAdminButton
+            <LoginAsModButton
               setErrors={setErrors}
               loginAuth={loginAuth}
               authLoading={authLoading}

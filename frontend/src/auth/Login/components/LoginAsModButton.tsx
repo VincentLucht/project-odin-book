@@ -1,19 +1,19 @@
 import handleLogin from '@/auth/Login/util/handleLogin';
 import { ValidationError } from '@/interface/backendErrors';
 
-interface LoginAsAdminButtonProps {
+interface LoginAsModButtonProps {
   setErrors: React.Dispatch<React.SetStateAction<ValidationError>>;
   loginAuth: (newToken: string) => void;
   authLoading: boolean;
   setAuthLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function LoginAsAdminButton({
+export default function LoginAsModButton({
   setErrors,
   loginAuth,
   authLoading,
   setAuthLoading,
-}: LoginAsAdminButtonProps) {
+}: LoginAsModButtonProps) {
   return (
     <button
       className="relative h-[52px] w-full rounded-full border-2 border-purple-200 bg-purple-50
@@ -30,7 +30,7 @@ export default function LoginAsAdminButton({
         alt="Login as Admin logo"
         className="absolute left-4 top-1/2 h-[26px] w-[32px] -translate-y-1/2 transform"
       />
-      <div className="font-semibold">Continue as Admin</div>
+      <div className="font-semibold">Continue as Moderator</div>
     </button>
   );
 }

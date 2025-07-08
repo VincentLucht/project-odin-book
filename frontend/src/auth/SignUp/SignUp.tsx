@@ -10,7 +10,7 @@ import validateSignup from '@/auth/SignUp/util/validateSignup';
 import SVG_PATHS from '@/auth/Login/svg/SVG_PATHS';
 
 import LoginAsGuestButton from '@/auth/Login/components/LoginAsGuestButton';
-import LoginAsAdminButton from '@/auth/Login/components/LoginAsAdminButton';
+import LoginAsModButton from '@/auth/Login/components/LoginAsModButton';
 import InputWithError from '@/components/InputWithError';
 import LoadingButton from '@/components/LoadingButton';
 
@@ -190,7 +190,7 @@ export default function SignUp() {
               setAuthLoading={setAuthLoading}
             />
 
-            <LoginAsAdminButton
+            <LoginAsModButton
               setErrors={setErrors}
               loginAuth={loginAuth}
               authLoading={authLoading}
