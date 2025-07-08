@@ -99,6 +99,13 @@ export default function SignUp() {
         username: 'Username can only contain letters, numbers, and underscores',
       }));
     }
+
+    if (username && username.length < 2) {
+      setErrors((prev) => ({
+        ...prev,
+        username: 'Username has to be at least 2 characters long',
+      }));
+    }
   }, [username]);
 
   return (

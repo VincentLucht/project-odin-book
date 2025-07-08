@@ -16,6 +16,11 @@ export default function validateSignup(
       ...errors,
       username: 'Username can only contain letters, numbers, and underscores',
     };
+  } else if (username.length < 2) {
+    errors = {
+      ...errors,
+      username: 'Username has to be at least 2 characters long',
+    };
   }
   if (!email) {
     errors = { ...errors, email: 'Email is required' };
