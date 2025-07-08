@@ -30,14 +30,12 @@ export default function UserButton({
 
   return (
     <div className="df" ref={dropdownRef}>
-      <div>
-        <UserPFP
-          url={user.profile_picture_url}
-          onClick={() =>
-            setShowDropDown((prev) => (prev === dropdownId ? null : dropdownId))
-          }
-        />
-      </div>
+      <UserPFP
+        url={user.profile_picture_url}
+        onClick={() =>
+          setShowDropDown((prev) => (prev === dropdownId ? null : dropdownId))
+        }
+      />
 
       <DropdownMenu
         className={`right-[20px] min-w-[256px] rounded-md transition-opacity duration-300 df
