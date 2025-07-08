@@ -30,7 +30,6 @@ interface ReplyEditorProps {
   hasReply?: boolean;
 }
 
-// TODO: Complete UI (border color => grey, white on focus, buttons)
 // TODO: Add Text Editor
 export default function ReplyEditor({
   show,

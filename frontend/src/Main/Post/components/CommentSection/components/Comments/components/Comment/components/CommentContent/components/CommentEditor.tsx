@@ -20,7 +20,6 @@ interface CommentEditorProps {
   setIsEditActive: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-// TODO: Complete UI (border color => grey, white on focus, buttons)
 // TODO: Add Text Editor
 export default function CommentEditor({
   toggleShow,

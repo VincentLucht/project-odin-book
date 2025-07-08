@@ -27,7 +27,6 @@ interface ModerationTag {
   useCompactMode?: boolean;
 }
 
-// TODO: Add good looking box shadow
 export default function ModerationTag({
   show,
   setShow,

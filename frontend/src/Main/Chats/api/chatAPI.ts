@@ -49,7 +49,7 @@ export interface FetchedChatOverview {
     } | null;
     owner_id: string;
     updated_at: string;
-    userChats: [DBUserChats]; // TODO: ???
+    userChats: [DBUserChats];
     existing_one_on_one_chats?: [ExistingOneOnOneChat];
   };
 }

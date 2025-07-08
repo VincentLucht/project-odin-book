@@ -21,7 +21,6 @@ interface Level1Props {
   setDescription: React.Dispatch<React.SetStateAction<string>>;
 }
 
-// TODO: Add a fitting main and text secondary color for ALL sidebars
 /**
  * Allows to choose the community name and description, and also show a sidebar preview.
  */

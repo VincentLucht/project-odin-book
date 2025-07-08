@@ -94,7 +94,6 @@ export default function CommentInteractionBar({
               previousVoteType={userVote.voteType}
             />
 
-            {/* TODO: Add: 1000 => 1k... */}
             <span className="-mx-[2px] text-sm font-medium text-gray-400">
               {formatCount(totalVoteCount)}
             </span>

@@ -37,7 +37,7 @@ export default function Community() {
 
   const communityName = getCommunityName(location.pathname);
   const previousCommunityName = useRef(communityName);
-  const [sortByType, setSortByType] = useState<SortByType>('new'); // ! TODO: Change back
+  const [sortByType, setSortByType] = useState<SortByType>('new');
   const [timeframe, setTimeframe] = useState<TimeFrame>('day');
 
   const [cursorId, setCursorId] = useState('');

@@ -1,7 +1,6 @@
 import { ArrowBigUp } from 'lucide-react';
 import { VoteType } from '@/interface/backendTypes';
 
-// TODO: Add transition here + downvote??
 interface UpvoteProps {
   isActive: boolean;
   isOtherActive: boolean;
