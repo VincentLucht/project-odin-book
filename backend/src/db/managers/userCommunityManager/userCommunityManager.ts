@@ -332,23 +332,45 @@ export default class UserCommunityManager {
 
   // ! CREATE
   async join(user_id: string, community_id: string) {
-    await this.prisma.userCommunity.create({
-      data: {
-        user_id,
-        community_id,
-        role: UserRole.BASIC,
-      },
-    });
+    await this.prisma.$transaction([
+      this.prisma.userCommunity.create({
+        data: {
+          user_id,
+          community_id,
+          role: UserRole.BASIC,
+        },
+      }),
+
+      this.prisma.community.update({
+        where: { id: community_id },
+        data: {
+          total_members: {
+            increment: 1,
+          },
+        },
+      }),
+    ]);
   }
 
   async leave(user_id: string, community_id: string) {
-    await this.prisma.userCommunity.delete({
-      where: {
-        user_id_community_id: {
-          user_id,
-          community_id,
+    await this.prisma.$transaction([
+      this.prisma.userCommunity.delete({
+        where: {
+          user_id_community_id: {
+            user_id,
+            community_id,
+          },
         },
-      },
-    });
+      }),
+
+      this.prisma.community.update({
+        where: { id: community_id },
+        data: {
+          total_members: {
+            decrement: 1,
+          },
+        },
+      }),
+    ]);
   }
 }
