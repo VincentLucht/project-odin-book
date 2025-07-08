@@ -245,6 +245,7 @@ export interface DBMessage {
   is_system_message: boolean;
   chat_id: string;
   iv: string;
+  status?: 'pending' | 'failed' | 'sent';
 }
 
 export interface DBUserChats {
