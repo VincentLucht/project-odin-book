@@ -87,14 +87,12 @@ export default {
         '.text-gray-secondary': {
           color: '#B0B5BB'
         },
-        // TODO: Replace it with this class for every header btn
         '.bg-hover-transition': {
-          '@apply transition-all min-h-10 w-10 df rounded-full hover:bg-accent-gray cursor-pointer': {}
+          '@apply transition-all min-h-10 w-10 df rounded-full hover:bg-accent-gray cursor-pointer active:bg-active-gray': {}
         },
         '.dropdown-btn-transition': {
           '@apply transition-all duration-200 hover:bg-hover-gray active:bg-active-gray ease-in-out': {}
         },
-        // TODO: Add active color
         '.normal-bg-transition' :{
           '@apply transition-colors bg-accent-gray hover:bg-active-gray active:bg-active-dark-gray' : {}
         },
