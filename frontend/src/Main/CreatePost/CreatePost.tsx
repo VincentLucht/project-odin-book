@@ -103,7 +103,7 @@ export default function CreatePost() {
             setIsAllowedToPost={setIsAllowedToPost}
           />
 
-          <SetPostType postType={postType} onPostTypeChange={onPostTypeChange} />
+          {/* <SetPostType postType={postType} onPostTypeChange={onPostTypeChange} /> */}
 
           <div className={`flex ${isSpoiler || isMature ? 'h-7' : ''} gap-1`}>
             {isSpoiler && <SpoilerTag />}
