@@ -9,10 +9,10 @@ class AuthValidator {
       body('username').trim()
         .custom((username) => {
           if (!username) {
-            throw new Error('Name is required');
+            throw new Error('Username is required');
           }
           if (username.length < 2) {
-            throw new Error(vm.minLen('Name', 3));
+            throw new Error(vm.minLen('Name', 2));
           }
           if (username.length > 20) {
             throw new Error(vm.maxLen('Name', 21));
