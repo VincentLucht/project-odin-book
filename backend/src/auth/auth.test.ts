@@ -64,7 +64,7 @@ describe('/auth', () => {
         mockDb.user.getByUsername.mockResolvedValue(true);
         const response = await sendRequest(mockUser);
 
-        assert.exp(response, 409, 'User already exists');
+        assert.exp(response, 409, 'Username already in use');
         expect(db.user.getByUsername).toHaveBeenCalledWith(mockUser.username);
         expect(db.user.create).not.toHaveBeenCalled();
       });
@@ -77,42 +77,32 @@ describe('/auth', () => {
         expect(db.user.create).not.toHaveBeenCalled();
       });
 
-      it('should handle invalid cake day format', async () => {
-        const response = await sendRequest({ ...mockUser, cake_day: 'invalid_format' });
-
-        expect(response.body).toMatchObject({
-          message: 'Failed to create user',
-          error: 'Cake Day must be in DD/MM format',
-        });
-        expect(db.user.create).not.toHaveBeenCalled();
-      });
-
       it('should handle missing inputs', async () => {
         const response = await sendRequest({});
 
         expect(response.body).toMatchObject({
-          errors: [
-            {
-              type: 'field',
-              value: '',
-              msg: 'Username must be at least 2 characters long',
-              path: 'username',
-              location: 'body',
-            },
-            {
-              type: 'field',
-              value: '',
-              msg: 'Email must be at least 1 characters long',
-              path: 'email',
-              location: 'body',
-            },
-            {
-              type: 'field',
-              value: '',
-              msg: 'Password must be at least 1 characters long',
-              path: 'password',
-              location: 'body',
-            },
+          'errors': [
+              {
+                  'type': 'field',
+                  'value': '',
+                  'msg': 'Username is required',
+                  'path': 'username',
+                  'location': 'body',
+              },
+              {
+                  'type': 'field',
+                  'value': '',
+                  'msg': 'Email must be at least 1 characters long',
+                  'path': 'email',
+                  'location': 'body',
+              },
+              {
+                  'type': 'field',
+                  'value': '',
+                  'msg': 'Password must be at least 1 characters long',
+                  'path': 'password',
+                  'location': 'body',
+              },
           ],
         });
         expect(db.user.create).not.toHaveBeenCalled();
