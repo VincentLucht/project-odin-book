@@ -39,7 +39,7 @@ import PageNotFound from '@/components/partials/PageNotFound';
 
 import ScreenSizeProvider from '@/context/screen/ScreenSizeProvider';
 import AuthProvider from '@/context/auth/AuthProvider';
-import RecentCommunitiesProvider from '@/Sidebar/components/RecentCommunities/context/RecentCommunitiesProvider.tsx';
+import RecentCommunitiesProvider from '@/Sidebar/components/RecentCommunities/context/RecentCommunitiesProvider';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
