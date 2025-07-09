@@ -35,13 +35,10 @@ export async function fetchPopularPosts(
       token,
     );
 
-    console.log(response);
-
     onComplete(response.posts, response.pagination);
 
     return response;
   } catch (error) {
-    console.log(error);
     catchError(error);
     return false;
   }
