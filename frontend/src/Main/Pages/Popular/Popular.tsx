@@ -45,8 +45,10 @@ export default function Popular() {
           console.log('Posts:', posts);
           console.log('Pagination:', pagination);
 
-          setPosts((prev) => (isInitialFetch ? [...posts] : [...posts, ...prev]));
-          setPagination(pagination);
+          setPosts((prev) =>
+            isInitialFetch ? [...(posts ?? [])] : [...(posts ?? []), ...prev],
+          );
+          setPagination(pagination ?? { hasMore: false, nextCursor: '' });
           setLoading(false);
         },
       );
