@@ -23,21 +23,21 @@ app.use(
     origin: '*',
   }),
 );
-app.use(express.json()); // ? parse JSON bodies
-app.use(express.urlencoded({ extended: true })); // ? allow req.body
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.use('/', router);
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Listening on Port ${PORT}`);
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path}`);
+  next();
 });
 
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok' });
 });
 
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.path}`);
-  next();
+app.use('/', router);
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Listening on Port ${PORT}`);
 });
