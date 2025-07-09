@@ -16,12 +16,33 @@ const mockDb = {
     isPrivate: jest.fn(),
     create: jest.fn(),
     isOwner: jest.fn(),
+    getModInfo: jest.fn(),
+    editCommunitySettings: jest.fn(),
+  },
+  recentCommunities: {
+    assign: jest.fn(),
   },
   userCommunity: {
     isMember: jest.fn(),
     getById: jest.fn(),
     join: jest.fn(),
     leave: jest.fn(),
+    getMembersByName: jest.fn(),
+    getMembers: jest.fn(),
+    fetchHomePageBy: jest.fn(),
+    getJoinedCommunities: jest.fn(),
+  },
+  userChat: {
+    isMemberById: jest.fn(),
+    read: jest.fn(),
+    leave: jest.fn(),
+    muteChat: jest.fn(),
+  },
+  chat: {
+    getById: jest.fn(),
+    doesExist_1on1: jest.fn(),
+    canCreateChat: jest.fn(),
+    create: jest.fn(),
   },
   communityModerator: {
     isMod: jest.fn(),
@@ -40,9 +61,16 @@ const mockDb = {
     updateModeration: jest.fn(),
   },
   communityFlair: {
+    getAllPostFlairs: jest.fn(),
+    getAllCommunityFlairs: jest.fn(),
     doesExistByName: jest.fn(),
     getById: jest.fn(),
+    getPostFlairCount: jest.fn(),
+    getCommunityFlairCount: jest.fn(),
+    fetch: jest.fn(),
     create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
   },
   bannedUsers: {
     isBanned: jest.fn(),
@@ -55,6 +83,7 @@ const mockDb = {
     getByIdAndCommunity: jest.fn(),
     getPopular: jest.fn(),
     getBy: jest.fn(),
+    deletePost: jest.fn(),
   },
   postVote: {
     hasVoted: jest.fn(),
@@ -62,6 +91,7 @@ const mockDb = {
     getById: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
+    vote: jest.fn(),
   },
   comment: {
     getById: jest.fn(),
@@ -70,6 +100,9 @@ const mockDb = {
     softDelete: jest.fn(),
     delete: jest.fn(),
     getCommentThreads: jest.fn(),
+    getMoreReplies: jest.fn(),
+    update: jest.fn(),
+    getByIdAndCommunityId: jest.fn(),
   },
   commentVote: {
     getById: jest.fn(),
@@ -98,6 +131,11 @@ const mockDb = {
   },
   modMail: {
     sendMessage: jest.fn(),
+    getById: jest.fn(),
+    update: jest.fn(),
+  },
+  message: {
+    send: jest.fn(),
   },
   approvedUser: {
     isApproved: jest.fn(),
@@ -105,20 +143,32 @@ const mockDb = {
     delete: jest.fn(),
   },
   savedPost: {
+    fetch: jest.fn(),
     isSaved: jest.fn(),
     save: jest.fn(),
     unsave: jest.fn(),
   },
   savedComment: {
+    fetch: jest.fn(),
     isSaved: jest.fn(),
     save: jest.fn(),
     unsave: jest.fn(),
   },
   report: {
+    getBy: jest.fn(),
     updateAllPendingReports: jest.fn(),
+    alreadyReported: jest.fn(),
+    report: jest.fn(),
   },
   notification: {
+    getById: jest.fn(),
+    fetchBy: jest.fn(),
+    hasUnread: jest.fn(),
     send: jest.fn(),
+    read: jest.fn(),
+    openAll: jest.fn(),
+    markAllAsRead: jest.fn(),
+    hide: jest.fn(),
   },
 };
 
