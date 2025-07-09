@@ -31,7 +31,7 @@ class UserCommunityController {
         communityId,
       );
       if (!moderator || !moderator.is_active) {
-        return res.status(403).json({ message: 'You are not a moderator ' });
+        return res.status(403).json({ message: 'You are not a moderator' });
       }
 
       const { members, pagination } = await db.userCommunity.getMembers(
