@@ -18,6 +18,7 @@ const app = express();
 //     allowedHeaders: ['Content-Type', 'Authorization'],
 //   }),
 // );
+app.use(cors());
 app.use(express.json()); // ? parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // ? allow req.body
 
@@ -25,5 +26,6 @@ app.use('/', router);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
+  console.log(PORT);
   console.log('Listening on Port 3000');
 });
