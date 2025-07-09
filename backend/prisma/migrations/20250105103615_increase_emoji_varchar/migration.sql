@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Flair" ALTER COLUMN "emoji" SET DATA TYPE VARCHAR(8);

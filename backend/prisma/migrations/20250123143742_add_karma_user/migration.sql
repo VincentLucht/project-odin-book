@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "User" ADD COLUMN     "comment_karma" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "post_karma" INTEGER NOT NULL DEFAULT 0;
