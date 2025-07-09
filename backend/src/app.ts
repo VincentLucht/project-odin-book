@@ -10,7 +10,8 @@ app.use(
   cors({
     origin: [
       'https://project-odin-book-mocha.vercel.app',
-      'http://localhost:3000',
+      'https://project-odin-book-git-main-vincentluchts-projects.vercel.app',
+      'https://project-odin-book-sx69c3i53-vincentluchts-projects.vercel.app',
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true,
