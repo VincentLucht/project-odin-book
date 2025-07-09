@@ -32,6 +32,8 @@ export default function NotificationDropdown({
   }, dropdownRef);
 
   const onHide = () => {
+    if (!token) return;
+
     void hideNotification(token, { notification_id: notificationId }).then(
       (success) => {
         if (!success) return;
