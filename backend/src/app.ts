@@ -30,6 +30,14 @@ app.use('/', router);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(PORT);
-  console.log('Listening on Port 3000');
+  console.log(`Listening on Port ${PORT}`);
+});
+
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path}`);
+  next();
 });
