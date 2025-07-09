@@ -196,8 +196,6 @@ describe('/community/user/approved', () => {
         mockDb.communityModerator.isMod.mockResolvedValue(true);
         const response = await sendRequest('1', 'approved_user');
 
-        console.log(response.body);
-
         assert.exp(response, 200, 'Successfully unapproved user');
       });
 

@@ -16,8 +16,6 @@ export default class BannedUsersManager {
     ban_duration: string | null,
     ban_reason: string,
   ) {
-    console.log(ban_duration);
-
     await this.prisma.$transaction(async (tx) => {
       await tx.bannedUser.create({
         data: {

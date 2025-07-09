@@ -84,7 +84,6 @@ class ApprovedUserController {
         }
       }
       if (!(await db.communityModerator.isMod(user_id, community_id))) {
-        console.log(user_id);
         return res.status(403).json({ message: 'You are not a moderator' });
       }
 
