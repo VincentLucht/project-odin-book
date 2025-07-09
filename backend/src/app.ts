@@ -18,7 +18,11 @@ const app = express();
 //     allowedHeaders: ['Content-Type', 'Authorization'],
 //   }),
 // );
-app.use(cors());
+app.use(
+  cors({
+    origin: '*',
+  }),
+);
 app.use(express.json()); // ? parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // ? allow req.body
 
