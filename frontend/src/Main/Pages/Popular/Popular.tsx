@@ -41,6 +41,10 @@ export default function Popular() {
           cursorId,
         },
         (posts, pagination) => {
+          console.log('Ran');
+          console.log('Posts:', posts);
+          console.log('Pagination:', pagination);
+
           setPosts((prev) => (isInitialFetch ? [...posts] : [...posts, ...prev]));
           setPagination(pagination);
           setLoading(false);
@@ -49,6 +53,8 @@ export default function Popular() {
     },
     [token, apiParams],
   );
+
+  console.log('Posts state:', posts);
 
   useEffect(() => {
     setPosts([]);
