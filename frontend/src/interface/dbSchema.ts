@@ -72,7 +72,7 @@ export interface DBComment {
   content: string;
   created_at: Date;
   updated_at: Date;
-  edited_at: Date;
+  edited_at: Date | null;
   is_deleted: boolean;
   upvote_count: number;
   downvote_count: number;
@@ -343,5 +343,5 @@ export interface DBCommentWithReplies extends DBComment {
   replies: DBCommentWithReplies[];
   saved_by: { user_id: string }[];
   _count: { replies: number };
-  moderation: DBCommentModeration;
+  moderation: DBCommentModeration | null;
 }

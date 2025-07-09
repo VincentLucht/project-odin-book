@@ -22,10 +22,19 @@ export default function createTempComment(
 
     post_id,
     user_id,
-    user: { username, profile_picture_url: profile_picture_url ?? null },
+    user: {
+      username,
+      profile_picture_url: profile_picture_url ?? null,
+      deleted_at: '',
+    },
     replies: [],
     comment_votes: [{ user_id, vote_type: 'UPVOTE' }],
     parent_comment_id,
+    edited_at: null,
+    moderation: null,
+    saved_by: [],
+    reports: [],
+    _count: { replies: 0 },
   };
 
   return tempComment;

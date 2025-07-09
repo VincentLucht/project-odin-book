@@ -14,7 +14,7 @@ interface CommentContentProps {
   comment: {
     id: string;
     content: string;
-    moderation: DBCommentModeration;
+    moderation: DBCommentModeration | null;
     is_deleted: boolean;
   };
   isMod: IsMod;

@@ -42,6 +42,7 @@ export default function Notification({
         ${notification.read_at ? '' : 'cursor-pointer'} `}
       onClick={(e) => {
         e.stopPropagation();
+        if (!token) return;
 
         !notification.read_at &&
           void readNotification(token, { notification_id: notification.id }, () =>

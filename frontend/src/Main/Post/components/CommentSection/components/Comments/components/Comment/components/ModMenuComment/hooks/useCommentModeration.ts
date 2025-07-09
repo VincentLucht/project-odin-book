@@ -106,10 +106,12 @@ export default function useCommentModeration(
         commentId,
         (comment) => ({
           ...comment,
-          moderation: {
-            ...comment.moderation,
-            reason: newReason,
-          },
+          ...(comment.moderation && {
+            moderation: {
+              ...comment.moderation,
+              reason: newReason,
+            },
+          }),
         }),
         setComments,
       );
