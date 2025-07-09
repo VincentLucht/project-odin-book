@@ -26,7 +26,7 @@ jest.mock('bcrypt');
 import mockDb from '@/util/test/mockDb';
 
 // prettier-ignore
-describe('/auth', () => {
+describe('Auth', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.resetAllMocks();

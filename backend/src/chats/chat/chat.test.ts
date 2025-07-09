@@ -27,7 +27,7 @@ jest.mock('bcrypt');
 import mockDb from '@/util/test/mockDb';
 
 // prettier-ignore
-describe('/chat', () => {
+describe('Chat', () => {
   const mockUser = {
     id: 'user1',
     username: 'testuser',
@@ -242,7 +242,6 @@ describe('/chat', () => {
         mockDb.userChat.leave.mockResolvedValue(2); // 2 remaining members
 
         const response = await sendRequest({ chat_id: 'chat1' });
-        console.log(response.body);
 
         assert.exp(response, 200, 'Successfully left chat');
         expect(db.userChat.leave).toHaveBeenCalledWith('chat1', mockUser.id, mockUser.username, false);

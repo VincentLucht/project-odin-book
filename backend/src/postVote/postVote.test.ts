@@ -25,7 +25,7 @@ import mockDb from '@/util/test/mockDb';
 import db from '@/db/db';
 
 // prettier-ignore
-describe('/community/post/vote', () => {
+describe('Post vote', () => {
   const token = generateToken(mockUser.id, mockUser.username);
 
   beforeEach(() => {
@@ -110,6 +110,13 @@ describe('/community/post/vote', () => {
         const response = await sendRequest(mockRequest);
 
         assert.exp(response, 409, 'You already voted for this post');
+      });
+
+      it('should handle voting on deleted post', async () => {
+        mockDb.post.getById.mockResolvedValue({ deleted_at: new Date() });
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 410, 'Post was deleted');
       });
 
       it('should handle to not allow to vote for a private/restricted community you are not a member of', async () => {

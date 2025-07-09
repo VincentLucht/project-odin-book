@@ -25,7 +25,7 @@ import mockDb from '@/util/test/mockDb';
 import db from '@/db/db';
 
 // prettier-ignore
-describe('/community/flair', () => {
+describe('User assigned flair', () => {
   const token = generateToken(mockUser.id, mockUser.username);
 
   beforeEach(() => {
@@ -175,6 +175,13 @@ describe('/community/flair', () => {
 
     describe('Success cases', () => {
       it('should successfully delete a user flair', async () => {
+        mockDb.userAssignedFlair.getById.mockResolvedValue({
+          id: '1',
+          user_id: mockUser.id,
+          community_id: '1',
+          flair_id: '1',
+        });
+
         const response = await sendRequest(mockRequest);
 
         assert.exp(response, 200, 'Successfully removed user flair');

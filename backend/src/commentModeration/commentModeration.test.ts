@@ -24,7 +24,7 @@ jest.mock('@/db/db', () => {
 import mockDb from '@/util/test/mockDb';
 
 // prettier-ignore
-describe('/community/mod/post', () => {
+describe('Comment moderation', () => {
   const token = generateToken(mockUser.id, mockUser.username);
   const mockRequest = {
     comment_id: '1',

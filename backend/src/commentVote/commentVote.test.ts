@@ -24,7 +24,7 @@ jest.mock('@/db/db', () => {
 import mockDb from '@/util/test/mockDb';
 
 // prettier-ignore
-describe('/community/post/comment/vote', () => {
+describe('Comment vote', () => {
   const token = generateToken(mockUser.id, mockUser.username);
 
   beforeEach(() => {
@@ -32,14 +32,25 @@ describe('/community/post/comment/vote', () => {
     jest.resetAllMocks();
   });
 
-  describe('POST /community/post/comment', () => {
+  describe('POST /comment/vote', () => {
     beforeEach(() => {
       mockDb.user.getById.mockResolvedValue(true);
-      mockDb.post.getById.mockResolvedValue(true);
-      mockDb.comment.getById.mockResolvedValue(true);
-      mockDb.community.getById.mockResolvedValue({ id: '1', type: 'PUBLIC' });
+      mockDb.comment.getById.mockResolvedValue({
+        id: '1',
+        user_id: 'comment_author_id',
+        post_id: 'post_id_1',
+        is_deleted: false,
+      });
+      mockDb.post.getById.mockResolvedValue({
+        id: 'post_id_1',
+        community_id: 'community_id_1',
+      });
+      mockDb.community.getById.mockResolvedValue({
+        id: 'community_id_1',
+        type: 'PUBLIC',
+      });
       mockDb.bannedUsers.isBanned.mockResolvedValue(false);
-      mockDb.commentVote.getById.mockResolvedValue(false);
+      mockDb.commentVote.getById.mockResolvedValue(null);
     });
 
     const mockRequest = {
@@ -56,16 +67,26 @@ describe('/community/post/comment/vote', () => {
 
     describe('Success cases', () => {
       it('should successfully upvote a comment', async () => {
+        mockDb.commentVote.create.mockResolvedValue(true);
         const response = await sendRequest(mockRequest);
 
-        console.log(response.body);
-
         assert.exp(response, 201, 'Successfully voted for Comment');
+        expect(mockDb.commentVote.create).toHaveBeenCalledWith(
+          '1',
+          mockUser.id,
+          'UPVOTE',
+          'comment_author_id',
+        );
       });
 
       it('should allow basic users to vote in a restricted community', async () => {
-        mockDb.community.getById.mockResolvedValue({ type: 'RESTRICTED' });
+        mockDb.community.getById.mockResolvedValue({
+          id: 'community_id_1',
+          type: 'RESTRICTED',
+        });
         mockDb.userCommunity.getById.mockResolvedValue({ role: 'BASIC' });
+        mockDb.commentVote.create.mockResolvedValue(true);
+
         const response = await sendRequest(mockRequest);
 
         assert.exp(response, 201, 'Successfully voted for Comment');
@@ -73,22 +94,54 @@ describe('/community/post/comment/vote', () => {
 
       it('should successfully update a vote', async () => {
         mockDb.commentVote.getById.mockResolvedValue({ vote_type: 'DOWNVOTE' });
+        mockDb.commentVote.update.mockResolvedValue(true);
+
         const response = await sendRequest(mockRequest);
 
         assert.exp(response, 200, 'Successfully updated comment vote');
+        expect(mockDb.commentVote.update).toHaveBeenCalledWith(
+          '1',
+          mockUser.id,
+          'UPVOTE',
+          'comment_author_id',
+        );
       });
     });
 
     describe('Error cases', () => {
       it('should handle user not existing', async () => {
-        mockDb.user.getById.mockResolvedValue(false);
+        mockDb.user.getById.mockResolvedValue(null);
         const response = await sendRequest(mockRequest);
 
         assert.user.notFound(response);
       });
 
       it('should handle comment not existing', async () => {
-        mockDb.comment.getById.mockResolvedValue(false);
+        mockDb.comment.getById.mockResolvedValue(null);
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 404, 'Comment not found');
+      });
+
+      it('should handle deleted comment', async () => {
+        mockDb.comment.getById.mockResolvedValue({
+          id: '1',
+          user_id: 'comment_author_id',
+          post_id: 'post_id_1',
+          is_deleted: true,
+        });
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 404, 'Comment is deleted');
+      });
+
+      it('should handle comment without user_id', async () => {
+        mockDb.comment.getById.mockResolvedValue({
+          id: '1',
+          user_id: null,
+          post_id: 'post_id_1',
+          is_deleted: false,
+        });
         const response = await sendRequest(mockRequest);
 
         assert.exp(response, 404, 'Comment not found');
@@ -123,29 +176,43 @@ describe('/community/post/comment/vote', () => {
       });
 
       it('should not allow non-member to vote in a restricted community', async () => {
-        mockDb.community.getById.mockResolvedValue({ type: 'RESTRICTED' });
-        mockDb.userCommunity.getById.mockResolvedValue({ role: 'BASIC' });
+        mockDb.community.getById.mockResolvedValue({
+          id: 'community_id_1',
+          type: 'RESTRICTED',
+        });
+        mockDb.userCommunity.getById.mockResolvedValue(null);
         const response = await sendRequest(mockRequest);
 
-        assert.exp(response, 201, 'Successfully voted for Comment');
+        assert.exp(response, 403, 'You must be a member of this community to vote');
       });
 
       it('should not allow non-member to vote in private communities', async () => {
-        mockDb.community.getById.mockResolvedValue({ type: 'PRIVATE' });
-        mockDb.userCommunity.getById.mockResolvedValue(false);
+        mockDb.community.getById.mockResolvedValue({
+          id: 'community_id_1',
+          type: 'PRIVATE',
+        });
+        mockDb.userCommunity.getById.mockResolvedValue(null);
         const response = await sendRequest(mockRequest);
 
         assert.exp(response, 403, 'You must be a member of this community to vote');
       });
 
       it('should handle incorrect vote type', async () => {
+        const response = await sendRequest({
+          comment_id: '1',
+          vote_type: 'INVALID_TYPE',
+        });
 
+        // This should fail validation before reaching the controller
+        expect(response.status).toBe(400);
       });
 
       it('should handle missing inputs', async () => {
         const response = await sendRequest({});
 
-        expect(response.body).toMatchObject({});
+        // This should fail validation before reaching the controller
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty('errors');
       });
 
       it('should handle db error', async () => {
@@ -157,7 +224,7 @@ describe('/community/post/comment/vote', () => {
     });
   });
 
-  describe('DELETE /comment/post/comment', () => {
+  describe('DELETE /comment/vote', () => {
     const sendRequest = (body: any) => {
       return request(app)
         .delete('/comment/vote')
@@ -167,9 +234,20 @@ describe('/community/post/comment/vote', () => {
 
     beforeEach(() => {
       mockDb.user.getById.mockResolvedValue(true);
-      mockDb.comment.getById.mockResolvedValue(true);
-      mockDb.post.getById.mockResolvedValue(true);
-      mockDb.community.getById.mockResolvedValue({ id: '1', type: 'PUBLIC' });
+      mockDb.comment.getById.mockResolvedValue({
+        id: '1',
+        user_id: 'comment_author_id',
+        post_id: 'post_id_1',
+        is_deleted: false,
+      });
+      mockDb.post.getById.mockResolvedValue({
+        id: 'post_id_1',
+        community_id: 'community_id_1',
+      });
+      mockDb.community.getById.mockResolvedValue({
+        id: 'community_id_1',
+        type: 'PUBLIC',
+      });
       mockDb.bannedUsers.isBanned.mockResolvedValue(false);
       mockDb.commentVote.getById.mockResolvedValue({ vote_type: 'UPVOTE' });
     });
@@ -180,26 +258,97 @@ describe('/community/post/comment/vote', () => {
 
     describe('Success cases', () => {
       it('should successfully delete a vote', async () => {
+        mockDb.commentVote.delete.mockResolvedValue(true);
         const response = await sendRequest(mockRequest);
 
         assert.exp(response, 200, 'Successfully deleted comment vote');
+        expect(mockDb.commentVote.delete).toHaveBeenCalledWith(
+          '1',
+          mockUser.id,
+          'UPVOTE',
+          'comment_author_id',
+        );
       });
     });
 
     describe('Error cases', () => {
       it('should handle vote not existing', async () => {
-        mockDb.commentVote.getById.mockResolvedValue(false);
+        mockDb.commentVote.getById.mockResolvedValue(null);
         const response = await sendRequest(mockRequest);
 
         assert.exp(response, 404, 'Vote not found');
       });
 
-      it('should not allow comment deletion if user is non-member', async () => {
-        mockDb.community.getById.mockResolvedValue({ type: 'RESTRICTED' });
-        mockDb.userCommunity.getById.mockResolvedValue(false);
+      it('should not allow comment vote deletion if user is non-member in restricted community', async () => {
+        mockDb.community.getById.mockResolvedValue({
+          id: 'community_id_1',
+          type: 'RESTRICTED',
+        });
+        mockDb.userCommunity.getById.mockResolvedValue(null);
         const response = await sendRequest(mockRequest);
 
         assert.exp(response, 403, 'You must be a member of this community to vote');
+      });
+
+      it('should not allow comment vote deletion if user is non-member in private community', async () => {
+        mockDb.community.getById.mockResolvedValue({
+          id: 'community_id_1',
+          type: 'PRIVATE',
+        });
+        mockDb.userCommunity.getById.mockResolvedValue(null);
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 403, 'You must be a member of this community to vote');
+      });
+
+      it('should handle user not existing', async () => {
+        mockDb.user.getById.mockResolvedValue(null);
+        const response = await sendRequest(mockRequest);
+
+        assert.user.notFound(response);
+      });
+
+      it('should handle comment not existing', async () => {
+        mockDb.comment.getById.mockResolvedValue(null);
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 404, 'Comment not found');
+      });
+
+      it('should handle post not being found', async () => {
+        mockDb.post.getById.mockResolvedValue(null);
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 404, 'Post not found');
+      });
+
+      it('should handle community not being found', async () => {
+        mockDb.community.getById.mockResolvedValue(null);
+        const response = await sendRequest(mockRequest);
+
+        assert.community.notFound(response);
+      });
+
+      it('should handle user being banned from community', async () => {
+        mockDb.bannedUsers.isBanned.mockResolvedValue(true);
+        const response = await sendRequest(mockRequest);
+
+        assert.isBanned(response);
+      });
+
+      it('should handle missing inputs', async () => {
+        const response = await sendRequest({});
+
+        // This should fail validation before reaching the controller
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty('errors');
+      });
+
+      it('should handle db error', async () => {
+        mockDb.user.getById.mockRejectedValue(new Error('DB error'));
+        const response = await sendRequest(mockRequest);
+
+        assert.dbError(response);
       });
     });
   });

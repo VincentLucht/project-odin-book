@@ -23,7 +23,8 @@ jest.mock('@/db/db', () => {
 
 import mockDb from '@/util/test/mockDb';
 
-describe('/saved', () => {
+// prettier-ignore
+describe('Saved', () => {
   const token = generateToken(mockUser.id, mockUser.username);
 
   beforeEach(() => {
@@ -35,6 +36,198 @@ describe('/saved', () => {
     mockDb.comment.getById.mockResolvedValue({ id: '1', post_id: '1' });
     mockDb.userCommunity.isMember.mockResolvedValue(true);
     mockDb.bannedUsers.isBanned.mockResolvedValue(false);
+  });
+
+describe('GET /saved/posts', () => {
+  const sendRequest = (queryParams: any = {}) => {
+    let url = '/saved/posts';
+    if (queryParams.cId) {
+      url += `?cId=${queryParams.cId}`;
+    }
+    return request(app)
+      .get(url)
+      .set('Authorization', `Bearer ${token}`);
+  };
+
+  describe('Success cases', () => {
+    it('should successfully fetch saved posts without cursor', async () => {
+      const mockPosts = [
+        { id: '1', title: 'Test Post 1' },
+        { id: '2', title: 'Test Post 2' },
+      ];
+      const mockPagination = { hasMore: false, nextCursor: null };
+
+      mockDb.savedPost.fetch.mockResolvedValue({
+        posts: mockPosts,
+        pagination: mockPagination,
+      });
+
+      const response = await sendRequest();
+
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe('Successfully fetched saved posts');
+      expect(response.body.posts).toEqual(mockPosts);
+      expect(response.body.pagination).toEqual(mockPagination);
+      expect(mockDb.savedPost.fetch).toHaveBeenCalledWith(mockUser.id, undefined);
+    });
+
+    it('should successfully fetch saved posts with cursor', async () => {
+      const mockPosts = [
+        { id: '3', title: 'Test Post 3' },
+        { id: '4', title: 'Test Post 4' },
+      ];
+      const mockPagination = { hasMore: true, nextCursor: 'cursor123' };
+
+      mockDb.savedPost.fetch.mockResolvedValue({
+        posts: mockPosts,
+        pagination: mockPagination,
+      });
+
+      const response = await sendRequest({ cId: 'cursor123' });
+
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe('Successfully fetched saved posts');
+      expect(response.body.posts).toEqual(mockPosts);
+      expect(response.body.pagination).toEqual(mockPagination);
+      expect(mockDb.savedPost.fetch).toHaveBeenCalledWith(mockUser.id, 'cursor123');
+    });
+
+    it('should handle empty results', async () => {
+      const mockPagination = { hasMore: false, nextCursor: null };
+
+      mockDb.savedPost.fetch.mockResolvedValue({
+        posts: [],
+        pagination: mockPagination,
+      });
+
+      const response = await sendRequest();
+
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe('Successfully fetched saved posts');
+      expect(response.body.posts).toEqual([]);
+      expect(response.body.pagination).toEqual(mockPagination);
+    });
+  });
+
+  describe('Error cases', () => {
+    it('should handle user not existing', async () => {
+      mockDb.user.getById.mockResolvedValue(false);
+      const response = await sendRequest();
+
+      assert.user.notFound(response);
+    });
+
+    it('should handle db error', async () => {
+      mockDb.user.getById.mockRejectedValue(new Error('DB error'));
+      const response = await sendRequest();
+
+      assert.dbError(response);
+    });
+
+    it('should handle fetch error', async () => {
+      mockDb.savedPost.fetch.mockRejectedValue(new Error('Fetch error'));
+      const response = await sendRequest();
+
+      expect(response.status).toBe(500);
+      expect(response.body.message).toBe('Failed fetch saved posts');
+    });
+  });
+});
+
+describe('GET /saved/comments', () => {
+  const sendRequest = (queryParams: any = {}) => {
+    let url = '/saved/comments';
+    if (queryParams.cId) {
+      url += `?cId=${queryParams.cId}`;
+    }
+    return request(app)
+      .get(url)
+      .set('Authorization', `Bearer ${token}`);
+  };
+
+  describe('Success cases', () => {
+    it('should successfully fetch saved comments without cursor', async () => {
+      const mockComments = [
+        { id: '1', content: 'Test Comment 1' },
+        { id: '2', content: 'Test Comment 2' },
+      ];
+      const mockPagination = { hasMore: false, nextCursor: null };
+
+      mockDb.savedComment.fetch.mockResolvedValue({
+        comments: mockComments,
+        pagination: mockPagination,
+      });
+
+      const response = await sendRequest();
+
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe('Successfully fetched saved comments');
+      expect(response.body.comments).toEqual(mockComments);
+      expect(response.body.pagination).toEqual(mockPagination);
+      expect(mockDb.savedComment.fetch).toHaveBeenCalledWith(mockUser.id, undefined);
+    });
+
+    it('should successfully fetch saved comments with cursor', async () => {
+      const mockComments = [
+        { id: '3', content: 'Test Comment 3' },
+        { id: '4', content: 'Test Comment 4' },
+      ];
+      const mockPagination = { hasMore: true, nextCursor: 'cursor456' };
+
+      mockDb.savedComment.fetch.mockResolvedValue({
+        comments: mockComments,
+        pagination: mockPagination,
+      });
+
+      const response = await sendRequest({ cId: 'cursor456' });
+
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe('Successfully fetched saved comments');
+      expect(response.body.comments).toEqual(mockComments);
+      expect(response.body.pagination).toEqual(mockPagination);
+      expect(mockDb.savedComment.fetch).toHaveBeenCalledWith(mockUser.id, 'cursor456');
+    });
+
+    it('should handle empty results', async () => {
+      const mockPagination = { hasMore: false, nextCursor: null };
+
+      mockDb.savedComment.fetch.mockResolvedValue({
+        comments: [],
+        pagination: mockPagination,
+      });
+
+      const response = await sendRequest();
+
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe('Successfully fetched saved comments');
+      expect(response.body.comments).toEqual([]);
+      expect(response.body.pagination).toEqual(mockPagination);
+    });
+  });
+
+  describe('Error cases', () => {
+    it('should handle user not existing', async () => {
+      mockDb.user.getById.mockResolvedValue(false);
+      const response = await sendRequest();
+
+      assert.user.notFound(response);
+    });
+
+    it('should handle db error', async () => {
+      mockDb.user.getById.mockRejectedValue(new Error('DB error'));
+      const response = await sendRequest();
+
+      assert.dbError(response);
+    });
+
+    it('should handle fetch error', async () => {
+      mockDb.savedComment.fetch.mockRejectedValue(new Error('Fetch error'));
+      const response = await sendRequest();
+
+      expect(response.status).toBe(500);
+      expect(response.body.message).toBe('Failed to fetch saved comments');
+    });
+    });
   });
 
   describe('POST /post/save', () => {

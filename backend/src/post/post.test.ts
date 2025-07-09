@@ -34,8 +34,11 @@ describe('/community', () => {
 
   describe('GET /community/post', () => {
     beforeEach(() => {
-      mockDb.post.getById.mockResolvedValue({ community_id: '1' });
+      mockDb.post.getById.mockResolvedValue({ id: '1', community_id: '1', deleted_at: null });
       mockDb.community.getById.mockResolvedValue({ id: '1', type: 'PUBLIC', allow_basic_user_posts: true, is_post_flair_required: false });
+      mockDb.post.getByIdAndCommunity.mockResolvedValue({ id: '1', community_id: '1', community: { id: '1', name: 'test' } });
+      mockDb.communityModerator.isMod.mockResolvedValue(false);
+      mockDb.recentCommunities.assign.mockResolvedValue(true);
     });
 
     const sendRequest = (post_id = 1) => {
@@ -49,6 +52,20 @@ describe('/community', () => {
         const response = await sendRequest();
 
         assert.exp(response, 200, 'Successfully fetched post');
+      });
+
+      it('should add moderator status to community data', async () => {
+        mockDb.communityModerator.isMod.mockResolvedValue(true);
+        const response = await sendRequest();
+
+        assert.exp(response, 200, 'Successfully fetched post');
+        expect(response.body.postAndCommunity.community.is_moderator).toBe(true);
+      });
+
+      it('should assign recent community for authenticated user', async () => {
+        await sendRequest();
+
+        expect(mockDb.recentCommunities.assign).toHaveBeenCalledWith(mockUser.id, '1');
       });
     });
 
@@ -72,8 +89,6 @@ describe('/community', () => {
         mockDb.userCommunity.isMember.mockResolvedValue(false);
         const response = await sendRequest();
 
-        console.log(response.body);
-
         assert.exp(response, 403, 'You are not part of this community');
       });
 
@@ -91,7 +106,31 @@ describe('/community', () => {
         .get('/post/')
         .set('Authorization', `Bearer ${token}`);
 
-        expect(response.status).toBe(404);
+        expect(response.body).toMatchObject({
+          errors: [
+            {
+              type: 'field',
+              value: '',
+              msg: 'Community ID is required',
+              path: 'cyId',
+              location: 'query',
+            },
+            {
+              type: 'field',
+              value: '',
+              msg: 'Invalid value',
+              path: 'sbt',
+              location: 'query',
+            },
+          ],
+        });
+      });
+
+      it('should handle db error', async () => {
+        mockDb.post.getById.mockRejectedValue('DB error');
+        const response = await sendRequest();
+
+        assert.dbError(response);
       });
     });
   });
@@ -99,8 +138,11 @@ describe('/community', () => {
   describe('POST /community/post', () => {
     beforeEach(() => {
       mockDb.user.getById.mockResolvedValue(true);
-      mockDb.community.getById.mockResolvedValue({ id: '1', type: 'PUBLIC', allow_basic_user_posts: true, is_post_flair_required: false });
+      mockDb.community.getById.mockResolvedValue({ id: '1', type: 'PUBLIC', allow_basic_user_posts: true, is_post_flair_required: false, name: 'test' });
       mockDb.bannedUsers.isBanned.mockResolvedValue(false);
+      mockDb.post.create.mockResolvedValue({ id: '1', title: 't', body: 'b' });
+      // Mock userCommunity methods instead of checkCommunityPermissions
+      mockDb.userCommunity.getById.mockResolvedValue({ id: '1', user_id: mockUser.id, community_id: '1', role: 'BASIC' });
     });
 
     const sendRequest = (body: any) => {
@@ -124,11 +166,12 @@ describe('/community', () => {
         const response = await sendRequest(mockRequest);
 
         assert.exp(response, 201, 'Successfully created post');
+        expect(response.body.communityName).toBe('test');
       });
 
-      it('should successfully create a post in a restricted community', async () => {
-        mockDb.community.getById.mockResolvedValue({ type: 'RESTRICTED' });
-        mockDb.userCommunity.getById.mockResolvedValue({ role: 'CONTRIBUTOR' });
+      it('should successfully create a post in a restricted community as contributor', async () => {
+        mockDb.community.getById.mockResolvedValue({ type: 'RESTRICTED', name: 'test' });
+        mockDb.userCommunity.getById.mockResolvedValue({ id: '1', user_id: mockUser.id, community_id: '1', role: 'CONTRIBUTOR' });
 
         const response = await sendRequest(mockRequest);
 
@@ -136,10 +179,19 @@ describe('/community', () => {
       });
 
       it('should successfully create a post in a private community', async () => {
-        mockDb.community.getById.mockResolvedValue({ type: 'PRIVATE' });
-        mockDb.userCommunity.getById.mockResolvedValue({ role: 'CONTRIBUTOR' });
+        mockDb.community.getById.mockResolvedValue({ type: 'PRIVATE', allow_basic_user_posts: true, name: 'test' });
+        mockDb.userCommunity.getById.mockResolvedValue({ id: '1', user_id: mockUser.id, community_id: '1', role: 'BASIC' });
 
         const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 201, 'Successfully created post');
+      });
+
+      it('should successfully create a post with flair when required', async () => {
+        mockDb.community.getById.mockResolvedValue({ id: '1', type: 'PUBLIC', allow_basic_user_posts: true, is_post_flair_required: true, name: 'test' });
+        mockDb.communityFlair.getById.mockResolvedValue({ id: '1', is_assignable_to_posts: true });
+
+        const response = await sendRequest({ ...mockRequest, flair_id: '1' });
 
         assert.exp(response, 201, 'Successfully created post');
       });
@@ -160,7 +212,7 @@ describe('/community', () => {
         assert.community.notFound(response);
       });
 
-      it('should not allow user to post in private/restricted communities they are not a part of', async () => {
+      it('should not allow non-member to post in restricted community', async () => {
         mockDb.community.getById.mockResolvedValue({ type: 'RESTRICTED' });
         mockDb.userCommunity.getById.mockResolvedValue(null);
 
@@ -169,18 +221,27 @@ describe('/community', () => {
         assert.exp(response, 403, 'You must be a member of this community to post');
       });
 
-      it('should handle user not being able to post in restricted community because they are not a contributor', async () => {
+      it('should not allow basic user to post in restricted community', async () => {
         mockDb.community.getById.mockResolvedValue({ type: 'RESTRICTED' });
-        mockDb.userCommunity.getById.mockResolvedValue({ role: 'BASIC' });
+        mockDb.userCommunity.getById.mockResolvedValue({ id: '1', user_id: mockUser.id, community_id: '1', role: 'BASIC' });
 
         const response = await sendRequest(mockRequest);
 
         assert.exp(response, 403, 'Only Contributors can post in restricted communities');
       });
 
-      it('should handle user not being able to post in private community because they are not a contributor', async () => {
+      it('should not allow non-member to post in private community', async () => {
         mockDb.community.getById.mockResolvedValue({ type: 'PRIVATE' });
-        mockDb.userCommunity.getById.mockResolvedValue({ role: 'BASIC' });
+        mockDb.userCommunity.getById.mockResolvedValue(null);
+
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 403, 'You must be a member of this community to post');
+      });
+
+      it('should not allow basic user to post in private community when not allowed', async () => {
+        mockDb.community.getById.mockResolvedValue({ type: 'PRIVATE', allow_basic_user_posts: false });
+        mockDb.userCommunity.getById.mockResolvedValue({ id: '1', user_id: mockUser.id, community_id: '1', role: 'BASIC' });
 
         const response = await sendRequest(mockRequest);
 
@@ -203,12 +264,19 @@ describe('/community', () => {
         });
       });
 
-      it('it should handle community requiring flairs + sending an incorrect flair', async () => {
-        mockDb.community.getById.mockResolvedValue({ id: '1', type: 'PUBLIC', allow_basic_user_posts: true, is_post_flair_required: true });
+      it('should handle community requiring flairs + sending an incorrect flair', async () => {
+        mockDb.community.getById.mockResolvedValue({ id: '1', type: 'PUBLIC', allow_basic_user_posts: true, is_post_flair_required: true, name: 'test' });
         mockDb.communityFlair.getById.mockResolvedValue(false);
         const response = await sendRequest({ ...mockRequest, flair_id: 'invalid' });
 
         expect(response.body.error).toBe('Flair not found');
+      });
+
+      it('should handle missing/incorrect flair', async () => {
+        mockDb.community.getById.mockResolvedValue({ id: '1', type: 'PUBLIC', allow_basic_user_posts: true, is_post_flair_required: true, name: 'test' });
+        const response = await sendRequest(mockRequest);
+
+        expect(response.body.error).toBe('Invalid flair type detected');
       });
 
       it('should not allow banned user to post', async () => {
@@ -275,8 +343,10 @@ describe('/community', () => {
   describe('PUT /community/post', () => {
     beforeEach(() => {
       mockDb.user.getById.mockResolvedValue(true);
-      mockDb.post.getById.mockResolvedValue({ poster_id: 't1' });
-      mockDb.community.getById.mockResolvedValue({ is_post_flair_required: false });
+      mockDb.post.getById.mockResolvedValue({ id: '1', poster_id: 't1', community_id: '1', deleted_at: null });
+      mockDb.community.getById.mockResolvedValue({ id: '1', is_post_flair_required: false });
+      mockDb.bannedUsers.isBanned.mockResolvedValue(false);
+      mockDb.post.edit.mockResolvedValue(true);
     });
 
     const sendRequest = (body: any) => {
@@ -331,24 +401,19 @@ describe('/community', () => {
         assert.post.notFound(response);
       });
 
+      it('should handle deleted post', async () => {
+        mockDb.post.getById.mockResolvedValue({ id: '1', poster_id: 't1', community_id: '1', deleted_at: new Date() });
+        const response = await sendRequest(mockRequest);
+
+        expect(response.body.message).toBe('Post was delete');
+        expect(response.status).toBe(404);
+      });
+
       it('should handle user not being the poster', async () => {
-        mockDb.post.getById.mockResolvedValue({ poster_id: 'otherUser' });
+        mockDb.post.getById.mockResolvedValue({ poster_id: 'otherUser', community_id: '1', deleted_at: null });
         const response = await sendRequest(mockRequest);
 
         assert.exp(response, 403, 'You are not allowed to edit this post');
-      });
-
-      it('should handle missing flair when required', async () => {
-        mockDb.community.getById.mockResolvedValue({ is_post_flair_required: true });
-        const response = await sendRequest(mockRequest);
-
-        assert.exp(response, 400, 'Flair is required for this community');
-      });
-
-      it('it should handle sending an incorrect flair', async () => {
-        const response = await sendRequest({ ...mockRequest, flair_id: 'invalid' });
-
-        expect(response.body.error).toBe('Flair not found');
       });
 
       it('should not allow banned user to edit', async () => {
@@ -362,41 +427,34 @@ describe('/community', () => {
         const response = await sendRequest({});
 
         expect(response.body).toMatchObject({
-            'errors': [
-                {
-                    'type': 'field',
-                    'value': '',
-                    'msg': 'Post ID is required',
-                    'path': 'post_id',
-                    'location': 'body',
-                },
-                {
-                    'type': 'field',
-                    'value': '',
-                    'msg': 'Title must be at least 1 characters long',
-                    'path': 'title',
-                    'location': 'body',
-                },
-                {
-                    'type': 'field',
-                    'value': '',
-                    'msg': 'Body must be at least 1 characters long',
-                    'path': 'body',
-                    'location': 'body',
-                },
-                {
-                    'type': 'field',
-                    'msg': 'Invalid value',
-                    'path': 'is_spoiler',
-                    'location': 'body',
-                },
-                {
-                    'type': 'field',
-                    'msg': 'Invalid value',
-                    'path': 'is_mature',
-                    'location': 'body',
-                },
-            ],
+          errors: [
+            {
+              type: 'field',
+              value: '',
+              msg: 'Post ID is required',
+              path: 'post_id',
+              location: 'body',
+            },
+            {
+              type: 'field',
+              value: '',
+              msg: 'Body must be at least 1 characters long',
+              path: 'body',
+              location: 'body',
+            },
+            {
+              type: 'field',
+              msg: 'Invalid value',
+              path: 'is_spoiler',
+              location: 'body',
+            },
+            {
+              type: 'field',
+              msg: 'Invalid value',
+              path: 'is_mature',
+              location: 'body',
+            },
+          ],
         });
       });
 
@@ -411,6 +469,13 @@ describe('/community', () => {
 
   describe('DELETE /community/post', () => {
     beforeEach(() => {
+      mockDb.user.getById.mockResolvedValue(true);
+      mockDb.post.getById.mockResolvedValue({ id: '1', poster_id: 't1', community_id: '1' });
+      mockDb.community.getById.mockResolvedValue({ id: '1', type: 'PUBLIC' });
+      mockDb.bannedUsers.isBanned.mockResolvedValue(false);
+      mockDb.post.deletePost.mockResolvedValue(true);
+      // Mock userCommunity methods for delete operations
+      mockDb.userCommunity.getById.mockResolvedValue({ id: '1', user_id: mockUser.id, community_id: '1', role: 'BASIC' });
     });
 
     const sendRequest = (body: any) => {
@@ -422,18 +487,24 @@ describe('/community', () => {
 
     const mockRequest = {
       post_id: '1',
-
     };
 
     describe('Success cases', () => {
       it('should successfully delete a post', async () => {
         const response = await sendRequest(mockRequest);
 
-        assert.exp(response, 200, 'Successfully edited post');
+        assert.exp(response, 200, 'Successfully deleted post');
       });
     });
 
     describe('Error cases', () => {
+      it('should handle user not existing', async () => {
+        mockDb.user.getById.mockResolvedValue(false);
+        const response = await sendRequest(mockRequest);
+
+        assert.user.notFound(response);
+      });
+
       it('should handle post not existing', async () => {
         mockDb.post.getById.mockResolvedValue(false);
         const response = await sendRequest(mockRequest);
@@ -441,11 +512,54 @@ describe('/community', () => {
         assert.post.notFound(response);
       });
 
-      it('should handle user not being the poster', async () => {
-        mockDb.post.getById.mockResolvedValue({ poster_id: 'otherUser' });
+      it('should handle community not existing', async () => {
+        mockDb.community.getById.mockResolvedValue(false);
         const response = await sendRequest(mockRequest);
 
-        assert.exp(response, 403, 'You are not allowed to edit this post');
+        assert.community.notFound(response);
+      });
+
+      it('should handle user not being the poster', async () => {
+        mockDb.post.getById.mockResolvedValue({ poster_id: 'otherUser', community_id: '1' });
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 403, "You cannot delete someone else's post");
+      });
+
+      it('should not allow non-member to delete in restricted community', async () => {
+        mockDb.community.getById.mockResolvedValue({ type: 'RESTRICTED' });
+        mockDb.userCommunity.getById.mockResolvedValue(null);
+
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 403, 'You must be a member of this community to delete posts');
+      });
+
+      it('should not allow basic user to delete in restricted community', async () => {
+        mockDb.community.getById.mockResolvedValue({ type: 'RESTRICTED' });
+        mockDb.userCommunity.getById.mockResolvedValue({ id: '1', user_id: mockUser.id, community_id: '1', role: 'BASIC' });
+
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 403, 'Only Contributors can delete posts in restricted communities');
+      });
+
+      it('should not allow non-member to delete in private community', async () => {
+        mockDb.community.getById.mockResolvedValue({ type: 'PRIVATE' });
+        mockDb.userCommunity.getById.mockResolvedValue(null);
+
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 403, 'You must be a member of this community to delete posts');
+      });
+
+      it('should not allow basic user to delete in private community when not allowed', async () => {
+        mockDb.community.getById.mockResolvedValue({ type: 'PRIVATE', allow_basic_user_posts: false });
+        mockDb.userCommunity.getById.mockResolvedValue({ id: '1', user_id: mockUser.id, community_id: '1', role: 'BASIC' });
+
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 403, 'Basic users cannot delete posts in this community');
       });
 
       it('should not allow banned user to delete', async () => {

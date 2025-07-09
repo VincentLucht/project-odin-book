@@ -24,7 +24,7 @@ jest.mock('@/db/db', () => {
 import mockDb from '@/util/test/mockDb';
 
 // prettier-ignore
-describe('/community/mod/post', () => {
+describe('Post moderation', () => {
   const token = generateToken(mockUser.id, mockUser.username);
   const mockRequest = {
     post_id: '1',
@@ -261,6 +261,21 @@ describe('/community/mod/post', () => {
 
         expect(response.status).toBe(200);
       });
+    });
+
+    it('should not send notification when poster_id is null', async () => {
+      mockDb.post.getByIdAndModerator.mockResolvedValue({
+        id: '1',
+        community_id: '2',
+        poster_id: null, // or undefined
+        title: 'Test Post',
+        moderation: null,
+      });
+
+      const response = await sendRequest(mockRequest);
+
+      assert.exp(response, 201, 'Successfully moderated post');
+      expect(mockDb.notification.send).not.toHaveBeenCalled();
     });
 
     describe('Error cases', () => {

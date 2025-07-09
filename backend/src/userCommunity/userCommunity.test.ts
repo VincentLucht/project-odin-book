@@ -26,7 +26,7 @@ jest.mock('@/db/db', () => {
 import mockDb from '@/util/test/mockDb';
 
 // prettier-ignore
-describe('/community', () => {
+describe('User community', () => {
   const token = generateToken(mockUser.id, mockUser.username);
 
   const mockRequest = {
@@ -46,6 +46,160 @@ describe('/community', () => {
     mockDb.community.isPrivate.mockResolvedValue(false);
     mockDb.bannedUsers.isBanned.mockResolvedValue(false);
   });
+
+  describe('GET /community/members', () => {
+  const sendRequest = (query: any) =>
+    request(app)
+      .get('/community/members')
+      .set('Authorization', `Bearer ${token}`)
+      .query(query);
+
+  beforeEach(() => {
+    mockDb.communityModerator.getById.mockResolvedValue({ is_active: true });
+    mockDb.userCommunity.getMembers.mockResolvedValue({
+      members: [{ id: 'user1' }],
+      pagination: { nextCursor: null },
+    });
+  });
+
+  it('should successfully fetch members', async () => {
+    const response = await sendRequest({ cmId: '1', m: 'users' });
+    assert.exp(response, 200, 'Successfully fetched members');
+    expect(response.body.members).toBeDefined();
+  });
+
+  it('should reject if not a moderator', async () => {
+    mockDb.communityModerator.getById.mockResolvedValue({ is_active: false });
+    const response = await sendRequest({ cmId: '1', m: 'users' });
+    assert.exp(response, 403, 'You are not a moderator');
+  });
+
+  it('should handle db error', async () => {
+    mockDb.userCommunity.getMembers.mockRejectedValue(new Error('DB error'));
+    const response = await sendRequest({ cmId: '1', m: 'users' });
+    assert.dbError(response);
+  });
+});
+
+describe('GET /community/members/search', () => {
+  const sendRequest = (query: any) =>
+    request(app)
+      .get('/community/members/search')
+      .set('Authorization', `Bearer ${token}`)
+      .query(query);
+
+  beforeEach(() => {
+    mockDb.communityModerator.getById.mockResolvedValue({ is_active: true });
+    mockDb.userCommunity.getMembersByName.mockResolvedValue([
+      { id: 'user2', username: 'john' },
+    ]);
+  });
+
+  it('should fetch members by name', async () => {
+    const response = await sendRequest({
+      cmId: '1',
+      u: 'john',
+      m: 'users',
+    });
+
+    assert.exp(response, 200, 'Successfully fetched members');
+    expect(response.body.members).toHaveLength(1);
+  });
+
+  it('should return empty if no matches', async () => {
+    mockDb.userCommunity.getMembersByName.mockResolvedValue(null);
+    const response = await sendRequest({
+      cmId: '1',
+      u: 'nonexistent',
+      m: 'users',
+    });
+
+    assert.exp(response, 200, 'Successfully fetched members');
+    expect(response.body.members).toEqual([]);
+  });
+
+  it('should handle db error', async () => {
+    mockDb.userCommunity.getMembersByName.mockRejectedValue(
+      new Error('DB error'),
+    );
+    const response = await sendRequest({
+      cmId: '1',
+      u: 'john',
+      m: 'users',
+    });
+
+    assert.dbError(response);
+  });
+});
+
+describe('GET /community/homepage', () => {
+  const sendRequest = (query: any) =>
+    request(app)
+      .get('/community/homepage')
+      .set('Authorization', `Bearer ${token}`)
+      .query(query);
+
+  beforeEach(() => {
+    mockDb.userCommunity.fetchHomePageBy.mockResolvedValue({
+      homepage: [{ id: 'post1' }],
+      pagination: { nextCursor: null },
+    });
+  });
+
+  it('should fetch homepage posts', async () => {
+    const response = await sendRequest({
+      sbt: 'new',
+      t: 'DAY',
+      cId: '',
+    });
+
+    assert.exp(response, 200, 'Successfully fetched home page');
+    expect(response.body.posts).toHaveLength(1);
+  });
+
+  it('should handle db error', async () => {
+    mockDb.userCommunity.fetchHomePageBy.mockRejectedValue(
+      new Error('DB error'),
+    );
+    const response = await sendRequest({
+      sbt: 'top',
+      t: 'WEEK',
+      cId: '',
+    });
+
+    assert.dbError(response);
+  });
+});
+
+describe('GET /community/joined-communities', () => {
+  const sendRequest = (query: any = {}) =>
+    request(app)
+      .get('/community/joined-communities')
+      .set('Authorization', `Bearer ${token}`)
+      .query(query);
+
+  beforeEach(() => {
+    mockDb.userCommunity.getJoinedCommunities.mockResolvedValue([
+      { id: 'community1', name: 'test' },
+    ]);
+  });
+
+  it('should fetch joined communities', async () => {
+    const response = await sendRequest({ page: 1, limit: 15 });
+
+    assert.exp(response, 201, 'Successfully fetched joined communities');
+    expect(response.body.joinedCommunities).toHaveLength(1);
+  });
+
+  it('should handle db error', async () => {
+    mockDb.userCommunity.getJoinedCommunities.mockRejectedValue(
+      new Error('DB error'),
+    );
+    const response = await sendRequest();
+
+    assert.dbError(response);
+  });
+});
 
   describe('POST /community/join', () => {
     const sendRequest = (body: any) => {
@@ -177,8 +331,6 @@ describe('/community', () => {
         mockDb.userCommunity.isMember.mockResolvedValueOnce(true);
         mockDb.community.isOwner.mockResolvedValueOnce(true);
         const response = await sendRequest(mockRequest);
-
-        console.log(response.body);
 
         assert.exp(response, 400, 'As the owner, you can not leave a community');
       });

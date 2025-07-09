@@ -25,7 +25,7 @@ import mockDb from '@/util/test/mockDb';
 import db from '@/db/db';
 
 // prettier-ignore
-describe('/community/post/flair', () => {
+describe('Post assigned flair', () => {
   const token = generateToken(mockUser.id, mockUser.username);
   const modToken = generateToken('2', 't2');
 
@@ -142,8 +142,8 @@ describe('/community/post/flair', () => {
         assert.exp(response, 404, 'Community flair not found');
       });
 
-      it('should handle flair not being assignable to users', async () => {
-        mockDb.communityFlair.getById.mockResolvedValue({ is_assignable_to_users: false });
+      it('should handle flair not being assignable to posts', async () => {
+        mockDb.communityFlair.getById.mockResolvedValue({ is_assignable_to_posts: false });
         const response = await sendRequest(mockRequest);
 
         assert.exp(response, 400, 'Flair is only assignable to users');
@@ -268,6 +268,20 @@ describe('/community/post/flair', () => {
         const response = await sendRequest(mockRequest);
 
         assert.exp(response, 403, 'Non-members cannot assign post flairs');
+      });
+
+      it('should handle post flair being required in community', async () => {
+        mockDb.community.getById.mockResolvedValue({ is_post_flair_required: true });
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 400, 'Post Flairs are required for this community');
+      });
+
+      it('should handle post flair not existing', async () => {
+        mockDb.postAssignedFlair.hasPostFlair.mockResolvedValue(null);
+        const response = await sendRequest(mockRequest);
+
+        assert.exp(response, 404, 'Flair not found');
       });
 
       it('should handle user being banned', async () => {

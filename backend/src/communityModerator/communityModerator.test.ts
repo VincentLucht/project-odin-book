@@ -107,6 +107,22 @@ describe('/community/mod', () => {
         assert.exp(response, 403, 'This user already is a moderator');
       });
 
+      it('should handle user trying to make themselves a mod', async () => {
+        const selfPromotionRequest = {
+          community_id: '1',
+          username: mockUser.username,
+        };
+
+        mockDb.user.getByUsername.mockResolvedValue(mockUser);
+        const response = await sendRequest(selfPromotionRequest);
+
+        assert.exp(response, 201, 'Successfully made user mod');
+        expect(mockDb.communityModerator.makeMod).toHaveBeenCalledWith(
+          mockRequest.community_id,
+          mockUser.id,
+        );
+      });
+
       it('should handle missing inputs', async () => {
         const response = await sendRequest({});
 
