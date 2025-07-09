@@ -3,7 +3,7 @@ import token from '@/auth/token';
 import notificationController from '@/notification/notificationController';
 import notificationValidator from '@/notification/notificationValidator';
 
-// /notifications
+// /notification
 const notificationRouter = express.Router();
 
 notificationRouter.get(
