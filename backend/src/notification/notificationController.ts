@@ -64,28 +64,6 @@ class NotificationController {
     }
   });
 
-  // ! CREATE
-  create = asyncHandler(async (req: Request, res: Response) => {
-    if (checkValidationError(req, res)) return;
-
-    const { community_id } = req.body;
-
-    try {
-      const { user_id } = getAuthUser(req.authData);
-      if (!(await db.user.getById(user_id))) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-
-      return res.status(201).json({ message: 'Successfully created flair' });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({
-        message: 'Failed to create flair',
-        error: error instanceof Error ? error.message : String(error),
-      });
-    }
-  });
-
   // ! UPDATE
   markAllAsRead = asyncHandler(async (req: Request, res: Response) => {
     if (checkValidationError(req, res)) return;
