@@ -5,34 +5,19 @@ import express from 'express';
 import cors from 'cors';
 const app = express();
 
-// Configure CORS globally
-app.use(
-  cors({
-    origin(origin, callback) {
-      console.log('CORS Origin:', origin); // Debug line
-
-      // Allow requests with no origin (mobile apps, etc.)
-      if (!origin) return callback(null, true);
-
-      // Allow localhost for development
-      if (origin.includes('localhost')) return callback(null, true);
-
-      // Allow all Vercel domains for your project
-      if (
-        origin.includes('project-odin-book') &&
-        origin.includes('vercel.app')
-      ) {
-        return callback(null, true);
-      }
-
-      // Reject other origins
-      callback(new Error('Not allowed by CORS'));
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  }),
-);
+// // Configure CORS globally
+// app.use(
+//   cors({
+//     origin: [
+//       'https://project-odin-book-mocha.vercel.app',
+//       'https://project-odin-book-git-main-vincentluchts-projects.vercel.app',
+//       'https://project-odin-book-sx69c3i53-vincentluchts-projects.vercel.app',
+//     ],
+//     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//     credentials: true,
+//     allowedHeaders: ['Content-Type', 'Authorization'],
+//   }),
+// );
 app.use(express.json()); // ? parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // ? allow req.body
 
