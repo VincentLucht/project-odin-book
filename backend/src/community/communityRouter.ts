@@ -59,7 +59,6 @@ communityRouter.get('/community/mod/mods', token.authenticate);
 communityRouter.put(
   '/community/mod/settings',
   token.authenticate,
-  token.authenticate,
   communityValidator.editCommunitySettingsRules(),
   communityController.editCommunitySettings,
 );
