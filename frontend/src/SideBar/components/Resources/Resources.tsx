@@ -37,11 +37,11 @@ export default function Resources({ navigate, route, isLoggedIn }: ResourcesProp
           className={`${route === '/about' ? 'bg-hover-gray' : ''}`}
         />
 
-        <SidebarButton
+        {/* <SidebarButton
           navigate={() => navigate('/help')}
           buttonName="Help"
           className={`${route === '/help' ? 'bg-hover-gray' : ''}`}
-        />
+        /> */}
 
         <Link to={'https://github.com/VincentLucht/project-odin-book'}>
           <SidebarButton navigate={() => void 0} buttonName="Source Code" />
