@@ -15,7 +15,7 @@ export const mockUser = {
 
 export const mockCommunity = {
   id: '1',
-  name: 'mc',
+  name: 'mcc',
   description: 'desc',
   profile_picture_url_desktop: 'https://example.com/profile-pic-desktop.jpg',
   profile_picture_url_mobile: 'https://example.com/profile-pic-mobile.jpg',
@@ -26,7 +26,7 @@ export const mockCommunity = {
   owner_id: 't1',
   allow_basic_user_posts: true,
   type: CommunityType.PUBLIC,
-  topics: ['topic1', 'topic2'],
+  topics: [],
 };
 
 export const generateToken = (userId: string, username: string) => {
