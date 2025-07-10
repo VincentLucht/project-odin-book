@@ -63,13 +63,7 @@ export class DB {
   public chatAdmin: ChatAdminManager;
 
   constructor() {
-    this.prisma = new PrismaClient({
-      datasources: {
-        db: {
-          url: process.env.DIRECT_URL,
-        },
-      },
-    });
+    this.prisma = new PrismaClient();
     this.user = new UserManager(this.prisma);
     this.community = new CommunityManager(this.prisma);
     this.recentCommunities = new RecentCommunitiesManager(this.prisma);
