@@ -9,7 +9,7 @@
     "postinstall": "prisma generate",
     "build": "tsc && tsc-alias",
     "migrate": "npx prisma migrate deploy",
-    "start": "node dist/app.js"
+    "start": "node -r tsconfig-paths/register dist/app.js"
   },
   "keywords": [],
   "author": "",
