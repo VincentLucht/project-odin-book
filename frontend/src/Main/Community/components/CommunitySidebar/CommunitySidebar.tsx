@@ -71,7 +71,7 @@ export default function CommunitySidebar({
         <div className="font-medium">{community.name}</div>
       )}
 
-      <div className="break-all font-light">{community.description}</div>
+      <div className="break-words font-light">{community.description}</div>
 
       <div className="flex flex-col gap-1 py-2">
         <DisplayCreationDate creationDate={community.created_at} />
