@@ -1,69 +1,68 @@
-[![en](https://img.shields.io/badge/lang-en-red.svg)](README.md)
-[![de](https://img.shields.io/badge/lang-de-blue.svg)](README.de.md)
+[![de](https://img.shields.io/badge/lang-de-blue.svg)](README.md) 
+[![en](https://img.shields.io/badge/lang-en-red.svg)](README.en.md) 
 
 # Frontend - Reddnir
-The frontend for [Reddnir](https://github.com/VincentLucht/project-odin-book) built with React and Typescript.
+Das Frontend für [Reddnir](https://github.com/VincentLucht/project-odin-book) entwickelt mit React und Typescript.
 
-## ✨ Key Features
-**Community Management:**
-- Browse, create, and customize communities with custom icons and banners
-- Create community flairs
-- Join/leave communities
-- View community member lists and moderation tools for authorized users
-- Edit community settings and flairs, view mod mail and reports
+## ✨ Hauptfeatures
+**Community-Management:**
+- Communities durchsuchen, erstellen und mit benutzerdefinierten Icons und Bannern anpassen
+- Community-Flairs erstellen
+- Communities beitreten/verlassen
+- Community-Mitgliederlisten anzeigen und Moderationstools für autorisierte Benutzer
+- Community Einstellungen und Flairs bearbeiten, Mod-Mails und Berichte anzeigen
 
-**Post Interaction:**
-- Create posts within communities with full CRUD operations
-- Voting system with upvote/downvote functionality and karma updates
-- Multiple sorting algorithms (new, popular, hot) for post sorting
-- Save/unsave posts for later viewing
+**Post-Interaktion:**
+- Posts innerhalb von Communities mit vollständigen CRUD-Operationen erstellen
+- Voting-System mit Upvote/Downvote Funktionalität und Karma Updates
+- Mehrere Sortieralgorithmen (neu, beliebt, hot) für Post-Sortierung
+- Posts für späteres Anzeigen speichern/entspeichern
 
-**Comment System:**
-- Threaded comment discussions with unlimited nesting levels
-- Create, edit, or delete comments
-- Vote on comments with instant UI feedback
-- Collapsible comment threads for better readability
-- Reply chains with visual indentation and connection lines
+**Kommentar-System:**
+- Thread-Kommentardiskussionen mit unbegrenzter Antwort-Tiefe
+- Erstelle, editiere oder lösche Kommentare
+- Kommentare bewerten mit sofortigem UI-Feedback
+- Einklappbare Kommentar-Threads für bessere Lesbarkeit
+- Antwort-Ketten mit visueller Strukturierung und Verbindungslinien
 
-**User Experience:**
-- Responsive design optimized for desktop, tablet, and mobile devices (down to 360px)
-- Advanced search functionality across posts, comments, and communities
-- User profile customization with bio, avatar, and description
+**Benutzererfahrung:**
+- Responsives Design optimiert für Desktop, Tablet und Smartphones (bis zu 360px)
+- Erweiterte Suchfunktionalität über Posts, Kommentare und Communities
+- Benutzerprofilanpassung mit Bio, Avatar und Beschreibung
 
 **Performance & Navigation:**
-- Client-side routing with React Router for seamless navigation
-- Optimistic UI updates for immediate user feedback
-- Infinite scrolling and virtualization for smooth performance on large datasets
+- Client-side Routing mit React Router für schnelle Navigation
+- Optimistische UI-Updates für sofortiges Benutzer Feedback
+- Unendliches Scrollen und Virtualisierung für flüssige Performance bei großen Datensätzen
 
 **Social Features:**
-- Chat system for direct user messaging
-- User karma tracking and display across posts and comments
-- Comprehensive activity feeds showing user's posts, comments, and interactions
-- Report system for content moderation
+- Chat System für direkte Benutzernachrichten
+- Benutzer-Karma-Tracking und -Anzeige über Posts und Kommentare
+- Umfassende Aktivitäts-Feeds, die Posts, Kommentare und Interaktionen des Benutzers zeigen
+- Meldesystem für Inhaltsmoderation
 
 ## 🧰 Installation & Setup
-### ‼️ Prerequisites
-You <u>need</u> 1 environment variable:
-`VITE_API_URL` (URL of your vite Port)
+### ‼️ Voraussetzungen
+Du <u>benötigst</u> 1 Umgebungsvariable: `VITE_API_URL` (URL deines Vite-Ports)
 
 ### ⚙️ Installation
-Clone the Project:
+Projekt klonen:
 ```bash
 git clone https://github.com/VincentLucht/project-odin-book.git
 ```
 
-Go to the project directory and then into the frontend dir:
+Zum Projektverzeichnis und dann ins Frontend-Verzeichnis wechseln:
 ```bash
 cd project-odin-book
 cd frontend
 ```
 
-Install dependencies:
+Abhängigkeiten installieren:
 ```bash
 npm install
 ```
 
-Start the server:
+Server starten:
 ```bash
 npm run dev
 ```

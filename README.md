@@ -1,37 +1,37 @@
-[![en](https://img.shields.io/badge/lang-en-red.svg)](README.md)
-[![de](https://img.shields.io/badge/lang-de-blue.svg)](README.de.md)
+[![de](https://img.shields.io/badge/lang-de-blue.svg)](README.md)
+[![en](https://img.shields.io/badge/lang-en-red.svg)](README.en.md)
 
 # Reddnir
-A full featured reddit-like community based social media platform, where users can create posts and comments. Built as the final project of [Odin Project Curriculum](https://www.theodinproject.com).
+Eine vollständige Reddit-ähnliche, community-basierte Social-Media-Plattform, auf der Benutzer Posts und Kommentare erstellen können. Entwickelt als Abschlussprojekt des [Odin Project Curriculums](https://www.theodinproject.com).
 
-## ✨ Key Features
-**Communities:** Create and manage communities with custom icons, banners, and up to 3 topics. Set privacy levels (public, restricted, or private) that control member access and content visibility
+## ✨ Hauptfeatures
+**Communities:** Erstelle und verwalte Communities mit benutzerdefinierten Icons, Bannern und bis zu 3 Themen. Bestimme die Sichtbarkeit (öffentlich, eingeschränkt oder privat) und kontrolliere, wer der Community beitreten und Inhalte sehen kann
 
-**Posts:** Create posts in communities with full upvote/downvote functionality. Browse posts using multiple sorting algorithms (new, popular, hot) and discover popular posts in the /popular feed
+**Posts:** Erstelle Posts in Communities mit vollständiger Upvote/Downvote Funktionalität. Durchsuche Posts mit mehreren Sortieralgorithmen (neu, beliebt, hot) und entdecke beliebte Posts im /popular Feed
 
-**Comments:** Engage in threaded discussions with theoretically unlimited nesting levels. Comment on posts, reply to other comments, and upvote/downvote them
+**Kommentare:** Beteilige dich an Thread-Diskussionen mit theoretisch unbegrenzter Antwort-Tiefe. Kommentiere unter Posts, antworte auf andere Kommentare und bewerte sie mit Upvotes/Downvotes
 
-**Users:** Create accounts to unlock full platform features including post/comment saving, karma tracking, and comprehensive post/comment history viewing
+**Benutzer:** Erstelle Accounts, um die vollen Plattform-Features freizuschalten, einschließlich Post/Kommentar-Speicherung, Karma-Tracking und umfassender Post/Kommentar Verlauf
 
-**Moderation Tools:** Community moderators can manage reports, handle mod mail, and control member permissions (approve/ban users) through dedicated moderation tools
+**Moderationstools:** Community Moderatoren können Posts verwalten, Mod-Mails bearbeiten und Mitgliederberechtigung (Benutzer genehmigen/bannen) über Moderationstools kontrollieren
 
-**Customizability:** Customize your community, post, or user profile!
+**Anpassbarkeit:** Personalisiere deine Community, Posts oder Benutzerprofil!
 
-**Security and Validation:** Secure user authentication with role-based access control ensuring private communities remain exclusive to authorized members
+**Sicherheit und Validierung:** Sichere Benutzerauthentifizierung mit rollenbasierter Zugriffskontrolle, die gewährleistet, dass private Communities exklusiv für autorisierte Mitglieder bleiben
 
-## 🌟 Technical Highlights
-**Scale & Architecture:** 40,000+ lines of TypeScript code across a full-stack Reddit-like platform with complex database relationships for communities, posts, comments, moderation systems, and more 
+## 🌟 Technische Highlights
+Skalierung & Architektur: 40.000+ Zeilen TypeScript Code über eine Full-Stack Reddit-ähnliche Plattform mit komplexen Datenbankbeziehungen für Communities, Posts, Kommentare, Moderationssysteme und mehr
 
-**Frontend Performance:** React with advanced optimization including virtualization for large lists, pagination, responsive design, and smooth user interactions using Tailwind CSS 
+**Frontend Performance:** React mit fortgeschrittenen Optimierungen einschließlich Virtualisierung für große Listen, Paginierung, responsives Design und flüssige Benutzerinteraktionen mit Tailwind CSS
 
-**Backend Engineering:** Node.js/Express REST API with 100+ secure endpoints, comprehensive input validation, role-based access control, and PostgreSQL database with Prisma ORM and raw SQL queries for advanced queries 
+**Backend Engineering:** Node.js/Express REST API mit 100+ sicheren Endpunkten, umfassender Eingabevalidierung, rollenbasierter Zugriffskontrolle und PostgreSQL Datenbank mit Prisma ORM und raw SQL queries für fortgeschrittene Queries
 
-## ⚡️ Live Application
-- [View live project](https://reddnir.vercel.app)
+## ⚡️ Live Anwendung
+- [Live Projekt ansehen](https://reddnir.vercel.app)
 
 ![Demo](./demo.gif)
 
-## 🔗 Related Repositories (for more details)
+## 🔗 Verwandte Repositories (für weitere Details)
 - [Frontend Code](https://github.com/VincentLucht/project-odin-book/tree/main/frontend)
 - [Backend Code](https://github.com/VincentLucht/project-odin-book/tree/main/backend)
 
@@ -41,27 +41,26 @@ A full featured reddit-like community based social media platform, where users c
 ### Backend:
 [![Tech Stack](https://skillicons.dev/icons?i=ts,nodejs,express,postgres,prisma)](https://skillicons.dev)
 
-## 🗺️ Roadmap (maybe)
-- [] add better text editing and displaying images and videos
-- [] add following users
-- [] add group chats
-- [] implement user flairs
-- [] add more community customization, like changing colors
-- [] add pinning posts
+## 🗺️ Roadmap (vielleicht)
+- [ ] Bessere Textbearbeitung und Anzeige von Bildern und Videos hinzufügen
+- [ ] Benutzer folgen hinzufügen
+- [ ] Gruppenchats hinzufügen
+- [ ] User-Flairs implementieren
+- [ ] Mehr Community-Anpassungen hinzufügen, wie das Ändern von Farben
+- [ ] Anheften von Posts hinzufügen
 
-## 📚 What I learned
-### Working with large codebases (40k+ lines)
-- Architecting a huge project with 600+ line database schema
-- Code organization and maintainability at scale
-- Managing complexity and technical debt in large projects
+## 📚 Was ich gelernt habe
+### Arbeiten mit großen Codebasen (40k+ Zeilen)
+- Architektur eines großen Projekts mit 600+ Zeilen Datenbankschema
+- Code-Organisation und Maintainability in großem Maßstab
+- Verwaltung von Komplexität und technischen Schulden in großen Projekten
 
-### Performance optimization
-- Mastered virtualization/virtual scrolling for handling large datasets
-- Implemented efficient pagination strategies
-- Database optimization through pattern recognition and query improvements
+### Performance-Optimierung
+- Virtualisierung/Virtual Scrolling für die Verarbeitung großer Datensätze gemeistert
+- Effiziente Paginierungsstrategien implementiert
+- Datenbankoptimierung durch Mustererkennung und Query-Verbesserungen
 
-### Long-term project management
-- Maintaining motivation and focus over 6 months of development
-- Iterative development and continuous improvement
-- Persistence through complex technical challenges
-
+### Langfristige Projektverwaltung
+- Motivation und Fokus über 6 Monate Entwicklung aufrechterhalten
+- Iterative Entwicklung und kontinuierliche Verbesserung
+- Durchhaltevermögen bei komplexen technischen Herausforderungen
