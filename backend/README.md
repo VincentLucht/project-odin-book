@@ -1,83 +1,79 @@
-[![en](https://img.shields.io/badge/lang-en-red.svg)](README.md)
-[![de](https://img.shields.io/badge/lang-de-blue.svg)](README.de.md)
+[![de](https://img.shields.io/badge/lang-de-blue.svg)](README.md)
+[![en](https://img.shields.io/badge/lang-en-red.svg)](README.en.md) 
 
 # Backend - Reddnir
-The backend API for [Reddnir](https://github.com/VincentLucht/project-odin-book) built with Node.js, Express, and TypeScript.
+Die Backend-API für [Reddnir](https://github.com/VincentLucht/project-odin-book) entwickelt mit Node.js, Express und TypeScript.
 
-## ✨ Key Features
-**API Architecture:**
-- 100+ secure REST endpoints with comprehensive input validation
-- Role-based access control ensuring proper authorization across all routes
-- Structured error handling with consistent response formats
-- comprehensive Security middleware
+## ✨ Hauptfeatures
+**API-Architektur:**
+- 100+ sichere REST-Endpunkte mit umfassender Eingabevalidierung
+- Rollenbasierte Zugriffskontrolle für ordnungsgemäße Autorisierung auf allen Routen
+- Strukturierte Fehlerbehandlung mit konsistenten Antwortformaten
+- Umfassende Sicherheits-Middleware
 
-**Database Management:**
-- PostgreSQL database with Prisma ORM for type-safe database operations
-- Complex relational schema supporting communities, posts, comments, users, and moderation
-- Raw SQL queries for advanced operations and performance optimization
-- Database migrations and seeding for development and production environments
+**Datenbankmanagement:**
+- PostgreSQL-Datenbank mit Prisma ORM für typsichere Datenbankoperationen
+- Komplexes relationales Schema für Communities, Posts, Kommentare, Benutzer und Moderation
+- Raw SQL Queries für fortgeschrittene Queries und Leistungsoptimierung
+- Datenbankmigrationen und Seeding für Entwicklungs- und Produktionsumgebungen
 
-**Authentication & Security:**
-- JWT-based authentication with refresh token rotation
-- Password hashing using bcrypt with salt rounds
-- CORS configuration for secure cross-origin requests
-- Input sanitization and validation using Zod schemas
+**Authentifizierung & Sicherheit:**
+- JWT-basierte Authentifizierung
+- Passwort-Hashing mit bcrypt und Salt-Rounds
+- CORS-Konfiguration für sichere Cross-Origin-Anfragen
 
-**Community System:**
-- Community creation, management, and privacy controls (public, restricted, private)
-- Membership management with join/leave functionality
-- Moderation tools including user bans, reports handling, and mod mail
-- Custom community settings with icon and banner upload support
+**Community-System:**
+- Community-Erstellung, -Verwaltung und Datenschutzkontrollen (öffentlich, eingeschränkt, privat)
+- Mitgliederverwaltung mit Beitritts-/Verlassen-Funktionalität
+- Moderationstools einschließlich Benutzersperren, Berichtsbehandlung und Mod-Mail
+- Benutzerdefinierte Community-Einstellungen mit Icon- und Banner-Upload-Unterstützung
 
-**Content Management:**
-- Post CRUD operations with voting system and karma calculation
-- Threaded comment system with unlimited nesting levels
-- Content sorting algorithms (new, popular, hot) with optimized queries
-- Save/unsave functionality for user content curation
+**Content-Management:**
+- Post-CRUD-Operationen mit Voting-System und Karma-Berechnung
+- Thread-Kommentarsystem mit unbegrenzten Antwort-Ebenen
+- Content-Sortieralgorithmen (neu, beliebt, hot)
+- Speichern/Entspeichern-Funktionalität
 
-**User Management:**
-- User registration and authentication with email verification
-- Profile customization with bio, avatar, and description
-- Karma tracking across posts and comments
-- User activity feeds and interaction history
+**Benutzerverwaltung:**
+- Benutzerregistrierung via Username und email
+- Profilanpassung mit Bio, Avatar und Beschreibung
+- Karma-Tracking über Posts und Kommentare
+- Benutzeraktivitäts-Feeds und Interaktionsverlauf
 
 ## 🧰 Installation & Setup
-### ‼️ Prerequisites
-You **need** these environment variables:
-- `DATABASE_URL` (PostgreSQL connection string)
-- `JWT_SECRET` (Secret key for JWT tokens)
-- `JWT_REFRESH_SECRET` (Secret key for refresh tokens)
-- `CORS_ORIGIN` (Frontend URL for CORS)
-- `NODE_ENV` (development/production)
+### ‼️ Voraussetzungen
+Du **benötigst** 2 environment Variablen:
+- `DATABASE_URL` (PostgreSQL-Connection String)
+- `SECRET_KEY` (für password hashing)
 
 ### ⚙️ Installation
-Clone the Project:
+Projekt klonen:
 ```bash
 git clone https://github.com/VincentLucht/project-odin-book.git
 ```
 
-Go to the project directory and then into the backend dir:
+Öffne das directory und gehe anschließend in den Backend Ordner:
 ```bash
 cd project-odin-book
 cd backend
 ```
 
-Install dependencies:
+Dependencies installieren:
 ```bash
 npm install
 ```
 
-Set up the database:
+Datenbank einrichten:
 ```bash
-npx prisma migrate dev
+npm prisma migrate dev
 ```
 
-Start the server:
+Server starten:
 ```bash
 npm run dev
 ```
 
-Run the seed script (optional)
+Führe den Seed-Script aus (optional):
 ```bash
 npm run db
 ```
