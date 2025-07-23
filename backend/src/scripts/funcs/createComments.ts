@@ -229,28 +229,5 @@ export default async function createComments(prisma: PrismaClient) {
     nextAvailableId++;
   }
 
-  // ! CREATE COMMENT IN PRIVATE COMMUNITY
-  await prisma.post.create({
-    data: {
-      id: '3',
-      community_id: '2',
-      poster_id: '1',
-      title: "You can't see me",
-      body: "I'm a post inside of a private community",
-      is_spoiler: false,
-      is_mature: false,
-      post_type: 'BASIC',
-    },
-  });
-
-  await prisma.comment.create({
-    data: {
-      id: '30',
-      content: "I'm just inside of a private community",
-      post_id: '3',
-      user_id: '1',
-    },
-  });
-
   console.log('Successfully created Comments');
 }

@@ -27,55 +27,59 @@ export default async function createCommunities(prisma: PrismaClient) {
   await prisma.community.create({
     data: {
       id: '1',
-      name: 't11',
+      name: 'theodinproject',
       type: CommunityType.PUBLIC,
       owner_id: '1',
+      profile_picture_url:
+        'https://avatars.githubusercontent.com/u/4441966?s=280&v=4',
+      banner_url_desktop:
+        'https://www.skillfinder.com.au/media/wysiwyg/the-odin-project-logo-skill-finder-partners-page.png',
       total_members: 127238,
       description:
-        'Lorem ipsum odor amet, consectetuer adipiscing elit. Felis ad finibus tellus placerat vestibulum ridiculus vivamus commodo quam vehicula per nibh facilisi varius semper magna.',
+        "A place to share stories or ask questions about your work with The Odin Project. Connect with fellow learners, celebrate your coding milestones, and get help when you're stuck on challenging concepts. Whether you're just starting your web development journey or working through advanced projects, this community is here to support your growth.",
     },
   });
 
-  const totalRecords = 8;
-  await prisma.$transaction(async (tx) => {
-    for (let index = 2; index < totalRecords; index++) {
-      const community = await tx.community.create({
-        data: {
-          id: index.toString(),
-          name:
-            index === 2
-              ? 'pc1'
-              : `${faker.company.name().substring(0, 10)}_${index}`,
-          description: faker.lorem.sentence(),
-          type: index === 2 ? CommunityType.PRIVATE : CommunityType.PUBLIC,
-          owner_id: '1',
-        },
-      });
+  // const totalRecords = 8;
+  // await prisma.$transaction(async (tx) => {
+  //   for (let index = 2; index < totalRecords; index++) {
+  //     const community = await tx.community.create({
+  //       data: {
+  //         id: index.toString(),
+  //         name:
+  //           index === 2
+  //             ? 'pc1'
+  //             : `${faker.company.name().substring(0, 10)}_${index}`,
+  //         description: faker.lorem.sentence(),
+  //         type: index === 2 ? CommunityType.PRIVATE : CommunityType.PUBLIC,
+  //         owner_id: '1',
+  //       },
+  //     });
 
-      await tx.communityTopics.createMany({
-        data: ['1', '2'].map((topicId) => ({
-          community_id: community.id,
-          topic_id: topicId,
-        })),
-      });
+  //     await tx.communityTopics.createMany({
+  //       data: ['1', '2'].map((topicId) => ({
+  //         community_id: community.id,
+  //         topic_id: topicId,
+  //       })),
+  //     });
 
-      await tx.communityModerator.create({
-        data: {
-          community_id: community.id,
-          user_id: '1',
-        },
-      });
+  //     await tx.communityModerator.create({
+  //       data: {
+  //         community_id: community.id,
+  //         user_id: '1',
+  //       },
+  //     });
 
-      await tx.userCommunity.create({
-        data: {
-          id: `user_community_${index}`,
-          community_id: community.id,
-          user_id: '1',
-          role: 'CONTRIBUTOR',
-        },
-      });
-    }
-  });
+  //     await tx.userCommunity.create({
+  //       data: {
+  //         id: `user_community_${index}`,
+  //         community_id: community.id,
+  //         user_id: '1',
+  //         role: 'CONTRIBUTOR',
+  //       },
+  //     });
+  //   }
+  // });
 
   // Join communities
   await prisma.userCommunity.create({

@@ -12,6 +12,12 @@ import createNotifications from '@/scripts/funcs/createNotifications';
 import createChatsAndMessages from '@/scripts/funcs/createChatsAndMessages';
 import createSavedPostsAndComments from '@/scripts/funcs/createSavedPostsAndComments';
 
+import {
+  createDeCommunity,
+  createFinanceCommunity,
+  createMHWildsCommunity,
+} from '@/scripts/funcs/createShowcaseData';
+
 const prisma = new PrismaClient();
 
 // Deleting records in a specific order to avoid foreign key constraint issues
@@ -68,12 +74,18 @@ async function main() {
   await createCommunities(prisma);
   await createPosts(prisma);
   await createComments(prisma);
-  await createFlairs(prisma);
-  await createModmails(prisma);
-  await createReports(prisma);
-  await createNotifications(prisma);
-  await createChatsAndMessages(prisma);
-  await createSavedPostsAndComments(prisma);
+
+  await Promise.all([
+    createFlairs(prisma),
+    createModmails(prisma),
+    createReports(prisma),
+    createNotifications(prisma),
+    createChatsAndMessages(prisma),
+    createSavedPostsAndComments(prisma),
+    createDeCommunity(prisma),
+    createFinanceCommunity(prisma),
+    createMHWildsCommunity(prisma),
+  ]);
 }
 
 main()
