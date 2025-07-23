@@ -17,6 +17,7 @@ import {
   createFinanceCommunity,
   createMHWildsCommunity,
 } from '@/scripts/funcs/createShowcaseData';
+import createOdinProjectCommunity from '@/scripts/funcs/createOdinProjectCommunity';
 
 const prisma = new PrismaClient();
 
@@ -85,6 +86,7 @@ async function main() {
     createDeCommunity(prisma),
     createFinanceCommunity(prisma),
     createMHWildsCommunity(prisma),
+    createOdinProjectCommunity(prisma),
   ]);
 }
 
